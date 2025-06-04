@@ -3,7 +3,7 @@
 import * as yup from 'yup'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Form, Formik } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import {
   IMG_MAX_HEIGHT,
   IMG_MAX_WIDTH,
@@ -13,7 +13,9 @@ import React, { useEffect, useRef, useState } from 'react'
 import { calculateSize, dataURItoBlob } from '@/utils/CompressImage'
 
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import type { IUserProfile } from '@/components/profile/interfaces'
+import { Input } from '@/components/ui/input'
 import { updateUserProfile } from '@/app/api/Auth'
 
 interface Values {
@@ -40,7 +42,7 @@ export default function EditUserProfile({
   userProfileInfo,
   updateProfile,
 }: EditUserProfileProps): React.JSX.Element {
-  const [, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',
     imagePreviewUrl: userProfileInfo.profileImg || '',
@@ -56,8 +58,16 @@ export default function EditUserProfile({
   }, [])
 
   const validationSchema = yup.object().shape({
-    firstName: yup.string().required('First name is required').min(2).max(50),
-    lastName: yup.string().required('Last name is required').min(2).max(50),
+    firstName: yup
+      .string()
+      .required('First Name is required')
+      .min(2, 'First Name must be at least 2 characters')
+      .max(50, 'First Name must be at most 50 characters'),
+    lastName: yup
+      .string()
+      .required('Last Name is required')
+      .min(2, 'Last Name must be at least 2 characters')
+      .max(50, 'Last Name must be at most 50 characters'),
   })
 
   const processImage = (file: File): void => {
@@ -122,7 +132,8 @@ export default function EditUserProfile({
     setLoading(true)
     try {
       const updatedData: IUserProfile = {
-        ...values,
+        ...userProfileInfo, // Keep all existing data
+        ...values, // Override with form values
         profileImg: (logoImage.imagePreviewUrl as string) || values.profileImg,
         id: userProfileInfo.id,
         roles: userProfileInfo.roles,
@@ -141,118 +152,151 @@ export default function EditUserProfile({
     }
   }
 
+  const handleCancel = (): void => {
+    setLogoImage({
+      logoFile: '',
+      imagePreviewUrl: userProfileInfo.profileImg || '',
+      fileName: '',
+    })
+    setImgError('')
+    toggleEditProfile()
+  }
+
   return (
-    <div className="bg-card rounded-lg p-6">
-      <Formik
-        initialValues={{
-          profileImg: userProfileInfo.profileImg || '',
-          firstName: userProfileInfo.firstName || '',
-          lastName: userProfileInfo.lastName || '',
-          email: userProfileInfo.email || '',
-        }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {(formik) => (
-          <Form className="space-y-6">
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                First Name
-              </label>
-              <input
-                ref={firstNameInputRef}
-                name="firstName"
-                type="text"
-                value={formik.values.firstName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="w-full rounded-md p-2"
-              />
-              {formik.errors.firstName && formik.touched.firstName && (
-                <div className="mt-1 text-sm">{formik.errors.firstName}</div>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Last Name
-              </label>
-              <input
-                name="lastName"
-                type="text"
-                value={formik.values.lastName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className="w-full rounded-md p-2"
-              />
-              {formik.errors.lastName && formik.touched.lastName && (
-                <div className="mt-1 text-sm">{formik.errors.lastName}</div>
-              )}
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-medium">
-                Profile Image
-              </label>
-              <div className="flex items-center space-x-4">
-                {logoImage.imagePreviewUrl ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={logoImage.imagePreviewUrl as string}
-                    alt="Profile Preview"
-                    className="h-24 w-24 rounded-full object-cover"
-                  />
-                ) : (
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage
-                      src=""
-                      alt={userProfileInfo?.email || 'Unknown'}
-                    />
-                    <AvatarFallback>
-                      {userProfileInfo?.firstName?.[0]?.toUpperCase() ||
-                        userProfileInfo?.lastName?.[0]?.toUpperCase() ||
-                        '?'}
-                    </AvatarFallback>
-                  </Avatar>
-                )}
+    <Card className="p-4">
+      <div className="bg-card rounded-lg p-6">
+        <Formik
+          initialValues={{
+            profileImg: userProfileInfo.profileImg || '',
+            firstName: userProfileInfo.firstName || '',
+            lastName: userProfileInfo.lastName || '',
+            email: userProfileInfo.email || '',
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+          enableReinitialize={true}
+        >
+          {(formik) => (
+            <Form className="space-y-6">
+              <div className="flex flex-wrap gap-6">
                 <div>
-                  <label
-                    htmlFor="profileImg"
-                    className="border-input bg-background hover:bg-accent hover:text-accent-foreground mt-4 cursor-pointer rounded-md border px-4 py-2 shadow-sm"
-                  >
-                    Upload Profile Image
-                  </label>
-                  <input
-                    id="profileImg"
-                    name="profileImg"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                  {imgError && (
-                    <div className="text-destructive mt-2 text-sm">
-                      {imgError}
+                  <div>
+                    <label className="mb-2 block text-sm font-medium">
+                      Profile Image
+                    </label>
+                    <div className="flex items-center space-x-4">
+                      {logoImage.imagePreviewUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={logoImage.imagePreviewUrl as string}
+                          alt="Profile Preview"
+                          className="h-24 w-24 rounded-full object-cover"
+                        />
+                      ) : (
+                        <Avatar className="h-24 w-24">
+                          <AvatarImage
+                            src=""
+                            alt={userProfileInfo?.email || 'Unknown'}
+                          />
+                          <AvatarFallback>
+                            {userProfileInfo?.firstName?.[0]?.toUpperCase() ||
+                              userProfileInfo?.lastName?.[0]?.toUpperCase() ||
+                              '?'}
+                          </AvatarFallback>
+                        </Avatar>
+                      )}
+                      <div>
+                        <label
+                          htmlFor="profileImg"
+                          className="border-input text-foreground flex cursor-pointer items-center gap-4 rounded-md border p-2 text-base text-sm hover:bg-gray-50"
+                        >
+                          Upload Profile Image
+                        </label>
+                        <Input
+                          id="profileImg"
+                          name="profileImg"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
+                        {imgError && (
+                          <p className="text-destructive mt-1 text-sm">
+                            {imgError}
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  )}
+                  </div>
+                </div>
+                <div className="flex flex-1 flex-col gap-4">
+                  <div>
+                    <label className="mb-2 block text-sm font-medium">
+                      First Name <span className="text-destructive">*</span>
+                    </label>
+                    <Field
+                      as={Input}
+                      innerref={firstNameInputRef}
+                      name="firstName"
+                      type="text"
+                      value={formik.values.firstName}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className="w-full rounded-md p-2"
+                      disabled={loading}
+                    />
+                    {formik.errors.firstName && formik.touched.firstName && (
+                      <div className="text-destructive mt-1 text-sm">
+                        {formik.errors.firstName}
+                      </div>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="mb-2 block text-sm font-medium">
+                      Last Name <span className="text-destructive">*</span>
+                    </label>
+                    <Field
+                      as={Input}
+                      name="lastName"
+                      type="text"
+                      value={formik.values.lastName}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      className="w-full rounded-md p-2"
+                      disabled={loading}
+                    />
+                    {formik.errors.lastName && formik.touched.lastName && (
+                      <div className="text-destructive mt-1 text-sm">
+                        {formik.errors.lastName}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <div className="flex justify-end space-x-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={toggleEditProfile}
-                className="flex items-center px-4 py-2 transition-colors"
-              >
-                Cancel
-              </Button>
-              <Button type="submit">Save Changes</Button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </div>
+              <div className="flex justify-end space-x-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  className="flex items-center px-4 py-2 transition-colors"
+                  disabled={loading}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={loading || !formik.isValid}
+                  className="flex items-center px-4 py-2"
+                >
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </Card>
   )
 }

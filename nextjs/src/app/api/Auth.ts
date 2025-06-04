@@ -20,6 +20,7 @@ export interface IUserSignInData {
   email: string | undefined
   isPasskey: boolean
   password?: string
+  isPassword?: boolean
 }
 export interface IEmailVerifyData {
   verificationCode: string

@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select'
 import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant'
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -32,7 +33,7 @@ import { Plus } from 'lucide-react'
 import SchemaCard from './SchemaCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOrganizationById } from '@/app/api/organization'
-import { useAppSelector } from '@/lib/hooks'
+import { getUserProfile } from '@/app/api/Auth'
 import { useRouter } from 'next/navigation'
 
 interface IAttributesDetails {
@@ -55,6 +56,18 @@ export interface ISchemaData {
   userName: string
 }
 
+interface UserOrgRole {
+  orgId: string
+  orgRole: {
+    name: string
+  }
+}
+
+interface GetUserProfileResponse {
+  data: {
+    userOrgRoles: UserOrgRole[]
+  }
+}
 const SchemaList = (props: {
   schemaSelectionCallback?: (
     schemaId: string,
@@ -71,7 +84,8 @@ const SchemaList = (props: {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
-  // const [schemaList, setSchemaList] = useState<SetStateAction<never[]>>([])
+  const token = useAppSelector((state) => state.auth.token)
+
   const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
 
   const [, setSchemaListErr] = useState<string | null>('')
@@ -85,8 +99,10 @@ const SchemaList = (props: {
   const [, setSelectedValue] = useState<string>('Organizations schema')
   const [w3cSchema, setW3CSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
+  const [orgRole, setOrgRole] = useState<string | null>(null)
 
   const route = useRouter()
+  const dispatch = useAppDispatch()
 
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
     itemPerPage,
@@ -98,6 +114,45 @@ const SchemaList = (props: {
   })
   const options = ['All schemas']
   const optionsWithDefault = ["Organization's schema", ...options]
+
+  useEffect(() => {
+    async function fetchProfile(): Promise<void> {
+      if (!token || !organizationId) {
+        return
+      }
+
+      try {
+        const response = await getUserProfile(token)
+
+        // Type narrowing: check if response is a string
+        if (typeof response === 'string') {
+          console.error('API error:', response)
+          setOrgRole(null)
+          return
+        }
+
+        // Type-cast to expected shape after narrowing
+        const typedResponse = response as AxiosResponse<GetUserProfileResponse>
+
+        const roles = typedResponse?.data?.data?.userOrgRoles ?? []
+        const matchedRole = roles.find(
+          (role: UserOrgRole) => role.orgId === organizationId,
+        )
+
+        if (matchedRole?.orgRole?.name) {
+          setOrgRole(matchedRole.orgRole.name)
+        } else {
+          setOrgRole(null)
+        }
+      } catch (error) {
+        console.error('Unexpected fetch error:', error)
+        setOrgRole(null)
+      }
+    }
+
+    fetchProfile()
+  }, [token, organizationId, dispatch])
+
   const getSchemaList = async (
     schemaListAPIParameter: GetAllSchemaListParameter,
     flag: boolean,
@@ -196,7 +251,13 @@ const SchemaList = (props: {
           setLoading(false)
         })
     }
-  }, [organizationId, schemaListAPIParameter, allSchemaFlag])
+  }, [organizationId])
+
+  useEffect(() => {
+    if (organizationId) {
+      getSchemaList(schemaListAPIParameter, allSchemaFlag)
+    }
+  }, [schemaListAPIParameter.page])
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
     const inputValue = event.target.value
@@ -212,12 +273,40 @@ const SchemaList = (props: {
   }
 
   const handleFilterChange = async (value: string): Promise<void> => {
-    const isAllSchemas = value === 'all'
+    const isAllSchemas = value === 'All schemas'
 
     setSelectedValue(value)
     setAllSchemaFlag(isAllSchemas)
 
-    setSchemaListAPIParameter((prev) => ({ ...prev, page: 1 }))
+    // Reset pagination and search parameters
+    setSchemaListAPIParameter({
+      itemPerPage,
+      page: 1,
+      search: '',
+      sortBy: 'id',
+      sortingOrder: 'desc',
+      allSearch: '',
+    })
+
+    setSearchValue('')
+
+    if (organizationId) {
+      setLoading(true)
+      try {
+        await getSchemaList(
+          {
+            itemPerPage,
+            page: 1,
+            search: '',
+            sortBy: 'id',
+            allSearch: '',
+          },
+          isAllSchemas,
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   const schemaSelectionCallback = ({
@@ -264,6 +353,30 @@ const SchemaList = (props: {
     }
     props.W3CSchemaSelectionCallback?.(schemaId, w3cSchemaDetails)
   }
+  const paginationRange = 2
+  const currentPage = schemaListAPIParameter.page
+  const startPage = Math.max(1, currentPage - paginationRange)
+  const endPage = Math.min(lastPage, currentPage + paginationRange)
+
+  const paginationNumbers = []
+
+  if (startPage > 1) {
+    paginationNumbers.push(1)
+    if (startPage > 2) {
+      paginationNumbers.push('...')
+    }
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    paginationNumbers.push(i)
+  }
+
+  if (endPage < lastPage) {
+    if (endPage < lastPage - 1) {
+      paginationNumbers.push('...')
+    }
+    paginationNumbers.push(lastPage)
+  }
 
   return (
     <PageContainer>
@@ -299,7 +412,12 @@ const SchemaList = (props: {
             </SelectContent>
           </Select>
           <Button
-            onClick={() => route.push('/organizations/schemas/create')}
+            onClick={() => {
+              if (orgRole === 'admin' || orgRole === 'owner') {
+                route.push('/organizations/schemas/create')
+              }
+            }}
+            disabled={orgRole !== 'admin' && orgRole !== 'owner'}
             className="w-full sm:w-auto"
           >
             <Plus /> Create
@@ -362,30 +480,32 @@ const SchemaList = (props: {
                       </PaginationItem>
                     )}
 
-                    {Array.from({ length: lastPage }).map((_, index) => {
-                      const page = index + 1
-                      const isActive = page === schemaListAPIParameter.page
-                      return (
-                        <PaginationItem key={page}>
+                    {paginationNumbers.map((page, idx) => (
+                      <PaginationItem key={idx}>
+                        {page === '...' ? (
+                          <span className="text-muted-foreground px-3 py-2">
+                            …
+                          </span>
+                        ) : (
                           <PaginationLink
                             className={`${
-                              isActive
-                                ? 'bg-primary text-[var(--color-white)]'
+                              page === schemaListAPIParameter.page
+                                ? 'bg-primary text-white'
                                 : 'bg-background text-muted-foreground'
                             } rounded-lg px-4 py-2`}
                             href="#"
                             onClick={() =>
                               setSchemaListAPIParameter((prev) => ({
                                 ...prev,
-                                page,
+                                page: page as number,
                               }))
                             }
                           >
                             {page}
                           </PaginationLink>
-                        </PaginationItem>
-                      )
-                    })}
+                        )}
+                      </PaginationItem>
+                    ))}
 
                     {schemaListAPIParameter.page < lastPage && (
                       <PaginationItem>
@@ -409,10 +529,14 @@ const SchemaList = (props: {
           <EmptyMessage
             title="No Schemas"
             description="Get started by creating a new Schema"
-            buttonContent="Create Schema"
+            buttonContent="Create"
+            buttonIcon={<Plus className="h-4 w-4" />}
             onClick={() => {
-              route.push('/organizations/schemas/create')
+              if (orgRole === 'admin' || orgRole === 'owner') {
+                route.push('/organizations/schemas/create')
+              }
             }}
+            disabled={orgRole !== 'admin' && orgRole !== 'owner'}
           />
         )}
       </div>

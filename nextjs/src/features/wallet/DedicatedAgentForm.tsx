@@ -11,6 +11,7 @@ import React from 'react'
 
 const DedicatedAgentForm = ({
   ledgerConfig,
+  orgId,
   maskedSeeds,
   setLedgerConfig,
   seeds,
@@ -49,7 +50,7 @@ const DedicatedAgentForm = ({
               />
               {formikHandlers.errors.walletName &&
                 formikHandlers.touched.walletName && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-xs">
                     {formikHandlers.errors.walletName}
                   </span>
                 )}
@@ -67,7 +68,7 @@ const DedicatedAgentForm = ({
               />
               {formikHandlers.errors.agentEndpoint &&
                 formikHandlers.touched.agentEndpoint && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-xs">
                     {formikHandlers.errors.agentEndpoint}
                   </span>
                 )}
@@ -85,7 +86,7 @@ const DedicatedAgentForm = ({
               />
               {formikHandlers.errors.apiKey &&
                 formikHandlers.touched.apiKey && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-xs">
                     {formikHandlers.errors.apiKey}
                   </span>
                 )}
@@ -100,11 +101,9 @@ const DedicatedAgentForm = ({
 
     {ledgerConfig && (
       <DedicatedLedgerConfig
+        orgId={orgId}
         seeds={seeds}
-        // walletName={walletName}
         maskedSeeds={maskedSeeds}
-        // agentEndpoint={agentEndpoint}
-        // apiKey={apiKey}
         submitDedicatedWallet={submitDedicatedWallet}
         ledgerConfig={false}
         setLedgerConfig={function (): void {

@@ -2,12 +2,12 @@
 
 import * as Yup from 'yup'
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Formik, Form as FormikForm } from 'formik'
 import React, { useState } from 'react'
 import { apiStatusCodes, emailRegex } from '@/config/CommonConstant'
 import { checkUserExist, sendVerificationMail } from '@/app/api/Auth'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -26,15 +26,11 @@ export default function EmailVerificationForm({
 }: StepEmailProps): React.ReactElement {
   const [loading, setLoading] = useState(false)
   const [verifyLoader, setVerifyLoader] = useState(false)
+  const [emailSuccess, setEmailSuccess] = useState<string | null>(null)
+  const [addFailure, setAddFailure] = useState<string | null>(null)
 
   const searchParams = useSearchParams()
   const clientAliasValue = searchParams?.get('clientAlias')
-
-  const [showEmailVerification, setShowEmailVerification] = useState<{
-    message: string
-    isError: boolean
-    type: string
-  }>({ message: '', isError: false, type: '' })
 
   const validationSchema = Yup.object().shape({
     email: Yup.string()
@@ -56,26 +52,17 @@ export default function EmailVerificationForm({
       const { data } = userRsp as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setShowEmailVerification({
-          message: data?.message,
-          isError: false,
-          type: 'success',
-        })
+        setEmailSuccess(data?.message)
+        setAddFailure(null)
       } else {
-        setShowEmailVerification({
-          message: data?.message,
-          isError: true,
-          type: 'danger',
-        })
+        setAddFailure(userRsp as string)
+        setEmailSuccess(null)
       }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error during sending verification email:', err)
-      setShowEmailVerification({
-        message: 'An error occurred while sending verification email.',
-        isError: true,
-        type: 'danger',
-      })
+      setAddFailure('An error occurred while sending verification email.')
+      setEmailSuccess(null)
     } finally {
       setVerifyLoader(false)
     }
@@ -83,7 +70,8 @@ export default function EmailVerificationForm({
 
   const handleVerifyEmail = async (emailValue: string): Promise<void> => {
     setLoading(true)
-    setShowEmailVerification({ message: '', isError: false, type: '' })
+    setEmailSuccess(null)
+    setAddFailure(null)
 
     try {
       const userRsp = await checkUserExist(emailValue)
@@ -93,11 +81,7 @@ export default function EmailVerificationForm({
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         if (isEmailVerified) {
           if (isRegistrationCompleted) {
-            setShowEmailVerification({
-              message: 'Email is already registered.',
-              isError: true,
-              type: 'danger',
-            })
+            setAddFailure(data?.data?.message)
           } else {
             setEmail(emailValue)
             goToNext()
@@ -106,20 +90,12 @@ export default function EmailVerificationForm({
           await handleSendVerificationEmail(emailValue)
         }
       } else {
-        setShowEmailVerification({
-          message: data?.data?.message ?? 'Something went wrong.',
-          isError: true,
-          type: 'danger',
-        })
+        setAddFailure(data?.data?.message ?? 'Something went wrong.')
       }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Unexpected error during email verification:', err)
-      setShowEmailVerification({
-        message: 'An unexpected error occurred. Please try again.',
-        isError: true,
-        type: 'danger',
-      })
+      setAddFailure('An unexpected error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -145,29 +121,31 @@ export default function EmailVerificationForm({
 
         return (
           <FormikForm className="space-y-4">
-            {showEmailVerification.message && (
-              <Alert
-                variant={
-                  showEmailVerification.type === 'success'
-                    ? 'default'
-                    : 'destructive'
-                }
-                className={`mb-4 ${
-                  showEmailVerification.type === 'success'
-                    ? 'bg-success'
-                    : 'bg-error'
-                }`}
-              >
-                <AlertDescription
-                  className={
-                    showEmailVerification.type === 'success'
-                      ? 'text-success'
-                      : 'text-error'
-                  }
-                >
-                  {showEmailVerification.message}
-                </AlertDescription>
-              </Alert>
+            {emailSuccess && (
+              <div className="w-full" role="alert">
+                <AlertComponent
+                  message={emailSuccess}
+                  type={'success'}
+                  onAlertClose={() => {
+                    if (emailSuccess) {
+                      setEmailSuccess(null)
+                    }
+                  }}
+                />
+              </div>
+            )}
+            {addFailure && (
+              <div className="w-full" role="alert">
+                <AlertComponent
+                  message={addFailure}
+                  type={'failure'}
+                  onAlertClose={() => {
+                    if (addFailure) {
+                      setAddFailure(null)
+                    }
+                  }}
+                />
+              </div>
             )}
 
             <div className="h-12">

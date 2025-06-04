@@ -20,7 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
+import {
+  apiStatusCodes,
+  polygonFaucet,
+  polygonScan,
+} from '@/config/CommonConstant'
 import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -31,6 +35,7 @@ import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import { envConfig } from '@/config/envConfig'
+import { getDidValidationSchema } from '@/lib/validationSchemas'
 
 const LedgerConfig = ({
   maskedSeeds,
@@ -150,27 +155,11 @@ const LedgerConfig = ({
     setWalletLabel(walletName)
   }, [walletName])
 
-  const validations = {
-    label: yup
-      .string()
-      .required('Wallet label is required')
-      .trim()
-      .min(2, 'Wallet label must be at least 2 characters')
-      .max(25, 'Wallet label must be at most 25 characters'),
-    method: yup.string().required('Method is required'),
-    ledger: yup.string().required('Ledger is required'),
-    ...(haveDidShared && {
-      seed: yup.string().required('Seed is required'),
-      did: yup.string().required('DID is required'),
-    }),
-    ...((DidMethod.INDY === selectedMethod ||
-      DidMethod.POLYGON === selectedMethod) && {
-      network: yup.string().required('Network is required'),
-    }),
-    ...(DidMethod.WEB === selectedMethod && {
-      domain: yup.string().required('Domain is required'),
-    }),
-  }
+  const validations = getDidValidationSchema({
+    haveDidShared,
+    selectedMethod,
+    includeLabel: true,
+  })
 
   const renderNetworkOptions = (
     formikHandlers: FormikProps<IValuesShared>,
@@ -625,10 +614,10 @@ const LedgerConfig = ({
                               <div className="mt-1">
                                 For example, use{' '}
                                 <a
-                                  href="https://faucet.polygon.technology/"
-                                  className="underline"
+                                  href={polygonFaucet}
+                                  className="font-semibold underline"
                                 >
-                                  https://faucet.polygon.technology/
+                                  {polygonFaucet}
                                 </a>{' '}
                                 to get free tokens.
                               </div>
@@ -641,7 +630,10 @@ const LedgerConfig = ({
                               <div className="mt-1">
                                 For example, copy the address and check the
                                 balance on{' '}
-                                <a href={polygonScan} className="underline">
+                                <a
+                                  href={polygonScan}
+                                  className="font-semibold underline"
+                                >
                                   {polygonScan}
                                 </a>
                                 .

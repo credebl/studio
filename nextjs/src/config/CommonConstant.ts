@@ -14,6 +14,11 @@ export const limitedAttributesLength = 3
 export const itemPerPage = 10
 export const allSchemas = 'All schemas'
 export const polygonScan = 'https://mumbai.polygonscan.com/'
+export const createDateTime = 'createDateTime'
+export const totalRecords = 'totalRecords'
+export const successfulRecords = 'successfulRecords'
+export const currentPageNumber = 1
+export const polygonFaucet = 'https://faucet.polygon.technology/'
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,
@@ -68,7 +73,7 @@ export const emailCredDefHeaders = [
 ]
 
 export const predicatesConditions = [
-  { value: '', label: 'Select' },
+  { value: 'Select', label: 'Select' },
   { value: '>', label: 'Greater than' },
   { value: '<', label: 'Less than' },
   { value: '>=', label: 'Greater than or equal to' },
@@ -164,4 +169,36 @@ export enum RoleNames {
   OWNER = 'owner',
   HOLDER = 'holder',
   MEMBER = 'member',
+}
+
+export const optionsSchemaCreation = [
+  {
+    value: 'string',
+    label: 'String',
+  },
+  {
+    value: 'number',
+    label: 'Number',
+  },
+  {
+    value: 'time',
+    label: 'Time',
+  },
+  {
+    value: 'datetime-local',
+    label: 'Date & Time',
+  },
+]
+
+export const createSchemaStyles = {
+  createButton: {
+    height: '2.6rem',
+    width: 'auto',
+    minWidth: '2rem',
+  },
+  resetButton: {
+    height: '2.6rem',
+    width: '6rem',
+    minWidth: '2rem',
+  },
 }

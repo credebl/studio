@@ -324,9 +324,7 @@ const WalletSpinup = (): React.JSX.Element => {
         }, 1000)
 
         const redirectUrl =
-          redirectTo && clientAlias
-            ? redirectTo
-            : `/organizations/dashboard/${orgId}`
+          redirectTo && clientAlias ? redirectTo : `/organizations/${orgId}`
 
         router.push(redirectUrl)
         // eslint-disable-next-line no-console
@@ -389,6 +387,7 @@ const WalletSpinup = (): React.JSX.Element => {
     } else {
       formComponent = (
         <DedicatedAgentForm
+          orgId={orgId || ''}
           ledgerConfig={showLedgerConfig}
           setLedgerConfig={setShowLedgerConfig}
           seeds={seeds}

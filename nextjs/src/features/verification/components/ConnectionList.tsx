@@ -1,21 +1,14 @@
 'use client'
 
-import {
-  ConnectionIdCell,
-  CreatedOnCell,
-  SelectCheckboxCell,
-  TheirLabelCell,
-} from './ConnectionListCells'
-import {
-  IColumnData,
-  ITableMetadata,
-  getColumns,
-} from '@/components/ui/generic-table-component/columns'
 import { IConnectionList, LocalOrgs } from '../type/interface'
 import {
   IConnectionListAPIParameter,
   getConnectionsByOrg,
 } from '@/app/api/connection'
+import {
+  ITableMetadata,
+  getColumns,
+} from '@/components/ui/generic-table-component/columns'
 import { JSX, useEffect, useState } from 'react'
 import {
   resetSelectedConnections,
@@ -29,6 +22,7 @@ import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import DateTooltip from '@/components/DateTooltip'
 import { ITableData } from '@/components/DataTable/interface'
 import { dateConversion } from '@/utils/DateConversion'
+import { generateColumns } from './ConnectionHelperData'
 
 const initialPageState = {
   itemPerPage: 10,
@@ -267,79 +261,13 @@ const ConnectionList = (props: {
     updateLocalOrgs()
   }, [])
 
-  const generateColumns = (): IColumnData[] => [
-    {
-      id: 'select',
-      title: '',
-      accessorKey: 'select',
-      columnFunction: ['hide'],
-      cell: ({ row }) => (
-        <SelectCheckboxCell
-          connection={row.original}
-          checked={isConnectionChecked(row.original.connectionId)}
-          onSelect={selectOrganization}
-        />
-      ),
-    },
-    {
-      id: 'theirLabel',
-      title: 'User',
-      accessorKey: 'theirLabel',
-      columnFunction: [
-        {
-          sortCallBack: async (order) =>
-            setListAPIParameter((prev) => ({
-              ...prev,
-              sortBy: 'theirLabel',
-              sortingOrder: order,
-            })),
-        },
-      ],
-      cell: ({ row }) => <TheirLabelCell label={row.original.theirLabel} />,
-    },
-    {
-      id: 'connectionId',
-      title: 'Connection ID',
-      accessorKey: 'connectionId',
-      columnFunction: [
-        {
-          sortCallBack: async (order) =>
-            setListAPIParameter((prev) => ({
-              ...prev,
-              sortBy: 'connectionId',
-              sortingOrder: order,
-            })),
-        },
-      ],
-      cell: ({ row }) => (
-        <ConnectionIdCell connectionId={row.original.connectionId} />
-      ),
-    },
-    {
-      id: 'createDateTime',
-      title: 'Created on',
-      accessorKey: 'createDateTime',
-      columnFunction: [
-        {
-          sortCallBack: async (order) =>
-            setListAPIParameter((prev) => ({
-              ...prev,
-              sortBy: 'createDateTime',
-              sortingOrder: order,
-            })),
-        },
-      ],
-      cell: ({ row }) => <CreatedOnCell date={row.original.createDateTime} />,
-    },
-  ]
-
   const metadata: ITableMetadata = {
     enableSelection: false,
   }
 
   const columns = getColumns<IConnectionList>({
     metadata,
-    columnData: generateColumns(),
+    columnData: generateColumns(setListAPIParameter, selectOrganization),
   })
 
   const refreshPage = (): void => {

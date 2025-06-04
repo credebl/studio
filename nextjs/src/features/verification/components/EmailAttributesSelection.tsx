@@ -14,10 +14,10 @@ import { apiStatusCodes, predicatesConditions } from '@/config/CommonConstant'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
+import { ArrowRight } from 'lucide-react'
 import { AxiosResponse } from 'axios'
 import BackButton from '@/components/BackButton'
 import { Button } from '@/components/ui/button'
-import { ContinueIcon } from '@/components/iconsSvg'
 import CustomCheckbox from '@/components/CustomCheckbox'
 import DataTable from '@/components/DataTable'
 import { DidMethod } from '@/common/enums'
@@ -520,7 +520,7 @@ const EmailAttributesSelection = (): JSX.Element => {
             disabled={!attributeData?.some((ele) => ele.isChecked)}
             className="mt-2 ml-auto rounded-lg text-center text-base font-medium sm:w-auto"
           >
-            <ContinueIcon />
+            <ArrowRight />
             Continue
           </Button>
         </div>

@@ -12,8 +12,9 @@ const GenerateButtonPolygon = ({
 }: IProps): React.JSX.Element => (
   <div className="relative my-3 grid w-fit grid-cols-2 gap-x-9 md:gap-56">
     <div className="mt-4">
-      <Label htmlFor="generateKey">Generate private key</Label>
-      <span className="text-destructive text-xs">*</span>
+      <Label htmlFor="generateKey">
+        Generate private key <span className="text-destructive text-xs">*</span>
+      </Label>
     </div>
 
     <Button

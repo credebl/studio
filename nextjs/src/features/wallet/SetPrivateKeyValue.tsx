@@ -145,12 +145,12 @@ const SetPrivateKeyValueInput = ({
               <TokenWarningMessage />
 
               <div className="relative my-3">
-                <p className="truncate text-sm">
+                <span className="truncate text-sm">
                   <span className="font-semibold">Address:</span>
                   <div className="flex">
                     <CopyDid value={generatedKeys.address} />
                   </div>
-                </p>
+                </span>
               </div>
             </>
           )}
@@ -162,7 +162,7 @@ const SetPrivateKeyValueInput = ({
               as={Input}
               id="privatekey"
               name="privatekey"
-              className="w-[480px]"
+              className=""
               value={privateKeyValue}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setPrivateKeyValue(e.target.value)
@@ -171,7 +171,6 @@ const SetPrivateKeyValueInput = ({
               onBlur={formikHandlers.handleBlur}
               placeholder="Enter private key"
             />
-            <CopyDid value={privateKeyValue || ''} />
           </div>
 
           <span className="text-destructive static bottom-0 text-xs">

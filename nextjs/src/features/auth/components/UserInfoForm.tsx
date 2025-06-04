@@ -450,7 +450,7 @@ export default function UserInfoForm({
           )}
 
           <div className="flex justify-center gap-2">
-            <Button type="submit" disabled={loading || !usePassword}>
+            <Button type="submit" disabled={loading}>
               {loading ? 'Creating account...' : 'Create account'}
             </Button>
           </div>

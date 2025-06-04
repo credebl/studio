@@ -28,115 +28,101 @@ body {
 
 /* Theme: Credebl */
 .theme-credebl {
-  --background: #ffffff;
-  --foreground: #333333;
+  --background: #f8f8f8;
+  --foreground: #111826;
   --card: #ffffff;
-  --card-foreground: #333333;
-  --card-gradient: linear-gradient(to top, #dbeafe, #ffffff);
+  --card-foreground: #111826;
   --popover: #ffffff;
-  --popover-foreground: #333333;
-  --primary: #3b82f6;
+  --popover-foreground: #111826;
+  --primary: #0152cb;
   --primary-foreground: #ffffff;
-  --secondary: #f3f4f6;
-  --secondary-foreground: #4b5563;
-  --muted: #f9fafb;
-  --muted-foreground: #6b7280;
-  --accent: #e0f2fe;
-  --accent-foreground: #1e3a8a;
-  --destructive: #ef4444;
+  --secondary: #f5f5f5;
+  --secondary-foreground: #364050;
+  --muted: #f5f5f5;
+  --muted-foreground: #6c727e;
+  --accent: #e7effc;
+  --accent-foreground: #0152cb;
+  --destructive: #df2224;
   --destructive-foreground: #ffffff;
-  --border: #e5e7eb;
-  --input: #e5e7eb;
-  --ring: #3b82f6;
-  --chart-1: #3b82f6;
-  --chart-2: #2563eb;
-  --chart-3: #1d4ed8;
-  --chart-4: #1e40af;
-  --chart-5: #1e3a8a;
-  --sidebar: #f9fafb;
-  --sidebar-foreground: #333333;
-  --sidebar-primary: #3b82f6;
+  --border: #e4e8ef;
+  --input: #e4e8ef;
+  --ring: #0152cb;
+  --chart-1: #0152cb;
+  --chart-2: #0265fd;
+  --chart-3: #00409b;
+  --chart-4: #0d49a5;
+  --chart-5: #162a4e;
+  --sidebar: #f5f5f5;
+  --sidebar-foreground: #111826;
+  --sidebar-primary: #0152cb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e0f2fe;
-  --sidebar-accent-foreground: #1e3a8a;
-  --sidebar-border: #e5e7eb;
-  --sidebar-ring: #3b82f6;
+  --sidebar-accent: #e7effc;
+  --sidebar-accent-foreground: #0152cb;
+  --sidebar-border: #e4e8ef;
+  --sidebar-ring: #0152cb;
   --font-sans: Inter, sans-serif;
   --font-serif: Source Serif 4, serif;
-  --font-mono: JetBrains Mono, monospace;
+  --font-mono: IBM Plex Mono, monospace;
   --radius: 0.375rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 2px 4px -1px hsl(0 0% 0% / 0.1);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 4px 6px -1px hsl(0 0% 0% / 0.1);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-  --page-bg-gradient: linear-gradient(to top, #fef9c3, #ffffff);
-  --success: #c8f5d8;
-  --error: #f8b0b0;
-  --success-text: #1d5833;
-  --error-text: #dc0425;
 }
 
 /* Dark mode for credebl */
 .dark .theme-credebl {
-  --background: #171717;
-  --foreground: #e5e5e5;
-  --card: #262626;
-  --card-foreground: #e5e5e5;
-  --card-gradient: linear-gradient(to top, #1e3a8a, #0f172a);
-  --popover: #262626;
-  --popover-foreground: #e5e5e5;
-  --primary: #3b82f6;
+  --background: #1c2433;
+  --foreground: #e4e8ef;
+  --card: #252e3d;
+  --card-foreground: #e4e8ef;
+  --popover: #252e3d;
+  --popover-foreground: #e4e8ef;
+  --primary: #0265fd;
   --primary-foreground: #ffffff;
-  --secondary: #262626;
-  --secondary-foreground: #e5e5e5;
-  --muted: #262626;
-  --muted-foreground: #a3a3a3;
-  --accent: #1e3a8a;
-  --accent-foreground: #bfdbfe;
-  --destructive: #ef4444;
+  --secondary: #2f3b50;
+  --secondary-foreground: #e4e8ef;
+  --muted: #252e3d;
+  --muted-foreground: #9ba2ae;
+  --accent: #2b354a;
+  --accent-foreground: #e4e8ef;
+  --destructive: #f14444;
   --destructive-foreground: #ffffff;
-  --border: #404040;
-  --input: #404040;
-  --ring: #3b82f6;
-  --chart-1: #60a5fa;
-  --chart-2: #3b82f6;
-  --chart-3: #2563eb;
-  --chart-4: #1d4ed8;
-  --chart-5: #1e40af;
-  --sidebar: #171717;
-  --sidebar-foreground: #e5e5e5;
-  --sidebar-primary: #3b82f6;
+  --border: #2f3b50;
+  --input: #2f3b50;
+  --ring: #0265fd;
+  --chart-1: #0265fd;
+  --chart-2: #0152cb;
+  --chart-3: #4c9bff;
+  --chart-4: #0d49a5;
+  --chart-5: #162a4e;
+  --sidebar: #1c2433;
+  --sidebar-foreground: #e4e8ef;
+  --sidebar-primary: #0265fd;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #1e3a8a;
-  --sidebar-accent-foreground: #bfdbfe;
-  --sidebar-border: #404040;
-  --sidebar-ring: #3b82f6;
+  --sidebar-accent: #2b354a;
+  --sidebar-accent-foreground: #e4e8ef;
+  --sidebar-border: #2f3b50;
+  --sidebar-ring: #0265fd;
   --font-sans: Inter, sans-serif;
   --font-serif: Source Serif 4, serif;
   --font-mono: JetBrains Mono, monospace;
   --radius: 0.375rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
-  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 2px 4px -1px hsl(0 0% 0% / 0.1);
-  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 4px 6px -1px hsl(0 0% 0% / 0.1);
-  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
-    0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 1px 2px -1px hsl(0 0% 0% / 0.10);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 2px 4px -1px hsl(0 0% 0% / 0.10);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 4px 6px -1px hsl(0 0% 0% / 0.10);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.10), 0 8px 10px -1px hsl(0 0% 0% / 0.10);
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
-  --page-bg-gradient: linear-gradient(to top, #acaaff, #6e82db);
 }
+
+
 
 button:not(:disabled),
 [role='button']:not(:disabled),

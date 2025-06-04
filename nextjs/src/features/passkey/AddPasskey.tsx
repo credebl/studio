@@ -15,19 +15,22 @@ import {
   verifyRegistration,
 } from '@/app/api/Fido'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import DeviceDetails from './DeviceDetails'
 import { Devices } from '../auth/components/UserInfoForm'
 import PasskeyAddDevice from './PassKeyAddDevice'
 import PasskeyAlert from './PasskeyAlert'
-import { RootState } from '@/lib/store'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { startRegistration } from '@simplewebauthn/browser'
-import { useSelector } from 'react-redux'
 
 interface RegistrationOptionInterface {
   userName: string | null
   deviceFlag: boolean
+}
+
+interface AddPasskeyProps {
+  email?: string
 }
 
 interface AlertResponseType {
@@ -35,9 +38,11 @@ interface AlertResponseType {
   message: string
 }
 
-const AddPasskey = (): React.JSX.Element => {
+const AddPasskey = ({
+  email: userEmail,
+}: AddPasskeyProps = {}): React.JSX.Element => {
   const [error, setError] = useState('')
-  const [loader, setLoader] = useState(true)
+  const [loader, setLoader] = useState(false)
   const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
   const [deviceList, setDeviceListData] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
@@ -48,8 +53,6 @@ const AddPasskey = (): React.JSX.Element => {
   const [isDevice, setIsDevice] = useState<boolean>(false)
   const [openModel, setOpenModel] = useState<boolean>(false)
   const [, setErrMsg] = useState<string | null>(null)
-
-  const userEmail = useSelector((state: RootState) => state.profile.email)
 
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError
@@ -240,11 +243,32 @@ const AddPasskey = (): React.JSX.Element => {
     <div className="h-full">
       {(addSuccess || addFailure || error) && (
         <div className="p-2">
-          <Alert variant={addSuccess ? 'default' : 'destructive'}>
-            <AlertDescription>
-              {addSuccess || addFailure || error}
-            </AlertDescription>
-          </Alert>
+          {addSuccess && (
+            <div className="w-full" role="alert">
+              <AlertComponent
+                message={addSuccess}
+                type={'success'}
+                onAlertClose={() => {
+                  if (addSuccess) {
+                    setAddSuccess(null)
+                  }
+                }}
+              />
+            </div>
+          )}
+          {addFailure && (
+            <div className="w-full" role="alert">
+              <AlertComponent
+                message={addFailure}
+                type={'failure'}
+                onAlertClose={() => {
+                  if (addFailure) {
+                    setAddFailure(null)
+                  }
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
       <div className="relative flex h-full flex-auto flex-col p-3 sm:p-4">

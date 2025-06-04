@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -42,8 +43,8 @@ const OrganizationCardList = (): React.JSX.Element => {
 
   const route = useRouter()
 
-  const [currentPage] = useState(1)
-  const [pageSize] = useState(10)
+  const [currentPage] = useState(currentPageNumber)
+  const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
 
   const fetchOrganizations = async (): Promise<void> => {
@@ -71,7 +72,7 @@ const OrganizationCardList = (): React.JSX.Element => {
   }, [currentPage, pageSize, searchTerm])
 
   return (
-    <Card className="relative h-full w-full overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
+    <Card className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-x-2">
@@ -145,9 +146,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                 >
                   <button
                     className="flex min-w-0 items-center gap-3 hover:cursor-pointer"
-                    onClick={() =>
-                      route.push(`/organizations/dashboard/${org.id}`)
-                    }
+                    onClick={() => route.push(`/organizations/${org.id}`)}
                   >
                     <div className="flex-shrink-0">
                       {org.logoUrl ? (
@@ -253,9 +252,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                               }
                               hasWallet
                                 ? route.push('/organizations/schemas/create')
-                                : route.push(
-                                    `/organizations/dashboard/${org.id}`,
-                                  )
+                                : route.push(`/organizations/${org.id}`)
                             }}
                             disabled={!isAdmin}
                             className="rounded-md p-1"
@@ -281,7 +278,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                               if (hasWallet) {
                                 route.push('/organizations/schemas')
                               } else {
-                                route.push(`/organization/dashboard/${org.id}`)
+                                route.push(`/organizations/${org.id}`)
                               }
                             }}
                             className="rounded-md p-1"
@@ -304,7 +301,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                             if (hasWallet) {
                               route.push('/organizations/credentials')
                             } else {
-                              route.push(`/organization/dashboard/${org.id}`)
+                              route.push(`/organizations/${org.id}`)
                             }
                           }}
                         >
@@ -325,7 +322,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                             if (hasWallet) {
                               route.push('/organizations/verification')
                             } else {
-                              route.push(`/organization/dashboard/${org.id}`)
+                              route.push(`/organizations/${org.id}`)
                             }
                           }}
                         >
@@ -345,7 +342,12 @@ const OrganizationCardList = (): React.JSX.Element => {
       </CardContent>
 
       <CardFooter className="mt-auto justify-end pt-2">
-        <Link href="/organizations">View all</Link>
+        <Link
+          href="/organizations"
+          className="transition hover:underline hover:opacity-80"
+        >
+          View all
+        </Link>
       </CardFooter>
     </Card>
   )

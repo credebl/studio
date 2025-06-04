@@ -19,6 +19,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
@@ -55,13 +56,13 @@ export default function AppSidebar(): React.JSX.Element {
 
   const collapsedLogoImageSrc =
     activeTheme === 'credebl'
-      ? '/images/favicon-credebl.ico'
+      ? '/images/CREDEBL_ICON.ico'
       : '/images/favicon-sovio.ico'
 
   const dispatch = useAppDispatch()
 
-  const [currentPage] = useState(1)
-  const [pageSize] = useState(10)
+  const [currentPage] = useState(currentPageNumber)
+  const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
   const [, setOrgList] = useState<Organization[]>([])
 
@@ -91,15 +92,17 @@ export default function AppSidebar(): React.JSX.Element {
 
           // Only set initial organization if no organization is currently selected in Redux
           if (!selectedOrgId && orgs.length > 0) {
-            dispatch(setOrgId(orgs[0]?.id))
+            const [firstOrg]: Organization[] = orgs
+
+            dispatch(setOrgId(firstOrg?.id))
             dispatch(
               setOrgInfo({
-                id: orgs[0]?.id,
-                name: orgs[0]?.name,
-                description: orgs[0]?.description,
-                logoUrl: orgs[0]?.logoUrl,
+                id: firstOrg?.id,
+                name: firstOrg?.name,
+                description: firstOrg?.description,
+                logoUrl: firstOrg?.logoUrl,
                 roles:
-                  orgs[0]?.userOrgRoles?.map(
+                  firstOrg?.userOrgRoles?.map(
                     (role: { orgRole: { name: string } }) =>
                       role?.orgRole?.name,
                   ) || [],

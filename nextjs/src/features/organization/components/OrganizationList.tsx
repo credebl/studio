@@ -111,7 +111,7 @@ export const OrganizationList = (): React.JSX.Element => {
       )
     }
 
-    router.push(`/organizations/dashboard/${orgId}`)
+    router.push(`/organizations/${orgId}`)
   }
   const handleCreateOrg = (): void => {
     router.push('organizations/create-organization')
@@ -145,7 +145,7 @@ export const OrganizationList = (): React.JSX.Element => {
 
       <div className="mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {loading ? (
-           <div className="mb-4 col-span-full grid place-items-center min-h-[50vh] w-full">
+          <div className="col-span-full mb-4 grid min-h-[50vh] w-full place-items-center">
             <Loader />
           </div>
         ) : organizationsList.length > 0 ? (
@@ -179,11 +179,23 @@ export const OrganizationList = (): React.JSX.Element => {
                   >
                     {org.description}
                   </p>
-                  <div className="text-md mt-2 flex items-center gap-1">
-                    <span className="font-bold">Role(s):</span>
-                    <span className="bg-secondary text-secondary-foreground rounded-md px-3 py-1">
-                      {org.userOrgRoles[0].orgRole.name || 'No Role'}
-                    </span>
+
+                  <div className="text-md mt-2 flex flex-wrap items-center gap-1">
+                    <span className="mr-1 font-bold">Role(s):</span>
+                    {org.userOrgRoles.length > 0 ? (
+                      org.userOrgRoles.map((roles, index) => (
+                        <span
+                          key={index}
+                          className="bg-secondary text-secondary-foreground rounded-md px-3 py-1 text-sm"
+                        >
+                          {roles.orgRole.name}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground text-sm">
+                        No Roles
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface UserOrgRole {
   id: string
@@ -336,6 +335,7 @@ export interface ILedgerConfigData {
 
 export interface IDedicatedAgentForm {
   ledgerConfig: boolean
+  orgId: string
   maskedSeeds: string
   setLedgerConfig: (value: boolean) => void
   seeds: string

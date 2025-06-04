@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { Dispatch, JSX, SetStateAction } from 'react'
 
 export interface RequestProof {
   _tags: {
@@ -28,7 +28,7 @@ export interface IProofRrquestDetails {
   verifyLoading: boolean
   openModal: boolean
   closeModal: (flag: boolean, id: string, state: boolean) => void
-  onSucess: (verifyPresentationId: string) => void
+  onSuccess: (verifyPresentationId: string) => void
   requestId: string
   userData: UserDataItem[]
   view: boolean
@@ -173,4 +173,37 @@ export type LocalOrgs = {
 export interface NumberAttribute {
   selectedOption: string | null
   value: string | number | null
+}
+
+export interface SchemaListPaginationProps {
+  schemasListParameter: ISchemasListParameter
+  setSchemasListParameter: Dispatch<
+    SetStateAction<{
+      itemPerPage: number
+      page: number
+      search: string
+      sortBy: string
+      sortingOrder: string
+      allSearch: string
+    }>
+  >
+  totalItems: number
+}
+
+interface ISchemasListParameter {
+  itemPerPage: number
+  page: number
+  search: string
+  sortBy: string
+  sortingOrder: string
+  allSearch: string
+}
+
+export interface IFetchOrganizationDetails {
+  setLoading: Dispatch<SetStateAction<boolean>>
+  organizationId: string
+  setWalletStatus: Dispatch<SetStateAction<boolean>>
+  setW3cSchema: Dispatch<SetStateAction<boolean>>
+  setSchemaType: Dispatch<SetStateAction<string>>
+  setIsNoLedger: Dispatch<SetStateAction<boolean>>
 }

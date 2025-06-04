@@ -7,6 +7,10 @@ import { Provider } from 'next-auth/providers/index'
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
 
+type PasskeyUser = {
+  userName: string
+  email?: string
+}
 interface MyAuthOptions {
   providers: Provider[]
   callbacks?: {
@@ -60,27 +64,70 @@ export const authOptions: MyAuthOptions = {
         },
         password: { label: 'Password', type: 'password' },
         isPasskey: { label: 'IsPasskey', type: 'boolean' },
+        isPassword: { label: 'isPassword', type: 'boolean' },
+        obj: { label: 'obj', type: 'string' },
+        verifyAuthenticationObj: {
+          label: 'verifyAuthenticationObj',
+          type: 'string',
+        },
       },
       async authorize(credentials) {
+        let parsedVerifyAuthObj: Record<string, unknown> = {}
+        let parsedObj: PasskeyUser = { userName: '' }
         try {
-          const { email, password } = credentials || {}
-
-          const sanitizedPayload = {
+          const {
             email,
             password,
+            isPasskey,
+            isPassword,
+            verifyAuthenticationObj,
+            obj,
+          } = credentials || {}
+          let sanitizedPayload = {}
+          if (isPassword) {
+            sanitizedPayload = {
+              email,
+              password,
+              isPasskey,
+            }
+          } else {
+            try {
+              parsedVerifyAuthObj = JSON.parse(verifyAuthenticationObj || '{}')
+              parsedObj = JSON.parse(obj || '{}')
+            } catch (err) {
+              console.error('Failed to parse incoming JSON strings:', err)
+              return null
+            }
+            sanitizedPayload = {
+              ...parsedVerifyAuthObj,
+            }
+          }
+          // eslint-disable-next-line init-declarations
+          let res
+          if (isPassword) {
+            res = await fetch(
+              `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sanitizedPayload),
+              },
+            )
+          } else {
+            if (obj) {
+              res = await fetch(
+                `${envConfig.NEXT_PUBLIC_BASE_URL}/${apiRoutes.auth.fidoVerifyAuthentication}${parsedObj.userName}`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify(sanitizedPayload),
+                },
+              )
+            }
           }
 
-          const res = await fetch(
-            `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
-            {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(sanitizedPayload),
-            },
-          )
-
-          if (!res.ok) {
-            console.error('Error fetching user:', res.statusText)
+          if (!res?.ok) {
+            console.error('Error fetching user:', res?.statusText)
             return null
           }
 

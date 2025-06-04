@@ -12,28 +12,23 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import React, { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
 import {
   forgotPassword,
   getUserProfile,
   passwordEncryption,
 } from '@/app/api/Auth'
-import {
-  generateAuthenticationOption,
-  verifyAuthentication,
-} from '@/app/api/Fido'
-import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { IVerifyRegistrationObj } from '@/components/profile/interfaces'
 import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
-import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
@@ -57,7 +52,10 @@ export default function SignInViewPage(): React.JSX.Element {
 
   const [, setFidoLoader] = useState<boolean>(false)
   const [, setFidoUserError] = useState('')
+  const [alert, setAlert] = useState<null | string>(null)
+  const [success, setSuccess] = useState<null | string>(null)
 
+  const { data: session } = useSession()
   const dispatch = useDispatch()
   const route = useRouter()
   const signInForm = useForm<SignInFormValues>({
@@ -86,6 +84,7 @@ export default function SignInViewPage(): React.JSX.Element {
       const entityData = {
         email: values.email,
         password: await passwordEncryption(values.password || ''),
+        isPassword: isPasswordTab,
       }
 
       const redirectTo = searchParams?.get('redirectTo')
@@ -99,10 +98,18 @@ export default function SignInViewPage(): React.JSX.Element {
       if (response?.ok && response?.url) {
         route.push(response.url)
       } else {
+        const errorMsg = response?.error
+        ? response.error === 'CredentialsSignin'
+          ? 'Invalid Credentials'
+          : response.error
+        : 'Sign in failed. Please try again.'
+      setAlert(errorMsg)
+
         console.error('Sign in failed:', response?.error)
       }
     } catch (error) {
-      console.error('SignIn error:', error)
+      setAlert('Something went wrong during sign in. Please try again.')
+      console.error('Sign in error:', error)
     }
   }
 
@@ -112,7 +119,7 @@ export default function SignInViewPage(): React.JSX.Element {
   ): Promise<
     | {
         role: { name: string }
-        orgId: string
+        orgId: string | null
       }
     | undefined
   > => {
@@ -122,10 +129,11 @@ export default function SignInViewPage(): React.JSX.Element {
       const { data } = response as AxiosResponse
 
       if (data?.data?.userOrgRoles?.length > 0) {
-        const role = data?.data?.userOrgRoles.find(
-          (item: { orgRole: { name: PlatformRoles } }) =>
+        const platformAdminRole = data?.data?.userOrgRoles.find(
+          (item: { orgRole: { name: string } }) =>
             item.orgRole.name === PlatformRoles.platformAdmin,
         )
+        const selectedRole = platformAdminRole || data?.data?.userOrgRoles[0]
 
         const permissionArray: string[] = []
         data?.data?.userOrgRoles?.forEach(
@@ -149,29 +157,16 @@ export default function SignInViewPage(): React.JSX.Element {
         const orgId = orgWithValidId?.orgId ?? null
 
         return {
-          role: role?.orgRole ?? '',
+          role: { name: selectedRole.orgRole.name },
           orgId,
         }
       } else {
-        // eslint-disable-next-line no-console
         console.error('No roles found for the user')
+        return undefined
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error fetching user details', error)
-    }
-  }
-
-  const verifyAuthenticationMethod = async (
-    verifyAuthenticationObj: IVerifyRegistrationObj,
-    userData: { userName: string },
-  ): Promise<string | AxiosResponse> => {
-    try {
-      const res = verifyAuthentication(verifyAuthenticationObj, userData)
-      return await res
-    } catch (error) {
-      setFidoLoader(false)
-      throw error
+      return undefined
     }
   }
 
@@ -205,24 +200,26 @@ export default function SignInViewPage(): React.JSX.Element {
         ...attResp,
         challangeId: challengeId,
       }
+      const entityData = {
+        verifyAuthenticationObj: JSON.stringify(verifyAuthenticationObj),
+        obj: JSON.stringify(obj),
+        isPasswordTab,
+      }
 
-      const verificationResp = await verifyAuthenticationMethod(
-        verifyAuthenticationObj,
-        obj,
-      )
-      const { data } = verificationResp as AxiosResponse
+      const verificationResp = await signIn('credentials', {
+        ...entityData,
+        redirect: false,
+        callbackUrl: '/dashboard',
+      })
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const token = data?.data?.access_token
-        const refreshToken = data?.data?.refresh_token
-
-        dispatch(setToken(token))
-        dispatch(setRefreshToken(refreshToken))
-
-        const userRole = await getUserDetails(token)
+      if (verificationResp?.ok && verificationResp?.status === 200) {
+        if (!session?.accessToken) {
+          return
+        }
+        const userRole = await getUserDetails(session?.accessToken)
 
         if (!userRole?.role?.name) {
-          toast.error('Invalid user role')
+          setAlert('Invalid user role')
           return
         }
 
@@ -231,8 +228,8 @@ export default function SignInViewPage(): React.JSX.Element {
             ? '/dashboard/settings'
             : '/dashboard',
         )
-      } else if (data?.error) {
-        setFidoUserError(data?.error)
+      } else if (verificationResp?.error) {
+        setFidoUserError(verificationResp?.error)
       } else {
         setFidoUserError('Something went wrong during verification')
       }
@@ -270,10 +267,12 @@ export default function SignInViewPage(): React.JSX.Element {
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data.message)
+        setSuccess(data.message)
         setLoading(false)
       } else {
-        toast.error(response as string)
+        setAlert(
+          typeof response === 'string' ? response : 'Something went wrong',
+        )
         setLoading(false)
       }
     } catch (error) {
@@ -283,8 +282,29 @@ export default function SignInViewPage(): React.JSX.Element {
   }
 
   return (
-    <div className="relative flex w-full items-center justify-center">
-      <ToastContainer />
+    <div className="relative flex w-full flex-col items-center justify-center">
+      {alert && (
+        <div className="w-full max-w-md" role="alert">
+          <AlertComponent
+            message={alert}
+            type={'failure'}
+            onAlertClose={() => {
+              setAlert(null)
+            }}
+          />
+        </div>
+      )}
+      {success && (
+        <div className="w-full max-w-md" role="success">
+          <AlertComponent
+            message={success}
+            type={'success'}
+            onAlertClose={() => {
+              setSuccess(null)
+            }}
+          />
+        </div>
+      )}
       <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
         <div className="mb-6 text-center">
           <p className="text-muted-foreground text-sm">
@@ -328,7 +348,9 @@ export default function SignInViewPage(): React.JSX.Element {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="data-[error=true]:text-foreground">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />

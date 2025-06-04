@@ -20,10 +20,10 @@ import { AxiosResponse } from 'axios'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../../components/ui/generic-table-component/data-table'
 import { DidMethod } from '@/features/common/enum'
-import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import { IssuedCredential } from '../type/Issuance'
 import PageContainer from '@/components/layout/page-container'
+import { RefreshCw } from 'lucide-react'
 import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getIssuedCredentials } from '@/app/api/Issuance'
@@ -50,6 +50,7 @@ const Credentials = (): JSX.Element => {
   const [issuedCredList, setIssuedCredList] = useState<IssuedCredential[]>([])
   const [walletCreated, setWalletCreated] = useState(false)
   const [isW3C, setIsW3C] = useState(false)
+  const [reloading, setReloading] = useState<boolean>(false)
 
   // Consolidated pagination state
   const [pagination, setPagination] = useState<PaginationState>({
@@ -65,8 +66,15 @@ const Credentials = (): JSX.Element => {
     router.push(pathRoutes.organizations.Issuance.issue)
   }
 
-  const getIssuedCredDefs = async (): Promise<void> => {
-    setLoading(true)
+  const getIssuedCredDefs = async (
+    isReload: boolean = false,
+  ): Promise<void> => {
+    if (isReload) {
+      setReloading(true)
+    } else {
+      setLoading(true)
+    }
+
     try {
       const response = (await getOrganizationById(orgId)) as AxiosResponse
       const { data } = response
@@ -115,12 +123,20 @@ const Credentials = (): JSX.Element => {
       setIssuedCredList([])
       setError(error as string)
     } finally {
-      setLoading(false)
+      if (isReload) {
+        setReloading(false)
+      } else {
+        setLoading(false)
+      }
     }
+  }
+  const handleReload = async (): Promise<void> => {
+    await getIssuedCredDefs(true)
   }
 
   useEffect(() => {
     if (!orgId) {
+      setLoading(false)
       return
     }
     getIssuedCredDefs()
@@ -262,12 +278,27 @@ const Credentials = (): JSX.Element => {
           </p>
         </div>
         {walletCreated && (
-          <RoleViewButton
-            buttonTitle="Issue"
-            feature={Features.ISSUANCE}
-            svgComponent={issuanceSvgComponent()}
-            onClickEvent={schemeSelection}
-          />
+          <div className="flex items-center gap-2">
+            {/* Reload Button */}
+            <button
+              onClick={handleReload}
+              disabled={reloading}
+              title="Reload table data"
+              className="bg-secondary text-secondary-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            >
+              <RefreshCw
+                className={`h-5 w-5 ${reloading ? 'animate-spin' : ''}`}
+              />
+            </button>
+
+            {/* Issue Button */}
+            <RoleViewButton
+              buttonTitle="Issue"
+              feature={Features.ISSUANCE}
+              svgComponent={issuanceSvgComponent()}
+              onClickEvent={schemeSelection}
+            />
+          </div>
         )}
       </div>
 
@@ -281,40 +312,31 @@ const Credentials = (): JSX.Element => {
         />
       )}
 
-      {!walletCreated && !loading ? (
-        <div className="flex items-center justify-center">
-          <EmptyListMessage
-            message={'No Wallet Details Found'}
-            description={'The owner is required to create a wallet'}
-            buttonContent={''}
-          />
-        </div>
-      ) : (
-        <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <DataTable
-            placeHolder="Filter by Connection Id and Schema Name"
-            data={issuedCredList}
-            columns={column}
-            index={'credentialExchangeId'}
-            pageIndex={pagination.pageIndex}
-            pageSize={pagination.pageSize}
-            pageCount={pagination.pageCount}
-            onPageChange={(index) =>
-              setPagination((prev) => ({ ...prev, pageIndex: index }))
-            }
-            onPageSizeChange={(size) => {
-              setPagination((prev) => ({
-                ...prev,
-                pageSize: size,
-                pageIndex: 0,
-              }))
-            }}
-            onSearchTerm={(term) =>
-              setPagination((prev) => ({ ...prev, searchTerm: term }))
-            }
-          />
-        </div>
-      )}
+      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <DataTable
+          isLoading={loading}
+          placeHolder="Filter by Connection Id and Schema Name"
+          data={issuedCredList}
+          columns={column}
+          index={'credentialExchangeId'}
+          pageIndex={pagination.pageIndex}
+          pageSize={pagination.pageSize}
+          pageCount={pagination.pageCount}
+          onPageChange={(index) =>
+            setPagination((prev) => ({ ...prev, pageIndex: index }))
+          }
+          onPageSizeChange={(size) => {
+            setPagination((prev) => ({
+              ...prev,
+              pageSize: size,
+              pageIndex: 0,
+            }))
+          }}
+          onSearchTerm={(term) =>
+            setPagination((prev) => ({ ...prev, searchTerm: term }))
+          }
+        />
+      </div>
     </PageContainer>
   )
 }

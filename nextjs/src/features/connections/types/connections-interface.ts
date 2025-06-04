@@ -8,6 +8,7 @@ export interface IConnectionList {
 }
 
 export interface ITableData {
+  id?: string
   clickId?: string | null
   data: Data[]
 }
