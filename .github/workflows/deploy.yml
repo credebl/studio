@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: fix/deno
+    branches: main
   pull_request:
-    branches: fix/deno
+    branches: main
 
 jobs:
   deploy:
@@ -33,12 +33,11 @@ jobs:
 
       - name: Build step
         run: "npm run build"
-        working-directory: ./nextjs
 
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "studio-nextjs-test"
+          project: "studio-nextjs"
           entrypoint: "jsr:@deno/nextjs-start/v15"
           root: "./nextjs"
           
