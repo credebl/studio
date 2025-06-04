@@ -1,7 +1,5 @@
 'use client'
 
-// React and Next.js
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -57,8 +55,8 @@ export default function AppSidebar(): React.JSX.Element {
 
   const collapsedLogoImageSrc =
     activeTheme === 'credebl'
-      ? '/images/CREDEBL_favicon.ico'
-      : '/images/SOVIO_favicon.ico'
+      ? '/images/favicon-credebl.ico'
+      : '/images/favicon-sovio.ico'
 
   const dispatch = useAppDispatch()
 

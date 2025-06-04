@@ -266,13 +266,10 @@ const Credentials = (): JSX.Element => {
           />
         )}
       </div>
-
       <AlertComponent
-        message={error}
-        type={'failure'}
-        onAlertClose={() => {
-          setError(null)
-        }}
+        message={error && String(error)}
+        type="failure"
+        onAlertClose={() => setError(null)}
       />
 
       {!walletCreated && !loading ? (
