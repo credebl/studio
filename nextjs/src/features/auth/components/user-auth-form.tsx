@@ -5,7 +5,6 @@ import * as z from 'zod'
 import {
   Eye,
   EyeOff,
-  Github,
   KeyRound,
   Loader2,
   LockKeyhole,
@@ -35,7 +34,7 @@ import { setRefreshToken, setToken } from '@/lib/authSlice'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { IVerifyRegistrationObj } from '@/components/profile/interfaces'
-import Image from 'next/image'
+import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -389,8 +388,8 @@ export default function SignInViewPage(): React.JSX.Element {
                 <Button
                   type="button"
                   onClick={forgotUserPassword}
-                  variant={'secondary'}
-                  className="text-secondary-foreground cursor-pointer bg-transparent shadow-none hover:bg-transparent hover:underline"
+                  variant={'default'}
+                  className="focus-visible:ring-ring text-foreground w-fit bg-transparent px-2 text-left underline-offset-4 shadow-none hover:bg-transparent hover:underline focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
                 >
                   Forgot password?
                 </Button>
@@ -411,24 +410,21 @@ export default function SignInViewPage(): React.JSX.Element {
             <div className="mt-6 flex flex-col gap-3">
               <Button
                 type="button"
-                className="flex w-full items-center justify-center gap-3 rounded-md border border-[var(--color-gray-300)] bg-[var(--color-white)] py-2 text-sm font-medium text-[var(--color-gray-700)] transition-all duration-200 hover:bg-[var(--color-gray-50)] hover:shadow-sm"
+                className=""
                 onClick={() => route.push('#')}
+                variant={'outline'}
               >
-                <Image
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                  alt="Google"
-                  width={15}
-                  height={15}
-                />
+                <Icons.google className="mr-2 h-4 w-4" />
                 Sign in with Google
               </Button>
 
               <Button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--color-black)] text-[var(--color-white)] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-gray-800)] active:scale-95"
+                className=""
                 onClick={() => route.push('#')}
+                variant={'outline'}
               >
-                <Github className="h-5 w-5" />
+                <Icons.gitHub className="mr-2 h-4 w-4" />
                 <span className="text-sm font-medium">Sign in with GitHub</span>
               </Button>
             </div>
@@ -439,7 +435,7 @@ export default function SignInViewPage(): React.JSX.Element {
               </span>
               <Link
                 href="/auth/sign-up"
-                className="text-secondary hover:underline"
+                className="text-muted-foreground hover:text-inherit hover:underline"
               >
                 Create one
               </Link>
