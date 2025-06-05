@@ -5,7 +5,6 @@ import * as z from 'zod'
 import {
   Eye,
   EyeOff,
-  Github,
   KeyRound,
   Loader2,
   LockKeyhole,
@@ -26,6 +25,7 @@ import {
   passwordEncryption,
 } from '@/app/api/Auth'
 import React, { useState } from 'react'
+import { ToastContainer, toast } from 'react-toastify'
 import {
   generateAuthenticationOption,
   verifyAuthentication,
@@ -35,14 +35,13 @@ import { setRefreshToken, setToken } from '@/lib/authSlice'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { IVerifyRegistrationObj } from '@/components/profile/interfaces'
-import Image from 'next/image'
+import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { setProfile } from '@/lib/profileSlice'
 import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
-import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
@@ -287,6 +286,7 @@ export default function SignInViewPage(): React.JSX.Element {
 
   return (
     <div className="relative flex w-full items-center justify-center">
+      <ToastContainer />
       <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
         <div className="mb-6 text-center">
           <p className="text-muted-foreground text-sm">
@@ -294,14 +294,14 @@ export default function SignInViewPage(): React.JSX.Element {
           </p>
         </div>
 
-        <div className="bg-muted mb-4 flex overflow-hidden rounded-md text-sm font-medium">
+        <div className="bg-muted mb-4 flex overflow-hidden rounded-md p-1 text-sm font-medium">
           <Button
             type="button"
             variant="ghost"
-            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
+            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 hover:text-inherit ${
               isPasswordTab
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-card text-foreground'
+                ? 'bg-card text-foreground hover:bg-background'
+                : 'bg-muted text-muted-foreground hover:bg-transparent'
             }`}
             onClick={() => setIsPasswordTab(true)}
           >
@@ -311,10 +311,10 @@ export default function SignInViewPage(): React.JSX.Element {
           <Button
             type="button"
             variant="ghost"
-            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 ${
+            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 hover:text-inherit ${
               !isPasswordTab
-                ? 'bg-muted text-muted-foreground'
-                : 'bg-card text-foreground'
+                ? 'bg-card text-foreground hover:bg-background'
+                : 'bg-muted text-muted-foreground hover:bg-transparent'
             }`}
             onClick={() => setIsPasswordTab(false)}
           >
@@ -389,8 +389,8 @@ export default function SignInViewPage(): React.JSX.Element {
                 <Button
                   type="button"
                   onClick={forgotUserPassword}
-                  variant={'secondary'}
-                  className="text-secondary-foreground cursor-pointer bg-transparent shadow-none hover:bg-transparent hover:underline"
+                  variant={'default'}
+                  className="focus-visible:ring-ring text-foreground w-fit bg-transparent px-2 text-left underline-offset-4 shadow-none hover:bg-transparent hover:underline focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
                 >
                   Forgot password?
                 </Button>
@@ -411,24 +411,21 @@ export default function SignInViewPage(): React.JSX.Element {
             <div className="mt-6 flex flex-col gap-3">
               <Button
                 type="button"
-                className="flex w-full items-center justify-center gap-3 rounded-md border border-[var(--color-gray-300)] bg-[var(--color-white)] py-2 text-sm font-medium text-[var(--color-gray-700)] transition-all duration-200 hover:bg-[var(--color-gray-50)] hover:shadow-sm"
+                className=""
                 onClick={() => route.push('#')}
+                variant={'outline'}
               >
-                <Image
-                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                  alt="Google"
-                  width={15}
-                  height={15}
-                />
+                <Icons.google className="mr-2 h-4 w-4" />
                 Sign in with Google
               </Button>
 
               <Button
                 type="button"
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-[var(--color-black)] text-[var(--color-white)] transition-transform duration-200 hover:-translate-y-0.5 hover:bg-[var(--color-gray-800)] active:scale-95"
+                className=""
                 onClick={() => route.push('#')}
+                variant={'outline'}
               >
-                <Github className="h-5 w-5" />
+                <Icons.gitHub className="mr-2 h-4 w-4" />
                 <span className="text-sm font-medium">Sign in with GitHub</span>
               </Button>
             </div>
@@ -439,7 +436,7 @@ export default function SignInViewPage(): React.JSX.Element {
               </span>
               <Link
                 href="/auth/sign-up"
-                className="text-secondary hover:underline"
+                className="text-muted-foreground hover:text-inherit hover:underline"
               >
                 Create one
               </Link>
