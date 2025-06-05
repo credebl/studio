@@ -200,22 +200,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       ],
       cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
     },
-    {
-      id: 'successfulRecords',
-      title: 'Successful Records',
-      accessorKey: 'successfulRecords',
-      columnFunction: [
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
-              ...prev,
-              sortBy: 'successfulRecords',
-              sortOrder: order,
-            }))
-          },
-        },
-      ],
-    },
+
     {
       id: 'totalRecords',
       title: 'Total Records',
@@ -226,6 +211,23 @@ const HistoryBulkIssuance = (): JSX.Element => {
             setPagination((prev) => ({
               ...prev,
               sortBy: 'totalRecords',
+              sortOrder: order,
+            }))
+          },
+        },
+      ],
+    },
+
+    {
+      id: 'successfulRecords',
+      title: 'Successful Records',
+      accessorKey: 'successfulRecords',
+      columnFunction: [
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'successfulRecords',
               sortOrder: order,
             }))
           },
