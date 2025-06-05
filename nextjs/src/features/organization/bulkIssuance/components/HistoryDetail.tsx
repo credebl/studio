@@ -1,12 +1,12 @@
 'use client'
 
-import { type ChangeEvent, JSX, useEffect, useState } from 'react'
 import {
   IColumnData,
   ITableMetadata,
   TableStyling,
   getColumns,
 } from '@/components/ui/generic-table-component/columns'
+import { type JSX, useEffect, useState } from 'react'
 import { AlertComponent } from '@/components/AlertComponent'
 import { ArrowLeft } from 'lucide-react'
 import { AxiosResponse } from 'axios'
@@ -103,24 +103,27 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
   }
 
   useEffect(() => {
-    let getData: NodeJS.Timeout | null = null
-
-    if (listAPIParameter.search.length >= 1) {
-      getData = setTimeout(() => {
-        getHistoryDetails(listAPIParameter)
-      }, 1000)
-      return () => clearTimeout(getData ?? undefined)
-    } else {
+    const getData = setTimeout(() => {
       getHistoryDetails(listAPIParameter)
-    }
+    }, 500)
 
-    return () => clearTimeout(getData ?? undefined)
-  }, [listAPIParameter])
+    return () => clearTimeout(getData)
+  }, [
+    listAPIParameter.search,
+    listAPIParameter.page,
+    listAPIParameter.sortingOrder,
+    listAPIParameter.itemPerPage,
+  ])
 
-  const searchInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
+  const searchInputChange = (
+    value: string | React.ChangeEvent<HTMLInputElement>,
+  ): void => {
+    const searchTerm =
+      typeof value === 'string' ? value : (value?.target?.value ?? '')
+
     setListAPIParameter({
       ...listAPIParameter,
-      search: e.target.value,
+      search: searchTerm,
       page: 1,
     })
   }
@@ -236,7 +239,7 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
             page: 1,
           }))
         }}
-        onSearchTerm={searchInputChange}
+        onSearchTerm={(value) => searchInputChange(value)}
         loading={loading}
       />
     </div>

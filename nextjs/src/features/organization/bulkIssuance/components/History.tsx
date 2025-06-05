@@ -22,13 +22,12 @@ import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
-import DateTooltip from '@/components/DateTooltip'
+import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import { ITableData } from '@/features/connections/types/connections-interface'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { dateConversion } from '@/utils/DateConversion'
 import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
@@ -199,14 +198,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => (
-        <DateTooltip
-          date={row.original.createDateTime}
-          id="issuance_connection_list"
-        >
-          <div>{dateConversion(row.original.createDateTime)}</div>
-        </DateTooltip>
-      ),
+      cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
     },
     {
       id: 'successfulRecords',
