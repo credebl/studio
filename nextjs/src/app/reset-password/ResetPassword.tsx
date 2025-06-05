@@ -120,12 +120,12 @@ const ResetPassword = (): JSX.Element => {
               </div>
               <div className="flex grow-1 p-10">
                 <div className="flex w-full justify-center">
-                  <Card className="bg-card border-border relative z-10 w-full max-w-lg overflow-hidden rounded-xl border p-8 p-10 shadow-xl transition-transform duration-300 lg:max-w-md">
+                  <Card className="relative z-10 w-full max-w-lg overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300 lg:max-w-md">
                     <div className="flex w-full flex-col gap-4 lg:mt-8">
                       <div className="text-custom-900 dark:text-custom-100 font-inter flex justify-center text-center text-3xl leading-10 font-bold">
                         Reset Password
                       </div>
-                      <div className="font-inter h-5.061 text-secondary-foreground flex w-84 w-full flex-shrink-0 flex-col items-center justify-center text-base leading-5 font-medium">
+                      <div className="font-inter h-5.061 text-muted-foreground flex w-full flex-shrink-0 flex-col items-center justify-center text-base leading-5 font-medium">
                         Please set new password
                       </div>
                     </div>
@@ -178,7 +178,7 @@ const ResetPassword = (): JSX.Element => {
                                   {...formikHandlers.getFieldProps('password')}
                                   type={passwordVisible ? 'text' : 'password'}
                                   placeholder="Please enter password"
-                                  className="bg-accent w-full truncate rounded-md border py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
+                                  className=""
                                   disabled={loading}
                                   onFocus={() => setShowSuggestion(true)}
                                   onBlur={(e) => {
@@ -186,21 +186,22 @@ const ResetPassword = (): JSX.Element => {
                                     formikHandlers.handleBlur(e)
                                   }}
                                 />
-                                <button
+                                <Button
                                   type="button"
                                   onClick={() =>
                                     setPasswordVisible(
                                       (prevVisible) => !prevVisible,
                                     )
                                   }
-                                  className="text-secondary-foreground absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent hover:text-gray-800 dark:text-white dark:hover:text-white"
+                                  className="absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent hover:bg-transparent hover:text-inherit"
+                                  variant={'ghost'}
                                 >
                                   {passwordVisible ? (
                                     <EyeOff className="h-4 w-4" />
                                   ) : (
                                     <Eye className="h-4 w-4" />
                                   )}
-                                </button>
+                                </Button>
                               </div>
                               {showSuggestion &&
                                 formikHandlers?.errors?.password &&
@@ -235,7 +236,7 @@ const ResetPassword = (): JSX.Element => {
                                     confirmPasswordVisible ? 'text' : 'password'
                                   }
                                   placeholder="Please re-enter password"
-                                  className="bg-accent w-full truncate rounded-md border py-2 pr-10 pl-4 text-sm text-gray-700 focus:ring-1 focus:outline-none dark:bg-gray-800"
+                                  className=""
                                   disabled={loading}
                                   onFocus={() => setShowSuggestion(true)}
                                   onBlur={(e) => {
@@ -243,21 +244,22 @@ const ResetPassword = (): JSX.Element => {
                                     formikHandlers.handleBlur(e)
                                   }}
                                 />
-                                <button
+                                <Button
                                   type="button"
                                   onClick={() =>
                                     setConfirmPasswordVisible(
                                       (prevVisible) => !prevVisible,
                                     )
                                   }
-                                  className="text-secondary-foreground absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent hover:text-gray-800 dark:text-white dark:hover:text-white"
+                                  className="absolute top-1/2 right-2 -translate-y-1/2 transform bg-transparent hover:bg-transparent hover:text-inherit"
+                                  variant={'ghost'}
                                 >
                                   {confirmPasswordVisible ? (
                                     <EyeOff className="h-4 w-4" />
                                   ) : (
                                     <Eye className="h-4 w-4" />
                                   )}
-                                </button>
+                                </Button>
                               </div>
                               {formikHandlers?.errors?.confirmPassword &&
                                 formikHandlers?.touched?.confirmPassword && (

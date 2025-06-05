@@ -3,6 +3,7 @@ import './theme.css'
 
 import type { Metadata, Viewport } from 'next'
 
+import { FaviconUpdater } from '@/components/FaviconUpdater'
 import { Session as NextAuthSession } from 'next-auth'
 import NextTopLoader from 'nextjs-toploader'
 import { NuqsAdapter } from 'nuqs/adapters/next/app'
@@ -62,6 +63,8 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Default favicon */}
+        <link rel="icon" href="/favicon-credebl.ico" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -92,6 +95,7 @@ export default async function RootLayout({
               <SessionSyncer>
                 <SessionCheck>
                   <Toaster />
+                  <FaviconUpdater />
                   <PageLayout>{children}</PageLayout>
                 </SessionCheck>
               </SessionSyncer>

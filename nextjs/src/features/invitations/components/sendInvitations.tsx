@@ -243,9 +243,11 @@ export default function SendInvitationModal({
                     className="bg-transparent hover:bg-transparent"
                     variant="ghost"
                     size="icon"
+                    className='hover:bg-transparent'
                     onClick={() => removeInvitation(invitation.email)}
                   >
                     <DeleteIcon />
+
                   </Button>
                 </div>
               ))}
