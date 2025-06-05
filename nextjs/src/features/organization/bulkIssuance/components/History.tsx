@@ -40,7 +40,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
   const router = useRouter()
 
-  const [pagination, setPagination] = useState({
+  const [paginationForTable, setPaginationForTable] = useState({
     pageIndex: 0,
     pageSize: 10,
     pageCount: 1,
@@ -54,11 +54,11 @@ const HistoryBulkIssuance = (): JSX.Element => {
   async function getHistory(): Promise<void> {
     setLoading(true)
     const response = await getFilesHistory({
-      itemPerPage: pagination.pageSize,
-      page: pagination.pageIndex + 1,
-      search: pagination.searchTerm,
-      sortBy: pagination.sortBy,
-      sortingOrder: pagination.sortOrder,
+      itemPerPage: paginationForTable.pageSize,
+      page: paginationForTable.pageIndex + 1,
+      search: paginationForTable.searchTerm,
+      sortBy: paginationForTable.sortBy,
+      sortingOrder: paginationForTable.sortOrder,
       orgId,
     })
 
@@ -88,7 +88,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
         }),
       )
       setConnectionList(connections)
-      setPagination((prev) => ({
+      setPaginationForTable((prev) => ({
         ...prev,
         pageCount: data?.data.lastPage ?? 1,
       }))
@@ -154,7 +154,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
 
     let getData: NodeJS.Timeout | null = null
 
-    if (pagination.searchTerm.length >= 1) {
+    if (paginationForTable.searchTerm.length >= 1) {
       getData = setTimeout(() => {
         getHistory()
       }, 1000)
@@ -164,7 +164,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
     }
 
     return () => clearTimeout(getData ?? undefined)
-  }, [pagination])
+  }, [paginationForTable])
 
   const columnData: IColumnData[] = [
     {
@@ -174,7 +174,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setPaginationForTable((prev) => ({
               ...prev,
               sortBy: 'name',
               sortOrder: order,
@@ -190,7 +190,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setPaginationForTable((prev) => ({
               ...prev,
               sortBy: 'createDateTime',
               sortOrder: order,
@@ -208,7 +208,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setPaginationForTable((prev) => ({
               ...prev,
               sortBy: 'totalRecords',
               sortOrder: order,
@@ -225,7 +225,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setPaginationForTable((prev) => ({
               ...prev,
               sortBy: 'successfulRecords',
               sortOrder: order,
@@ -242,7 +242,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
+            setPaginationForTable((prev) => ({
               ...prev,
               sortBy: 'failedRecords',
               sortOrder: order,
@@ -375,21 +375,21 @@ const HistoryBulkIssuance = (): JSX.Element => {
           data={connectionList}
           columns={column}
           index={'id'}
-          pageIndex={pagination.pageIndex}
-          pageSize={pagination.pageSize}
-          pageCount={pagination.pageCount}
+          pageIndex={paginationForTable.pageIndex}
+          pageSize={paginationForTable.pageSize}
+          pageCount={paginationForTable.pageCount}
           onPageChange={(index) =>
-            setPagination((prev) => ({ ...prev, pageIndex: index }))
+            setPaginationForTable((prev) => ({ ...prev, pageIndex: index }))
           }
           onPageSizeChange={(size) => {
-            setPagination((prev) => ({
+            setPaginationForTable((prev) => ({
               ...prev,
               pageSize: size,
               pageIndex: 0,
             }))
           }}
           onSearchTerm={(term) =>
-            setPagination((prev) => ({ ...prev, searchTerm: term }))
+            setPaginationForTable((prev) => ({ ...prev, searchTerm: term }))
           }
         />
       </div>
