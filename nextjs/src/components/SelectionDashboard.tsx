@@ -30,7 +30,7 @@ const SelectionDashboard = ({ title, options }: IDashboard): JSX.Element => {
         </h1>
         <BackButton />
       </div>
-      <div className="rounded-lg border bg-white px-6 pt-6 shadow-sm 2xl:col-span-2">
+      <div className="rounded-lg border px-6 pt-6 shadow-sm 2xl:col-span-2">
         <p className="text-muted-foreground/90 text-start text-xl font-medium">
           Select the appropriate action
         </p>
