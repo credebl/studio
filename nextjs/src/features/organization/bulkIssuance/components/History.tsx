@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/generic-table-component/columns'
 import { JSX, useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
+import { apiStatusCodes, createDateTime } from '@/config/CommonConstant'
 import { getFilesHistory, retryBulkIssuance } from '@/app/api/BulkIssuance'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -27,7 +28,6 @@ import { ITableData } from '@/features/connections/types/connections-interface'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
@@ -41,12 +41,12 @@ const HistoryBulkIssuance = (): JSX.Element => {
   const router = useRouter()
 
   const [paginationForTable, setPaginationForTable] = useState({
-    tablePageIndex: 0,
-    tablePageSize: 10,
-    tablePageCount: 1,
-    tableSearchTerm: '',
-    tableSortBy: 'createDateTime',
-    tableSortOrder: 'desc' as SortActions,
+    pageIndex: 0,
+    pageSize: 10,
+    pageCount: 1,
+    searchTerm: '',
+    sortBy: 'createDateTime',
+    sortOrder: 'desc' as SortActions,
   })
 
   const [connectionList, setConnectionList] = useState<ITableData[]>([])
@@ -54,11 +54,11 @@ const HistoryBulkIssuance = (): JSX.Element => {
   async function getHistory(): Promise<void> {
     setLoading(true)
     const response = await getFilesHistory({
-      itemPerPage: paginationForTable.tablePageSize,
-      page: paginationForTable.tablePageIndex + 1,
-      search: paginationForTable.tableSearchTerm,
-      sortBy: paginationForTable.tableSortBy,
-      sortingOrder: paginationForTable.tableSortOrder,
+      itemPerPage: paginationForTable.pageSize,
+      page: paginationForTable.pageIndex + 1,
+      search: paginationForTable.searchTerm,
+      sortBy: paginationForTable.sortBy,
+      sortingOrder: paginationForTable.sortOrder,
       orgId,
     })
 
@@ -90,7 +90,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       setConnectionList(connections)
       setPaginationForTable((prev) => ({
         ...prev,
-        tablePageCount: data?.data.lastPage ?? 1,
+        pageCount: data?.data.lastPage ?? 1,
       }))
     } else if (response?.toString()?.toLowerCase() !== 'history not found') {
       setFailure(response as string)
@@ -154,7 +154,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
 
     let getData: NodeJS.Timeout | null = null
 
-    if (paginationForTable.tableSearchTerm.length >= 1) {
+    if (paginationForTable.searchTerm.length >= 1) {
       getData = setTimeout(() => {
         getHistory()
       }, 1000)
@@ -176,24 +176,24 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              tableSortBy: 'name',
-              tableSortOrder: order,
+              sortBy: 'name',
+              sortOrder: order,
             }))
           },
         },
       ],
     },
     {
-      id: 'createDateTime',
+      id: createDateTime,
       title: 'Uploaded Date',
-      accessorKey: 'createDateTime',
+      accessorKey: createDateTime,
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              tableSortBy: 'createDateTime',
-              tableSortOrder: order,
+              sortBy: createDateTime,
+              sortOrder: order,
             }))
           },
         },
@@ -210,8 +210,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              tableSortBy: 'totalRecords',
-              tableSortOrder: order,
+              sortBy: 'totalRecords',
+              sortOrder: order,
             }))
           },
         },
@@ -227,8 +227,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              tableSortBy: 'successfulRecords',
-              tableSortOrder: order,
+              sortBy: 'successfulRecords',
+              sortOrder: order,
             }))
           },
         },
@@ -244,8 +244,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              tableSortBy: 'failedRecords',
-              tableSortOrder: order,
+              sortBy: 'failedRecords',
+              sortOrder: order,
             }))
           },
         },
@@ -375,26 +375,26 @@ const HistoryBulkIssuance = (): JSX.Element => {
           data={connectionList}
           columns={column}
           index={'id'}
-          pageIndex={paginationForTable.tablePageIndex}
-          pageSize={paginationForTable.tablePageSize}
-          pageCount={paginationForTable.tablePageCount}
+          pageIndex={paginationForTable.pageIndex}
+          pageSize={paginationForTable.pageSize}
+          pageCount={paginationForTable.pageCount}
           onPageChange={(index) =>
             setPaginationForTable((prev) => ({
               ...prev,
-              tablePageIndex: index,
+              pageIndex: index,
             }))
           }
           onPageSizeChange={(size) => {
             setPaginationForTable((prev) => ({
               ...prev,
-              tablePageSize: size,
-              tablePageIndex: 0,
+              pageSize: size,
+              pageIndex: 0,
             }))
           }}
           onSearchTerm={(term) =>
             setPaginationForTable((prev) => ({
               ...prev,
-              tableSearchTerm: term,
+              searchTerm: term,
             }))
           }
         />
