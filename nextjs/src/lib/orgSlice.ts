@@ -53,6 +53,7 @@ const orgSlice = createSlice({
     clearOrgInfo: (state) => {
       state.orgInfo = null
     },
+    resetOrgState: () => initialState,
   },
 })
 
@@ -65,5 +66,6 @@ export const {
   clearOrgId,
   clearLedgerId,
   clearOrgInfo,
+  resetOrgState,
 } = orgSlice.actions
 export default orgSlice.reducer
