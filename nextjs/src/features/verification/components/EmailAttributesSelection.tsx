@@ -1,12 +1,19 @@
 /* eslint-disable max-lines */
 'use client'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { ISelectedAttributes, NumberAttribute } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { apiStatusCodes, predicatesConditions } from '@/config/CommonConstant'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import BackButton from '@/components/BackButton'
 import { Button } from '@/components/ui/button'
@@ -17,7 +24,6 @@ import { DidMethod } from '@/common/enums'
 import { ITableData } from '@/components/DataTable/interface'
 import PageContainer from '@/components/layout/page-container'
 import { TableHeader } from './SortDataTable'
-import { X } from 'lucide-react'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setSelectedAttributeData } from '@/lib/verificationSlice'
@@ -32,7 +38,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   const [attributeData, setAttributeData] = useState<
     ISelectedAttributes[] | null
   >(null)
-  const [w3cSchema, setW3cSchema] = useState<boolean>(false)
+  const [w3cSchema, setW3cSchema] = useState<boolean | null>(null)
   const [isConnectionProof, setIsConnectionProof] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
@@ -46,10 +52,13 @@ const EmailAttributesSelection = (): JSX.Element => {
   const getSelectedCredDefData = useAppSelector(
     (state) => state.verification.CredDefData,
   )
-
+  const getSelectedW3cSchemaData = useAppSelector(
+    (state) => state.verification.w3cSchemaAttributes,
+  )
   const selectedSchemaAttributes = useAppSelector(
     (state) => state.verification.schemaAttributes,
   )
+
   const ConnectionVerification = async (): Promise<void> => {
     if (verificationRouteType === 'Connection') {
       setIsConnectionProof(true)
@@ -112,23 +121,28 @@ const EmailAttributesSelection = (): JSX.Element => {
   const getOrgDetails = async (): Promise<void> => {
     setLoading(true)
 
-    const response = await getOrganizationById(orgId)
-    const { data } = response as AxiosResponse
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const did = data?.data?.org_agents?.[0]?.orgDid
+    try {
+      const response = await getOrganizationById(orgId)
+      const { data } = response as AxiosResponse
 
-      if (
-        did.includes(DidMethod.POLYGON) ||
-        did.includes(DidMethod.KEY) ||
-        did.includes(DidMethod.WEB)
-      ) {
-        setW3cSchema(true)
-      } else if (did.includes(DidMethod.INDY)) {
-        setW3cSchema(false)
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const did = data?.data?.org_agents?.[0]?.orgDid
+
+        if (
+          did.includes(DidMethod.POLYGON) ||
+          did.includes(DidMethod.KEY) ||
+          did.includes(DidMethod.WEB)
+        ) {
+          setW3cSchema(true)
+        } else if (did.includes(DidMethod.INDY)) {
+          setW3cSchema(false)
+        }
       }
+    } catch (error) {
+      console.error('Error fetching organization details:', error)
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false)
   }
 
   useEffect(() => {
@@ -198,7 +212,7 @@ const EmailAttributesSelection = (): JSX.Element => {
     try {
       setAttributeData([])
       if (w3cSchema) {
-        const parsedW3CSchemaDetails = selectedSchemaAttributes
+        const parsedW3CSchemaDetails = getSelectedW3cSchemaData
         if (
           Array.isArray(parsedW3CSchemaDetails) &&
           parsedW3CSchemaDetails.length > 0
@@ -207,9 +221,9 @@ const EmailAttributesSelection = (): JSX.Element => {
             if (schema.attributes && Array.isArray(schema.attributes)) {
               return schema.attributes.map((attribute) => ({
                 ...attribute,
-                schemaName: schema.name,
+                schemaName: schema.schemaName,
                 credDefName: '',
-                schemaId: schema.schemaLedgerId,
+                schemaId: schema.schemaId,
                 credDefId: '',
               }))
             }
@@ -240,8 +254,9 @@ const EmailAttributesSelection = (): JSX.Element => {
       } else {
         const selectedCredDefs = getSelectedCredDefData || []
 
-        const parsedSchemaDetails = selectedSchemaAttributes || []
-
+        const parsedSchemaDetails = Array.isArray(selectedSchemaAttributes)
+          ? selectedSchemaAttributes
+          : []
         if (
           Array.isArray(parsedSchemaDetails) &&
           parsedSchemaDetails.length > 0
@@ -287,7 +302,9 @@ const EmailAttributesSelection = (): JSX.Element => {
   }
 
   useEffect(() => {
-    loadAttributesData()
+    if (w3cSchema !== null) {
+      loadAttributesData()
+    }
   }, [w3cSchema])
 
   const attributeFunction = async (): Promise<void> => {
@@ -332,30 +349,44 @@ const EmailAttributesSelection = (): JSX.Element => {
             data: !w3cSchema ? (
               <div className="relative flex items-center">
                 {attribute?.dataType === 'number' && (
-                  <select
+                  <Select
                     disabled={!attribute?.isChecked}
                     value={attribute?.selectedOption}
-                    onChange={(e) =>
+                    onValueChange={(value) =>
                       handleAttributeChange(
                         attribute?.attributeName,
                         'select',
-                        e.target.value,
+                        value,
                         attribute?.schemaId,
                         attribute?.credDefId,
                       )
                     }
-                    className={`${
-                      !attribute?.isChecked
-                        ? 'cursor-not-allowed opacity-50'
-                        : 'cursor-pointer'
-                    } border-border rounded-md border p-1`}
                   >
-                    {attribute?.options?.map((option) => (
-                      <option key={option?.value} value={option?.value}>
-                        {option?.label}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger
+                      className={`min-h-[42px] w-[230px] rounded-lg border p-2.5 text-sm ${
+                        !attribute?.isChecked
+                          ? 'cursor-not-allowed opacity-50'
+                          : 'cursor-pointer'
+                      }`}
+                    >
+                      <SelectValue placeholder="Select an option" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {attribute?.options
+                        ?.filter(
+                          (option) => option?.value?.toString().trim() !== '',
+                        )
+                        .map((option) => (
+                          <SelectItem
+                            key={String(option.value)}
+                            value={String(option.value)}
+                          >
+                            {' '}
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
                 )}
                 {attribute?.selectError && (
                   <div className="absolute bottom-[-16px] text-xs text-[--var(--destructive)]">
@@ -389,7 +420,7 @@ const EmailAttributesSelection = (): JSX.Element => {
                       !attribute?.isChecked
                         ? 'cursor-not-allowed opacity-50'
                         : 'cursor-pointer'
-                    } rounded-md border p-1`}
+                    } border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring flex h-9 rounded-md border bg-transparent p-1 px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm`}
                   />
                 )}
                 {attribute?.inputError && (
@@ -455,27 +486,15 @@ const EmailAttributesSelection = (): JSX.Element => {
         </div>
 
         {(proofReqSuccess || errMsg) && (
-          <div className="relative p-2">
-            <Alert
-              className={`pr-10 ${
-                proofReqSuccess ? 'text-success' : 'text-error'
-              }`}
-            >
-              <AlertTitle className="font-semibold">
-                {proofReqSuccess ? 'Success' : 'Error'}
-              </AlertTitle>
-              <AlertDescription>{proofReqSuccess ?? errMsg}</AlertDescription>
-              <Button
-                className="text-muted-foreground hover:text-foreground absolute top-3 right-3"
-                onClick={() => {
-                  setProofReqSuccess(null)
-                  setErrMsg(null)
-                }}
-                aria-label="Dismiss"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </Alert>
+          <div className="p-2">
+            <AlertComponent
+              message={proofReqSuccess || errMsg}
+              type={proofReqSuccess ? 'success' : 'failure'}
+              onAlertClose={() => {
+                setProofReqSuccess(null)
+                setErrMsg(null)
+              }}
+            />
           </div>
         )}
         <div

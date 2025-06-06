@@ -84,7 +84,7 @@ const DataTable: React.FC<DataTableProps> = ({
                             <button
                               onClick={() => callback?.(row.clickId)}
                               type="button"
-                              className="bg-primary hover:bg-primary/90 focus:ring-primary/50 dark:focus:ring-primary/70 mt-2 rounded-lg px-5 py-2.5 text-sm font-medium text-white focus:ring-2 focus:outline-none"
+                              className="bg-primary hover:bg-primary/90 focus:ring-primary/50 dark:focus:ring-primary/70 mt-2 rounded-lg px-5 py-2.5 text-sm font-medium focus:ring-2 focus:outline-none"
                             >
                               Select
                             </button>

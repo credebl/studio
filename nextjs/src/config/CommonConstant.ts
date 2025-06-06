@@ -149,10 +149,10 @@ export const labelRed = {
 }
 
 export const credDefHeader = [
+  { columnName: 'Select' },
   { columnName: 'Name' },
   { columnName: 'Credential definition Id' },
   { columnName: 'Revocable' },
-  { columnName: 'Select' },
 ]
 export const fieldCardStyles = {
   maxWidth: '100%',

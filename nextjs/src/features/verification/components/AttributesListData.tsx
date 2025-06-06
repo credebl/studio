@@ -38,77 +38,63 @@ const AttributesListData = ({
   return (
     <>
       {mergedData?.map((item, index) => (
-        <Card key={index} className="mb-4">
-          <div className="flex flex-col justify-start gap-2 p-4">
-            <div className="mb-2 flex justify-start text-xl font-semibold">
+        <Card key={index} className="mb-4 overflow-x-auto">
+          <div className="flex flex-col justify-start gap-4 p-4 sm:p-6">
+            <div className="text-left text-xl font-semibold">
               {`Credential ${index + 1}`}
             </div>
 
-            <div className="mb-4 flex h-full flex-col justify-center gap-0 sm:p-0">
-              <div className="flex border-b">
-                <div className="text-primary flex w-5/12 truncate text-lg font-semibold sm:mr-8 md:mr-0 md:pl-1">
-                  Attributes
-                </div>
-                <div className="text-primary flex w-1/12 justify-start truncate text-xl font-semibold sm:mr-8 md:mr-0 md:pl-1"></div>
-                <div className="text-primary flex w-6/12 truncate text-lg font-semibold sm:pl-4">
-                  {' '}
-                  Values
-                </div>
-              </div>
-
-              {Object.entries(item)
-                .filter(([key]) => key !== 'credDefId' && key !== 'schemaId')
-                .map(([key, value], idx) => (
-                  <div key={idx} className="flex w-full items-center text-lg">
-                    <div className="text-primary-700 m-1 flex w-3/12 items-center justify-start p-1 text-start font-semibold">
-                      {key}
-                    </div>
-                    <div className="m-1 flex w-1/12 items-center p-1 text-lg">
-                      :
-                    </div>
-                    <div className="m-1 w-9/12 cursor-pointer items-center overflow-auto text-start">
-                      {value}
-                    </div>
-                  </div>
-                ))}
+            <div className="text-primary grid grid-cols-12 gap-2 border-b pb-2 text-lg font-semibold">
+              <div className="col-span-4 text-left">Attributes</div>
+              <div className="col-span-1 text-left">:</div>
+              <div className="col-span-7 text-left">Values</div>
             </div>
 
-            <div className="">
-              <div className="flex w-full items-center text-lg">
-                <div className="text-primary-700 m-1 flex w-3/12 items-center justify-start p-1 text-start font-semibold">
+            {Object.entries(item)
+              .filter(([key]) => key !== 'credDefId' && key !== 'schemaId')
+              .map(([key, value], idx) => (
+                <div
+                  key={idx}
+                  className="grid grid-cols-12 items-center gap-2 text-base"
+                >
+                  <div className="text-muted-foreground col-span-4 truncate text-left font-semibold">
+                    {key}
+                  </div>
+                  <div className="col-span-1 text-left">:</div>
+                  <div className="col-span-7 text-left break-words">
+                    {value}
+                  </div>
+                </div>
+              ))}
+
+            {item.schemaId && (
+              <div className="grid grid-cols-12 items-center gap-2 text-base">
+                <div className="text-muted-foreground col-span-4 text-left font-semibold">
                   schemaId
                 </div>
-                <div className="m-1 flex items-center p-1">:</div>
-                <div className="m-1 w-9/12 cursor-pointer items-center overflow-auto text-start">
-                  <div className="flex items-center">
-                    <CopyDid
-                      value={item.schemaId || ''}
-                      className="font-courier mt-2 truncate"
-                    />
-                  </div>
+                <div className="col-span-1 text-left">:</div>
+                <div className="col-span-7 text-left break-words">
+                  <CopyDid
+                    value={item.schemaId}
+                    className="font-courier mt-2 truncate"
+                  />
                 </div>
               </div>
-            </div>
+            )}
 
             {item.credDefId && (
-              <div className="mb-4">
-                <div className="flex w-full items-center text-lg">
-                  <div className="text-primary-700 m-1 flex w-3/12 items-center justify-start p-1 text-start font-semibold">
-                    credDefId
-                  </div>
-                  <div className="m-1 flex items-center p-1">:</div>
-                  <div className="m-1 w-9/12 cursor-pointer items-center overflow-auto text-start">
-                    <div className="flex items-center">
-                      <CopyDid
-                        value={
-                          typeof item.credDefId === 'string'
-                            ? item.credDefId
-                            : ''
-                        }
-                        className="font-courier mt-2 truncate"
-                      />
-                    </div>
-                  </div>
+              <div className="grid grid-cols-12 items-center gap-2 text-base">
+                <div className="text-muted-foreground col-span-4 text-left font-semibold">
+                  credDefId
+                </div>
+                <div className="col-span-1 text-left">:</div>
+                <div className="col-span-7 text-left break-words">
+                  <CopyDid
+                    value={
+                      typeof item.credDefId === 'string' ? item.credDefId : ''
+                    }
+                    className="font-courier mt-2 truncate"
+                  />
                 </div>
               </div>
             )}

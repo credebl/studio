@@ -33,8 +33,9 @@ export const getSchemaById = async (
   schemaId: string,
   orgId: string,
 ): Promise<AxiosResponse | string> => {
+  const encodedSchemaId = encodeURIComponent(schemaId)
   const details = {
-    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${schemaId}`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getSchemaById}/${encodedSchemaId}`,
     config,
   }
 
@@ -125,8 +126,9 @@ export const getCredDeffById = async (
   schemaId: string,
   orgId: string,
 ): Promise<AxiosResponse | string> => {
+  const encodedSchemaId = encodeURIComponent(schemaId)
   const details = {
-    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${schemaId}/cred-defs`,
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.getCredDefBySchemaId}/${encodedSchemaId}/cred-defs`,
     config,
   }
 

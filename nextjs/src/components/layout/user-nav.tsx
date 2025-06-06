@@ -24,6 +24,7 @@ import { getUserProfile } from '@/app/api/Auth'
 import { logout } from '@/lib/authSlice'
 import { logoutAndRedirect } from '@/services/axiosIntercepter'
 import { persistor } from '@/lib/store'
+import { resetOrgState } from '@/lib/orgSlice'
 import { resetVerificationState } from '@/lib/verificationSlice'
 import { setUserProfileDetails } from '@/lib/userSlice'
 import { useDispatch } from 'react-redux'
@@ -35,8 +36,6 @@ export function UserNav(): React.JSX.Element | null {
   const router = useRouter()
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
-  // const token = useAppSelector((state) => state.auth.token)
-
   const { data: session } = useSession()
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
@@ -66,8 +65,9 @@ export function UserNav(): React.JSX.Element | null {
   }
 
   const handleLogout = async (): Promise<void> => {
-    dispatch(logout())
+    dispatch(resetOrgState())
     dispatch(resetVerificationState())
+    dispatch(logout())
     await persistor.purge()
     logoutAndRedirect()
   }

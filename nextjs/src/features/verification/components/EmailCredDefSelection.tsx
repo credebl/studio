@@ -93,6 +93,11 @@ const EmailCredDefSelection = (): JSX.Element => {
   }
 
   const getCredDefs = async (schemaIds: string[]): Promise<void> => {
+    if (!orgId) {
+      setError('Organization ID is missing.')
+      return
+    }
+
     setLoading(true)
     let allCredDefs: ITableData[] = []
     let rawCredDefs: CredDefData[] = []

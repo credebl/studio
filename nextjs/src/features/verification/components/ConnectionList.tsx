@@ -1,11 +1,22 @@
 'use client'
 
-import { ChangeEvent, JSX, useEffect, useState } from 'react'
+import {
+  ConnectionIdCell,
+  CreatedOnCell,
+  SelectCheckboxCell,
+  TheirLabelCell,
+} from './ConnectionListCells'
+import {
+  IColumnData,
+  ITableMetadata,
+  getColumns,
+} from '@/components/ui/generic-table-component/columns'
 import { IConnectionList, LocalOrgs } from '../type/interface'
 import {
   IConnectionListAPIParameter,
   getConnectionsByOrg,
 } from '@/app/api/connection'
+import { JSX, useEffect, useState } from 'react'
 import {
   resetSelectedConnections,
   resetSelectedUser,
@@ -14,9 +25,9 @@ import {
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
+import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import DateTooltip from '@/components/DateTooltip'
 import { ITableData } from '@/components/DataTable/interface'
-import SortDataTable from './SortDataTable'
 import { dateConversion } from '@/utils/DateConversion'
 
 const initialPageState = {
@@ -32,21 +43,18 @@ const ConnectionList = (props: {
   selectConnection: (connections: IConnectionList[]) => void
 }): JSX.Element => {
   const [connectionList, setConnectionList] = useState<IConnectionList[]>([])
-  const [connectionsTableData, setConnectionsTableData] = useState<
-    ITableData[]
-  >([])
+  const [, setConnectionsTableData] = useState<ITableData[]>([])
   const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([])
-  const [searchText, setSearchText] = useState('')
   const [selectedConnectionList, setSelectedConnectionList] = useState<
     IConnectionList[]
   >([])
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [, setLoading] = useState<boolean>(false)
   const [listAPIParameter, setListAPIParameter] =
     useState<IConnectionListAPIParameter>(initialPageState)
   const [totalItem, setTotalItem] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [pageInfo, setPageInfo] = useState({
+  const [, setPageInfo] = useState({
     totalItem: 0,
     nextPage: 0,
     lastPage: 0,
@@ -58,16 +66,6 @@ const ConnectionList = (props: {
   )
 
   const orgId = useAppSelector((state) => state.organization.orgId)
-
-  const searchInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const { value } = e.target
-    setSearchText(value)
-    setListAPIParameter({
-      ...listAPIParameter,
-      search: value,
-      page: 1,
-    })
-  }
 
   const extractConnectionFields = (
     item: IConnectionList,
@@ -217,7 +215,6 @@ const ConnectionList = (props: {
         setTotalItem(totalItems)
         setError(null)
       } else {
-        // If API returned void or unexpected structure
         setConnectionList([])
         setError('Failed to fetch connections.')
       }
@@ -270,20 +267,80 @@ const ConnectionList = (props: {
     updateLocalOrgs()
   }, [])
 
-  const verificationHeader = [
-    { columnName: '', width: 'w-0.5' },
-    { columnName: 'User' },
-    { columnName: 'Connection ID' },
-    { columnName: 'Created on' },
+  const generateColumns = (): IColumnData[] => [
+    {
+      id: 'select',
+      title: '',
+      accessorKey: 'select',
+      columnFunction: ['hide'],
+      cell: ({ row }) => (
+        <SelectCheckboxCell
+          connection={row.original}
+          checked={isConnectionChecked(row.original.connectionId)}
+          onSelect={selectOrganization}
+        />
+      ),
+    },
+    {
+      id: 'theirLabel',
+      title: 'User',
+      accessorKey: 'theirLabel',
+      columnFunction: [
+        {
+          sortCallBack: async (order) =>
+            setListAPIParameter((prev) => ({
+              ...prev,
+              sortBy: 'theirLabel',
+              sortingOrder: order,
+            })),
+        },
+      ],
+      cell: ({ row }) => <TheirLabelCell label={row.original.theirLabel} />,
+    },
+    {
+      id: 'connectionId',
+      title: 'Connection ID',
+      accessorKey: 'connectionId',
+      columnFunction: [
+        {
+          sortCallBack: async (order) =>
+            setListAPIParameter((prev) => ({
+              ...prev,
+              sortBy: 'connectionId',
+              sortingOrder: order,
+            })),
+        },
+      ],
+      cell: ({ row }) => (
+        <ConnectionIdCell connectionId={row.original.connectionId} />
+      ),
+    },
+    {
+      id: 'createDateTime',
+      title: 'Created on',
+      accessorKey: 'createDateTime',
+      columnFunction: [
+        {
+          sortCallBack: async (order) =>
+            setListAPIParameter((prev) => ({
+              ...prev,
+              sortBy: 'createDateTime',
+              sortingOrder: order,
+            })),
+        },
+      ],
+      cell: ({ row }) => <CreatedOnCell date={row.original.createDateTime} />,
+    },
   ]
 
-  const searchSortByValue = (value: string): void => {
-    setListAPIParameter({
-      ...listAPIParameter,
-      page: 1,
-      sortingOrder: value,
-    })
+  const metadata: ITableMetadata = {
+    enableSelection: false,
   }
+
+  const columns = getColumns<IConnectionList>({
+    metadata,
+    columnData: generateColumns(),
+  })
 
   const refreshPage = (): void => {
     setSelectedConnectionList([])
@@ -297,6 +354,7 @@ const ConnectionList = (props: {
   useEffect(() => {
     const clearStorageAndRefresh = async (): Promise<void> => {
       refreshPage()
+      setLocalOrgs([])
       dispatch(resetSelectedConnections())
       dispatch(resetSelectedUser())
     }
@@ -319,31 +377,32 @@ const ConnectionList = (props: {
           setError(null)
         }}
       />
-      <SortDataTable
-        onInputChange={searchInputChange}
-        searchValue={searchText}
-        refresh={refreshPage}
-        header={verificationHeader}
-        data={connectionsTableData}
-        loading={loading}
-        currentPage={listAPIParameter?.page}
-        onPageChange={(page: number) => {
-          setListAPIParameter((prevState) => ({
-            ...prevState,
-            page,
+      <DataTable
+        placeHolder="Search Connections"
+        data={connectionList}
+        columns={columns}
+        index="connectionId"
+        pageIndex={listAPIParameter.page - 1}
+        pageSize={listAPIParameter.itemPerPage}
+        pageCount={Math.ceil(totalItem / listAPIParameter.itemPerPage)}
+        onPageChange={(index) =>
+          setListAPIParameter((prev) => ({ ...prev, page: index + 1 }))
+        }
+        onPageSizeChange={(size) =>
+          setListAPIParameter((prev) => ({
+            ...prev,
+            itemPerPage: size,
+            page: 1,
           }))
-        }}
-        totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-        pageInfo={pageInfo}
-        searchSortByValue={searchSortByValue}
-        isHeader={true}
-        isSearch={true}
-        isRefresh={true}
-        isSort={true}
-        isPagination={true}
-        message={'No Connections'}
-        discription={'You dont have any connections yet'}
-      ></SortDataTable>
+        }
+        onSearchTerm={(term) =>
+          setListAPIParameter((prev) => ({
+            ...prev,
+            search: term,
+            page: 1,
+          }))
+        }
+      />
     </div>
   )
 }

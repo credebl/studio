@@ -27,12 +27,6 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const pathname = usePathname()
   const isVerificationPage = pathname.includes('verification')
 
-  // const isSelectedSchema = props.selectedSchemas?.some(
-  //   (selectedSchema) =>
-  //     selectedSchema.schemaId === props.schemaId ||
-  //     selectedSchema.schemaLedgerId === props.schemaId,
-  // )
-
   const AttributesList: React.FC<{
     attributes: IAttributes[]
     limitedAttributes?: boolean
@@ -150,7 +144,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
 
           <div className="flex flex-wrap items-center gap-2 text-sm sm:justify-end sm:text-right">
             {props.w3cSchema && (
-              <span className="bg-primary/10 text-primary rounded px-2 py-0.5 text-xs font-medium">
+              <span className="focus:ring-ring text-foreground flex items-center gap-1 rounded-lg border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:ring-2 focus:ring-offset-2 focus:outline-none">
                 W3C
               </span>
             )}
