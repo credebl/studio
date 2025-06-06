@@ -119,7 +119,8 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
               onClick={handleClose}
               disabled={props.verifyLoading}
               style={{ height: '2.5rem', minWidth: '100px' }}
-              className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
+              className="ml-auto rounded-lg text-base font-medium"
+              variant="outline"
             >
               {navigation || props.view ? 'Close' : 'No, cancel'}
             </Button>
