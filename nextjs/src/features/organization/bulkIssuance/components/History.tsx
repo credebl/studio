@@ -41,12 +41,12 @@ const HistoryBulkIssuance = (): JSX.Element => {
   const router = useRouter()
 
   const [paginationForTable, setPaginationForTable] = useState({
-    pageIndex: 0,
-    pageSize: 10,
-    pageCount: 1,
-    searchTerm: '',
-    sortBy: 'createDateTime',
-    sortOrder: 'desc' as SortActions,
+    tablePageIndex: 0,
+    tablePageSize: 10,
+    tablePageCount: 1,
+    tableSearchTerm: '',
+    tableSortBy: 'createDateTime',
+    tableSortOrder: 'desc' as SortActions,
   })
 
   const [connectionList, setConnectionList] = useState<ITableData[]>([])
@@ -54,11 +54,11 @@ const HistoryBulkIssuance = (): JSX.Element => {
   async function getHistory(): Promise<void> {
     setLoading(true)
     const response = await getFilesHistory({
-      itemPerPage: paginationForTable.pageSize,
-      page: paginationForTable.pageIndex + 1,
-      search: paginationForTable.searchTerm,
-      sortBy: paginationForTable.sortBy,
-      sortingOrder: paginationForTable.sortOrder,
+      itemPerPage: paginationForTable.tablePageSize,
+      page: paginationForTable.tablePageIndex + 1,
+      search: paginationForTable.tableSearchTerm,
+      sortBy: paginationForTable.tableSortBy,
+      sortingOrder: paginationForTable.tableSortOrder,
       orgId,
     })
 
@@ -90,7 +90,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       setConnectionList(connections)
       setPaginationForTable((prev) => ({
         ...prev,
-        pageCount: data?.data.lastPage ?? 1,
+        tablePageCount: data?.data.lastPage ?? 1,
       }))
     } else if (response?.toString()?.toLowerCase() !== 'history not found') {
       setFailure(response as string)
@@ -154,7 +154,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
 
     let getData: NodeJS.Timeout | null = null
 
-    if (paginationForTable.searchTerm.length >= 1) {
+    if (paginationForTable.tableSearchTerm.length >= 1) {
       getData = setTimeout(() => {
         getHistory()
       }, 1000)
@@ -176,8 +176,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'name',
-              sortOrder: order,
+              tableSortBy: 'name',
+              tableSortOrder: order,
             }))
           },
         },
@@ -192,8 +192,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'createDateTime',
-              sortOrder: order,
+              tableSortBy: 'createDateTime',
+              tableSortOrder: order,
             }))
           },
         },
@@ -210,8 +210,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'totalRecords',
-              sortOrder: order,
+              tableSortBy: 'totalRecords',
+              tableSortOrder: order,
             }))
           },
         },
@@ -227,8 +227,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'successfulRecords',
-              sortOrder: order,
+              tableSortBy: 'successfulRecords',
+              tableSortOrder: order,
             }))
           },
         },
@@ -244,8 +244,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'failedRecords',
-              sortOrder: order,
+              tableSortBy: 'failedRecords',
+              tableSortOrder: order,
             }))
           },
         },
@@ -375,21 +375,27 @@ const HistoryBulkIssuance = (): JSX.Element => {
           data={connectionList}
           columns={column}
           index={'id'}
-          pageIndex={paginationForTable.pageIndex}
-          pageSize={paginationForTable.pageSize}
-          pageCount={paginationForTable.pageCount}
+          pageIndex={paginationForTable.tablePageIndex}
+          pageSize={paginationForTable.tablePageSize}
+          pageCount={paginationForTable.tablePageCount}
           onPageChange={(index) =>
-            setPaginationForTable((prev) => ({ ...prev, pageIndex: index }))
+            setPaginationForTable((prev) => ({
+              ...prev,
+              tablePageIndex: index,
+            }))
           }
           onPageSizeChange={(size) => {
             setPaginationForTable((prev) => ({
               ...prev,
-              pageSize: size,
-              pageIndex: 0,
+              tablePageSize: size,
+              tablePageIndex: 0,
             }))
           }}
           onSearchTerm={(term) =>
-            setPaginationForTable((prev) => ({ ...prev, searchTerm: term }))
+            setPaginationForTable((prev) => ({
+              ...prev,
+              tableSearchTerm: term,
+            }))
           }
         />
       </div>
