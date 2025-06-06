@@ -471,7 +471,7 @@ const VerificationCredentialList = (): JSX.Element => {
               setShouldRefresh(false)
             }
           }}
-          onSucess={(proofVericationId: string) => {
+          onSuccess={(proofVericationId: string) => {
             setShouldRefresh(true)
             requestProof(proofVericationId)
           }}
