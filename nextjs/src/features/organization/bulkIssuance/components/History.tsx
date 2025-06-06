@@ -16,7 +16,12 @@ import {
 } from '@/components/ui/generic-table-component/columns'
 import { JSX, useEffect, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
-import { apiStatusCodes, createDateTime } from '@/config/CommonConstant'
+import {
+  apiStatusCodes,
+  createDateTime,
+  successfulRecords,
+  totalRecords,
+} from '@/config/CommonConstant'
 import { getFilesHistory, retryBulkIssuance } from '@/app/api/BulkIssuance'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -202,15 +207,15 @@ const HistoryBulkIssuance = (): JSX.Element => {
     },
 
     {
-      id: 'totalRecords',
+      id: totalRecords,
       title: 'Total Records',
-      accessorKey: 'totalRecords',
+      accessorKey: totalRecords,
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'totalRecords',
+              sortBy: totalRecords,
               sortOrder: order,
             }))
           },
@@ -219,15 +224,15 @@ const HistoryBulkIssuance = (): JSX.Element => {
     },
 
     {
-      id: 'successfulRecords',
+      id: successfulRecords,
       title: 'Successful Records',
-      accessorKey: 'successfulRecords',
+      accessorKey: successfulRecords,
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
             setPaginationForTable((prev) => ({
               ...prev,
-              sortBy: 'successfulRecords',
+              sortBy: successfulRecords,
               sortOrder: order,
             }))
           },
