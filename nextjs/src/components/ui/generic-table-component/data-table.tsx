@@ -26,6 +26,7 @@ import {
 import { DataTablePagination } from './data-table-pagination'
 import { DataTableToolbar } from './data-table-toolbar'
 import Loader from '@/components/Loader'
+import { useState } from 'react'
 
 /**
  * Props for the DataTable component.
@@ -83,6 +84,11 @@ interface DataTableProps<TData, TValue> {
    * Callback triggered when the search term changes.
    */
   onSearchTerm: (searchTerm: string) => void
+
+  /**
+   * Loading state to show data loading state.
+   */
+  isLoading?: boolean
 }
 
 /**
@@ -115,13 +121,11 @@ export function DataTable<TData, TValue>({
   onPageChange,
   onPageSizeChange,
   onSearchTerm,
+  isLoading = false,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  )
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const table = useReactTable({
@@ -146,7 +150,7 @@ export function DataTable<TData, TValue>({
           ? updater({ pageIndex, pageSize })
           : updater
       if (newState.pageSize !== pageSize) {
-        onPageChange(0) //reset to first page on page size change
+        onPageChange(0)
       } else {
         onPageChange(newState.pageIndex)
       }
@@ -199,7 +203,16 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell
+                  colSpan={table.getAllColumns().length}
+                  className="h-24 text-center"
+                >
+                  <Loader />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row, index) => (
                 <TableRow
                   key={row.id}
@@ -222,7 +235,7 @@ export function DataTable<TData, TValue>({
                   colSpan={table.getAllColumns().length}
                   className="h-24 text-center"
                 >
-                  <Loader />
+                  No results found.
                 </TableCell>
               </TableRow>
             )}
