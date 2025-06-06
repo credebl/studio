@@ -62,6 +62,7 @@ const VerificationCredentialList = (): JSX.Element => {
   const [view, setView] = useState(false)
   const [verifyLoading, setVerifyLoading] = useState(true)
   const [userRoles, setUserRoles] = useState<string[]>([])
+  const [shouldRefresh, setShouldRefresh] = useState(false)
 
   // Consolidated pagination state
   const [proofPagination, setProofPagination] = useState<PaginationState>({
@@ -463,8 +464,17 @@ const VerificationCredentialList = (): JSX.Element => {
       {userData && (
         <ProofRequest
           openModal={openModal}
-          closeModal={() => openProofRequestModel(false, '', '')}
-          onSucess={requestProof}
+          closeModal={() => {
+            openProofRequestModel(false, '', '')
+            if (shouldRefresh) {
+              getVerificationListData()
+              setShouldRefresh(false)
+            }
+          }}
+          onSucess={(proofVericationId: string) => {
+            setShouldRefresh(true)
+            requestProof(proofVericationId)
+          }}
           requestId={requestId}
           userData={userData}
           view={view}

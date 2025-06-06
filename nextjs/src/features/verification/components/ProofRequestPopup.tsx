@@ -119,7 +119,6 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
               onClick={handleClose}
               disabled={props.verifyLoading}
               style={{ height: '2.5rem', minWidth: '100px' }}
-              // className="medium rounded-lg border px-2 py-1 text-center font-medium focus:z-10 focus:ring-4 focus:outline-none"
               className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
             >
               {navigation || props.view ? 'Close' : 'No, cancel'}
@@ -130,7 +129,6 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
                 onClick={() => handleConfirmClick(props.requestId)}
                 disabled={isDisabled}
                 style={{ height: '2.5rem', minWidth: '3rem' }}
-                // className="medium bg-primary hover:bg-primary focus:ring-primary dark:bg-primary dark:hover:bg-primary dark:focus:ring-primary flex items-center gap-2 rounded-lg px-2 py-1 text-center focus:ring-4 focus:outline-none"
                 className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
               >
                 {buttonLoader ? <Loader /> : <VerifiedIcon />}
