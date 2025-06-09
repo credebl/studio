@@ -146,7 +146,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
   useEffect(() => {
     SOCKET.emit('bulk-connection')
 
-    SOCKET.on('bulk-issuance-process-retry-completed', () => {
+    const handleSuccess = (): void => {
       setSuccess(null)
       toast.success('Issuance process completed', {
         position: 'top-right',
@@ -159,9 +159,9 @@ const HistoryBulkIssuance = (): JSX.Element => {
         theme: 'colored',
       })
       getHistory()
-    })
+    }
 
-    SOCKET.on('error-in-bulk-issuance-retry-process', () => {
+    const handleError = (): void => {
       setFailure(null)
       toast.error('Issuance process failed. Please retry', {
         position: 'top-right',
@@ -174,7 +174,15 @@ const HistoryBulkIssuance = (): JSX.Element => {
         theme: 'colored',
       })
       getHistory()
-    })
+    }
+
+    SOCKET.on('bulk-issuance-process-retry-completed', handleSuccess)
+    SOCKET.on('error-in-bulk-issuance-retry-process', handleError)
+
+    return () => {
+      SOCKET.off('bulk-issuance-process-retry-completed', handleSuccess)
+      SOCKET.off('error-in-bulk-issuance-retry-process', handleError)
+    }
   }, [])
 
   const columnData: IColumnData[] = [
