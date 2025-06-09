@@ -62,7 +62,6 @@ const VerificationCredentialList = (): JSX.Element => {
   const [view, setView] = useState(false)
   const [verifyLoading, setVerifyLoading] = useState(true)
   const [userRoles, setUserRoles] = useState<string[]>([])
-  const [shouldRefresh, setShouldRefresh] = useState(false)
 
   // Consolidated pagination state
   const [proofPagination, setProofPagination] = useState<PaginationState>({
@@ -171,7 +170,8 @@ const VerificationCredentialList = (): JSX.Element => {
       if (data?.statusCode === apiStatusCodes?.API_STATUS_CREATED) {
         setOpenModal(false)
         setProofReqSuccess(data.message)
-        setTimeout(() => getVerificationListData(), 2000)
+        await getVerificationListData()
+        // setTimeout(() => getVerificationListData(), 2000)
       } else {
         setError(response as string)
       }
@@ -466,13 +466,10 @@ const VerificationCredentialList = (): JSX.Element => {
           openModal={openModal}
           closeModal={() => {
             openProofRequestModel(false, '', '')
-            if (shouldRefresh) {
-              getVerificationListData()
-              setShouldRefresh(false)
-            }
+
+            getVerificationListData()
           }}
           onSuccess={(proofVericationId: string) => {
-            setShouldRefresh(true)
             requestProof(proofVericationId)
           }}
           requestId={requestId}
