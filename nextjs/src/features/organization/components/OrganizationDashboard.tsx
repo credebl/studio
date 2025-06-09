@@ -193,8 +193,14 @@ export const OrganizationDashboard = ({
           </Card>
 
           <Card
-            className="shadow transition-all hover:scale-102"
-            onClick={() => router.push('/organizations/schemas')}
+            className={`shadow transition-all hover:scale-102 ${
+              !walletStatus ? 'pointer-events-none opacity-50' : ''
+            }`}
+            onClick={() => {
+              if (walletStatus) {
+                router.push('/organizations/schemas')
+              }
+            }}
           >
             <CardContent className="flex items-center justify-between p-6">
               <div>

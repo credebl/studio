@@ -113,11 +113,13 @@ const SchemasList = ({
       <button
         key={index}
         type="button"
-        onClick={() =>
-          (isIndySchema
-            ? handleClickSchema(schema.schemaLedgerId)
-            : router.push(pathRoutes.organizations.schemas))
-        }
+        onClick={() => {
+          if (isIndySchema) {
+            handleClickSchema(schema.schemaLedgerId)
+          } else {
+            router.push(pathRoutes.organizations.schemas)
+          }
+        }}
         aria-disabled={!isIndySchema}
         className={
           'border-border/50 hover:bg-muted/50 flex w-full items-center justify-between gap-5 rounded-xl border p-3 text-left shadow-xl transition-transform duration-300'
@@ -218,7 +220,12 @@ const SchemasList = ({
       </CardContent>
 
       <CardFooter className="mt-auto justify-end pt-2">
-        <Link href="/organizations/schemas">View all</Link>
+        <Link
+          href="/organizations/schemas"
+          className="transition hover:underline hover:opacity-80"
+        >
+          View all
+        </Link>
       </CardFooter>
     </Card>
   )
