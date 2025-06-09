@@ -2,7 +2,6 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
-import { Edit, Trash2 } from 'lucide-react'
 import { IOrgDashboard, IOrganisation } from './interfaces/organization'
 import React, { useEffect, useState } from 'react'
 import {
@@ -15,6 +14,8 @@ import { getOrgDashboard, getOrganizationById } from '@/app/api/organization'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { DeleteIcon } from '@/config/svgs/DeleteIcon'
+import { Edit } from 'lucide-react'
 import OrganizationDetails from './OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -146,14 +147,21 @@ export const OrganizationDashboard = ({
               </div>
 
               <div className="flex gap-3">
-                <Button variant="outline" size="icon" onClick={handleEditOrg}>
-                  <Edit className="h-4 w-4" />
+                <Button
+                  className="bg-transparent hover:bg-transparent"
+                  type="button"
+                  size="icon"
+                  onClick={handleEditOrg}
+                >
+                  <Edit />
                 </Button>
-                <Button variant="outline" size="icon" onClick={handleDeleteOrg}>
-                  <Trash2
-                    className="h-4 w-4"
-                    style={{ color: 'var(--destructive)' }}
-                  />
+                <Button
+                  size="icon"
+                  onClick={handleDeleteOrg}
+                  aria-label="Delete organization"
+                  className="bg-transparent hover:bg-transparent"
+                >
+                  <DeleteIcon />
                 </Button>
               </div>
             </div>

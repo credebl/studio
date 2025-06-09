@@ -35,7 +35,6 @@ import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import Stepper from '@/components/StepperComponent'
-import { Textarea } from '@/components/ui/textarea'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { processImageFile } from '@/components/ProcessImage'
 
@@ -78,6 +77,8 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
   const [, setMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [dataLoaded, setDataLoaded] = useState<boolean>(false)
+  const [initializing, setInitializing] = useState<boolean>(true)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -132,47 +133,67 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
-    const response = await getOrganizationById(orgId as string)
-    const { data } = response as AxiosResponse
-    setLoading(false)
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const org = data?.data
-      setOrgData(org)
-      setIsPublic(org.publicProfile)
-      if (org?.countryId) {
-        setSelectedCountryId(org.countryId)
-        fetchStates(org.countryId)
-      }
+    try {
+      const response = await getOrganizationById(orgId as string)
+      const { data } = response as AxiosResponse
 
-      if (org?.stateId && org?.countryId) {
-        setSelectedStateId(org.stateId)
-        fetchCities(org.countryId, org.stateId)
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const org = data?.data
+        setOrgData(org)
+        setIsPublic(org.publicProfile)
+        if (org?.countryId) {
+          setSelectedCountryId(org.countryId)
+          await fetchStates(org.countryId)
+        }
+
+        if (org?.stateId && org?.countryId) {
+          setSelectedStateId(org.stateId)
+          await fetchCities(org.countryId, org.stateId)
+        }
+
+        // Mark data as loaded after all async operations
+        setDataLoaded(true)
+      } else {
+        setFailure(data?.message as string)
+        setDataLoaded(true)
       }
-    } else {
-      setFailure(data?.message as string)
+    } catch (error) {
+      console.error('Error fetching organization details:', error)
+      setFailure('Failed to load organization details')
+      setDataLoaded(true)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   useEffect(() => {
-    getCountries()
-    if (orgId) {
-      setIsEditMode(true)
-      fetchOrganizationDetails()
+    const initializeData = async (): Promise<void> => {
+      setInitializing(true)
+      await getCountries()
+      if (orgId) {
+        setIsEditMode(true)
+        await fetchOrganizationDetails()
+      } else {
+        setDataLoaded(true)
+      }
+      setInitializing(false)
     }
-  }, [])
 
+    initializeData()
+  }, [orgId])
+
+  // These useEffects handle state/city loading when user changes selections
   useEffect(() => {
-    if (selectedCountryId) {
+    if (selectedCountryId && !isEditMode) {
       fetchStates(selectedCountryId)
     }
-  }, [selectedCountryId])
+  }, [selectedCountryId, isEditMode])
 
   useEffect(() => {
-    if (selectedStateId && selectedCountryId) {
+    if (selectedStateId && selectedCountryId && !isEditMode) {
       fetchCities(selectedCountryId, selectedStateId)
     }
-  }, [selectedStateId])
+  }, [selectedStateId, selectedCountryId, isEditMode])
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -292,371 +313,381 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   return (
     <PageContainer>
-      <div className="flex min-h-screen items-start justify-center p-6">
-        <Card className="border-border relative w-full max-w-[800px] min-w-[700px] overflow-hidden rounded-xl border p-8 py-12 shadow-xl transition-transform duration-300">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">
-                {isEditMode ? 'Edit Organization' : 'Organization Setup'}
-              </h1>
-              <p className="">
-                {isEditMode
-                  ? 'Edit your organization details'
-                  : 'Tell us about your organization'}
-              </p>
+      {initializing || (isEditMode && !dataLoaded) ? (
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader />
+        </div>
+      ) : (
+        <div className="flex min-h-screen items-start justify-center p-6">
+          <Card className="border-border relative w-full max-w-[800px] min-w-[700px] overflow-hidden rounded-xl border p-8 py-12 shadow-xl transition-transform duration-300">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-semibold">
+                  {isEditMode ? 'Edit Organization' : 'Organization Setup'}
+                </h1>
+                <p className="">
+                  {isEditMode
+                    ? 'Edit your organization details'
+                    : 'Tell us about your organization'}
+                </p>
+              </div>
+              {!isEditMode && (
+                <div className="text-muted-foreground text-sm">
+                  Step 1 of {totalSteps}
+                </div>
+              )}
             </div>
-            {!isEditMode && (
-              <div className="text-muted-foreground text-sm">
-                Step 1 of {totalSteps}
+            {!isEditMode && <Stepper currentStep={1} totalSteps={totalSteps} />}
+
+            {success && (
+              <div className="w-full" role="alert">
+                <AlertComponent
+                  message={success}
+                  type={'success'}
+                  onAlertClose={() => {
+                    if (setSuccess) {
+                      setSuccess(null)
+                    }
+                  }}
+                />
               </div>
             )}
-          </div>
-          {!isEditMode && <Stepper currentStep={1} totalSteps={totalSteps} />}
+            {failure && (
+              <div className="w-full" role="alert">
+                <AlertComponent
+                  message={failure}
+                  type={'failure'}
+                  onAlertClose={() => {
+                    if (setFailure) {
+                      setFailure(null)
+                    }
+                  }}
+                />
+              </div>
+            )}
+            <Formik
+              enableReinitialize
+              initialValues={{
+                name: orgData?.name || '',
+                description: orgData?.description || '',
+                countryId: orgData?.countryId ?? null,
+                stateId: orgData?.stateId ?? null,
+                cityId: orgData?.cityId ?? null,
+                website: orgData?.website || '',
+                logoFile: null,
+                logoPreview: orgData?.logoUrl || '',
+                logoUrl: orgData?.logoPreview || '',
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleCreateAndContinue}
+            >
+              {({ errors, touched, setFieldValue, values, isValid, dirty }) => (
+                <Form className="space-y-6">
+                  <div>
+                    <Label className="mb-2 block pb-4">Organization Logo</Label>
+                    <div className="border-input flex items-center gap-4 rounded-md border p-4">
+                      {logoPreview ? (
+                        <Avatar className="h-24 w-24">
+                          <AvatarImage
+                            src={logoPreview}
+                            alt="Logo Preview"
+                            className="object-cover"
+                          />
+                          <AvatarFallback>Logo</AvatarFallback>
+                        </Avatar>
+                      ) : (
+                        <Avatar className="h-24 w-24 rounded-none">
+                          <AvatarImage
+                            src={
+                              logoPreview ||
+                              orgData?.logoUrl ||
+                              '/images/upload_logo_file.svg'
+                            }
+                            alt="Logo Preview"
+                          />
+                        </Avatar>
+                      )}
 
-          {success && (
-            <div className="w-full" role="alert">
-              <AlertComponent
-                message={success}
-                type={'success'}
-                onAlertClose={() => {
-                  if (setSuccess) {
-                    setSuccess(null)
-                  }
-                }}
-              />
-            </div>
-          )}
-          {failure && (
-            <div className="w-full" role="alert">
-              <AlertComponent
-                message={failure}
-                type={'failure'}
-                onAlertClose={() => {
-                  if (setFailure) {
-                    setFailure(null)
-                  }
-                }}
-              />
-            </div>
-          )}
-          <Formik
-            enableReinitialize
-            initialValues={{
-              name: orgData?.name || '',
-              description: orgData?.description || '',
-              countryId: orgData?.countryId ?? null,
-              stateId: orgData?.stateId ?? null,
-              cityId: orgData?.cityId ?? null,
-              website: orgData?.website || '',
-              logoFile: null,
-              logoPreview: orgData?.logoUrl || '',
-              logoUrl: orgData?.logoPreview || '',
-            }}
-            validationSchema={validationSchema}
-            onSubmit={handleCreateAndContinue}
-          >
-            {({ errors, touched, setFieldValue, values, isValid, dirty }) => (
-              <Form className="space-y-6">
-                <div>
-                  <Label className="mb-2 block pb-4">Organization Logo</Label>
-                  <div className="border-input flex items-center gap-4 rounded-md border p-4">
-                    {logoPreview ? (
-                      <Avatar className="h-24 w-24">
-                        <AvatarImage
-                          src={logoPreview}
-                          alt="Logo Preview"
-                          className="object-cover"
+                      <div className="flex flex-col">
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleImageChange(e, setFieldValue)}
                         />
-                        <AvatarFallback>Logo</AvatarFallback>
-                      </Avatar>
-                    ) : (
-                      <Avatar className="h-24 w-24 rounded-none">
-                        <AvatarImage
-                          src={
-                            logoPreview ||
-                            orgData?.logoUrl ||
-                            '/images/upload_logo_file.svg'
-                          }
-                          alt="Logo Preview"
-                        />
-                      </Avatar>
+                        {imgError && (
+                          <p className="text-destructive mt-1 text-sm">
+                            {imgError}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="pb-4">
+                      Organization Name{' '}
+                      <span className="text-destructive">*</span>
+                    </Label>
+                    <Field
+                      as={Input}
+                      name="name"
+                      placeholder="Enter organization name"
+                    />
+                    {errors.name && touched.name && (
+                      <p className="text-destructive mt-1 text-xs">
+                        {errors.name}
+                      </p>
                     )}
+                  </div>
 
-                    <div className="flex flex-col">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, setFieldValue)}
-                      />
-                      {imgError && (
-                        <p className="text-destructive mt-1 text-sm">
-                          {imgError}
+                  {/* Description */}
+                  <div>
+                    <Label className="pb-4">
+                      Description <span className="text-destructive">*</span>
+                    </Label>
+                    <Field
+                      as={Input}
+                      name="description"
+                      placeholder="Enter organization description"
+                    />
+                    {errors.description && touched.description && (
+                      <p className="text-destructive mt-1 text-xs">
+                        {errors.description}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    {/* Country Select */}
+                    <div>
+                      <Label className="pb-2">
+                        Country <span className="text-destructive">*</span>
+                      </Label>
+                      <Select
+                        name="countryId"
+                        value={
+                          values.countryId ? values.countryId.toString() : ''
+                        }
+                        onValueChange={async (value) => {
+                          const countryId = Number(value)
+                          setSelectedCountryId(countryId)
+                          setSelectedStateId(null)
+                          setCities([])
+                          setStates([])
+                          setFieldValue('countryId', countryId)
+                          setFieldValue('stateId', null)
+                          setFieldValue('cityId', null)
+
+                          // Fetch states for the selected country
+                          if (countryId) {
+                            await fetchStates(countryId)
+                          }
+                        }}
+                      >
+                        <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                          <SelectValue placeholder="Select country" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px] overflow-scroll">
+                          {countries.map((country) => (
+                            <SelectItem
+                              key={country.id}
+                              value={country.id.toString()}
+                            >
+                              {country.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {errors.countryId && touched.countryId && (
+                        <p className="text-destructive mt-1 text-xs">
+                          {errors.countryId}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* State Select */}
+                    <div>
+                      <Label className="pb-2">
+                        State <span className="text-destructive">*</span>
+                      </Label>
+                      <Select
+                        value={values.stateId ? values.stateId.toString() : ''}
+                        onValueChange={async (value) => {
+                          const stateId = Number(value)
+                          setSelectedStateId(stateId)
+                          setFieldValue('stateId', stateId)
+                          setFieldValue('cityId', null)
+                          setCities([])
+
+                          // Fetch cities for the selected state
+                          if (selectedCountryId && stateId) {
+                            await fetchCities(selectedCountryId, stateId)
+                          }
+                        }}
+                        disabled={!values.countryId}
+                      >
+                        <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                          <SelectValue placeholder="Select state" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px] overflow-scroll">
+                          {states.length > 0 ? (
+                            states.map((state) => (
+                              <SelectItem
+                                key={state.id}
+                                value={state.id.toString()}
+                              >
+                                {state.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="text-muted-foreground px-3 py-2 text-sm">
+                              No states available
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      {errors.stateId && touched.stateId && (
+                        <p className="text-destructive mt-1 text-xs">
+                          {errors.stateId}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* City Select */}
+                    <div>
+                      <Label className="pb-2">
+                        City <span className="text-destructive">*</span>
+                      </Label>
+                      <Select
+                        value={values.cityId ? values.cityId.toString() : ''}
+                        onValueChange={(value) => {
+                          const cityId = Number(value)
+                          setFieldValue('cityId', cityId)
+                        }}
+                        disabled={!values.stateId}
+                      >
+                        <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
+                          <SelectValue placeholder="Select city" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-[300px] overflow-scroll">
+                          {cities.length > 0 ? (
+                            cities.map((city) => (
+                              <SelectItem
+                                key={city.id}
+                                value={city.id.toString()}
+                              >
+                                {city.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="text-muted-foreground px-3 py-2 text-sm">
+                              No cities available
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      {errors.cityId && touched.cityId && (
+                        <p className="text-destructive mt-1 text-xs">
+                          {errors.cityId}
                         </p>
                       )}
                     </div>
                   </div>
-                </div>
 
-                <div>
-                  <Label className="pb-4">
-                    Organization Name{' '}
-                    <span className="text-destructive">*</span>
-                  </Label>
-                  <Field
-                    as={Input}
-                    name="name"
-                    placeholder="Enter organization name"
-                  />
-                  {errors.name && touched.name && (
-                    <p className="text-destructive mt-1 text-xs">
-                      {errors.name}
-                    </p>
-                  )}
-                </div>
-
-                {/* Description */}
-                <div>
-                  <Label className="pb-4">
-                    Description <span className="text-destructive">*</span>
-                  </Label>
-                  <Field
-                    as={Textarea}
-                    name="description"
-                    placeholder="Enter organization description"
-                    className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[60px] w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                  />
-                  {errors.description && touched.description && (
-                    <p className="text-destructive mt-1 text-xs">
-                      {errors.description}
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                  {/* Country Select */}
+                  {/* Website */}
                   <div>
-                    <Label className="pb-2">
-                      Country <span className="text-destructive">*</span>
-                    </Label>
-                    <Select
-                      name="countryId"
-                      value={
-                        values.countryId ? values.countryId.toString() : ''
-                      }
-                      onValueChange={(value) => {
-                        const countryId = Number(value)
-                        setSelectedCountryId(countryId)
-                        setSelectedStateId(null)
-                        setCities([])
-                        setStates([])
-                        setFieldValue('countryId', countryId)
-                        setFieldValue('stateId', null)
-                        setFieldValue('cityId', null)
-                      }}
-                    >
-                      <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
-                        <SelectValue placeholder="Select country" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[300px] overflow-scroll">
-                        {countries.map((country) => (
-                          <SelectItem
-                            key={country.id}
-                            value={country.id.toString()}
-                          >
-                            {country.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    {errors.countryId && touched.countryId && (
+                    <Label className="pb-4">Website URL</Label>
+                    <Field
+                      as={Input}
+                      name="website"
+                      placeholder="https://example.com"
+                    />
+                    {errors.website && touched.website && (
                       <p className="text-destructive mt-1 text-xs">
-                        {errors.countryId}
+                        {errors.website}
                       </p>
                     )}
                   </div>
 
-                  {/* State Select */}
-                  <div>
-                    <Label className="pb-2">
-                      State <span className="text-destructive">*</span>
-                    </Label>
-                    <Select
-                      value={values.stateId ? values.stateId.toString() : ''}
-                      onValueChange={(value) => {
-                        const stateId = Number(value)
-                        setSelectedStateId(stateId)
-                        setFieldValue('stateId', stateId)
-                        setFieldValue('cityId', null)
-                      }}
-                      disabled={!values.countryId}
-                    >
-                      <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
-                        <SelectValue placeholder="Select state" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[300px] overflow-scroll">
-                        {states.length > 0 ? (
-                          states.map((state) => (
-                            <SelectItem
-                              key={state.id}
-                              value={state.id.toString()}
-                            >
-                              {state.name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className="text-muted-foreground px-3 py-2 text-sm">
-                            No states available
+                  <div className="mx-2 grid">
+                    {isEditMode && (
+                      <>
+                        <div>
+                          <div className="mt-2 mb-2 block text-sm font-medium">
+                            <Label htmlFor="name" />
                           </div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    {errors.stateId && touched.stateId && (
-                      <p className="text-destructive mt-1 text-xs">
-                        {errors.stateId}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* City Select */}
-                  <div>
-                    <Label className="pb-2">
-                      City <span className="text-destructive">*</span>
-                    </Label>
-                    <Select
-                      value={values.cityId ? values.cityId.toString() : ''}
-                      onValueChange={(value) => {
-                        const cityId = Number(value)
-                        setFieldValue('cityId', cityId)
-                      }}
-                      disabled={!values.stateId}
-                    >
-                      <SelectTrigger className="disabled:bg-muted flex h-10 w-full items-center justify-between border px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50">
-                        <SelectValue placeholder="Select city" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[300px] overflow-scroll">
-                        {cities.length > 0 ? (
-                          cities.map((city) => (
-                            <SelectItem
-                              key={city.id}
-                              value={city.id.toString()}
-                            >
-                              {city.name}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className="text-muted-foreground px-3 py-2 text-sm">
-                            No cities available
+                          <Field
+                            type="radio"
+                            checked={isPublic === false}
+                            onChange={() => setIsPublic(false)}
+                            id="private"
+                            name="private"
+                          />
+                          <span className="ml-2">
+                            Private
+                            <span className="block pl-6 text-sm">
+                              Only the connected organization can see your
+                              organization details
+                            </span>
+                          </span>
+                        </div>
+                        <div>
+                          <div className="mt-2 mb-2 block text-sm font-medium">
+                            <Label htmlFor="name" />
                           </div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    {errors.cityId && touched.cityId && (
-                      <p className="text-destructive mt-1 text-xs">
-                        {errors.cityId}
-                      </p>
+                          <Field
+                            type="radio"
+                            onChange={() => setIsPublic(true)}
+                            checked={isPublic === true}
+                            id="public"
+                            name="public"
+                          />
+                          <span className="ml-2">
+                            Public
+                            <span className="block pl-6 text-sm">
+                              Your profile and organization details can be seen
+                              by everyone
+                            </span>
+                          </span>
+                        </div>
+                      </>
                     )}
                   </div>
-                </div>
 
-                {/* Website */}
-                <div>
-                  <Label className="pb-4">Website URL</Label>
-                  <Field
-                    as={Input}
-                    name="website"
-                    placeholder="https://example.com"
-                  />
-                  {errors.website && touched.website && (
-                    <p className="text-destructive mt-1 text-xs">
-                      {errors.website}
-                    </p>
-                  )}
-                </div>
-
-                <div className="mx-2 grid">
-                  {isEditMode && (
-                    <>
-                      <div>
-                        <div className="mt-2 mb-2 block text-sm font-medium">
-                          <Label htmlFor="name" />
-                        </div>
-                        <Field
-                          type="radio"
-                          checked={isPublic === false}
-                          onChange={() => setIsPublic(false)}
-                          id="private"
-                          name="private"
-                        />
-                        <span className="ml-2">
-                          Private
-                          <span className="block pl-6 text-sm">
-                            Only the connected organization can see your
-                            organization details
-                          </span>
-                        </span>
-                      </div>
-                      <div>
-                        <div className="mt-2 mb-2 block text-sm font-medium">
-                          <Label htmlFor="name" />
-                        </div>
-                        <Field
-                          type="radio"
-                          onChange={() => setIsPublic(true)}
-                          checked={isPublic === true}
-                          id="public"
-                          name="public"
-                        />
-                        <span className="ml-2">
-                          Public
-                          <span className="block pl-6 text-sm">
-                            Your profile and organization details can be seen by
-                            everyone
-                          </span>
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-
-                <div className="mt-6 flex items-center justify-between">
-                  <Button
-                    variant="secondary"
-                    type="button"
-                    onClick={() => router.push('/organizations')}
-                  >
-                    Back
-                  </Button>
-
-                  {!isEditMode ? (
+                  <div className="mt-6 flex items-center justify-between">
                     <Button
-                      type="submit"
-                      disabled={!isValid || !dirty || loading}
+                      variant="secondary"
+                      type="button"
+                      onClick={() => router.push('/organizations')}
                     >
-                      {loading ? (
-                        <Loader/>
-                      ) : (
-                        'Create Organization'
-                      )}
+                      Back
                     </Button>
-                  ) : (
-                    <div className="flex">
+
+                    {!isEditMode ? (
                       <Button
-                        type="button"
-                        onClick={() => handleUpdateOrganization(values)}
+                        type="submit"
+                        disabled={!isValid || !dirty || loading}
                       >
-                        {loading ? (
-                          <Loader/>
-                        ) : null}
-                        Save
+                        {loading ? <Loader /> : 'Create Organization'}
                       </Button>
-                    </div>
-                  )}
-                </div>
-              </Form>
-            )}
-          </Formik>
-        </Card>
-      </div>
+                    ) : (
+                      <div className="flex">
+                        <Button
+                          type="button"
+                          onClick={() => handleUpdateOrganization(values)}
+                          disabled={loading}
+                        >
+                          {loading ? <Loader /> : 'Save'}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </Form>
+              )}
+            </Formik>
+          </Card>
+        </div>
+      )}
     </PageContainer>
   )
 }
