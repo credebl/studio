@@ -157,8 +157,8 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
         <p
           className={`${
             row.original.isError === false
-              ? 'border border-green-100 bg-green-100 text-green-800 dark:border-green-500 dark:bg-gray-700 dark:text-green-400'
-              : 'border border-red-100 bg-red-100 text-red-800 dark:border-red-400 dark:bg-gray-700 dark:text-red-400'
+              ? 'badges-success text-foreground'
+              : 'badges-error text-foreground'
           } text-md flex w-fit justify-center rounded-md px-2 py-0.5 font-medium min-[320]:px-3 sm:mr-0 sm:px-3 md:mr-2 lg:px-3`}
         >
           {row.original.status}
@@ -208,10 +208,8 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
         id="connection-list"
       >
         <h1 className="ml-1">
-          <p className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white">
-            History Details
-          </p>
-          <p className="text-sm text-gray-400">Bulk Issuance History Details</p>
+          <p className="text-xl font-semibold">History Details</p>
+          <p className="text-sm">Bulk Issuance History Details</p>
         </h1>
       </div>
       <AlertComponent

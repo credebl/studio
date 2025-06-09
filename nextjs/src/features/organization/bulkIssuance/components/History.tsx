@@ -30,6 +30,7 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import { ITableData } from '@/features/connections/types/connections-interface'
+import { IssuanceRetryIcon } from '@/config/svgs/issuanceRetryButton'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
@@ -126,7 +127,25 @@ const HistoryBulkIssuance = (): JSX.Element => {
   }
 
   useEffect(() => {
+    getHistory()
+  }, [
+    paginationForTable.pageIndex,
+    paginationForTable.pageSize,
+    paginationForTable.sortBy,
+    paginationForTable.sortOrder,
+  ])
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      getHistory()
+    }, 500)
+
+    return () => clearTimeout(delayDebounce)
+  }, [paginationForTable.searchTerm])
+
+  useEffect(() => {
     SOCKET.emit('bulk-connection')
+
     SOCKET.on('bulk-issuance-process-retry-completed', () => {
       setSuccess(null)
       toast.success('Issuance process completed', {
@@ -156,20 +175,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
       })
       getHistory()
     })
-
-    let getData: NodeJS.Timeout | null = null
-
-    if (paginationForTable.searchTerm.length >= 1) {
-      getData = setTimeout(() => {
-        getHistory()
-      }, 1000)
-      return () => clearTimeout(getData ?? undefined)
-    } else {
-      getHistory()
-    }
-
-    return () => clearTimeout(getData ?? undefined)
-  }, [paginationForTable])
+  }, [])
 
   const columnData: IColumnData[] = [
     {
@@ -264,8 +270,8 @@ const HistoryBulkIssuance = (): JSX.Element => {
         <p
           className={`${
             row.original.failedRecords > 0
-              ? 'border border-orange-100 bg-orange-100 text-orange-800 dark:border-orange-400 dark:bg-gray-700 dark:text-orange-400'
-              : 'border border-green-100 bg-green-100 text-green-800 dark:border-green-500 dark:bg-gray-700 dark:text-green-400'
+              ? 'badges-warning text-foreground'
+              : 'badges-success text-foreground'
           } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-sm font-medium`}
         >
           {row.original.failedRecords > 0
@@ -298,29 +304,14 @@ const HistoryBulkIssuance = (): JSX.Element => {
           </Button>
           {row.original.failedRecords > 0 && (
             <Button
+              variant="secondary"
               onClick={() => handleRetry(row.original.id)}
-              className="hover:!bg-secondary-700 hover:bg-secondary-700 bg-secondary-700 focus:ring-primary-300 ring-primary-700 bg-white-700 text-primary-600 border-primary-650 hover:text-primary-600 dark:text-primary-450 dark:border-primary-450 dark:hover:text-primary-450 dark:hover:bg-secondary-700 mr-2 ml-4 rounded-md py-2 text-center text-base font-medium focus:ring-4 lg:px-3 lg:py-2.5 dark:bg-transparent"
+              className="ml-4"
               style={{ height: '2.5rem', minWidth: '4rem' }}
             >
               <p className="flex items-center justify-center pr-1 text-center">
-                {' '}
-                <svg
-                  className="mt-0.5 flex items-center pr-1"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="15"
-                  fill="none"
-                  viewBox="0 0 24 20"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M16 1v5h-5M2 19v-5h5m10-4a8 8 0 0 1-14.947 3.97M1 10a8 8 0 0 1 14.947-3.97"
-                  />
-                </svg>
-                <span>Retry</span>{' '}
+                <IssuanceRetryIcon />
+                <span>Retry</span>
               </p>
             </Button>
           )}
