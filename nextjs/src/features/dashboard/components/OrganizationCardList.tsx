@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -42,8 +43,8 @@ const OrganizationCardList = (): React.JSX.Element => {
 
   const route = useRouter()
 
-  const [currentPage] = useState(1)
-  const [pageSize] = useState(10)
+  const [currentPage] = useState(currentPageNumber)
+  const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
 
   const fetchOrganizations = async (): Promise<void> => {

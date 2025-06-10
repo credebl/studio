@@ -18,6 +18,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import {
+  apiStatusCodes,
+  currentPageNumber,
+  itemPerPage,
+} from '@/config/CommonConstant'
+import {
   createDid,
   createPolygonKeyValuePair,
   getDids,
@@ -34,7 +39,6 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
@@ -91,8 +95,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(
     null,
   )
-  const [currentPage] = useState(1)
-  const [pageSize] = useState(10)
+  const [currentPage] = useState(currentPageNumber)
+  const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
   const [userRoles, setUserRoles] = useState<string[]>([])
 
