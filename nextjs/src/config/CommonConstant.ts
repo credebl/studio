@@ -17,6 +17,7 @@ export const polygonScan = 'https://mumbai.polygonscan.com/'
 export const createDateTime = 'createDateTime'
 export const totalRecords = 'totalRecords'
 export const successfulRecords = 'successfulRecords'
+export const currentPageNumber = 1
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,

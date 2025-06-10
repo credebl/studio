@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
@@ -12,8 +13,8 @@ import { getOrganizations } from '@/app/api/organization'
 
 export default function Header(): React.JSX.Element {
   const dispatch = useAppDispatch()
-  const [currentPage] = useState(1)
-  const [pageSize] = useState(10)
+  const [currentPage] = useState(currentPageNumber)
+  const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
   const [orgList, setOrgList] = useState<Organisation[]>([])
   const tenantId = useAppSelector((state) => state.organization.orgId)
