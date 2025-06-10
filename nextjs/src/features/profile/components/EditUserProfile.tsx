@@ -162,7 +162,7 @@ export default function EditUserProfile({
               </label>
               <Field
                 as={Input}
-                ref={firstNameInputRef}
+                innerRef={firstNameInputRef}
                 name="firstName"
                 type="text"
                 value={formik.values.firstName}
