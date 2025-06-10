@@ -7,15 +7,16 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { IDisplayUserProfileProps } from '../../../components/profile/interfaces'
 import React from 'react'
+import { getRandomAvatarColor } from '@/utils/avatarColors'
 
 const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
 }: IDisplayUserProfileProps): React.JSX.Element => (
-  <div className="flex h-full flex-col sm:py-6">
+  <Card className="flex h-full flex-col p-8 sm:py-6">
     <div className="bg-background mx-auto w-full rounded-lg">
       <div className="mb-8 flex items-start justify-between">
-        <div className="flex items-start gap-32 space-x-6">
+        <div className="flex items-center justify-center gap-32 space-x-6">
           <div className="">
             {userProfileInfo?.profileImg ? (
               <img
@@ -24,9 +25,9 @@ const DisplayUserProfile = ({
                 className="h-48 w-48 rounded-full object-cover"
               />
             ) : (
-              <Avatar className="h-24 w-24">
+              <Avatar className="h-48 w-48">
                 <AvatarImage src="" alt={userProfileInfo?.email || 'Unknown'} />
-                <AvatarFallback>
+                <AvatarFallback className="text-4xl">
                   {userProfileInfo?.firstName?.[0]?.toUpperCase() ||
                     userProfileInfo?.lastName?.[0]?.toUpperCase() ||
                     '?'}
@@ -82,7 +83,9 @@ const DisplayUserProfile = ({
           size="icon"
           onClick={toggleEditProfile}
         >
-          <Edit className="mr-12" />
+          <span>
+            <Edit className="mr-12" />
+          </span>
         </Button>
       </div>
 
@@ -91,57 +94,54 @@ const DisplayUserProfile = ({
           <h3 className="text-foreground mb-4 text-lg font-semibold">
             Organizations associated
           </h3>
-
-          {userProfileInfo?.userOrgRoles &&
-          userProfileInfo.userOrgRoles.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {userProfileInfo.userOrgRoles
-                .filter((role) => role.organisation)
-                .map((role) => (
-                  <Card
-                    key={role.id}
-                    variant="secondary"
-                    className="inline-flex items-center border px-3 py-1 text-xs font-medium"
-                  >
-                    {role.organisation.logoUrl ? (
-                      <img
-                        src={role.organisation.logoUrl}
-                        alt={role.organisation.name}
-                        className="h-5 w-5 rounded-full object-cover"
-                      />
-                    ) : (
-                      <Avatar className="h-5 w-5">
-                        <AvatarFallback className="text-xs font-bold">
-                          {role.organisation.name.substring(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                    <span>{role.organisation.name}</span>
-                  </Card>
-                ))}
-            </div>
-          ) : (
-            <div className="text-muted-foreground py-8 text-center">
-              <svg
-                className="mx-auto mb-4 h-12 w-12 opacity-50"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                />
-              </svg>
-              <p>No organizations found</p>
-            </div>
-          )}
+          <hr />
+          <div className="mt-4">
+            {userProfileInfo?.userOrgRoles &&
+            userProfileInfo.userOrgRoles.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {userProfileInfo.userOrgRoles
+                  .filter((role) => role.organisation)
+                  .map((role) => {
+                    const { bg, text } = getRandomAvatarColor(
+                      role.organisation.name,
+                    )
+                    return (
+                      <Card
+                        key={role.id}
+                        className="inline-flex items-center border px-3 py-1 text-xs font-medium"
+                      >
+                        {role.organisation.logoUrl ? (
+                          <img
+                            src={role.organisation.logoUrl}
+                            alt={role.organisation.name}
+                            className="h-5 w-5 rounded-full object-cover"
+                          />
+                        ) : (
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback
+                              className={`${bg} ${text} text-xs font-bold`}
+                            >
+                              {role.organisation.name
+                                .substring(0, 2)
+                                .toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
+                        <span className="pl-2">{role.organisation.name}</span>
+                      </Card>
+                    )
+                  })}
+              </div>
+            ) : (
+              <div className="text-muted-foreground py-8 text-center">
+                <p>No organizations found</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Card>
 )
 
 export default DisplayUserProfile
