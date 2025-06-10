@@ -435,7 +435,7 @@ const DedicatedLedgerConfig = ({
             description="Hyperledger Indy"
             icon={
               <Image
-                src="/images/Indicio.png"
+                src="/images/Indicio.svg"
                 alt="Indy Icon"
                 width={112}
                 height={112}
@@ -448,7 +448,7 @@ const DedicatedLedgerConfig = ({
             description="Polygon blockchain"
             icon={
               <Image
-                src="/images/polygon.png"
+                src="/images/polygon.svg"
                 alt="Indy Icon"
                 width={112}
                 height={112}
