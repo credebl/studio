@@ -109,7 +109,9 @@ export function UserNav(): React.JSX.Element | null {
             Profile
           </DropdownMenuItem>
 
-          <DropdownMenuItem>Developer Settings</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push('/developers-setting')}>
+            Developer Settings
+          </DropdownMenuItem>
 
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>

@@ -14,6 +14,9 @@ export const limitedAttributesLength = 3
 export const itemPerPage = 10
 export const allSchemas = 'All schemas'
 export const polygonScan = 'https://mumbai.polygonscan.com/'
+export const createDateTime = 'createDateTime'
+export const totalRecords = 'totalRecords'
+export const successfulRecords = 'successfulRecords'
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,
