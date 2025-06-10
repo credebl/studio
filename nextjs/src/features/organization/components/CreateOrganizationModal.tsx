@@ -301,7 +301,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
           router.push(`/organizations/agent-config?orgId=${orgId}`)
         }, 3000)
       } else {
-        setFailure(data?.message as string)
+        setFailure(resCreateOrg as string)
       }
     } catch (error) {
       console.error('Error creating organization:', error)
