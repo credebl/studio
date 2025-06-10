@@ -49,7 +49,7 @@ const ClientCredentials = (): React.JSX.Element => {
 
         const currentOrg = organizations.find((org) => org.id === orgId)
         const roles =
-          currentOrg?.userOrgRoles?.map((role) => role.orgRole.name) || []
+          currentOrg?.userOrgRoles?.map((role) => role.orgRole.name) ?? []
         setUserRoles(roles)
       } else {
         setUserRoles([])
