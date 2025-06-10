@@ -235,7 +235,7 @@ const ClientCredentials = (): React.JSX.Element => {
 
                           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
                             <div className="flex items-center gap-4">
-                              {ClientSecretKeySvg()}
+                              <ClientSecretKeySvg />
 
                               <div className="truncate">
                                 <h1 className="ml-4 truncate text-base text-gray-500 dark:text-white">
