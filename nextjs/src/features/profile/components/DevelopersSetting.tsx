@@ -38,14 +38,18 @@ const ClientCredentials = (): React.JSX.Element => {
     }
 
     setLoading(true)
-    const response = await getOrganizationById(orgId as string)
-    const { data } = response as AxiosResponse
+    try {
+      const response = await getOrganizationById(orgId as string)
+      const { data } = response as AxiosResponse
 
-    setLoading(false)
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      setUserRoles(data?.data?.userOrg)
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setUserRoles(data?.data?.userOrg)
+      }
+    } catch (error) {
+      console.error('Failed to fetch organization details:', error)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const createClientCredentials = async (): Promise<void> => {
