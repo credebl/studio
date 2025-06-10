@@ -3,7 +3,7 @@
 import * as yup from 'yup'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Form, Formik } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import {
   IMG_MAX_HEIGHT,
   IMG_MAX_WIDTH,
@@ -14,6 +14,7 @@ import { calculateSize, dataURItoBlob } from '@/utils/CompressImage'
 
 import { Button } from '@/components/ui/button'
 import type { IUserProfile } from '@/components/profile/interfaces'
+import { Input } from '@/components/ui/input'
 import { updateUserProfile } from '@/app/api/Auth'
 
 interface Values {
@@ -159,7 +160,8 @@ export default function EditUserProfile({
               <label className="mb-2 block text-sm font-medium">
                 First Name
               </label>
-              <input
+              <Field
+                as={Input}
                 ref={firstNameInputRef}
                 name="firstName"
                 type="text"
@@ -177,7 +179,8 @@ export default function EditUserProfile({
               <label className="mb-2 block text-sm font-medium">
                 Last Name
               </label>
-              <input
+              <Field
+                as={Input}
                 name="lastName"
                 type="text"
                 value={formik.values.lastName}
