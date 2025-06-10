@@ -23,6 +23,7 @@ import {
   getDids,
   updatePrimaryDid,
 } from '@/app/api/Agent'
+import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -36,7 +37,6 @@ import { Label } from '@/components/ui/label'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
-import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 
@@ -73,7 +73,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [showPopup, setShowPopup] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
-  const [userRoles] = useState<string[]>([])
   const [isMethodLoading, setIsMethodLoading] = useState(false)
 
   // State for Create DID modal
@@ -92,6 +91,11 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(
     null,
   )
+  const [currentPage] = useState(1)
+  const [pageSize] = useState(10)
+  const [searchTerm] = useState('')
+  const [userRoles, setUserRoles] = useState<string[]>([])
+
   const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
     ledger: '',
@@ -122,6 +126,35 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       console.error('Error setting primary DID:', error)
     }
   }
+
+  const fetchOrganizations = async (): Promise<void> => {
+    try {
+      const response = await getOrganizations(
+        currentPage,
+        pageSize,
+        searchTerm,
+        '',
+      )
+      if (typeof response !== 'string' && response?.data?.data?.organizations) {
+        const { organizations } = response.data.data
+
+        const currentOrg = organizations.find((org) => org.id === orgId)
+        const roles =
+          currentOrg?.userOrgRoles?.map((role) => role.orgRole.name) || []
+        setUserRoles(roles)
+      } else {
+        setUserRoles([])
+      }
+    } catch (err) {
+      console.error('Error fetching organizations:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchOrganizations()
+  }, [currentPage, pageSize, searchTerm])
 
   const getData = async (): Promise<void> => {
     try {
@@ -281,8 +314,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
 
-    // Only set isCreatingDid for non-Polygon methods
-    if (method !== DidMethod.POLYGON) {
+    // Only set isCreatingDid for non-Polygon and non-Web methods
+    if (method !== DidMethod.POLYGON && method !== DidMethod.WEB) {
       setIsCreatingDid(true)
     }
 
@@ -320,7 +353,10 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         setErrMsg(response as string)
         setLoading(false)
         setIsCreatingDid(false)
-        if (values.method === DidMethod.POLYGON) {
+        if (
+          values.method === DidMethod.POLYGON ||
+          values.method === DidMethod.WEB
+        ) {
           setShowPopup(true)
         }
       }
@@ -392,6 +428,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         <div className={`flex items-center gap-2 ${className}`}>
           <span className="truncate">{value}</span>
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             onClick={copyToClipboard}
@@ -413,6 +450,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           <div className={`flex items-center gap-2 ${className}`}>
             <span className="truncate font-mono">{value}</span>
             <Button
+              type="button"
               variant="ghost"
               size="icon"
               className="h-6 w-6"
@@ -467,8 +505,9 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
             setIsMethodLoading(true)
             await fetchOrganizationDetails()
             setIsMethodLoading(false)
+            setErrMsg(null)
 
-            if (method === DidMethod.POLYGON) {
+            if (method === DidMethod.POLYGON || method === DidMethod.WEB) {
               setShowPopup(true)
             } else {
               setIsCreatingDid(true)
@@ -491,7 +530,9 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Loading...
             </>
-          ) : isCreatingDid && method !== DidMethod.POLYGON ? (
+          ) : isCreatingDid &&
+            method !== DidMethod.POLYGON &&
+            method !== DidMethod.WEB ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Creating DID...
@@ -536,8 +577,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         ))}
       </div>
 
-      {/* Conditionally render the Dialog only for Polygon DID */}
-      {method === DidMethod.POLYGON && (
+      {/* Conditionally render the Dialog for both Polygon and Web DIDs */}
+      {(method === DidMethod.POLYGON || method === DidMethod.WEB) && (
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
           <DialogContent className="max-w-2xl!">
             <DialogHeader>
@@ -592,6 +633,31 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                         className="bg-muted cursor-default select-none"
                       />
                     </div>
+
+                    {method === DidMethod.WEB && (
+                      <div className="col-span-1 sm:col-span-2">
+                        <Label htmlFor="domain">
+                          Domain{' '}
+                          <span className="text-destructive text-xs">*</span>
+                        </Label>
+                        <Field
+                          as={Input}
+                          id="domain"
+                          name="domain"
+                          placeholder="Enter domain (e.g., example.com)"
+                          className="mt-1"
+                        />
+                        <ErrorMessage
+                          name="domain"
+                          component="div"
+                          className="text-destructive mt-1 text-sm"
+                        />
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          Enter the domain where your DID document will be
+                          hosted
+                        </p>
+                      </div>
+                    )}
 
                     {method === DidMethod.POLYGON && (
                       <>
@@ -763,7 +829,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                       type="submit"
                       disabled={
                         loading ||
-                        (method === DidMethod.POLYGON && !values.privatekey)
+                        (method === DidMethod.POLYGON && !values.privatekey) ||
+                        (method === DidMethod.WEB && !values.domain)
                       }
                     >
                       {loading ? 'Submitting...' : 'Submit'}
