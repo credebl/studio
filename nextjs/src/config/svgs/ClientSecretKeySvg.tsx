@@ -1,4 +1,4 @@
-export const clientSecretKeySvg = (): React.JSX.Element => (
+export const ClientSecretKeySvg = (): React.JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="36"
