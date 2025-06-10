@@ -19,18 +19,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  IUserSignInData,
-  forgotPassword,
-  getUserProfile,
-  passwordEncryption,
-} from '@/app/api/Auth'
 import React, { useState } from 'react'
+import { forgotPassword, getUserProfile } from '@/app/api/Auth'
 import {
   generateAuthenticationOption,
   verifyAuthentication,
 } from '@/app/api/Fido'
 import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -45,7 +41,6 @@ import { startAuthentication } from '@simplewebauthn/browser'
 import { toast } from 'sonner'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const signInSchema = z.object({
@@ -76,6 +71,38 @@ export default function SignInViewPage(): React.JSX.Element {
       password: '',
     },
   })
+
+  const searchParams = useSearchParams()
+
+  const handleSignIn = async (values: {
+    email: string
+    password?: string
+  }): Promise<void> => {
+    try {
+      const entityData = {
+        email: values.email,
+        password: values.password,
+        isPasskey: false,
+      }
+
+      // Get redirectTo from URL params
+      const redirectTo = searchParams?.get('redirectTo')
+
+      const response = await signIn('credentials', {
+        ...entityData,
+        redirect: true,
+        callbackUrl: redirectTo ? redirectTo : '/dashboard',
+      })
+
+      if (response?.ok && response?.url) {
+        route.push(response.url)
+      } else {
+        console.error('Sign in failed:', response?.error)
+      }
+    } catch (error) {
+      console.error('SignIn error:', error)
+    }
+  }
 
   const getUserDetails = async (
     // eslint-disable-next-line camelcase
@@ -130,38 +157,6 @@ export default function SignInViewPage(): React.JSX.Element {
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Error fetching user details', error)
-    }
-  }
-
-  const handleSignIn = async (values: {
-    email: string
-    password?: string
-  }): Promise<void> => {
-    try {
-      const entityData: IUserSignInData = isPasswordTab
-        ? {
-            email: values.email,
-            password: await passwordEncryption(values.password || ''),
-            isPasskey: false,
-          }
-        : {
-            email: values.email,
-            isPasskey: true,
-          }
-
-      const response = await signIn('credentials', {
-        ...entityData,
-        redirect: false,
-        callbackUrl: '/dashboard',
-      })
-
-      if (response?.ok && typeof response.url === 'string') {
-        route.push(response.url)
-      } else {
-        console.error('Sign in failed:', response?.error)
-      }
-    } catch (error) {
-      toast.error('Error signing in')
     }
   }
 

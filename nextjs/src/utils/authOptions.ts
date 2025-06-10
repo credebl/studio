@@ -18,10 +18,29 @@ interface MyAuthOptions {
       session: Session
       token: JWT
     }): Promise<Session>
+    redirect({
+      url,
+      baseUrl,
+    }: {
+      url: string
+      baseUrl: string
+    }): Promise<string>
   }
   secret?: string
   session?: Partial<SessionOptions> | undefined
   pages?: { signIn: string }
+  cookies?: {
+    sessionToken: {
+      name: string
+      options: {
+        domain?: string
+        path: string
+        sameSite: 'lax' | 'strict' | 'none'
+        secure: boolean
+        httpOnly: boolean
+      }
+    }
+  }
 }
 
 interface jwtDataPayload extends JwtPayload {
@@ -125,6 +144,37 @@ export const authOptions: MyAuthOptions = {
       session.expiresAt = token.expiresAt
       return session
     },
+
+    async redirect({ url, baseUrl }) {
+      // Extract redirectTo from the URL
+      const urlObj = new URL(url, baseUrl)
+      const redirectTo = urlObj.searchParams.get('redirectTo')
+
+      if (redirectTo) {
+        // Validate that redirectTo is a valid URL
+        try {
+          const redirectUrl = new URL(redirectTo)
+          // Only allow localhost URLs for security
+          if (redirectUrl.hostname === 'localhost') {
+            return redirectTo
+          }
+        } catch (error) {
+          console.error('Invalid redirectTo URL:', error)
+        }
+      }
+
+      // Check if URL contains redirectTo as query param
+      if (url.includes('redirectTo=')) {
+        const params = new URLSearchParams(url.split('?')[1])
+        const redirect = params.get('redirectTo')
+        if (redirect) {
+          return decodeURIComponent(redirect)
+        }
+      }
+
+      // Default redirect to main app dashboard
+      return `${baseUrl}/dashboard`
+    },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
@@ -135,5 +185,17 @@ export const authOptions: MyAuthOptions = {
 
   pages: {
     signIn: '/auth/sign-in',
+  },
+
+  cookies: {
+    sessionToken: {
+      name: 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false,
+      },
+    },
   },
 }
