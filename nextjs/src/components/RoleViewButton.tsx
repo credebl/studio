@@ -30,7 +30,7 @@ const RoleViewButton = ({
 
   const isRoleAccess = (): boolean => {
     switch (feature) {
-      case Features.CRETAE_ORG:
+      case Features.CREATE_ORG:
         return true
 
       case Features.ISSUANCE:
