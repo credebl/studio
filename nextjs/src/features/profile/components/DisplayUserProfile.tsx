@@ -5,9 +5,38 @@ import { Edit, Mail, User } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { IDisplayUserProfileProps } from '../../../components/profile/interfaces'
 import React from 'react'
 import { getRandomAvatarColor } from '@/utils/avatarColors'
+
+interface OrgRole {
+  name: string
+}
+
+interface Organisation {
+  id: string
+  name: string
+  logoUrl?: string | null
+}
+
+interface UserOrgRole {
+  id: string
+  orgRole: OrgRole
+  organisation: Organisation
+}
+
+interface DisplayUserProfileInfo {
+  profileImg?: string | null
+  firstName?: string
+  lastName?: string
+  username?: string
+  email?: string
+  userOrgRoles?: UserOrgRole[]
+}
+
+interface IDisplayUserProfileProps {
+  toggleEditProfile: () => void
+  userProfileInfo: DisplayUserProfileInfo
+}
 
 const DisplayUserProfile = ({
   toggleEditProfile,
@@ -20,7 +49,7 @@ const DisplayUserProfile = ({
           <div className="">
             {userProfileInfo?.profileImg ? (
               <img
-                src={userProfileInfo.profileImg as string}
+                src={userProfileInfo.profileImg}
                 alt="Profile Preview"
                 className="h-48 w-48 rounded-full object-cover"
               />
