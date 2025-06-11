@@ -223,7 +223,7 @@ export default function EditUserProfile({
                       value={formik.values.firstName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="w-full rounded-md p-2"
+                      className="w-3xl rounded-md p-2"
                     />
                     {formik.errors.firstName && formik.touched.firstName && (
                       <div className="mt-1 text-sm">
@@ -243,7 +243,7 @@ export default function EditUserProfile({
                       value={formik.values.lastName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="w-full rounded-md p-2"
+                      className="w-3xl rounded-md p-2"
                     />
                     {formik.errors.lastName && formik.touched.lastName && (
                       <div className="mt-1 text-sm">
