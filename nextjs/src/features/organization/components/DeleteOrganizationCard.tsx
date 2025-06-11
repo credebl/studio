@@ -8,10 +8,10 @@ import {
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import React from 'react'
-// components/organization/delete-organization-card.tsx
-import { Trash2 } from 'lucide-react'
 
+// components/organization/delete-organization-card.tsx
 interface DeleteOrganizationCardProps {
   title?: string
   description?: string
@@ -47,9 +47,13 @@ export function DeleteOrganizationCard({
             size="icon"
             onClick={onDeleteClick}
             disabled={isButtonDisabled}
-            className={isButtonDisabled ? 'cursor-not-allowed opacity-50' : ''}
+            className={
+              isButtonDisabled
+                ? 'cursor-not-allowed bg-transparent opacity-50 hover:bg-transparent'
+                : 'bg-transparent hover:bg-transparent'
+            }
           >
-            <Trash2 className="h-5 w-5" />
+            <DeleteIcon />
           </Button>
         </div>
       </CardHeader>

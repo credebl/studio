@@ -33,6 +33,7 @@ import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import { envConfig } from '@/config/envConfig'
+import { getDidValidationSchema } from '@/lib/validationSchemas'
 import { getLedgerConfig } from '@/app/api/Agent'
 
 interface IDetails {
@@ -184,21 +185,11 @@ const DedicatedLedgerConfig = ({
     setSeedVal(seeds)
   }, [seeds])
 
-  const validations = {
-    method: yup.string().required('Method is required'),
-    ledger: yup.string().required('Ledger is required'),
-    ...(haveDidShared && {
-      seed: yup.string().required('Seed is required'),
-      did: yup.string().required('DID is required'),
-    }),
-    ...((DidMethod.INDY === selectedMethod ||
-      DidMethod.POLYGON === selectedMethod) && {
-      network: yup.string().required('Network is required'),
-    }),
-    ...(DidMethod.WEB === selectedMethod && {
-      domain: yup.string().required('Domain is required'),
-    }),
-  }
+  const validations = getDidValidationSchema({
+    haveDidShared,
+    selectedMethod,
+  })
+
   const renderNetworkOptions = (
     formikHandlers: FormikProps<IValuesShared>,
   ): React.JSX.Element | null => {
