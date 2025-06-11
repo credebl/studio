@@ -317,3 +317,43 @@ ul.timelinestatic > li {
     width: 8px;
   }
 }
+
+/* Avatar background colors */
+.bg-avatar-1 {
+  background-color: #fceaea;
+}
+.bg-avatar-2 {
+  background-color: #eeecfe;
+}
+.bg-avatar-3 {
+  background-color: #f0f0f1;
+}
+.bg-avatar-4 {
+  background-color: #e5f8ed;
+}
+.bg-avatar-5 {
+  background-color: #fdf3e8;
+}
+.bg-avatar-6 {
+  background-color: #e0f9fd;
+}
+
+/* Avatar text colors */
+.text-avatar-1 {
+  color: #ea5455;
+} /* matching or contrasting color */
+.text-avatar-2 {
+  color: #b8b2f7;
+}
+.text-avatar-3 {
+  color: #c1c2c5;
+}
+.text-avatar-4 {
+  color: #82ddaa;
+}
+.text-avatar-5 {
+  color: #f4a651;
+}
+.text-avatar-6 {
+  color: #76ddef;
+}
