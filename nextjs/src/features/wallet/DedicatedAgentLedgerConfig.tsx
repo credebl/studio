@@ -148,6 +148,26 @@ const DedicatedLedgerConfig = ({
     setSelectedDid('')
   }
 
+  const isSubmitDisabled = (): boolean => {
+    if (!selectedLedger) {
+      return true
+    } else if (
+      (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
+      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
+    ) {
+      return true
+    } else if (
+      (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
+      (selectedLedger === Ledgers.NO_LEDGER &&
+        selectedMethod === DidMethod.WEB &&
+        !domainValue)
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   const handleNetworkChange = (
     network: React.SetStateAction<string>,
     didMethod: React.SetStateAction<string>,
@@ -296,26 +316,6 @@ const DedicatedLedgerConfig = ({
         )}
       </div>
     )
-  }
-
-  const isSubmitDisabled = (): boolean => {
-    if (!selectedLedger) {
-      return true
-    } else if (
-      (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
-      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
-    ) {
-      return true
-    } else if (
-      (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
-      (selectedLedger === Ledgers.NO_LEDGER &&
-        selectedMethod === DidMethod.WEB &&
-        !domainValue)
-    ) {
-      return true
-    }
-
-    return false
   }
 
   const LedgerCard = ({
