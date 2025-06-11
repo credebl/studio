@@ -16,6 +16,7 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import { Edit } from 'lucide-react'
+import Loader from '@/components/Loader'
 import OrganizationDetails from './OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -33,7 +34,7 @@ export const OrganizationDashboard = ({
   const router = useRouter()
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [orgDashboard, setOrgDashboard] = useState<IOrgDashboard | null>(null)
-  const [, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true)
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
 
@@ -267,7 +268,9 @@ export const OrganizationDashboard = ({
             </CardContent>
           </Card>
         </div>
-        {walletStatus === true ? (
+        {loading ? (
+          <Loader />
+        ) : walletStatus === true ? (
           <OrganizationDetails orgData={orgData} />
         ) : (
           <Button
