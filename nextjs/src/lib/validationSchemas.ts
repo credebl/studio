@@ -21,7 +21,7 @@ export const getDidValidationSchema = ({
       .min(2, 'Wallet label must be at least 2 characters')
       .max(25, 'Wallet label must be at most 25 characters'),
   }),
-  method: yup.string().required('Method i'),
+  method: yup.string().required('Method is required'),
   ledger: yup.string().required('Ledger is required'),
   ...(haveDidShared && {
     seed: yup.string().required('Seed is required'),
