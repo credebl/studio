@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Trash2, X } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
+import { X } from 'lucide-react'
 
 interface DeleteModalProps {
   openModal: boolean
@@ -54,10 +54,6 @@ const DeleteModal = ({
           </DialogClose>
         </div>
       </DialogHeader>
-
-      <div className="flex justify-center">
-        <Trash2 className="h-12 w-12 text-gray-400 dark:text-gray-500" />
-      </div>
 
       <DialogFooter className="mt-4 flex justify-center gap-4">
         <Button variant="outline" onClick={() => closeModal(false)}>

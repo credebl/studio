@@ -15,6 +15,7 @@ export default function UserProfile(): React.JSX.Element {
   const token = useAppSelector((state) => state.auth.token)
 
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
   const [prePopulatedUserProfile, setPrePopulatedUserProfile] =
     useState<IUserProfile | null>(null)
   const [activeTab, setActiveTab] = useState<'profile' | 'passkey'>('profile')
@@ -31,6 +32,7 @@ export default function UserProfile(): React.JSX.Element {
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
         ) {
           setPrePopulatedUserProfile(response.data.data)
+          setUserEmail(response.data.data.email)
         }
       } catch (error) {
         // eslint-disable-next-line no-console
@@ -91,7 +93,7 @@ export default function UserProfile(): React.JSX.Element {
             )}
           </>
         ) : (
-          <AddPasskey />
+          <AddPasskey email={userEmail} />
         )}
       </div>
     </div>
