@@ -60,17 +60,6 @@ interface ILedgerConfigData {
   }
 }
 
-// interface IValuesShared {
-//   seed: string;
-//   keyType: string;
-//   method: string;
-//   network: string;
-//   role: string;
-//   ledger: string;
-//   privatekey: string;
-//   [key: string]: string;
-// }
-
 const RequiredAsterisk = (): React.JSX.Element => (
   <span className="text-destructive text-xs">*</span>
 )
@@ -93,7 +82,7 @@ const DedicatedLedgerConfig = ({
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const ledgerConfigData: ILedgerConfigData = {
+        const dedicatedLedgerConfigData: ILedgerConfigData = {
           indy: {
             [`${DidMethod.INDY}`]: {},
           },
@@ -114,8 +103,9 @@ const DedicatedLedgerConfig = ({
                     `${DidMethod.INDY}:`,
                     '',
                   )
-                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] =
-                    value
+                  dedicatedLedgerConfigData.indy[`${DidMethod.INDY}`][
+                    formattedKey
+                  ] = value
                 }
               }
             }
@@ -123,21 +113,23 @@ const DedicatedLedgerConfig = ({
             for (const [key, value] of Object.entries(details)) {
               if (typeof value === 'object' && value !== null) {
                 for (const [subKey, subValue] of Object.entries(value)) {
-                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] =
-                    subValue
+                  dedicatedLedgerConfigData.polygon[`${DidMethod.POLYGON}`][
+                    subKey
+                  ] = subValue
                 }
               } else if (typeof value === 'string') {
-                ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value
+                dedicatedLedgerConfigData.polygon[`${DidMethod.POLYGON}`][key] =
+                  value
               }
             }
           } else if (lowerName === Ledgers.NO_LEDGER.toLowerCase() && details) {
             for (const [key, value] of Object.entries(details)) {
-              ledgerConfigData.noLedger[key] = value as string
+              dedicatedLedgerConfigData.noLedger[key] = value as string
             }
           }
         })
 
-        setMappedData(ledgerConfigData)
+        setMappedData(dedicatedLedgerConfigData)
       }
     } catch (err) {
       console.error('Fetch Network ERROR::::', err)
