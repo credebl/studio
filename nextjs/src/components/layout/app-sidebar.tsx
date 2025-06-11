@@ -19,6 +19,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
@@ -60,8 +61,8 @@ export default function AppSidebar(): React.JSX.Element {
 
   const dispatch = useAppDispatch()
 
-  const [currentPage] = useState(1)
-  const [pageSize] = useState(10)
+  const [currentPage] = useState(currentPageNumber)
+  const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
   const [, setOrgList] = useState<Organization[]>([])
 
