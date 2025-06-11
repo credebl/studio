@@ -91,15 +91,17 @@ export default function AppSidebar(): React.JSX.Element {
 
           // Only set initial organization if no organization is currently selected in Redux
           if (!selectedOrgId && orgs.length > 0) {
-            dispatch(setOrgId(orgs[0]?.id))
+            const [firstOrg]: Organization[] = orgs
+
+            dispatch(setOrgId(firstOrg?.id))
             dispatch(
               setOrgInfo({
-                id: orgs[0]?.id,
-                name: orgs[0]?.name,
-                description: orgs[0]?.description,
-                logoUrl: orgs[0]?.logoUrl,
+                id: firstOrg?.id,
+                name: firstOrg?.name,
+                description: firstOrg?.description,
+                logoUrl: firstOrg?.logoUrl,
                 roles:
-                  orgs[0]?.userOrgRoles?.map(
+                  firstOrg?.userOrgRoles?.map(
                     (role: { orgRole: { name: string } }) =>
                       role?.orgRole?.name,
                   ) || [],

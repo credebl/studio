@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/select'
 import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant'
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -32,7 +33,7 @@ import { Plus } from 'lucide-react'
 import SchemaCard from './SchemaCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOrganizationById } from '@/app/api/organization'
-import { useAppSelector } from '@/lib/hooks'
+import { getUserProfile } from '@/app/api/Auth'
 import { useRouter } from 'next/navigation'
 
 interface IAttributesDetails {
@@ -55,6 +56,18 @@ export interface ISchemaData {
   userName: string
 }
 
+interface UserOrgRole {
+  orgId: string
+  orgRole: {
+    name: string
+  }
+}
+
+interface GetUserProfileResponse {
+  data: {
+    userOrgRoles: UserOrgRole[]
+  }
+}
 const SchemaList = (props: {
   schemaSelectionCallback?: (
     schemaId: string,
@@ -71,6 +84,8 @@ const SchemaList = (props: {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
+  const token = useAppSelector((state) => state.auth.token)
+
   // const [schemaList, setSchemaList] = useState<SetStateAction<never[]>>([])
   const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
 
@@ -85,8 +100,10 @@ const SchemaList = (props: {
   const [, setSelectedValue] = useState<string>('Organizations schema')
   const [w3cSchema, setW3CSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
+  const [orgRole, setOrgRole] = useState<string | null>(null)
 
   const route = useRouter()
+  const dispatch = useAppDispatch()
 
   const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
     itemPerPage,
@@ -98,6 +115,45 @@ const SchemaList = (props: {
   })
   const options = ['All schemas']
   const optionsWithDefault = ["Organization's schema", ...options]
+
+  useEffect(() => {
+    async function fetchProfile(): Promise<void> {
+      if (!token || !organizationId) {
+        return
+      }
+
+      try {
+        const response = await getUserProfile(token)
+
+        // Type narrowing: check if response is a string
+        if (typeof response === 'string') {
+          console.error('API error:', response)
+          setOrgRole(null)
+          return
+        }
+
+        // Type-cast to expected shape after narrowing
+        const typedResponse = response as AxiosResponse<GetUserProfileResponse>
+
+        const roles = typedResponse?.data?.data?.userOrgRoles ?? []
+        const matchedRole = roles.find(
+          (role: UserOrgRole) => role.orgId === organizationId,
+        )
+
+        if (matchedRole?.orgRole?.name) {
+          setOrgRole(matchedRole.orgRole.name)
+        } else {
+          setOrgRole(null)
+        }
+      } catch (error) {
+        console.error('Unexpected fetch error:', error)
+        setOrgRole(null)
+      }
+    }
+
+    fetchProfile()
+  }, [token, organizationId, dispatch])
+
   const getSchemaList = async (
     schemaListAPIParameter: GetAllSchemaListParameter,
     flag: boolean,
@@ -299,7 +355,12 @@ const SchemaList = (props: {
             </SelectContent>
           </Select>
           <Button
-            onClick={() => route.push('/organizations/schemas/create')}
+            onClick={() => {
+              if (orgRole === 'admin' || orgRole === 'owner') {
+                route.push('/organizations/schemas/create')
+              }
+            }}
+            disabled={orgRole !== 'admin' && orgRole !== 'owner'}
             className="w-full sm:w-auto"
           >
             <Plus /> Create
@@ -346,7 +407,7 @@ const SchemaList = (props: {
             </div>
             {totalItem > itemPerPage && (
               <div className="mt-6 flex justify-end">
-                <Pagination className='w-fit m-0'>
+                <Pagination className="m-0 w-fit">
                   <PaginationContent>
                     {schemaListAPIParameter.page > 1 && (
                       <PaginationItem>
@@ -409,10 +470,14 @@ const SchemaList = (props: {
           <EmptyMessage
             title="No Schemas"
             description="Get started by creating a new Schema"
-            buttonContent="Create Schema"
+            buttonContent="Create"
+            buttonIcon={<Plus className="h-4 w-4" />}
             onClick={() => {
-              route.push('/organizations/schemas/create')
+              if (orgRole === 'admin' || orgRole === 'owner') {
+                route.push('/organizations/schemas/create')
+              }
             }}
+            disabled={orgRole !== 'admin' && orgRole !== 'owner'}
           />
         )}
       </div>
