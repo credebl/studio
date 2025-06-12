@@ -1,9 +1,9 @@
 name: Deploy
 on:
   push:
-    branches: main
+    branches: deno-deploy
   pull_request:
-    branches: main
+    branches: deno-deploy
 
 jobs:
   deploy:
@@ -37,7 +37,7 @@ jobs:
       - name: Upload to Deno Deploy
         uses: denoland/deployctl@v1
         with:
-          project: "studio-nextjs"
+          project: "studio-nextjs-test"
           entrypoint: "jsr:@deno/nextjs-start/v15"
           root: "./nextjs"
           
