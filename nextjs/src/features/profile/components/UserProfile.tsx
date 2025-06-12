@@ -96,10 +96,6 @@ export default function UserProfile(): React.JSX.Element {
     )
   }
 
-  const handleTabChange = (value: string): void => {
-    setActiveTab(value as 'profile' | 'passkey')
-  }
-
   return (
     <div className="mx-auto p-6">
       <h1 className="text-foreground mb-6 text-2xl font-semibold">
