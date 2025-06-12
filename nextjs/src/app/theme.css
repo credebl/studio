@@ -250,19 +250,3 @@ ul.timelinestatic > li {
   background-color: #fee2e2;
   color: #b91c1c;
 }
-
-.badges-success {
-  background-color: #dcfce7;
-}
-
-.badges-error {
-  background-color: #fee2e2;
-}
-
-.text-success {
-  color: var(--success-text);
-}
-
-.text-error {
-  color: var(--error-text);
-}
