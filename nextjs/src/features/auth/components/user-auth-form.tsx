@@ -2,14 +2,7 @@
 
 import * as z from 'zod'
 
-import {
-  Eye,
-  EyeOff,
-  KeyRound,
-  Loader2,
-  LockKeyhole,
-  Mail,
-} from 'lucide-react'
+import { Eye, EyeOff, KeyRound, Loader2, LockKeyhole, Mail } from 'lucide-react'
 import {
   Form,
   FormControl,

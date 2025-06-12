@@ -358,7 +358,9 @@ const VerificationSchemasList = (): JSX.Element => {
                     feature={Features.CRETAE_SCHEMA}
                     svgComponent={createSchemaButtonTitle.svg}
                     onClickEvent={() => {
-                      route.push(`${pathRoutes.organizations.dashboard}`)
+                      route.push(
+                        `${pathRoutes.organizations}/${organizationId}`,
+                      )
                     }}
                   />
                 )}

@@ -33,6 +33,7 @@ import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import { envConfig } from '@/config/envConfig'
+import { getDidValidationSchema } from '@/lib/validationSchemas'
 import { getLedgerConfig } from '@/app/api/Agent'
 
 interface IDetails {
@@ -60,17 +61,6 @@ interface ILedgerConfigData {
   }
 }
 
-// interface IValuesShared {
-//   seed: string;
-//   keyType: string;
-//   method: string;
-//   network: string;
-//   role: string;
-//   ledger: string;
-//   privatekey: string;
-//   [key: string]: string;
-// }
-
 const RequiredAsterisk = (): React.JSX.Element => (
   <span className="text-destructive text-xs">*</span>
 )
@@ -93,7 +83,7 @@ const DedicatedLedgerConfig = ({
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const ledgerConfigData: ILedgerConfigData = {
+        const dedicatedLedgerConfigData: ILedgerConfigData = {
           indy: {
             [`${DidMethod.INDY}`]: {},
           },
@@ -114,8 +104,9 @@ const DedicatedLedgerConfig = ({
                     `${DidMethod.INDY}:`,
                     '',
                   )
-                  ledgerConfigData.indy[`${DidMethod.INDY}`][formattedKey] =
-                    value
+                  dedicatedLedgerConfigData.indy[`${DidMethod.INDY}`][
+                    formattedKey
+                  ] = value
                 }
               }
             }
@@ -123,21 +114,23 @@ const DedicatedLedgerConfig = ({
             for (const [key, value] of Object.entries(details)) {
               if (typeof value === 'object' && value !== null) {
                 for (const [subKey, subValue] of Object.entries(value)) {
-                  ledgerConfigData.polygon[`${DidMethod.POLYGON}`][subKey] =
-                    subValue
+                  dedicatedLedgerConfigData.polygon[`${DidMethod.POLYGON}`][
+                    subKey
+                  ] = subValue
                 }
               } else if (typeof value === 'string') {
-                ledgerConfigData.polygon[`${DidMethod.POLYGON}`][key] = value
+                dedicatedLedgerConfigData.polygon[`${DidMethod.POLYGON}`][key] =
+                  value
               }
             }
           } else if (lowerName === Ledgers.NO_LEDGER.toLowerCase() && details) {
             for (const [key, value] of Object.entries(details)) {
-              ledgerConfigData.noLedger[key] = value as string
+              dedicatedLedgerConfigData.noLedger[key] = value as string
             }
           }
         })
 
-        setMappedData(ledgerConfigData)
+        setMappedData(dedicatedLedgerConfigData)
       }
     } catch (err) {
       console.error('Fetch Network ERROR::::', err)
@@ -156,6 +149,26 @@ const DedicatedLedgerConfig = ({
     setSelectedDid('')
   }
 
+  const isSubmitDisabled = (): boolean => {
+    if (!selectedLedger) {
+      return true
+    } else if (
+      (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
+      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
+    ) {
+      return true
+    } else if (
+      (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
+      (selectedLedger === Ledgers.NO_LEDGER &&
+        selectedMethod === DidMethod.WEB &&
+        !domainValue)
+    ) {
+      return true
+    }
+
+    return false
+  }
+
   const handleNetworkChange = (
     network: React.SetStateAction<string>,
     didMethod: React.SetStateAction<string>,
@@ -172,21 +185,11 @@ const DedicatedLedgerConfig = ({
     setSeedVal(seeds)
   }, [seeds])
 
-  const validations = {
-    method: yup.string().required('Method is required'),
-    ledger: yup.string().required('Ledger is required'),
-    ...(haveDidShared && {
-      seed: yup.string().required('Seed is required'),
-      did: yup.string().required('DID is required'),
-    }),
-    ...((DidMethod.INDY === selectedMethod ||
-      DidMethod.POLYGON === selectedMethod) && {
-      network: yup.string().required('Network is required'),
-    }),
-    ...(DidMethod.WEB === selectedMethod && {
-      domain: yup.string().required('Domain is required'),
-    }),
-  }
+  const validations = getDidValidationSchema({
+    haveDidShared,
+    selectedMethod,
+  })
+
   const renderNetworkOptions = (
     formikHandlers: FormikProps<IValuesShared>,
   ): React.JSX.Element | null => {
@@ -306,26 +309,6 @@ const DedicatedLedgerConfig = ({
     )
   }
 
-  const isSubmitDisabled = (): boolean => {
-    if (!selectedLedger) {
-      return true
-    } else if (
-      (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
-      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
-    ) {
-      return true
-    } else if (
-      (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
-      (selectedLedger === Ledgers.NO_LEDGER &&
-        selectedMethod === DidMethod.WEB &&
-        !domainValue)
-    ) {
-      return true
-    }
-
-    return false
-  }
-
   const LedgerCard = ({
     ledger,
     title,
@@ -435,7 +418,7 @@ const DedicatedLedgerConfig = ({
             description="Hyperledger Indy"
             icon={
               <Image
-                src="/images/Indicio.svg"
+                src="/images/Indicio.png"
                 alt="Indy Icon"
                 width={112}
                 height={112}
@@ -448,7 +431,7 @@ const DedicatedLedgerConfig = ({
             description="Polygon blockchain"
             icon={
               <Image
-                src="/images/polygon.svg"
+                src="/images/polygon.png"
                 alt="Indy Icon"
                 width={112}
                 height={112}
