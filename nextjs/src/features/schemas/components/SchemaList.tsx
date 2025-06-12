@@ -86,7 +86,6 @@ const SchemaList = (props: {
   const ledgerId = useAppSelector((state) => state.organization.ledgerId)
   const token = useAppSelector((state) => state.auth.token)
 
-  // const [schemaList, setSchemaList] = useState<SetStateAction<never[]>>([])
   const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
 
   const [, setSchemaListErr] = useState<string | null>('')
