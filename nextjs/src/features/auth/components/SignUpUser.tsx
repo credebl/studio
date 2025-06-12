@@ -57,7 +57,9 @@ export default function SignUpUser(): React.JSX.Element {
         <div className="text-muted-foreground mt-4 text-center text-sm">
           Already have an account?{' '}
           <Link href="/auth/sign-in">
-            <span className="text-secondary hover:underline">Sign in</span>
+            <span className="text-muted-foreground hover:text-foreground hover:underline">
+              Sign in
+            </span>
           </Link>
         </div>
       </div>
