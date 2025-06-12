@@ -269,11 +269,6 @@ const AddPasskey = ({
               />
             </div>
           )}
-          <Alert variant={addSuccess ? 'default' : 'destructive'}>
-            <AlertDescription>
-              {addSuccess || addFailure || error}
-            </AlertDescription>
-          </Alert>
         </div>
       )}
       <div className="relative flex h-full flex-auto flex-col p-3 sm:p-4">
