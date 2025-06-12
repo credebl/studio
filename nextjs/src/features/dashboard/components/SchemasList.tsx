@@ -249,7 +249,14 @@ const SchemasList = ({
 
           <Tooltip open={showTooltip}>
             <TooltipTrigger asChild>
-              <Button onClick={handleCreateSchemaClick}>
+              <Button
+                onClick={handleCreateSchemaClick}
+                disabled={
+                  !orgId ||
+                  !walletExists ||
+                  !(orgRole === 'owner' || orgRole === 'admin')
+                }
+              >
                 <Plus className="h-4 w-4" /> New Schema
               </Button>
             </TooltipTrigger>
