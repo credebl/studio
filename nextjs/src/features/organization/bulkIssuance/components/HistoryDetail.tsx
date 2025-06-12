@@ -238,7 +238,7 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
           }))
         }}
         onSearchTerm={(value) => searchInputChange(value)}
-        loading={loading}
+        isLoading={loading}
       />
     </div>
   )

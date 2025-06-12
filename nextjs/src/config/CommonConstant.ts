@@ -72,7 +72,7 @@ export const emailCredDefHeaders = [
 ]
 
 export const predicatesConditions = [
-  { value: '', label: 'Select' },
+  { value: 'Select', label: 'Select' },
   { value: '>', label: 'Greater than' },
   { value: '<', label: 'Less than' },
   { value: '>=', label: 'Greater than or equal to' },

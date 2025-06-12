@@ -36,7 +36,7 @@ export enum DataType {
 
 export enum Features {
   SEND_INVITATION = 'send_invitations',
-  CRETAE_ORG = 'create_org',
+  CREATE_ORG = 'create_org',
   CRETAE_SCHEMA = 'create_schema',
   ISSUANCE = 'issuance',
   VERIFICATION = 'verification',

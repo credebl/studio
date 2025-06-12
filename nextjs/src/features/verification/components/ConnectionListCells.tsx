@@ -1,8 +1,7 @@
 'use client'
 
-import { JSX, useEffect, useState } from 'react'
-
 import DateTooltip from '@/components/DateTooltip'
+import { JSX } from 'react'
 import { dateConversion } from '@/utils/DateConversion'
 
 export interface IConnectionList {
@@ -52,23 +51,52 @@ export const SelectCheckboxCell = ({
   onSelect,
   disabled = false,
 }: SelectCheckboxCellProps): JSX.Element => {
-  const [isChecked, setIsChecked] = useState(checked)
-
-  useEffect(() => {
-    setIsChecked(checked)
-  }, [checked])
+  const handleCheckboxChange = (): void => {
+    if (disabled) {
+      return
+    }
+    onSelect(connection, !checked)
+  }
 
   return (
-    <input
-      type="checkbox"
-      className="h-4 w-4 cursor-pointer rounded"
-      checked={isChecked}
-      onChange={(e) => {
-        const newChecked = e.target.checked
-        setIsChecked(newChecked)
-        onSelect(connection, newChecked)
-      }}
-      disabled={disabled}
-    />
+    <button
+      type="button"
+      onClick={handleCheckboxChange}
+      aria-label="Checkbox"
+      className={`flex h-4 w-4 items-center justify-center ${
+        disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+      }`}
+    >
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(e) => onSelect(connection, e.target.checked)}
+        className="hidden"
+        disabled={disabled}
+      />
+      <div
+        className={`h-full w-full border ${
+          checked ? 'bg-primary' : 'bg-transparent'
+        }`}
+        style={{
+          borderColor: 'rgb(31 78 173 / var(--tw-bg-opacity))',
+          position: 'relative',
+        }}
+      >
+        {checked && (
+          <svg
+            className="text-primary-foreground absolute inset-0 h-full w-full"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+        )}
+      </div>
+    </button>
   )
 }

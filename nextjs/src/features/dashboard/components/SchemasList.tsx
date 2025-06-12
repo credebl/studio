@@ -16,7 +16,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
+import { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
@@ -25,8 +27,8 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { ToolTipDataForSchema } from './TooltipData'
 import { dateConversion } from '@/utils/DateConversion'
 import { getAllSchemasByOrgId } from '@/app/api/schema'
+import { getUserProfile } from '@/app/api/Auth'
 import { pathRoutes } from '@/config/pathRoutes'
-import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
 type Schema = {
@@ -37,6 +39,19 @@ type Schema = {
   organizationName: string
   schemaLedgerId: string
   issuerId?: string
+}
+
+interface UserOrgRole {
+  orgId: string
+  orgRole: {
+    name: string
+  }
+}
+
+interface GetUserProfileResponse {
+  data: {
+    userOrgRoles: UserOrgRole[]
+  }
 }
 
 const SchemasList = ({
@@ -50,9 +65,49 @@ const SchemasList = ({
   const currentPage = 1
   const pageSize = 10
   const [showTooltip, setShowTooltip] = useState(false)
-  const orgId = useAppSelector((state) => state.organization.orgId)
+  const [tooltipMessage, setTooltipMessage] = useState<string>('')
   const router = useRouter()
+  const token = useAppSelector((state) => state.auth.token)
+  const orgId = useAppSelector((state) => state.organization.orgId)
+  const [orgRole, setOrgRole] = useState<string | null>(null)
+  const dispatch = useAppDispatch()
+  useEffect(() => {
+    async function fetchProfile(): Promise<void> {
+      if (!token || !orgId) {
+        return
+      }
 
+      try {
+        const response = await getUserProfile(token)
+
+        // Type narrowing: check if response is a string
+        if (typeof response === 'string') {
+          console.error('API error:', response)
+          setOrgRole(null)
+          return
+        }
+
+        // Type-cast to expected shape after narrowing
+        const typedResponse = response as AxiosResponse<GetUserProfileResponse>
+
+        const roles = typedResponse?.data?.data?.userOrgRoles ?? []
+        const matchedRole = roles.find(
+          (role: UserOrgRole) => role.orgId === orgId,
+        )
+
+        if (matchedRole?.orgRole?.name) {
+          setOrgRole(matchedRole.orgRole.name)
+        } else {
+          setOrgRole(null)
+        }
+      } catch (error) {
+        console.error('Unexpected fetch error:', error)
+        setOrgRole(null)
+      }
+    }
+
+    fetchProfile()
+  }, [token, orgId, dispatch])
   const fetchSchemas = async (): Promise<void> => {
     setLoading(true)
 
@@ -157,12 +212,21 @@ const SchemasList = ({
   }
 
   const handleCreateSchemaClick = (): void => {
-    if (!orgId || !walletExists) {
+    if (!orgId) {
+      setTooltipMessage('You need to create an organization first.')
       setShowTooltip(true)
-      setTimeout(() => setShowTooltip(false), 3000)
+    } else if (!walletExists) {
+      setTooltipMessage('You need to create a wallet first.')
+      setShowTooltip(true)
+    } else if (!(orgRole === 'owner' || orgRole === 'admin')) {
+      setTooltipMessage('You do not have a valid role to create a schema.')
+      setShowTooltip(true)
     } else {
       router.push('/organizations/schemas/create')
+      return
     }
+
+    setTimeout(() => setShowTooltip(false), 3000)
   }
 
   return (
@@ -185,13 +249,18 @@ const SchemasList = ({
 
           <Tooltip open={showTooltip}>
             <TooltipTrigger asChild>
-              <Button onClick={handleCreateSchemaClick}>
+              <Button
+                onClick={handleCreateSchemaClick}
+                disabled={
+                  !orgId ||
+                  !walletExists ||
+                  !(orgRole === 'owner' || orgRole === 'admin')
+                }
+              >
                 <Plus className="h-4 w-4" /> New Schema
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
-              Create an organization and a wallet first.
-            </TooltipContent>
+            <TooltipContent>{tooltipMessage}</TooltipContent>
           </Tooltip>
         </div>
         <CardDescription>Manage your data schemas</CardDescription>

@@ -16,6 +16,25 @@ import { getOrganizations } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
 import { useAppSelector } from '@/lib/hooks'
 
+interface OrgRole {
+  name: string
+}
+
+interface UserOrgRole {
+  orgId: string | null
+  organisation: {
+    id: string
+    name: string
+  } | null
+  orgRole: OrgRole
+}
+
+interface Organization {
+  id: string
+  name: string
+  userOrgRoles: UserOrgRole[]
+}
+
 const ClientCredentials = (): React.JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
   const [clientId, setClientId] = useState<string | null>(null)
@@ -47,9 +66,13 @@ const ClientCredentials = (): React.JSX.Element => {
       if (typeof response !== 'string' && response?.data?.data?.organizations) {
         const { organizations } = response.data.data
 
-        const currentOrg = organizations.find((org) => org.id === orgId)
+        const currentOrg = organizations.find(
+          (org: Organization) => org.id === orgId,
+        )
         const roles =
-          currentOrg?.userOrgRoles?.map((role) => role.orgRole.name) ?? []
+          currentOrg?.userOrgRoles?.map(
+            (role: UserOrgRole) => role.orgRole.name,
+          ) ?? []
         setUserRoles(roles)
       } else {
         setUserRoles([])
@@ -139,7 +162,8 @@ const ClientCredentials = (): React.JSX.Element => {
         ) {
           const userProfile = response.data.data
           const hasOrg = userProfile.userOrgRoles?.some(
-            (role) => role.orgId !== null || role.organisation !== null,
+            (role: UserOrgRole) =>
+              role.orgId !== null || role.organisation !== null,
           )
           if (hasOrganizations !== hasOrg) {
             setHasOrganizations(hasOrg)

@@ -71,6 +71,24 @@ interface IFormValues {
   did: string
 }
 
+interface OrgRole {
+  name: string
+}
+
+interface UserOrgRole {
+  orgId: string | null
+  organisation: {
+    id: string
+    name: string
+  } | null
+  orgRole: OrgRole
+}
+
+interface Organization {
+  id: string
+  name: string
+  userOrgRoles: UserOrgRole[]
+}
 const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
@@ -142,9 +160,13 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       if (typeof response !== 'string' && response?.data?.data?.organizations) {
         const { organizations } = response.data.data
 
-        const currentOrg = organizations.find((org) => org.id === orgId)
+        const currentOrg = organizations.find(
+          (org: Organization) => org.id === orgId,
+        )
         const roles =
-          currentOrg?.userOrgRoles?.map((role) => role.orgRole.name) || []
+          currentOrg?.userOrgRoles?.map(
+            (role: UserOrgRole) => role.orgRole.name,
+          ) || []
         setUserRoles(roles)
       } else {
         setUserRoles([])

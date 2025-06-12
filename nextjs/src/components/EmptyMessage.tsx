@@ -9,6 +9,7 @@ interface EmptyStateProps {
   svgComponent?: React.ReactNode
   onClick?: () => void
   buttonIcon?: React.ReactNode
+  disabled?: boolean
 }
 
 export const EmptyMessage = ({
@@ -19,6 +20,7 @@ export const EmptyMessage = ({
   svgComponent,
   onClick,
   buttonIcon,
+  disabled = false,
 }: EmptyStateProps): React.JSX.Element => (
   <div
     className="flex flex-col items-center justify-center space-y-4 text-center"
@@ -36,6 +38,7 @@ export const EmptyMessage = ({
       <Button
         onClick={onClick}
         className="bg-primary hover:bg-primary/90 mt-2 rounded-lg px-4 py-2"
+        disabled={disabled}
       >
         {buttonIcon}
         {buttonContent}
