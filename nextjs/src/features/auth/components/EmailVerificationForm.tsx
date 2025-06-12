@@ -30,7 +30,7 @@ export default function EmailVerificationForm({
 }: StepEmailProps): React.ReactElement {
   const [loading, setLoading] = useState(false)
   const [verifyLoader, setVerifyLoader] = useState(false)
-  const [addSuccess, setAddSuccess] = useState<string | null>(null)
+  const [emailSuccess, setEmailSuccess] = useState<string | null>(null)
   const [addFailure, setAddFailure] = useState<string | null>(null)
 
   const validationSchema = Yup.object().shape({
@@ -54,17 +54,17 @@ export default function EmailVerificationForm({
       const { data } = userRsp as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setAddSuccess(data?.message)
+        setEmailSuccess(data?.message)
         setAddFailure(null)
       } else {
         setAddFailure(userRsp as string)
-        setAddSuccess(null)
+        setEmailSuccess(null)
       }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('Error during sending verification email:', err)
       setAddFailure('An error occurred while sending verification email.')
-      setAddSuccess(null)
+      setEmailSuccess(null)
     } finally {
       setVerifyLoader(false)
     }
@@ -72,7 +72,7 @@ export default function EmailVerificationForm({
 
   const handleVerifyEmail = async (emailValue: string): Promise<void> => {
     setLoading(true)
-    setAddSuccess(null)
+    setEmailSuccess(null)
     setAddFailure(null)
 
     try {
@@ -123,14 +123,14 @@ export default function EmailVerificationForm({
 
         return (
           <FormikForm className="space-y-4">
-            {addSuccess && (
+            {emailSuccess && (
               <div className="w-full" role="alert">
                 <AlertComponent
-                  message={addSuccess}
+                  message={emailSuccess}
                   type={'success'}
                   onAlertClose={() => {
-                    if (addSuccess) {
-                      setAddSuccess(null)
+                    if (emailSuccess) {
+                      setEmailSuccess(null)
                     }
                   }}
                 />
