@@ -179,11 +179,23 @@ export const OrganizationList = (): React.JSX.Element => {
                   >
                     {org.description}
                   </p>
-                  <div className="text-md mt-2 flex items-center gap-1">
-                    <span className="font-bold">Role(s):</span>
-                    <span className="bg-secondary text-secondary-foreground rounded-md px-3 py-1">
-                      {org.userOrgRoles[0].orgRole.name || 'No Role'}
-                    </span>
+
+                  <div className="text-md mt-2 flex flex-wrap items-center gap-1">
+                    <span className="mr-1 font-bold">Role(s):</span>
+                    {org.userOrgRoles.length > 0 ? (
+                      org.userOrgRoles.map((roles, index) => (
+                        <span
+                          key={index}
+                          className="bg-secondary text-secondary-foreground rounded-md px-3 py-1 text-sm"
+                        >
+                          {roles.orgRole.name}
+                        </span>
+                      ))
+                    ) : (
+                      <span className="text-muted-foreground text-sm">
+                        No Roles
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

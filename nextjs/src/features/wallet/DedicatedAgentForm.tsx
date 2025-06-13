@@ -49,7 +49,7 @@ const DedicatedAgentForm = ({
               />
               {formikHandlers.errors.walletName &&
                 formikHandlers.touched.walletName && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-xs">
                     {formikHandlers.errors.walletName}
                   </span>
                 )}
@@ -67,7 +67,7 @@ const DedicatedAgentForm = ({
               />
               {formikHandlers.errors.agentEndpoint &&
                 formikHandlers.touched.agentEndpoint && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-xs">
                     {formikHandlers.errors.agentEndpoint}
                   </span>
                 )}
@@ -85,7 +85,7 @@ const DedicatedAgentForm = ({
               />
               {formikHandlers.errors.apiKey &&
                 formikHandlers.touched.apiKey && (
-                  <span className="text-xs text-red-500">
+                  <span className="text-destructive text-xs">
                     {formikHandlers.errors.apiKey}
                   </span>
                 )}

@@ -2,7 +2,7 @@
 
 import * as Yup from 'yup'
 
-import { ArrowLeft, CircleArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import type {
   DataTypeAttributes,
@@ -409,7 +409,7 @@ const IssueCred = (): React.JSX.Element => {
                           disabled={issuanceLoader || !isValid}
                           className=""
                         >
-                          <CircleArrowRight />
+                          <ArrowRight />
                           <span className="">Issue</span>
                         </Button>
                       </div>

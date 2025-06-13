@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowLeft, CircleArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import type {
   IConnectionList,
   ITableData,
@@ -122,7 +122,7 @@ const Connections = (): JSX.Element => {
           >
             <ConnectionList selectConnection={selectConnection} />
             <div className="m-4 mb-4 flex items-center justify-between pt-6">
-              <h1 className="ml-1 text-xl font-semibold  sm:text-2xl ">
+              <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
                 Selected Users
               </h1>
             </div>
@@ -139,7 +139,7 @@ const Connections = (): JSX.Element => {
                     className="bg-primary hover:!bg-primary/90 hover:bg-accent-00 rounded-lg text-center text-base sm:w-auto"
                   >
                     <div className="">
-                      <CircleArrowRight />
+                      <ArrowRight />
                     </div>
                     Continue
                   </Button>

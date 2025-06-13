@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client'
 
+import { ArrowRight, Plus } from 'lucide-react'
 import { DidMethod, Features, SchemaTypes } from '@/common/enums'
 import { IAttributesDetails, ISchema, ISchemaData } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
@@ -32,13 +33,11 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { ContinueIcon } from '@/components/iconsSvg'
 import { EmptyMessage } from '@/components/EmptyMessage'
 import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
-import { Plus } from 'lucide-react'
 import RoleViewButton from '@/components/RoleViewButton'
 import SchemaCard from '@/features/schemas/components/SchemaCard'
 import { getOrganizationById } from '@/app/api/organization'
@@ -416,7 +415,7 @@ const VerificationSchemasList = (): JSX.Element => {
                   disabled={selectedSchemas.length === 0}
                   className="flex items-center gap-2 rounded-md px-4 py-4 text-base font-medium sm:w-auto"
                 >
-                  <ContinueIcon />
+                  <ArrowRight />
                   Continue
                 </Button>
               </div>
