@@ -99,11 +99,11 @@ export default function SignInViewPage(): React.JSX.Element {
         route.push(response.url)
       } else {
         const errorMsg = response?.error
-        ? response.error === 'CredentialsSignin'
-          ? 'Invalid Credentials'
-          : response.error
-        : 'Sign in failed. Please try again.'
-      setAlert(errorMsg)
+          ? response.error === 'CredentialsSignin'
+            ? 'Invalid Credentials'
+            : response.error
+          : 'Sign in failed. Please try again.'
+        setAlert(errorMsg)
 
         console.error('Sign in failed:', response?.error)
       }
