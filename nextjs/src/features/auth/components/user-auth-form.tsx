@@ -329,7 +329,9 @@ export default function SignInViewPage(): React.JSX.Element {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="data-[error=true]:text-foreground">
+                    Email
+                  </FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
