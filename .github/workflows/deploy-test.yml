@@ -79,5 +79,5 @@ jobs:
         uses: denoland/deployctl@v1
         with:
           project: "studio-nextjs-test"
-          entrypoint: "jsr:@deno/nextjs-start/v15"
+          entrypoint: "NODE_ENV=production jsr:@deno/nextjs-start/v15"
           root: "./nextjs"
