@@ -340,10 +340,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                           setSuccess(null)
                           setFailure(null)
                         }}
-                        disabled={
-                          !userRoles.includes(Roles.OWNER) ||
-                          !userRoles.includes(Roles.ADMIN)
-                        }
                         className="flex items-center rounded-lg py-1 text-center text-base font-medium sm:w-auto"
                       >
                         <Plus />
@@ -417,10 +413,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                   setSuccess(null)
                   setFailure(null)
                 }}
-                disabled={
-                  !userRoles.includes(Roles.OWNER) ||
-                  !userRoles.includes(Roles.ADMIN)
-                }
               />
             </>
           )}
