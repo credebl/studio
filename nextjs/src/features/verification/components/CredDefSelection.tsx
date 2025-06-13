@@ -5,10 +5,10 @@ import { apiStatusCodes, credDefHeader } from '@/config/CommonConstant'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
+import { ArrowRight } from 'lucide-react'
 import { AxiosResponse } from 'axios'
 import BackButton from '@/components/BackButton'
 import { Button } from '@/components/ui/button'
-import { ContinueIcon } from '@/components/iconsSvg'
 import DataTable from '@/components/DataTable'
 import { ITableData } from './SortDataTable'
 import Loader from '@/components/Loader'
@@ -172,7 +172,7 @@ const CredDefSelection = (): JSX.Element => {
           }}
           className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
         >
-          <ContinueIcon />
+          <ArrowRight />
           Continue
         </Button>
       </div>

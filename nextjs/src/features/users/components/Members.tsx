@@ -404,9 +404,9 @@ export default function Members(): React.JSX.Element {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
             <TabsTrigger value="users" className="relative">
-              users
+              Users
             </TabsTrigger>
-            <TabsTrigger value="invitations">invitations</TabsTrigger>
+            <TabsTrigger value="invitations">Invitations</TabsTrigger>
           </TabsList>
 
           <div className="mb-6 flex w-full items-center justify-end">

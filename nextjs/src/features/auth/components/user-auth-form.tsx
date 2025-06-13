@@ -150,10 +150,16 @@ export default function SignInViewPage(): React.JSX.Element {
       if (response?.ok && typeof response.url === 'string') {
         route.push(response.url)
       } else {
-        console.error('Sign in failed:', response?.error)
+        const errorMsg = response?.error
+          ? response.error === 'CredentialsSignin'
+            ? 'Invalid email or password'
+            : response.error
+          : 'Sign in failed. Please try again.'
+        toast.error(errorMsg)
       }
     } catch (error) {
-      toast.error('Error signing in')
+      toast.error('Something went wrong during sign in. Please try again.')
+      console.error('Sign in error:', error)
     }
   }
 
