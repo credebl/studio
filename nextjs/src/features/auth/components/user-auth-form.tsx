@@ -39,6 +39,7 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { AlertComponent } from '@/components/AlertComponent'
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -58,6 +59,7 @@ export default function SignInViewPage(): React.JSX.Element {
 
   const [, setFidoLoader] = useState<boolean>(false)
   const [, setFidoUserError] = useState('')
+	const [alert,setAlert] = useState<null|string>('Hi there')
 
   const dispatch = useDispatch()
   const route = useRouter()
@@ -284,8 +286,19 @@ export default function SignInViewPage(): React.JSX.Element {
   }
 
   return (
-    <div className="relative flex w-full items-center justify-center">
+    <div className="relative flex flex-col w-full items-center justify-center">
       <ToastContainer />
+				{alert && (
+					<div className="w-full max-w-lg" role="alert">
+						<AlertComponent
+							message={alert}
+							type={'failure'}
+							onAlertClose={() => {
+								setAlert(null)
+							}}
+						/>
+					</div>
+				)}
       <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
         <div className="mb-6 text-center">
           <p className="text-muted-foreground text-sm">
