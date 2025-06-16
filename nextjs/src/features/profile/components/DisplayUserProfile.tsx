@@ -42,7 +42,6 @@ const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
 }: IDisplayUserProfileProps): React.JSX.Element => {
-  // const [orgPresent, setOrgPresent] = useState<[] | UserOrgRole[]>()
   const orgPresent = useMemo(
     () =>
       userProfileInfo?.userOrgRoles?.filter((role) => role.organisation) || [],
