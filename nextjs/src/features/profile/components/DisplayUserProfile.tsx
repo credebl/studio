@@ -2,7 +2,7 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Edit, Mail, User } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+import React, { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -42,13 +42,12 @@ const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
 }: IDisplayUserProfileProps): React.JSX.Element => {
-  const [orgPresent, setOrgPresent] = useState<[] | UserOrgRole[]>()
-  useEffect(() => {
-    const organizationPresent = userProfileInfo?.userOrgRoles?.filter(
-      (role) => role.organisation,
-    )
-    setOrgPresent(organizationPresent)
-  }, [userProfileInfo])
+  // const [orgPresent, setOrgPresent] = useState<[] | UserOrgRole[]>()
+  const orgPresent = useMemo(
+    () =>
+      userProfileInfo?.userOrgRoles?.filter((role) => role.organisation) || [],
+    [userProfileInfo],
+  )
 
   return (
     <Card className="flex h-full flex-col p-8 sm:py-6">
