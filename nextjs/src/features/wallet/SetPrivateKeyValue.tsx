@@ -132,7 +132,7 @@ const SetPrivateKeyValueInput = ({
 
           {generatedKeys && (
             <>
-              <div className="mt-3 relative flex items-center">
+              <div className="relative mt-3 flex items-center">
                 <CopyDid value={generatedKeys.privateKey.slice(2)} />
               </div>
 
@@ -162,7 +162,7 @@ const SetPrivateKeyValueInput = ({
               as={Input}
               id="privatekey"
               name="privatekey"
-              className="w-[480px]"
+              className=""
               value={privateKeyValue}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setPrivateKeyValue(e.target.value)
@@ -171,7 +171,7 @@ const SetPrivateKeyValueInput = ({
               onBlur={formikHandlers.handleBlur}
               placeholder="Enter private key"
             />
-            <CopyDid value={privateKeyValue || ''} />
+            {/* <CopyDid value={privateKeyValue || ''} /> */}
           </div>
 
           <span className="text-destructive static bottom-0 text-xs">
