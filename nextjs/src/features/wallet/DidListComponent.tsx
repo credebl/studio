@@ -339,6 +339,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
+    setErrMsg(null)
 
     // Only set isCreatingDid for non-Polygon and non-Web methods
     if (method !== DidMethod.POLYGON && method !== DidMethod.WEB) {
@@ -372,6 +373,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         setSuccessMsg(data?.message)
         setLoading(false)
         setIsCreatingDid(false)
+        await getData()
         setTimeout(() => {
           router.refresh()
         }, 2000)
@@ -385,6 +387,9 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         ) {
           setShowPopup(true)
         }
+        setTimeout(() => {
+          router.refresh()
+        }, 2000)
       }
     } catch (error) {
       console.error('An error occurred while creating did:', error)
