@@ -121,6 +121,7 @@ const Credentials = (): JSX.Element => {
 
   useEffect(() => {
     if (!orgId) {
+			setLoading(false)
       return
     }
     getIssuedCredDefs()

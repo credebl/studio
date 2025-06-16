@@ -36,6 +36,7 @@ export const OrganizationDashboard = ({
   const [orgDashboard, setOrgDashboard] = useState<IOrgDashboard | null>(null)
   const [loading, setLoading] = useState(true)
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
+	const [showSetupButton, setSetupButton] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
 
   const selecteDropdownOrgId = useAppSelector(
@@ -60,7 +61,9 @@ export const OrganizationDashboard = ({
         data?.data?.org_agents[0]?.orgDid
       ) {
         setWalletStatus(true)
-      }
+      }else{
+				setSetupButton(true)
+			}
       setOrgData(data?.data)
     } else {
       setError(response as string)
@@ -273,6 +276,8 @@ export const OrganizationDashboard = ({
         ) : walletStatus === true ? (
           <OrganizationDetails orgData={orgData} />
         ) : (
+				<>
+				{showSetupButton &&
           <Button
             onClick={() =>
               router.push(
@@ -282,6 +287,8 @@ export const OrganizationDashboard = ({
           >
             Setup Your Wallet
           </Button>
+				}
+				</>
         )}
       </div>
     </PageContainer>

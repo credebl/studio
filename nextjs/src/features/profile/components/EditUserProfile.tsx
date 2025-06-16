@@ -213,7 +213,7 @@ export default function EditUserProfile({
                 <div className="flex flex-1 flex-col gap-4">
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      First Name
+                      First Name{' '}<span className='text-destructive'>*</span>
                     </label>
                     <Field
                       as={Input}
@@ -226,15 +226,15 @@ export default function EditUserProfile({
                       className="w-3xl rounded-md p-2"
                     />
                     {formik.errors.firstName && formik.touched.firstName && (
-                      <div className="mt-1 text-sm">
-                        {formik.errors.firstName}
+                      <div className="mt-1 text-sm text-destructive">
+                        {formik.errors.firstName} 
                       </div>
                     )}
                   </div>
 
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      Last Name
+                      Last Name{' '}<span className='text-destructive'>*</span>
                     </label>
                     <Field
                       as={Input}
@@ -246,8 +246,8 @@ export default function EditUserProfile({
                       className="w-3xl rounded-md p-2"
                     />
                     {formik.errors.lastName && formik.touched.lastName && (
-                      <div className="mt-1 text-sm">
-                        {formik.errors.lastName}
+                      <div className="mt-1 text-sm text-destructive">
+                        {formik.errors.lastName} 
                       </div>
                     )}
                   </div>
