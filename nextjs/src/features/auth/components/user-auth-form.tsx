@@ -18,13 +18,13 @@ import {
   passwordEncryption,
 } from '@/app/api/Auth'
 import React, { useState } from 'react'
-import { ToastContainer, toast } from 'react-toastify'
 import {
   generateAuthenticationOption,
   verifyAuthentication,
 } from '@/app/api/Fido'
 import { setRefreshToken, setToken } from '@/lib/authSlice'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { IVerifyRegistrationObj } from '@/components/profile/interfaces'
@@ -39,7 +39,6 @@ import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { AlertComponent } from '@/components/AlertComponent'
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -59,7 +58,8 @@ export default function SignInViewPage(): React.JSX.Element {
 
   const [, setFidoLoader] = useState<boolean>(false)
   const [, setFidoUserError] = useState('')
-	const [alert,setAlert] = useState<null|string>('Hi there')
+  const [alert, setAlert] = useState<null | string>(null)
+  const [success, setSuccess] = useState<null | string>(null)
 
   const dispatch = useDispatch()
   const route = useRouter()
@@ -157,10 +157,10 @@ export default function SignInViewPage(): React.JSX.Element {
             ? 'Invalid email or password'
             : response.error
           : 'Sign in failed. Please try again.'
-        toast.error(errorMsg)
+        setAlert(errorMsg)
       }
     } catch (error) {
-      toast.error('Something went wrong during sign in. Please try again.')
+      setAlert('Something went wrong during sign in. Please try again.')
       console.error('Sign in error:', error)
     }
   }
@@ -225,7 +225,7 @@ export default function SignInViewPage(): React.JSX.Element {
         const userRole = await getUserDetails(token)
 
         if (!userRole?.role?.name) {
-          toast.error('Invalid user role')
+          setAlert('Invalid user role')
           return
         }
 
@@ -273,10 +273,12 @@ export default function SignInViewPage(): React.JSX.Element {
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        toast.success(data.message)
+        setSuccess(data.message)
         setLoading(false)
       } else {
-        toast.error(response as string)
+        setAlert(
+          typeof response === 'string' ? response : 'Something went wrong',
+        )
         setLoading(false)
       }
     } catch (error) {
@@ -286,19 +288,29 @@ export default function SignInViewPage(): React.JSX.Element {
   }
 
   return (
-    <div className="relative flex flex-col w-full items-center justify-center">
-      <ToastContainer />
-				{alert && (
-					<div className="w-full max-w-lg" role="alert">
-						<AlertComponent
-							message={alert}
-							type={'failure'}
-							onAlertClose={() => {
-								setAlert(null)
-							}}
-						/>
-					</div>
-				)}
+    <div className="relative flex w-full flex-col items-center justify-center">
+      {alert && (
+        <div className="w-full max-w-md" role="alert">
+          <AlertComponent
+            message={alert}
+            type={'failure'}
+            onAlertClose={() => {
+              setAlert(null)
+            }}
+          />
+        </div>
+      )}
+      {success && (
+        <div className="w-full max-w-md" role="success">
+          <AlertComponent
+            message={success}
+            type={'success'}
+            onAlertClose={() => {
+              setSuccess(null)
+            }}
+          />
+        </div>
+      )}
       <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
         <div className="mb-6 text-center">
           <p className="text-muted-foreground text-sm">

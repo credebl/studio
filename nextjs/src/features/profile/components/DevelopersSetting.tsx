@@ -56,7 +56,7 @@ const ClientCredentials = (): React.JSX.Element => {
   const [searchTerm] = useState('')
 
   const fetchOrganizations = async (): Promise<void> => {
-		setLoading(true)
+    setLoading(true)
     try {
       const response = await getOrganizations(
         currentPage,
