@@ -42,7 +42,7 @@ export default function EditUserProfile({
   userProfileInfo,
   updateProfile,
 }: EditUserProfileProps): React.JSX.Element {
-  const [, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [logoImage, setLogoImage] = useState<ILogoImage>({
     logoFile: '',
     imagePreviewUrl: userProfileInfo.profileImg || '',
@@ -124,7 +124,8 @@ export default function EditUserProfile({
     setLoading(true)
     try {
       const updatedData: IUserProfile = {
-        ...values,
+        ...userProfileInfo, // Keep all existing data
+        ...values, // Override with form values
         profileImg: (logoImage.imagePreviewUrl as string) || values.profileImg,
         id: userProfileInfo.id,
         roles: userProfileInfo.roles,
@@ -143,9 +144,18 @@ export default function EditUserProfile({
     }
   }
 
+  const handleCancel = (): void => {
+    setLogoImage({
+      logoFile: '',
+      imagePreviewUrl: userProfileInfo.profileImg || '',
+      fileName: '',
+    })
+    setImgError('')
+    toggleEditProfile()
+  }
+
   return (
     <Card className="p-4">
-      {' '}
       <div className="bg-card rounded-lg p-6">
         <Formik
           initialValues={{
@@ -156,6 +166,7 @@ export default function EditUserProfile({
           }}
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
+          enableReinitialize={true}
         >
           {(formik) => (
             <Form className="space-y-6">
@@ -189,7 +200,7 @@ export default function EditUserProfile({
                       <div>
                         <label
                           htmlFor="profileImg"
-                          className="border-input text-foreground flex items-center gap-4 rounded-md border p-2 text-base text-sm"
+                          className="border-input text-foreground flex cursor-pointer items-center gap-4 rounded-md border p-2 text-base text-sm hover:bg-gray-50"
                         >
                           Upload Profile Image
                         </label>
@@ -213,7 +224,7 @@ export default function EditUserProfile({
                 <div className="flex flex-1 flex-col gap-4">
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      First Name{' '}<span className='text-destructive'>*</span>
+                      First Name <span className="text-destructive">*</span>
                     </label>
                     <Field
                       as={Input}
@@ -223,18 +234,19 @@ export default function EditUserProfile({
                       value={formik.values.firstName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="w-3xl rounded-md p-2"
+                      className="w-full rounded-md p-2"
+                      disabled={loading}
                     />
                     {formik.errors.firstName && formik.touched.firstName && (
-                      <div className="mt-1 text-sm text-destructive">
-                        {formik.errors.firstName} 
+                      <div className="text-destructive mt-1 text-sm">
+                        {formik.errors.firstName}
                       </div>
                     )}
                   </div>
 
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      Last Name{' '}<span className='text-destructive'>*</span>
+                      Last Name <span className="text-destructive">*</span>
                     </label>
                     <Field
                       as={Input}
@@ -243,26 +255,35 @@ export default function EditUserProfile({
                       value={formik.values.lastName}
                       onChange={formik.handleChange}
                       onBlur={formik.handleBlur}
-                      className="w-3xl rounded-md p-2"
+                      className="w-full rounded-md p-2"
+                      disabled={loading}
                     />
                     {formik.errors.lastName && formik.touched.lastName && (
-                      <div className="mt-1 text-sm text-destructive">
-                        {formik.errors.lastName} 
+                      <div className="text-destructive mt-1 text-sm">
+                        {formik.errors.lastName}
                       </div>
                     )}
                   </div>
                 </div>
               </div>
+
               <div className="flex justify-end space-x-4">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={toggleEditProfile}
+                  onClick={handleCancel}
                   className="flex items-center px-4 py-2 transition-colors"
+                  disabled={loading}
                 >
                   Cancel
                 </Button>
-                <Button type="submit">Save Changes</Button>
+                <Button
+                  type="submit"
+                  disabled={loading || !formik.isValid}
+                  className="flex items-center px-4 py-2"
+                >
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </Button>
               </div>
             </Form>
           )}
