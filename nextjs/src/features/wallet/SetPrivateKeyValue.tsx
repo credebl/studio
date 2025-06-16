@@ -171,7 +171,6 @@ const SetPrivateKeyValueInput = ({
               onBlur={formikHandlers.handleBlur}
               placeholder="Enter private key"
             />
-            {/* <CopyDid value={privateKeyValue || ''} /> */}
           </div>
 
           <span className="text-destructive static bottom-0 text-xs">
