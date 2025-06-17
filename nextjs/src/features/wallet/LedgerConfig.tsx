@@ -611,7 +611,7 @@ const LedgerConfig = ({
                                 For example, use{' '}
                                 <a
                                   href="https://faucet.polygon.technology/"
-                                  className="underline"
+                                  className="font-semibold underline"
                                 >
                                   https://faucet.polygon.technology/
                                 </a>{' '}
@@ -626,7 +626,10 @@ const LedgerConfig = ({
                               <div className="mt-1">
                                 For example, copy the address and check the
                                 balance on{' '}
-                                <a href={polygonScan} className="underline">
+                                <a
+                                  href={polygonScan}
+                                  className="font-semibold underline"
+                                >
                                   {polygonScan}
                                 </a>
                                 .

@@ -181,6 +181,10 @@ a[href] {
   color: white;
 }
 
+.bg-warning {
+  background-color: #facc15;
+}
+
 .bg-error {
   background-color: var(--error);
   color: white;
