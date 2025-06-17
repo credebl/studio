@@ -46,7 +46,7 @@ const ClientCredentials = (): React.JSX.Element => {
   const [buttonDisplay, setButtonDisplay] = useState<boolean>(true)
   const [regenerate, setRegenerate] = useState<boolean>(false)
 
-  const [hasOrganizations, setHasOrganizations] = useState<boolean>(false)
+  const [hasOrganizations, setHasOrganizations] = useState<boolean>(true)
   const token = useAppSelector((state) => state.auth.token)
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [userRoles, setUserRoles] = useState<string[]>([])
@@ -56,6 +56,7 @@ const ClientCredentials = (): React.JSX.Element => {
   const [searchTerm] = useState('')
 
   const fetchOrganizations = async (): Promise<void> => {
+    setLoading(true)
     try {
       const response = await getOrganizations(
         currentPage,
@@ -179,7 +180,7 @@ const ClientCredentials = (): React.JSX.Element => {
 
   if (loading) {
     return (
-      <div className="flex h-full items-center justify-center">
+      <div className="flex h-lvh items-center justify-center">
         <Loader />
       </div>
     )
@@ -199,7 +200,7 @@ const ClientCredentials = (): React.JSX.Element => {
           />
         )}
         {!hasOrganizations ? (
-          <div className="flex h-full items-center justify-center">
+          <div className="flex h-[80vh] items-center justify-center">
             <div className="text-center">
               <div className="mb-4 text-2xl font-bold">No Organization</div>
               <p className="text-lg">

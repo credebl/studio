@@ -224,7 +224,7 @@ export default function EditUserProfile({
                 <div className="flex flex-1 flex-col gap-4">
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      First Name *
+                      First Name <span className="text-destructive">*</span>
                     </label>
                     <Field
                       as={Input}
@@ -238,7 +238,7 @@ export default function EditUserProfile({
                       disabled={loading}
                     />
                     {formik.errors.firstName && formik.touched.firstName && (
-                      <div className="mt-1 text-sm text-red-500">
+                      <div className="text-destructive mt-1 text-sm">
                         {formik.errors.firstName}
                       </div>
                     )}
@@ -246,7 +246,7 @@ export default function EditUserProfile({
 
                   <div>
                     <label className="mb-2 block text-sm font-medium">
-                      Last Name *
+                      Last Name <span className="text-destructive">*</span>
                     </label>
                     <Field
                       as={Input}
@@ -259,7 +259,7 @@ export default function EditUserProfile({
                       disabled={loading}
                     />
                     {formik.errors.lastName && formik.touched.lastName && (
-                      <div className="mt-1 text-sm text-red-500">
+                      <div className="text-destructive mt-1 text-sm">
                         {formik.errors.lastName}
                       </div>
                     )}

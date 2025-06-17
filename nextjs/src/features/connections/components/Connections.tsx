@@ -31,16 +31,7 @@ export default function Connections(): JSX.Element {
   const orgId = useAppSelector((state) => state.organization.orgId)
 
   const [isLoading, setIsLoading] = useState(false)
-  const [connectionData, setConnectionData] = useState<Connection[]>([
-    {
-      createDateTime: '',
-      createdBy: '',
-      orgId: '',
-      state: '',
-      theirLabel: '',
-      connectionId: '',
-    },
-  ])
+  const [connectionData, setConnectionData] = useState<Connection[]>([])
 
   const [paginationState, setPaginationState] = useState({
     pageIndex: 0,
