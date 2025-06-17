@@ -145,12 +145,12 @@ const SetPrivateKeyValueInput = ({
               <TokenWarningMessage />
 
               <div className="relative my-3">
-                <p className="truncate text-sm">
+                <span className="truncate text-sm">
                   <span className="font-semibold">Address:</span>
                   <div className="flex">
                     <CopyDid value={generatedKeys.address} />
                   </div>
-                </p>
+                </span>
               </div>
             </>
           )}
