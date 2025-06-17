@@ -13,6 +13,15 @@ export interface IConnectionListAPIParameter {
   sortBy: string
   sortingOrder: string
   filter?: string
+}
+
+export interface IConnectionListAPIParameterAllSearch {
+  itemPerPage: number
+  page: number
+  search: string
+  sortBy: string
+  sortingOrder: string
+  filter?: string
   allSearch: string
 }
 

@@ -3,6 +3,7 @@
 import { IConnectionList, LocalOrgs } from '../type/interface'
 import {
   IConnectionListAPIParameter,
+  IConnectionListAPIParameterAllSearch,
   getConnectionsByOrg,
 } from '@/app/api/connection'
 import {
@@ -45,7 +46,7 @@ const ConnectionList = (props: {
 
   const [, setLoading] = useState<boolean>(false)
   const [listAPIParameter, setListAPIParameter] =
-    useState<IConnectionListAPIParameter>(initialPageState)
+    useState<IConnectionListAPIParameterAllSearch>(initialPageState)
   const [totalItem, setTotalItem] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const [, setPageInfo] = useState({

@@ -40,10 +40,13 @@ type LocalOrgs = {
 const ConnectionList = (props: {
   selectConnection: (connections: IConnectionList[]) => void
 }): JSX.Element => {
-  const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
-  const [connectionList, setConnectionList] = useState<IConnectionList[]>([])
+  const [listAPIParameterIssuance, setListAPIParameterIssuance] =
+    useState(initialPageState)
+  const [connectionListIssuance, setConnectionList] = useState<
+    IConnectionList[]
+  >([])
   const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingIssuance, setLoading] = useState<boolean>(false)
   const [totalItem, setTotalItem] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const dispatch = useAppDispatch()
@@ -109,7 +112,7 @@ const ConnectionList = (props: {
 
   const refreshPage = (): void => {
     setLocalOrgs([])
-    getConnections(listAPIParameter)
+    getConnections(listAPIParameterIssuance)
   }
 
   useEffect(() => {
@@ -135,23 +138,26 @@ const ConnectionList = (props: {
 
   useEffect(() => {
     let getData: NodeJS.Timeout | null = null
-    if (listAPIParameter?.search?.length >= 1) {
+    if (listAPIParameterIssuance?.search?.length >= 1) {
       getData = setTimeout(() => {
-        getConnections(listAPIParameter)
+        getConnections(listAPIParameterIssuance)
       }, 1000)
       return () => clearTimeout(getData ?? undefined)
     } else {
-      getConnections(listAPIParameter)
+      getConnections(listAPIParameterIssuance)
     }
     return () => clearTimeout(getData ?? undefined)
-  }, [listAPIParameter])
+  }, [listAPIParameterIssuance])
 
   const metadata: ITableMetadata = {
     enableSelection: false,
   }
-  const columns = getColumns<IConnectionList>({
+  const columnsIssuance = getColumns<IConnectionList>({
     metadata,
-    columnData: generateColumns(setListAPIParameter, selectOrganization),
+    columnData: generateColumns(
+      setListAPIParameterIssuance,
+      selectOrganization,
+    ),
   })
 
   return (
@@ -171,26 +177,26 @@ const ConnectionList = (props: {
       )}
 
       <DataTable
-        placeHolder="Search Connections"
-        data={connectionList}
-        columns={columns}
+        placeHolder="Search Connections ..."
+        data={connectionListIssuance}
+        columns={columnsIssuance}
         index="connectionId"
-        isLoading={loading}
-        pageIndex={listAPIParameter.page - 1}
-        pageSize={listAPIParameter.itemPerPage}
-        pageCount={Math.ceil(totalItem / listAPIParameter.itemPerPage)}
+        isLoading={loadingIssuance}
+        pageIndex={listAPIParameterIssuance.page - 1}
+        pageSize={listAPIParameterIssuance.itemPerPage}
+        pageCount={Math.ceil(totalItem / listAPIParameterIssuance.itemPerPage)}
         onPageChange={(index) =>
-          setListAPIParameter((prev) => ({ ...prev, page: index + 1 }))
+          setListAPIParameterIssuance((prev) => ({ ...prev, page: index + 1 }))
         }
         onPageSizeChange={(size) =>
-          setListAPIParameter((prev) => ({
+          setListAPIParameterIssuance((prev) => ({
             ...prev,
             itemPerPage: size,
             page: 1,
           }))
         }
         onSearchTerm={(term) =>
-          setListAPIParameter((prev) => ({
+          setListAPIParameterIssuance((prev) => ({
             ...prev,
             search: term,
             page: 1,

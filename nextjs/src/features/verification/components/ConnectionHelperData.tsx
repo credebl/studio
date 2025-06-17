@@ -6,12 +6,12 @@ import {
 } from './ConnectionListCells'
 
 import { IColumnData } from '@/components/ui/generic-table-component/columns'
-import { IConnectionListAPIParameter } from '@/app/api/connection'
+import { IConnectionListAPIParameterAllSearch } from '@/app/api/connection'
 import { SelectCheckboxCell } from '../../organization/connectionIssuance/components/ConnectionListCells'
 
 export const generateColumns = (
   setListAPIParameter: React.Dispatch<
-    React.SetStateAction<IConnectionListAPIParameter>
+    React.SetStateAction<IConnectionListAPIParameterAllSearch>
   >,
   selectOrganization: (
     item: IConnectionList,
