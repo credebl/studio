@@ -823,7 +823,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                                     href="https://faucet.polygon.technology/"
                                     className="font-semibold underline"
                                     target="_blank"
-                                    rel="noopener noreferrer font-semibold"
+                                    rel="noopener noreferrer"
                                   >
                                     https://faucet.polygon.technology/
                                   </a>{' '}

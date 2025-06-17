@@ -42,11 +42,18 @@ const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
 }: IDisplayUserProfileProps): React.JSX.Element => {
-  const orgPresent = useMemo(
-    () =>
-      userProfileInfo?.userOrgRoles?.filter((role) => role.organisation) || [],
-    [userProfileInfo],
-  )
+  const orgPresent = useMemo(() => {
+    const roles = userProfileInfo?.userOrgRoles || []
+    const uniqueOrgsMap = new Map<string, UserOrgRole>()
+
+    roles.forEach((role) => {
+      if (role.organisation && !uniqueOrgsMap.has(role.organisation.id)) {
+        uniqueOrgsMap.set(role.organisation.id, role)
+      }
+    })
+
+    return Array.from(uniqueOrgsMap.values())
+  }, [userProfileInfo])
 
   return (
     <Card className="flex h-full flex-col p-8 sm:py-6">
