@@ -555,7 +555,7 @@ const DedicatedLedgerConfig = ({
                                     For eg. use{' '}
                                     <a
                                       href="https://faucet.polygon.technology/"
-                                      className="text-primary underline"
+                                      className="font-semibold underline"
                                     >
                                       https://faucet.polygon.technology/
                                     </a>{' '}
@@ -574,7 +574,7 @@ const DedicatedLedgerConfig = ({
                                     balance on{' '}
                                     <a
                                       href={polygonScan}
-                                      className="text-primary underline"
+                                      className="font-semibold underline"
                                     >
                                       {polygonScan}
                                     </a>

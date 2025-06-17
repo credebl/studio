@@ -821,7 +821,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                                   For eg. use{' '}
                                   <a
                                     href="https://faucet.polygon.technology/"
-                                    className="underline"
+                                    className="font-semibold underline"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
