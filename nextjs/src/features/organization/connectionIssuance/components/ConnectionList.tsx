@@ -41,11 +41,11 @@ const ConnectionList = (props: {
 }): JSX.Element => {
   const [listAPIParameterIssuance, setListAPIParameterIssuance] =
     useState(initialPageState)
-  const [connectionListIssuance, setConnectionList] = useState<
+  const [connectionListIssuance, setConnectionListIssuance] = useState<
     IConnectionList[]
   >([])
   const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([])
-  const [loadingIssuance, setLoading] = useState<boolean>(false)
+  const [loadingIssuance, setLoadingIssuance] = useState<boolean>(false)
   const [totalItem, setTotalItem] = useState(0)
   const [error, setError] = useState<string | null>(null)
   const dispatch = useAppDispatch()
@@ -86,7 +86,7 @@ const ConnectionList = (props: {
   const getConnections = async (
     apiParameter: IConnectionListAPIParameter,
   ): Promise<void> => {
-    setLoading(true)
+    setLoadingIssuance(true)
     try {
       const response = await getConnectionsByOrg({ ...apiParameter, orgId })
       if (!response) {
@@ -96,16 +96,16 @@ const ConnectionList = (props: {
       if (Array.isArray(data)) {
         const { totalItems } = response
         setTotalItem(totalItems)
-        setConnectionList(data)
+        setConnectionListIssuance(data)
         setError(null)
       } else {
-        setConnectionList([])
+        setConnectionListIssuance([])
       }
     } catch (error) {
-      setConnectionList([])
+      setConnectionListIssuance([])
       setError(error as string)
     } finally {
-      setLoading(false)
+      setLoadingIssuance(false)
     }
   }
 
@@ -120,7 +120,7 @@ const ConnectionList = (props: {
       dispatch(clearSelectedConnection())
       dispatch(clearSelectedUser())
       dispatch(setSelectedConnection([]))
-      setConnectionList([])
+      setConnectionListIssuance([])
       setLocalOrgs([])
     }
 
