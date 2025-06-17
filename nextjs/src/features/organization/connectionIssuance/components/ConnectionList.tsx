@@ -29,7 +29,6 @@ const initialPageState = {
   search: '',
   sortBy: 'createDateTime',
   sortingOrder: 'desc',
-  allSearch: '',
 }
 
 type LocalOrgs = {
