@@ -188,3 +188,16 @@ export const optionsSchemaCreation = [
     label: 'Date & Time',
   },
 ]
+
+export const createSchemaStyles = {
+  createButton: {
+    height: '2.6rem',
+    width: 'auto',
+    minWidth: '2rem',
+  },
+  resetButton: {
+    height: '2.6rem',
+    width: '6rem',
+    minWidth: '2rem',
+  },
+}
