@@ -11,7 +11,7 @@ import React, { JSX, useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import ConnectionList from './ConnectionList'
-import DataTable from './ConnectionIssueTable'
+import DataTable from '@/components/DataTable'
 import DateTooltip from '@/components/DateTooltip'
 import PageContainer from '@/components/layout/page-container'
 import { dateConversion } from '@/utils/DateConversion'
@@ -126,7 +126,7 @@ const Connections = (): JSX.Element => {
                 Selected Users
               </h1>
             </div>
-            <div className="m-4 rounded-lg border shadow-sm sm:p-4 2xl:col-span-2">
+            <div className="m-4 rounded-lg 2xl:col-span-2">
               <DataTable
                 header={selectedConnectionHeader}
                 data={selectedConnections}
