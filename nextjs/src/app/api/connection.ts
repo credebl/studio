@@ -15,6 +15,16 @@ export interface IConnectionListAPIParameter {
   filter?: string
 }
 
+export interface IConnectionListAPIParameterAllSearch {
+  itemPerPage: number
+  page: number
+  search: string
+  sortBy: string
+  sortingOrder: string
+  filter?: string
+  allSearch: string
+}
+
 export const getConnectionsByOrg = async ({
   orgId,
   page,
