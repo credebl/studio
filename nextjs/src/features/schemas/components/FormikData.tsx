@@ -63,10 +63,12 @@ function FormikData({
                 attributeName: yup
                   .string()
                   .trim()
-                  .required('Attribute name is required.'),
+                  .required('Attribute name is required.')
+                  .min(2, 'Please enter at least two characters'),
                 displayName: yup
                   .string()
                   .trim()
+                  .min(2, 'Please enter at least two characters')
                   .required('Display name is required.'),
                 isRequired: yup.boolean(),
               })
