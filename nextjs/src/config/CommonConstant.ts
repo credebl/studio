@@ -169,3 +169,22 @@ export enum RoleNames {
   HOLDER = 'holder',
   MEMBER = 'member',
 }
+
+export const optionsSchemaCreation = [
+  {
+    value: 'string',
+    label: 'String',
+  },
+  {
+    value: 'number',
+    label: 'Number',
+  },
+  {
+    value: 'time',
+    label: 'Time',
+  },
+  {
+    value: 'datetime-local',
+    label: 'Date & Time',
+  },
+]
