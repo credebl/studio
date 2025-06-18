@@ -63,12 +63,11 @@ export const authOptions: MyAuthOptions = {
       },
       async authorize(credentials) {
         try {
-          const { email, password, isPasskey } = credentials || {}
+          const { email, password } = credentials || {}
 
           const sanitizedPayload = {
             email,
             password,
-            isPasskey,
           }
 
           const res = await fetch(
@@ -146,34 +145,22 @@ export const authOptions: MyAuthOptions = {
     },
 
     async redirect({ url, baseUrl }) {
-      // Extract redirectTo from the URL
-      const urlObj = new URL(url, baseUrl)
-      const redirectTo = urlObj.searchParams.get('redirectTo')
+      try {
+        const redirectUrl = new URL(url)
 
-      if (redirectTo) {
-        // Validate that redirectTo is a valid URL
-        try {
-          const redirectUrl = new URL(redirectTo)
-          // Only allow localhost URLs for security
-          if (redirectUrl.hostname === 'localhost') {
-            return redirectTo
-          }
-        } catch (error) {
-          console.error('Invalid redirectTo URL:', error)
+        if (
+          ['localhost', '127.0.0.1'].includes(redirectUrl.hostname) &&
+          (redirectUrl.protocol === 'http:' ||
+            redirectUrl.protocol === 'https:')
+        ) {
+          return redirectUrl.toString()
         }
+      } catch (err) {
+        // If not a full URL, treat it as relative path
+        return new URL(url, baseUrl).toString()
       }
 
-      // Check if URL contains redirectTo as query param
-      if (url.includes('redirectTo=')) {
-        const params = new URLSearchParams(url.split('?')[1])
-        const redirect = params.get('redirectTo')
-        if (redirect) {
-          return decodeURIComponent(redirect)
-        }
-      }
-
-      // Default redirect to main app dashboard
-      return `${baseUrl}/dashboard`
+      return baseUrl
     },
   },
 
@@ -195,6 +182,7 @@ export const authOptions: MyAuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: false,
+        domain: '.localhost',
       },
     },
   },

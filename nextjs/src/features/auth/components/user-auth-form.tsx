@@ -20,7 +20,11 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import React, { useState } from 'react'
-import { forgotPassword, getUserProfile } from '@/app/api/Auth'
+import {
+  forgotPassword,
+  getUserProfile,
+  passwordEncryption,
+} from '@/app/api/Auth'
 import {
   generateAuthenticationOption,
   verifyAuthentication,
@@ -74,6 +78,14 @@ export default function SignInViewPage(): React.JSX.Element {
 
   const searchParams = useSearchParams()
 
+  const redirectTo = searchParams?.get('redirectTo')
+  const clientAlias = searchParams?.get('clientAlias')
+
+  const signUpUrl =
+    redirectTo && clientAlias
+      ? `/auth/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clienAlias=${clientAlias}`
+      : '/auth/sign-up'
+
   const handleSignIn = async (values: {
     email: string
     password?: string
@@ -81,16 +93,14 @@ export default function SignInViewPage(): React.JSX.Element {
     try {
       const entityData = {
         email: values.email,
-        password: values.password,
-        isPasskey: false,
+        password: await passwordEncryption(values.password || ''),
       }
 
-      // Get redirectTo from URL params
       const redirectTo = searchParams?.get('redirectTo')
 
       const response = await signIn('credentials', {
         ...entityData,
-        redirect: true,
+        redirect: false,
         callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
 
@@ -433,8 +443,8 @@ export default function SignInViewPage(): React.JSX.Element {
                 Don’t have an account?{' '}
               </span>
               <Link
-                href="/auth/sign-up"
-                className="text-secondary hover:underline"
+                href={signUpUrl}
+                className="text-muted-foreground hover:underline"
               >
                 Create one
               </Link>

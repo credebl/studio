@@ -122,7 +122,7 @@ const Connections = (): JSX.Element => {
           >
             <ConnectionList selectConnection={selectConnection} />
             <div className="m-4 mb-4 flex items-center justify-between pt-6">
-              <h1 className="ml-1 text-xl font-semibold  sm:text-2xl ">
+              <h1 className="ml-1 text-xl font-semibold sm:text-2xl">
                 Selected Users
               </h1>
             </div>

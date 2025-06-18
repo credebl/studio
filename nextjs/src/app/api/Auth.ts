@@ -7,8 +7,7 @@ import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
 export interface IUserSignUpData {
   email: string
-  clientId: string
-  clientSecret: string
+  clientAlias?: string
 }
 export interface IAddPasswordDetails {
   email: string
@@ -39,7 +38,7 @@ export const sendVerificationMail = async (
   const config = getHeaderConfigs()
 
   const details = {
-    url: apiRoutes.auth.sendMail,
+    url: `${apiRoutes.auth.sendMail}?clientAlias=${payload?.clientAlias}`,
     payload,
     config,
   }

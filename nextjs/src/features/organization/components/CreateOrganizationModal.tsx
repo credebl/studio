@@ -632,11 +632,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       type="submit"
                       disabled={!isValid || !dirty || loading}
                     >
-                      {loading ? (
-                        <Loader/>
-                      ) : (
-                        'Create Organization'
-                      )}
+                      {loading ? <Loader /> : 'Create Organization'}
                     </Button>
                   ) : (
                     <div className="flex">
@@ -644,9 +640,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                         type="button"
                         onClick={() => handleUpdateOrganization(values)}
                       >
-                        {loading ? (
-                          <Loader/>
-                        ) : null}
+                        {loading ? <Loader /> : null}
                         Save
                       </Button>
                     </div>

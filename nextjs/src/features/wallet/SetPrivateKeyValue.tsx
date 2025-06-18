@@ -132,7 +132,7 @@ const SetPrivateKeyValueInput = ({
 
           {generatedKeys && (
             <>
-              <div className="mt-3 relative flex items-center">
+              <div className="relative mt-3 flex items-center">
                 <CopyDid value={generatedKeys.privateKey.slice(2)} />
               </div>
 

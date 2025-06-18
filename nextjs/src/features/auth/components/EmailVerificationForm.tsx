@@ -6,16 +6,12 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Formik, Form as FormikForm } from 'formik'
 import React, { useState } from 'react'
 import { apiStatusCodes, emailRegex } from '@/config/CommonConstant'
-import {
-  checkUserExist,
-  passwordEncryption,
-  sendVerificationMail,
-} from '@/app/api/Auth'
+import { checkUserExist, sendVerificationMail } from '@/app/api/Auth'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { envConfig } from '@/config/envConfig'
+import { useSearchParams } from 'next/navigation'
 
 interface StepEmailProps {
   readonly email: string
@@ -30,6 +26,9 @@ export default function EmailVerificationForm({
 }: StepEmailProps): React.ReactElement {
   const [loading, setLoading] = useState(false)
   const [verifyLoader, setVerifyLoader] = useState(false)
+
+  const searchParams = useSearchParams()
+  const clientAliasValue = searchParams?.get('clientAlias')
 
   const [showEmailVerification, setShowEmailVerification] = useState<{
     message: string
@@ -50,8 +49,7 @@ export default function EmailVerificationForm({
 
       const payload = {
         email,
-        clientId: passwordEncryption(envConfig.PLATFORM_DATA.clientId),
-        clientSecret: passwordEncryption(envConfig.PLATFORM_DATA.clientSecret),
+        clientAlias: clientAliasValue ? clientAliasValue : '',
       }
 
       const userRsp = await sendVerificationMail(payload)

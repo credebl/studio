@@ -12,6 +12,13 @@ export default function SignUpUser(): React.JSX.Element {
   const [email, setEmail] = useState<string>('')
   const searchParam = useSearchParams()
   const userEmail = searchParam.get('email')
+  const redirectTo = searchParam.get('redirectTo')
+  const clientAlias = searchParam.get('clientAlias')
+
+  const signInUrl =
+    redirectTo && clientAlias
+      ? `/auth/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clienAlias=${clientAlias}`
+      : '/auth/sign-in'
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -56,8 +63,10 @@ export default function SignUpUser(): React.JSX.Element {
 
         <div className="text-muted-foreground mt-4 text-center text-sm">
           Already have an account?{' '}
-          <Link href="/auth/sign-in">
-            <span className="text-secondary hover:underline">Sign in</span>
+          <Link href={signInUrl}>
+            <span className="text-muted-foreground hover:underline">
+              Sign in
+            </span>
           </Link>
         </div>
       </div>

@@ -277,8 +277,7 @@ const ConnectionList = (props: {
       <div
         className="mb-4 flex items-center justify-between"
         id="issued-credentials-list"
-      >
-      </div>
+      ></div>
       {error && (
         <AlertComponent
           message={JSON.stringify(error)}
