@@ -83,7 +83,7 @@ export default function SignInViewPage(): React.JSX.Element {
 
   const signUpUrl =
     redirectTo && clientAlias
-      ? `/auth/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clienAlias=${clientAlias}`
+      ? `/auth/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
       : '/auth/sign-up'
 
   const handleSignIn = async (values: {
