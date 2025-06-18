@@ -17,7 +17,7 @@ export default function SignUpUser(): React.JSX.Element {
 
   const signInUrl =
     redirectTo && clientAlias
-      ? `/auth/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clienAlias=${clientAlias}`
+      ? `/auth/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
       : '/auth/sign-in'
 
   return (
