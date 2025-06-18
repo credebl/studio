@@ -157,7 +157,7 @@ export const OrganizationDashboard = ({
                   size="icon"
                   onClick={handleEditOrg}
                 >
-                  <Edit />
+                  <Edit className="text-foreground" />
                 </Button>
                 <Button
                   size="icon"

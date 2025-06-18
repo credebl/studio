@@ -169,3 +169,35 @@ export enum RoleNames {
   HOLDER = 'holder',
   MEMBER = 'member',
 }
+
+export const optionsSchemaCreation = [
+  {
+    value: 'string',
+    label: 'String',
+  },
+  {
+    value: 'number',
+    label: 'Number',
+  },
+  {
+    value: 'time',
+    label: 'Time',
+  },
+  {
+    value: 'datetime-local',
+    label: 'Date & Time',
+  },
+]
+
+export const createSchemaStyles = {
+  createButton: {
+    height: '2.6rem',
+    width: 'auto',
+    minWidth: '2rem',
+  },
+  resetButton: {
+    height: '2.6rem',
+    width: '6rem',
+    minWidth: '2rem',
+  },
+}

@@ -1,4 +1,7 @@
-import { SchemaTypeValue } from '@/common/enums'
+import { SchemaType, SchemaTypeValue } from '@/common/enums'
+
+import { FormikProps } from 'formik'
+import { IPopup } from '../components/Create'
 
 export interface ISchemaData {
   schemaId: string
@@ -144,4 +147,55 @@ export interface ICredDefCard {
   credentialDefinitionId: string
   schemaLedgerId: string
   revocable: boolean
+}
+
+export interface ActionButtonsProps {
+  createLoader: boolean
+  formikHandlers: FormikProps<IFormData>
+  setShowPopup: (
+    value: React.SetStateAction<{
+      show: boolean
+      type: 'reset' | 'create'
+    }>,
+  ) => void
+  disabled: boolean
+}
+
+export interface IFormikDataProps {
+  formData: IFormData
+  type: SchemaType | undefined
+  setFormData: React.Dispatch<React.SetStateAction<IFormData>>
+  setShowPopup: React.Dispatch<React.SetStateAction<IPopup>>
+  validSameAttribute: (
+    formikHandlers: FormikProps<IFormData>,
+    index: number,
+    field: 'attributeName' | 'displayName',
+  ) => boolean
+  filteredOptions: {
+    value: string
+    label: string
+  }[]
+  filledInputs: (formData: IFormData) => boolean
+  createLoader: boolean
+  inValidAttributes: (
+    formikHandlers: FormikProps<IFormData>,
+    propertyName: 'attributeName' | 'displayName',
+  ) => boolean
+  success: string | null
+  failure: string | null
+  showPopup: IPopup
+  confirmCreateSchema: () => void
+  initFormData: IFormData
+  setFailure: React.Dispatch<React.SetStateAction<string | null>>
+  setSuccess: React.Dispatch<React.SetStateAction<string | null>>
+  loading: boolean
+}
+
+export interface IRequiredAndDeleteProps {
+  index: number
+  formikHandlers: FormikProps<IFormData>
+  values: IFormData
+  element: IAttributes
+  remove: (index: number) => void
+  areFirstInputsSelected: boolean
 }

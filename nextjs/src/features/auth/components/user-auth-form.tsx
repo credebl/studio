@@ -154,7 +154,7 @@ export default function SignInViewPage(): React.JSX.Element {
       } else {
         const errorMsg = response?.error
           ? response.error === 'CredentialsSignin'
-            ? 'Invalid email or password'
+            ? 'Invalid Credentials'
             : response.error
           : 'Sign in failed. Please try again.'
         setAlert(errorMsg)

@@ -1,29 +1,27 @@
 'use client'
 
-import type {
-  IConnectionList,
-  ITableData,
-  ITableHtml,
-} from '../type/Connections'
-
 import {
   type IConnectionListAPIParameter,
   getConnectionsByOrg,
 } from '@/app/api/connection'
-import React, { ChangeEvent, JSX, useEffect, useState } from 'react'
+import {
+  ITableMetadata,
+  getColumns,
+} from '@/components/ui/generic-table-component/columns'
+import React, { JSX, useEffect, useState } from 'react'
 import {
   clearSelectedConnection,
   clearSelectedUser,
   setSelectedConnection,
 } from '@/lib/storageKeys'
+
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { AlertComponent } from '@/components/AlertComponent'
-import { Card } from '@/components/ui/card'
-import DateTooltip from '@/components/DateTooltip'
+import { DataTable } from '@/components/ui/generic-table-component/data-table'
+import type { IConnectionList } from '../type/Connections'
 
-import NewDataTable from './connectionsTables/SortDataTable'
 import { RootState } from '@/lib/store'
-import { dateConversion } from '@/utils/DateConversion'
+import { generateColumns } from '@/features/verification/components/ConnectionHelperData'
 
 const initialPageState = {
   itemPerPage: 10,
@@ -31,7 +29,6 @@ const initialPageState = {
   search: '',
   sortBy: 'createDateTime',
   sortingOrder: 'desc',
-  allSearch: '',
 }
 
 type LocalOrgs = {
@@ -42,24 +39,17 @@ type LocalOrgs = {
 const ConnectionList = (props: {
   selectConnection: (connections: IConnectionList[]) => void
 }): JSX.Element => {
-  const [listAPIParameter, setListAPIParameter] = useState(initialPageState)
-  const [tableData, setTableData] = useState<ITableData[] | ITableHtml[]>([])
-  const [connectionList, setConnectionList] = useState<IConnectionList[]>([])
+  const [listAPIParameterIssuance, setListAPIParameterIssuance] =
+    useState(initialPageState)
+  const [connectionListIssuance, setConnectionListIssuance] = useState<
+    IConnectionList[]
+  >([])
   const [localOrgs, setLocalOrgs] = useState<LocalOrgs[]>([])
-  const [searchText, setSearchText] = useState('')
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loadingIssuance, setLoadingIssuance] = useState<boolean>(false)
   const [totalItem, setTotalItem] = useState(0)
   const [error, setError] = useState<string | null>(null)
-  const [pageInfo, setPageInfo] = useState({
-    totalItem: 0,
-    nextPage: 0,
-    lastPage: 0,
-  })
   const dispatch = useAppDispatch()
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
-  useEffect(() => {
-    setTableData([])
-  }, [])
 
   const selectOrganization = async (
     item: IConnectionList,
@@ -93,90 +83,10 @@ const ConnectionList = (props: {
     }
   }
 
-  const generateTable = async (
-    connections: IConnectionList[],
-  ): Promise<void> => {
-    try {
-      const connectionsData =
-        connections?.length > 0
-          ? connections?.map((ele: IConnectionList) => {
-              const createdOn = ele?.createDateTime
-                ? ele?.createDateTime
-                : 'Not available'
-              const connectionId = ele.connectionId
-                ? ele.connectionId
-                : 'Not available'
-              const userName = ele?.theirLabel
-                ? ele.theirLabel
-                : 'Not available'
-
-              const isChecked = localOrgs
-                .map((item) => item.connectionId)
-                .includes(ele.connectionId)
-
-              return {
-                data: [
-                  {
-                    data: (
-                      <div className="flex items-center" id="issuance_checkbox">
-                        <input
-                          id="default-checkbox"
-                          type="checkbox"
-                          name="connection"
-                          defaultChecked={ele.checked || isChecked}
-                          onClick={async (
-                            event: React.MouseEvent<HTMLInputElement>,
-                          ) => {
-                            const inputElement =
-                              event.target as HTMLInputElement
-
-                            const updateConnectionList = connections?.map(
-                              (item) => {
-                                if (item.connectionId === ele.connectionId) {
-                                  selectOrganization(item, inputElement.checked)
-                                  return {
-                                    ...item,
-                                    checked: inputElement.checked,
-                                  }
-                                }
-                                return item
-                              },
-                            )
-                            setConnectionList(updateConnectionList)
-                          }}
-                          // checked={ele.checked || isChecked}
-                          className="h-4 w-4 cursor-pointer rounded-lg border-gray-300 bg-gray-100 text-blue-600 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800"
-                        />
-                      </div>
-                    ),
-                  },
-                  { data: userName },
-                  { data: connectionId },
-                  {
-                    data: (
-                      <DateTooltip
-                        date={createdOn}
-                        id="issuance_connection_list"
-                      >
-                        <div> {dateConversion(createdOn)} </div>
-                      </DateTooltip>
-                    ),
-                  },
-                ],
-              }
-            })
-          : []
-
-      setTableData(connectionsData)
-    } catch (err) {
-      console.error('Error in Connection List', err)
-    }
-  }
-
   const getConnections = async (
     apiParameter: IConnectionListAPIParameter,
   ): Promise<void> => {
-    setLoading(true)
+    setLoadingIssuance(true)
     try {
       const response = await getConnectionsByOrg({ ...apiParameter, orgId })
       if (!response) {
@@ -184,54 +94,24 @@ const ConnectionList = (props: {
       }
       const { data } = response
       if (Array.isArray(data)) {
-        const { totalItems, nextPage, lastPage } = response
+        const { totalItems } = response
         setTotalItem(totalItems)
-        setPageInfo({
-          totalItem: Number(totalItems),
-          nextPage: Number(nextPage),
-          lastPage: Number(lastPage),
-        })
-        setConnectionList(data)
+        setConnectionListIssuance(data)
         setError(null)
       } else {
-        setConnectionList([])
+        setConnectionListIssuance([])
       }
     } catch (error) {
-      setConnectionList([])
+      setConnectionListIssuance([])
       setError(error as string)
     } finally {
-      setLoading(false)
+      setLoadingIssuance(false)
     }
-  }
-
-  const header = [
-    { columnName: '', width: 'w-0.5' },
-    { columnName: 'User' },
-    { columnName: 'Connection ID' },
-    { columnName: 'Created on' },
-  ]
-
-  //onChange of Search input text
-  const searchInputChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setSearchText(e.target.value)
-    setListAPIParameter({
-      ...listAPIParameter,
-      search: e.target.value,
-      page: 1,
-    })
-  }
-
-  const searchSortByValue = (value: string): void => {
-    setListAPIParameter({
-      ...listAPIParameter,
-      page: 1,
-      sortingOrder: value,
-    })
   }
 
   const refreshPage = (): void => {
     setLocalOrgs([])
-    getConnections(listAPIParameter)
+    getConnections(listAPIParameterIssuance)
   }
 
   useEffect(() => {
@@ -240,7 +120,7 @@ const ConnectionList = (props: {
       dispatch(clearSelectedConnection())
       dispatch(clearSelectedUser())
       dispatch(setSelectedConnection([]))
-      setConnectionList([])
+      setConnectionListIssuance([])
       setLocalOrgs([])
     }
 
@@ -252,33 +132,39 @@ const ConnectionList = (props: {
   }, [localOrgs])
 
   useEffect(() => {
-    generateTable(connectionList)
-  }, [connectionList, localOrgs])
-
-  useEffect(() => {
     dispatch(setSelectedConnection(localOrgs))
   }, [localOrgs])
 
   useEffect(() => {
     let getData: NodeJS.Timeout | null = null
-    if (listAPIParameter?.search?.length >= 1) {
+    if (listAPIParameterIssuance?.search?.length >= 1) {
       getData = setTimeout(() => {
-        getConnections(listAPIParameter)
+        getConnections(listAPIParameterIssuance)
       }, 1000)
       return () => clearTimeout(getData ?? undefined)
     } else {
-      getConnections(listAPIParameter)
+      getConnections(listAPIParameterIssuance)
     }
     return () => clearTimeout(getData ?? undefined)
-  }, [listAPIParameter])
+  }, [listAPIParameterIssuance])
+
+  const metadata: ITableMetadata = {
+    enableSelection: false,
+  }
+  const columnsIssuance = getColumns<IConnectionList>({
+    metadata,
+    columnData: generateColumns(
+      setListAPIParameterIssuance,
+      selectOrganization,
+    ),
+  })
 
   return (
     <div id=" issuance_connection_list" className="px-4">
       <div
         className="mb-4 flex items-center justify-between"
         id="issued-credentials-list"
-      >
-      </div>
+      ></div>
       {error && (
         <AlertComponent
           message={JSON.stringify(error)}
@@ -288,32 +174,34 @@ const ConnectionList = (props: {
           }}
         />
       )}
-      <Card className="p-1">
-        <NewDataTable
-          isHeader={true}
-          searchValue={searchText}
-          isSearch={true}
-          isRefresh={true}
-          isSort={true}
-          onInputChange={searchInputChange}
-          refresh={refreshPage}
-          header={header}
-          data={tableData}
-          loading={loading}
-          currentPage={listAPIParameter?.page}
-          onPageChange={(page: number) => {
-            setListAPIParameter((prevState) => ({
-              ...prevState,
-              page,
-            }))
-          }}
-          totalPages={Math.ceil(totalItem / listAPIParameter?.itemPerPage)}
-          pageInfo={pageInfo}
-          searchSortByValue={searchSortByValue}
-          message={'No Connections'}
-          discription={'You don"t have any connections yet'}
-        ></NewDataTable>
-      </Card>
+
+      <DataTable
+        placeHolder="Search Connections ..."
+        data={connectionListIssuance}
+        columns={columnsIssuance}
+        index="connectionId"
+        isLoading={loadingIssuance}
+        pageIndex={listAPIParameterIssuance.page - 1}
+        pageSize={listAPIParameterIssuance.itemPerPage}
+        pageCount={Math.ceil(totalItem / listAPIParameterIssuance.itemPerPage)}
+        onPageChange={(index) =>
+          setListAPIParameterIssuance((prev) => ({ ...prev, page: index + 1 }))
+        }
+        onPageSizeChange={(size) =>
+          setListAPIParameterIssuance((prev) => ({
+            ...prev,
+            itemPerPage: size,
+            page: 1,
+          }))
+        }
+        onSearchTerm={(term) =>
+          setListAPIParameterIssuance((prev) => ({
+            ...prev,
+            search: term,
+            page: 1,
+          }))
+        }
+      />
     </div>
   )
 }
