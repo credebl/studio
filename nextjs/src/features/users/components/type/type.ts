@@ -5,7 +5,7 @@ export interface tabDataProps {
   activeTab: string
   setActiveTab: React.Dispatch<React.SetStateAction<string>>
   searchText: string
-  handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => () => void
+  handleSearchChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   setInviteModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   usersLoading: boolean
   usersList: User[] | null
