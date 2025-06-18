@@ -52,7 +52,7 @@ function FormikData({
               schemaVersionRegex,
               'Enter valid schema version (eg. 0.1 or 0.0.1)',
             )
-            .required('Schema version is required'),
+            .required('Schema version is required.'),
         }),
         attribute: yup
           .array()
@@ -63,19 +63,19 @@ function FormikData({
                 attributeName: yup
                   .string()
                   .trim()
-                  .required('Attribute name is required'),
+                  .required('Attribute name is required.'),
                 displayName: yup
                   .string()
                   .trim()
-                  .required('Display name is required'),
+                  .required('Display name is required.'),
                 isRequired: yup.boolean(),
               })
               .default(() => ({ isRequired: false })),
           )
-          .required('At least one attribute is required')
+          .required('At least one attribute is required.')
           .test({
-            name: 'at-least-one-is-required',
-            message: 'At least one attribute must be required',
+            name: 'at-least-one-is-required.',
+            message: 'At least one attribute must be required.',
             test: (value) => value.some((attr) => attr.isRequired === true),
           }),
       })}
