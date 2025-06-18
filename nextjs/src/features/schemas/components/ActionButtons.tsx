@@ -33,7 +33,6 @@ function ActionButtons({
       </Button>
       <Button
         type="submit"
-        color="bg-primary-700"
         disabled={disabled}
         className="ml-auto rounded-lg text-center text-base font-medium sm:w-auto"
         style={createSchemaStyles.createButton}
