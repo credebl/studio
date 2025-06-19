@@ -49,9 +49,9 @@ export const fetchOrganizationDetails = async ({
         }
       }
     }
-    setLoading(false)
   } catch (error) {
     console.error('Error fetching organization details:', error)
+  } finally {
     setLoading(false)
   }
 }
