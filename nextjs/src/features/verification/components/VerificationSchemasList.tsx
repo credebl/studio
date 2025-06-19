@@ -1,18 +1,8 @@
-/* eslint-disable max-lines */
 'use client'
 
 import { ArrowRight, Plus } from 'lucide-react'
-import { DidMethod, Features, SchemaTypes } from '@/common/enums'
 import { IAttributesDetails, ISchema, ISchemaData } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
 import {
   Select,
   SelectContent,
@@ -21,12 +11,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
+import {
+  fetchOrganizationDetails,
+  handleW3CSchemaDetails,
+} from './SchemaListUtils'
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
 import {
   setSchemaAttributes,
   setSchemaId,
   setSelectedSchemasData,
-  setW3CSchemaAttributes,
 } from '@/lib/verificationSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
@@ -34,13 +27,14 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { EmptyMessage } from '@/components/EmptyMessage'
+import { Features } from '@/common/enums'
 import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import RoleViewButton from '@/components/RoleViewButton'
 import SchemaCard from '@/features/schemas/components/SchemaCard'
-import { getOrganizationById } from '@/app/api/organization'
+import SchemaListPagination from './SchemaListPagination'
 import { pathRoutes } from '@/config/pathRoutes'
 import { useRouter } from 'next/navigation'
 
@@ -206,40 +200,6 @@ const VerificationSchemasList = (): JSX.Element => {
     }
   }, [selectedSchemaArray])
 
-  const fetchOrganizationDetails = async (): Promise<void> => {
-    setLoading(true)
-    const response = await getOrganizationById(organizationId)
-    const { data } = response as AxiosResponse
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const did = data?.data?.org_agents?.[0]?.orgDid
-
-      if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
-        setWalletStatus(true)
-      }
-      if (typeof did === 'string') {
-        const isPolygon = did.includes(DidMethod.POLYGON)
-        const isKey = did.includes(DidMethod.KEY)
-        const isWeb = did.includes(DidMethod.WEB)
-        const isIndy = did.includes(DidMethod.INDY)
-
-        if (isPolygon || isKey || isWeb) {
-          setW3cSchema(true)
-          setSchemaType(SchemaTypes.schema_W3C)
-        }
-
-        if (isIndy) {
-          setW3cSchema(false)
-          setSchemaType(SchemaTypes.schema_INDY)
-        }
-
-        if (isKey || isWeb) {
-          setIsNoLedger(true)
-        }
-      }
-    }
-    setLoading(false)
-  }
-
   const handleContinue = async (): Promise<void> => {
     const schemaIds = selectedSchemas?.map((schema) => schema?.schemaId)
     dispatch(setSchemaId(schemaIds))
@@ -251,19 +211,6 @@ const VerificationSchemasList = (): JSX.Element => {
 
     dispatch(setSchemaAttributes(schemaAttributes))
     route.push(`${pathRoutes.organizations.verification.emailCredDef}`)
-  }
-
-  const handleW3CSchemaDetails = async (): Promise<void> => {
-    const w3cSchemaAttributes = selectedSchemaState
-      .filter((schema) => schema.schemaLedgerId)
-      .map((schema) => ({
-        schemaId: schema.schemaLedgerId ?? '',
-        attributes: schema.attributes,
-        schemaName: schema.name ?? '',
-      }))
-
-    dispatch(setW3CSchemaAttributes(w3cSchemaAttributes))
-    route.push(`${pathRoutes.organizations.verification.w3cAttributes}`)
   }
 
   const options = ['All schemas']
@@ -282,7 +229,14 @@ const VerificationSchemasList = (): JSX.Element => {
     setSearchValue('')
   }
   useEffect(() => {
-    fetchOrganizationDetails()
+    fetchOrganizationDetails({
+      setLoading,
+      organizationId,
+      setWalletStatus,
+      setW3cSchema,
+      setSchemaType,
+      setIsNoLedger,
+    })
     setSearchValue('')
   }, [])
 
@@ -411,7 +365,15 @@ const VerificationSchemasList = (): JSX.Element => {
 
               <div className="mb-4 flex items-center justify-end">
                 <Button
-                  onClick={w3cSchema ? handleW3CSchemaDetails : handleContinue}
+                  onClick={
+                    w3cSchema
+                      ? (): Promise<void> =>
+                          handleW3CSchemaDetails({
+                            selectedSchemaState,
+                            route,
+                          })
+                      : handleContinue
+                  }
                   disabled={selectedSchemas.length === 0}
                   className="flex items-center gap-2 rounded-md px-4 py-4 text-base font-medium sm:w-auto"
                 >
@@ -425,94 +387,13 @@ const VerificationSchemasList = (): JSX.Element => {
               >
                 {totalItems > 1 && (
                   <div className="mt-6 flex justify-end">
-                    <Pagination>
-                      <PaginationContent>
-                        {schemasListParameter.page > 1 && (
-                          <PaginationItem>
-                            <PaginationPrevious
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                setSchemasListParameter((prev) => ({
-                                  ...prev,
-                                  page: prev.page - 1,
-                                }))
-                              }}
-                            />
-                          </PaginationItem>
-                        )}
-
-                        {Array.from({ length: totalItems })
-                          .map((_, i) => i + 1)
-                          .filter(
-                            (page) =>
-                              page === 1 ||
-                              page === totalItems ||
-                              Math.abs(page - schemasListParameter.page) <= 1,
-                          )
-                          .reduce<(number | string)[]>((acc, page, i, arr) => {
-                            if (
-                              i > 0 &&
-                              typeof page === 'number' &&
-                              typeof arr[i - 1] === 'number' &&
-                              page - (arr[i - 1] as number) > 1
-                            ) {
-                              acc.push('...')
-                            }
-                            acc.push(page)
-                            return acc
-                          }, [])
-                          .map((page, idx) => {
-                            if (page === '...') {
-                              return (
-                                <span
-                                  key={`ellipsis-${idx}`}
-                                  className="text-muted-foreground px-2"
-                                >
-                                  ...
-                                </span>
-                              )
-                            }
-
-                            return (
-                              <PaginationItem key={page}>
-                                <PaginationLink
-                                  href="#"
-                                  onClick={(e) => {
-                                    e.preventDefault()
-                                    setSchemasListParameter((prev) => ({
-                                      ...prev,
-                                      page: page as number,
-                                    }))
-                                  }}
-                                  className={`rounded-lg px-4 py-2 ${
-                                    schemasListParameter.page === page
-                                      ? 'bg-primary text-[var(--color-white)]'
-                                      : 'bg-background text-muted-foreground'
-                                  }`}
-                                >
-                                  {page}
-                                </PaginationLink>
-                              </PaginationItem>
-                            )
-                          })}
-
-                        {schemasListParameter.page < totalItems && (
-                          <PaginationItem>
-                            <PaginationNext
-                              href="#"
-                              onClick={(e) => {
-                                e.preventDefault()
-                                setSchemasListParameter((prev) => ({
-                                  ...prev,
-                                  page: prev.page + 1,
-                                }))
-                              }}
-                            />
-                          </PaginationItem>
-                        )}
-                      </PaginationContent>
-                    </Pagination>
+                    <SchemaListPagination
+                      {...{
+                        schemasListParameter,
+                        setSchemasListParameter,
+                        totalItems,
+                      }}
+                    />
                   </div>
                 )}
               </div>
