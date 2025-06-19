@@ -176,7 +176,7 @@ export interface NumberAttribute {
 }
 
 export interface SchemaListPaginationProps {
-  schemasListParameter: schemasListParameter
+  schemasListParameter: ISchemasListParameter
   setSchemasListParameter: Dispatch<
     SetStateAction<{
       itemPerPage: number
@@ -190,7 +190,7 @@ export interface SchemaListPaginationProps {
   totalItems: number
 }
 
-interface schemasListParameter {
+interface ISchemasListParameter {
   itemPerPage: number
   page: number
   search: string

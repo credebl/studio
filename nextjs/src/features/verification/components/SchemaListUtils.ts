@@ -18,36 +18,42 @@ export const fetchOrganizationDetails = async ({
   setIsNoLedger,
 }: IFetchOrganizationDetails): Promise<void> => {
   setLoading(true)
-  const response = await getOrganizationById(organizationId)
-  const { data } = response as AxiosResponse
-  if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-    const did = data?.data?.org_agents?.[0]?.orgDid
+  try {
+    const response = await getOrganizationById(organizationId)
 
-    if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
-      setWalletStatus(true)
+    const { data } = response as AxiosResponse
+    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+      const did = data?.data?.org_agents?.[0]?.orgDid
+
+      if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
+        setWalletStatus(true)
+      }
+      if (typeof did === 'string') {
+        const isPolygon = did.includes(DidMethod.POLYGON)
+        const isKey = did.includes(DidMethod.KEY)
+        const isWeb = did.includes(DidMethod.WEB)
+        const isIndy = did.includes(DidMethod.INDY)
+
+        if (isPolygon || isKey || isWeb) {
+          setW3cSchema(true)
+          setSchemaType(SchemaTypes.schema_W3C)
+        }
+
+        if (isIndy) {
+          setW3cSchema(false)
+          setSchemaType(SchemaTypes.schema_INDY)
+        }
+
+        if (isKey || isWeb) {
+          setIsNoLedger(true)
+        }
+      }
     }
-    if (typeof did === 'string') {
-      const isPolygon = did.includes(DidMethod.POLYGON)
-      const isKey = did.includes(DidMethod.KEY)
-      const isWeb = did.includes(DidMethod.WEB)
-      const isIndy = did.includes(DidMethod.INDY)
-
-      if (isPolygon || isKey || isWeb) {
-        setW3cSchema(true)
-        setSchemaType(SchemaTypes.schema_W3C)
-      }
-
-      if (isIndy) {
-        setW3cSchema(false)
-        setSchemaType(SchemaTypes.schema_INDY)
-      }
-
-      if (isKey || isWeb) {
-        setIsNoLedger(true)
-      }
-    }
+    setLoading(false)
+  } catch (error) {
+    console.error('Error fetching organization details:', error)
+    setLoading(false)
   }
-  setLoading(false)
 }
 
 export const handleW3CSchemaDetails = async ({
