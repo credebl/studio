@@ -13,6 +13,14 @@ import {
 import { DidMethod, Network, Roles } from '@/common/enums'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import {
+  IDidListData,
+  IFormValues,
+  IPolygonKeys,
+  IUpdatePrimaryDid,
+  Organization,
+  UserOrgRole,
+} from './type/type'
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -41,54 +49,10 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
+import { getDidData } from './DidListUtils'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
 
-interface IDidListData {
-  id: string
-  did: string
-  isPrimaryDid: boolean
-}
-
-interface IUpdatePrimaryDid {
-  id: string
-  did: string
-}
-
-interface IPolygonKeys {
-  privateKey: string
-  publicKeyBase58: string
-  address: string
-}
-
-interface IFormValues {
-  method: string
-  ledger: string
-  network: string
-  domain: string
-  privatekey: string
-  endorserDid: string
-  did: string
-}
-
-interface OrgRole {
-  name: string
-}
-
-interface UserOrgRole {
-  orgId: string | null
-  organisation: {
-    id: string
-    name: string
-  } | null
-  orgRole: OrgRole
-}
-
-interface Organization {
-  id: string
-  name: string
-  userOrgRoles: UserOrgRole[]
-}
 const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
@@ -346,24 +310,26 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       setIsCreatingDid(true)
     }
 
-    let network = ''
-    if (values.method === DidMethod.INDY) {
-      network = values?.network || ''
-    } else if (values.method === DidMethod.POLYGON) {
-      network = `${values.ledger}:${values.network}`
-    }
-    const didData = {
-      seed: values.method === DidMethod.POLYGON ? '' : seed,
-      keyType: 'ed25519',
-      method: values.method?.split(':')[1] || '',
-      network,
-      domain: values.method === DidMethod.WEB ? values.domain : '',
-      role: values.method === DidMethod.INDY ? 'endorser' : '',
-      privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
-      did: values?.did ?? '',
-      endorserDid: values?.endorserDid || '',
-      isPrimaryDid: false,
-    }
+    const didData = getDidData({ values, seed })
+
+    // let network = ''
+    // if (values.method === DidMethod.INDY) {
+    //   network = values?.network || ''
+    // } else if (values.method === DidMethod.POLYGON) {
+    //   network = `${values.ledger}:${values.network}`
+    // }
+    // const didData = {
+    //   seed: values.method === DidMethod.POLYGON ? '' : seed,
+    //   keyType: 'ed25519',
+    //   method: values.method?.split(':')[1] || '',
+    //   network,
+    //   domain: values.method === DidMethod.WEB ? values.domain : '',
+    //   role: values.method === DidMethod.INDY ? 'endorser' : '',
+    //   privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
+    //   did: values?.did ?? '',
+    //   endorserDid: values?.endorserDid || '',
+    //   isPrimaryDid: false,
+    // }
     try {
       const response = await createDid(orgId, didData)
       const { data } = response as AxiosResponse
