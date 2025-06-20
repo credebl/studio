@@ -11,6 +11,7 @@ import React from 'react'
 
 const DedicatedAgentForm = ({
   ledgerConfig,
+  orgId,
   maskedSeeds,
   setLedgerConfig,
   seeds,
@@ -100,11 +101,9 @@ const DedicatedAgentForm = ({
 
     {ledgerConfig && (
       <DedicatedLedgerConfig
+        orgId={orgId}
         seeds={seeds}
-        // walletName={walletName}
         maskedSeeds={maskedSeeds}
-        // agentEndpoint={agentEndpoint}
-        // apiKey={apiKey}
         submitDedicatedWallet={submitDedicatedWallet}
         ledgerConfig={false}
         setLedgerConfig={function (): void {

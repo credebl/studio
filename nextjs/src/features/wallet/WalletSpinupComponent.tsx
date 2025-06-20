@@ -380,6 +380,7 @@ const WalletSpinup = (): React.JSX.Element => {
     } else {
       formComponent = (
         <DedicatedAgentForm
+          orgId={orgId || ''}
           ledgerConfig={showLedgerConfig}
           setLedgerConfig={setShowLedgerConfig}
           seeds={seeds}
