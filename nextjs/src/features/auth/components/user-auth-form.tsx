@@ -196,7 +196,7 @@ export default function SignInViewPage(): React.JSX.Element {
       const entityData = {
         verifyAuthenticationObj: JSON.stringify(verifyAuthenticationObj),
         obj: JSON.stringify(obj),
-        isPasswordTab,
+        isPassword: isPasswordTab,
       }
 
       const verificationResp = await signIn('credentials', {
