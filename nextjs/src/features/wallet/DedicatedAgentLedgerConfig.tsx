@@ -20,7 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
+import {
+  apiStatusCodes,
+  polygonFaucet,
+  polygonScan,
+} from '@/config/CommonConstant'
 
 import { ArrowLeft } from 'lucide-react'
 import type { AxiosResponse } from 'axios'
@@ -66,6 +70,7 @@ const RequiredAsterisk = (): React.JSX.Element => (
 )
 
 const DedicatedLedgerConfig = ({
+  orgId,
   seeds,
   submitDedicatedWallet,
 }: IDedicatedAgentForm): React.JSX.Element => {
@@ -528,64 +533,64 @@ const DedicatedLedgerConfig = ({
 
                   {/* Private key for Polygon */}
                   {selectedMethod === DidMethod.POLYGON && (
-                    <Card className="bg-muted/50 mt-6">
-                      <CardContent className="p-4">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                          <div>
-                            <SetPrivateKeyValueInput
-                              setPrivateKeyValue={setPrivateKeyValue}
-                              privateKeyValue={privateKeyValue}
-                              formikHandlers={formikHandlers}
-                            />
-                          </div>
-                          <div>
-                            <h4 className="mb-3 text-sm font-medium">
-                              Follow these instructions to generate polygon
-                              tokens:
-                            </h4>
-                            <ol className="space-y-3 text-sm">
-                              <li className="flex items-start">
-                                <span className="mr-2 font-semibold">
-                                  Step 1:
-                                </span>
-                                <div>
-                                  Copy the address and get the free tokens for
-                                  the testnet.
-                                  <div className="mt-1">
-                                    For eg. use{' '}
-                                    <a
-                                      href="https://faucet.polygon.technology/"
-                                      className="font-semibold underline"
-                                    >
-                                      https://faucet.polygon.technology/
-                                    </a>{' '}
-                                    to get free tokens
-                                  </div>
-                                </div>
-                              </li>
-                              <li className="flex items-start">
-                                <span className="mr-2 font-semibold">
-                                  Step 2:
-                                </span>
-                                <div>
-                                  Check that you have received the tokens.
-                                  <div className="mt-1">
-                                    For eg. copy the address and check the
-                                    balance on{' '}
-                                    <a
-                                      href={polygonScan}
-                                      className="font-semibold underline"
-                                    >
-                                      {polygonScan}
-                                    </a>
-                                  </div>
-                                </div>
-                              </li>
-                            </ol>
-                          </div>
+                    <div className="bg-muted mx-auto mt-6 max-w-2xl rounded-lg p-4">
+                      <div className="">
+                        <div>
+                          <SetPrivateKeyValueInput
+                            orgId={orgId}
+                            setPrivateKeyValue={setPrivateKeyValue}
+                            privateKeyValue={privateKeyValue}
+                            formikHandlers={formikHandlers}
+                          />
                         </div>
-                      </CardContent>
-                    </Card>
+                        <div>
+                          <h4 className="mb-3 text-sm font-medium">
+                            Follow these instructions to generate polygon
+                            tokens:
+                          </h4>
+                          <ol className="space-y-3 text-sm">
+                            <li className="">
+                              <span className="mr-2 font-semibold">
+                                Step 1:
+                              </span>
+                              <div>
+                                Copy the address and get the free tokens for the
+                                testnet.
+                                <div className="mt-1">
+                                  For example, use{' '}
+                                  <a
+                                    href={polygonFaucet}
+                                    className="font-semibold underline"
+                                  >
+                                    {polygonFaucet}
+                                  </a>{' '}
+                                  to get free tokens.
+                                </div>
+                              </div>
+                            </li>
+                            <li className="">
+                              <span className="mr-2 font-semibold">
+                                Step 2:
+                              </span>
+                              <div>
+                                Check that you have received the tokens.
+                                <div className="mt-1">
+                                  For example, copy the address and check the
+                                  balance on{' '}
+                                  <a
+                                    href={polygonScan}
+                                    className="font-semibold underline"
+                                  >
+                                    {polygonScan}
+                                  </a>
+                                  .
+                                </div>
+                              </div>
+                            </li>
+                          </ol>
+                        </div>
+                      </div>
+                    </div>
                   )}
                 </CardContent>
               </Card>
