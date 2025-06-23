@@ -18,6 +18,7 @@ export const createDateTime = 'createDateTime'
 export const totalRecords = 'totalRecords'
 export const successfulRecords = 'successfulRecords'
 export const currentPageNumber = 1
+export const polygonFaucet = 'https://faucet.polygon.technology/'
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,

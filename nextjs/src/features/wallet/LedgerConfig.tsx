@@ -20,7 +20,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { apiStatusCodes, polygonScan } from '@/config/CommonConstant'
+import {
+  apiStatusCodes,
+  polygonFaucet,
+  polygonScan,
+} from '@/config/CommonConstant'
 import { getLedgerConfig, getLedgers } from '@/app/api/Agent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -610,10 +614,10 @@ const LedgerConfig = ({
                               <div className="mt-1">
                                 For example, use{' '}
                                 <a
-                                  href="https://faucet.polygon.technology/"
+                                  href={polygonFaucet}
                                   className="font-semibold underline"
                                 >
-                                  https://faucet.polygon.technology/
+                                  {polygonFaucet}
                                 </a>{' '}
                                 to get free tokens.
                               </div>

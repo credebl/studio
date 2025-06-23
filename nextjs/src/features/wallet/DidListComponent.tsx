@@ -21,6 +21,7 @@ import {
   apiStatusCodes,
   currentPageNumber,
   itemPerPage,
+  polygonFaucet,
 } from '@/config/CommonConstant'
 import {
   createDid,
@@ -820,12 +821,12 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                                 <div>
                                   For eg. use{' '}
                                   <a
-                                    href="https://faucet.polygon.technology/"
+                                    href={polygonFaucet}
                                     className="font-semibold underline"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                   >
-                                    https://faucet.polygon.technology/
+                                    {polygonFaucet}
                                   </a>{' '}
                                   to get free token
                                 </div>

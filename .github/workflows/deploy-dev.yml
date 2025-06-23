@@ -26,7 +26,7 @@ jobs:
 
         run: |
 
-         echo "PUBLIC_MODE=PROD" > .env
+         echo "NEXT_PUBLIC_MODE=PROD" > .env
 
          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.DEV_PUBLIC_BASE_URL }}" >> .env
 
