@@ -18,22 +18,17 @@ import {
   passwordEncryption,
 } from '@/app/api/Auth'
 import React, { useState } from 'react'
-import {
-  generateAuthenticationOption,
-  verifyAuthentication,
-} from '@/app/api/Fido'
-import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { signIn, useSession } from 'next-auth/react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { IVerifyRegistrationObj } from '@/components/profile/interfaces'
 import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
-import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
@@ -61,6 +56,7 @@ export default function SignInViewPage(): React.JSX.Element {
   const [alert, setAlert] = useState<null | string>(null)
   const [success, setSuccess] = useState<null | string>(null)
 
+  const { data: session } = useSession()
   const dispatch = useDispatch()
   const route = useRouter()
   const signInForm = useForm<SignInFormValues>({
@@ -77,7 +73,7 @@ export default function SignInViewPage(): React.JSX.Element {
   ): Promise<
     | {
         role: { name: string }
-        orgId: string
+        orgId: string | null
       }
     | undefined
   > => {
@@ -87,10 +83,11 @@ export default function SignInViewPage(): React.JSX.Element {
       const { data } = response as AxiosResponse
 
       if (data?.data?.userOrgRoles?.length > 0) {
-        const role = data?.data?.userOrgRoles.find(
-          (item: { orgRole: { name: PlatformRoles } }) =>
+        const platformAdminRole = data?.data?.userOrgRoles.find(
+          (item: { orgRole: { name: string } }) =>
             item.orgRole.name === PlatformRoles.platformAdmin,
         )
+        const selectedRole = platformAdminRole || data?.data?.userOrgRoles[0]
 
         const permissionArray: string[] = []
         data?.data?.userOrgRoles?.forEach(
@@ -114,16 +111,16 @@ export default function SignInViewPage(): React.JSX.Element {
         const orgId = orgWithValidId?.orgId ?? null
 
         return {
-          role: role?.orgRole ?? '',
+          role: { name: selectedRole.orgRole.name },
           orgId,
         }
       } else {
-        // eslint-disable-next-line no-console
         console.error('No roles found for the user')
+        return undefined
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.error('Error fetching user details', error)
+      return undefined
     }
   }
 
@@ -137,6 +134,7 @@ export default function SignInViewPage(): React.JSX.Element {
             email: values.email,
             password: await passwordEncryption(values.password || ''),
             isPasskey: false,
+            isPassword: isPasswordTab,
           }
         : {
             email: values.email,
@@ -162,19 +160,6 @@ export default function SignInViewPage(): React.JSX.Element {
     } catch (error) {
       setAlert('Something went wrong during sign in. Please try again.')
       console.error('Sign in error:', error)
-    }
-  }
-
-  const verifyAuthenticationMethod = async (
-    verifyAuthenticationObj: IVerifyRegistrationObj,
-    userData: { userName: string },
-  ): Promise<string | AxiosResponse> => {
-    try {
-      const res = verifyAuthentication(verifyAuthenticationObj, userData)
-      return await res
-    } catch (error) {
-      setFidoLoader(false)
-      throw error
     }
   }
 
@@ -208,21 +193,23 @@ export default function SignInViewPage(): React.JSX.Element {
         ...attResp,
         challangeId: challengeId,
       }
+      const entityData = {
+        verifyAuthenticationObj: JSON.stringify(verifyAuthenticationObj),
+        obj: JSON.stringify(obj),
+        isPasswordTab,
+      }
 
-      const verificationResp = await verifyAuthenticationMethod(
-        verifyAuthenticationObj,
-        obj,
-      )
-      const { data } = verificationResp as AxiosResponse
+      const verificationResp = await signIn('credentials', {
+        ...entityData,
+        redirect: false,
+        callbackUrl: '/dashboard',
+      })
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const token = data?.data?.access_token
-        const refreshToken = data?.data?.refresh_token
-
-        dispatch(setToken(token))
-        dispatch(setRefreshToken(refreshToken))
-
-        const userRole = await getUserDetails(token)
+      if (verificationResp?.ok && verificationResp?.status === 200) {
+        if (!session?.accessToken) {
+          return
+        }
+        const userRole = await getUserDetails(session?.accessToken)
 
         if (!userRole?.role?.name) {
           setAlert('Invalid user role')
@@ -234,8 +221,8 @@ export default function SignInViewPage(): React.JSX.Element {
             ? '/dashboard/settings'
             : '/dashboard',
         )
-      } else if (data?.error) {
-        setFidoUserError(data?.error)
+      } else if (verificationResp?.error) {
+        setFidoUserError(verificationResp?.error)
       } else {
         setFidoUserError('Something went wrong during verification')
       }
