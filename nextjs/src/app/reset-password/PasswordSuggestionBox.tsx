@@ -71,7 +71,7 @@ const PasswordSuggestionBox = ({
 
   return (
     <div className="mt-4 ml-6">
-      <div className="absolute z-10 flex justify-end rounded-sm bg-white px-6 py-4 text-xs shadow-lg shadow-gray-500/50">
+      <div className="bg-popover absolute z-10 flex justify-end rounded-sm px-6 py-4 text-xs shadow-lg shadow-gray-500/50">
         {show === true ? (
           <>
             {restrictedChar ? (
