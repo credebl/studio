@@ -251,7 +251,7 @@ const SchemaList = (props: {
           setLoading(false)
         })
     }
-  }, [organizationId, schemaListAPIParameter, allSchemaFlag])
+  }, [organizationId])
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
     const inputValue = event.target.value
@@ -267,12 +267,41 @@ const SchemaList = (props: {
   }
 
   const handleFilterChange = async (value: string): Promise<void> => {
-    const isAllSchemas = value === 'all'
+    const isAllSchemas = value === 'All schemas'
 
     setSelectedValue(value)
     setAllSchemaFlag(isAllSchemas)
 
-    setSchemaListAPIParameter((prev) => ({ ...prev, page: 1 }))
+    // Reset pagination and search parameters
+    setSchemaListAPIParameter({
+      itemPerPage,
+      page: 1,
+      search: '',
+      sortBy: 'id',
+      sortingOrder: 'desc',
+      allSearch: '',
+    })
+
+    setSearchValue('')
+
+    if (organizationId) {
+      setLoading(true)
+      try {
+        await getSchemaList(
+          {
+            itemPerPage,
+            page: 1,
+            search: '',
+            sortBy: 'id',
+            sortingOrder: 'desc',
+            allSearch: '',
+          },
+          isAllSchemas,
+        )
+      } finally {
+        setLoading(false)
+      }
+    }
   }
 
   const schemaSelectionCallback = ({
