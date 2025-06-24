@@ -20,7 +20,6 @@ import { AxiosResponse } from 'axios'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../../components/ui/generic-table-component/data-table'
 import { DidMethod } from '@/features/common/enum'
-import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import { IssuedCredential } from '../type/Issuance'
 import PageContainer from '@/components/layout/page-container'
@@ -313,41 +312,31 @@ const Credentials = (): JSX.Element => {
         />
       )}
 
-      {!walletCreated && !loading ? (
-        <div className="flex items-center justify-center">
-          <EmptyListMessage
-            message={'No Wallet Details Found'}
-            description={'The owner is required to create a wallet'}
-            buttonContent={''}
-          />
-        </div>
-      ) : (
-        <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <DataTable
-            isLoading={loading}
-            placeHolder="Filter by Connection Id and Schema Name"
-            data={issuedCredList}
-            columns={column}
-            index={'credentialExchangeId'}
-            pageIndex={pagination.pageIndex}
-            pageSize={pagination.pageSize}
-            pageCount={pagination.pageCount}
-            onPageChange={(index) =>
-              setPagination((prev) => ({ ...prev, pageIndex: index }))
-            }
-            onPageSizeChange={(size) => {
-              setPagination((prev) => ({
-                ...prev,
-                pageSize: size,
-                pageIndex: 0,
-              }))
-            }}
-            onSearchTerm={(term) =>
-              setPagination((prev) => ({ ...prev, searchTerm: term }))
-            }
-          />
-        </div>
-      )}
+      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <DataTable
+          isLoading={loading}
+          placeHolder="Filter by Connection Id and Schema Name"
+          data={issuedCredList}
+          columns={column}
+          index={'credentialExchangeId'}
+          pageIndex={pagination.pageIndex}
+          pageSize={pagination.pageSize}
+          pageCount={pagination.pageCount}
+          onPageChange={(index) =>
+            setPagination((prev) => ({ ...prev, pageIndex: index }))
+          }
+          onPageSizeChange={(size) => {
+            setPagination((prev) => ({
+              ...prev,
+              pageSize: size,
+              pageIndex: 0,
+            }))
+          }}
+          onSearchTerm={(term) =>
+            setPagination((prev) => ({ ...prev, searchTerm: term }))
+          }
+        />
+      </div>
     </PageContainer>
   )
 }

@@ -111,7 +111,6 @@ const ConnectionList = (props: {
 
   const refreshPage = (): void => {
     setLocalOrgs([])
-    getConnections(listAPIParameterIssuance)
   }
 
   useEffect(() => {
@@ -185,21 +184,29 @@ const ConnectionList = (props: {
         pageSize={listAPIParameterIssuance.itemPerPage}
         pageCount={Math.ceil(totalItem / listAPIParameterIssuance.itemPerPage)}
         onPageChange={(index) =>
-          setListAPIParameterIssuance((prev) => ({ ...prev, page: index + 1 }))
+          setListAPIParameterIssuance((prev) => {
+            const newPage = index + 1
+            if (prev.page === newPage) {
+              return prev
+            }
+            return { ...prev, page: newPage }
+          })
         }
         onPageSizeChange={(size) =>
-          setListAPIParameterIssuance((prev) => ({
-            ...prev,
-            itemPerPage: size,
-            page: 1,
-          }))
+          setListAPIParameterIssuance((prev) => {
+            if (prev.itemPerPage === size && prev.page === 1) {
+              return prev
+            }
+            return { ...prev, itemPerPage: size, page: 1 }
+          })
         }
         onSearchTerm={(term) =>
-          setListAPIParameterIssuance((prev) => ({
-            ...prev,
-            search: term,
-            page: 1,
-          }))
+          setListAPIParameterIssuance((prev) => {
+            if (prev.search === term && prev.page === 1) {
+              return prev
+            }
+            return { ...prev, search: term, page: 1 }
+          })
         }
       />
     </div>
