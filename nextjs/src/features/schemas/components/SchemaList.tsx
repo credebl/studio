@@ -253,6 +253,12 @@ const SchemaList = (props: {
     }
   }, [organizationId])
 
+  useEffect(() => {
+    if (organizationId) {
+      getSchemaList(schemaListAPIParameter, allSchemaFlag)
+    }
+  }, [schemaListAPIParameter.page])
+
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
     const inputValue = event.target.value
     setSearchValue(inputValue)
@@ -347,6 +353,30 @@ const SchemaList = (props: {
       created,
     }
     props.W3CSchemaSelectionCallback?.(schemaId, w3cSchemaDetails)
+  }
+  const paginationRange = 2
+  const currentPage = schemaListAPIParameter.page
+  const startPage = Math.max(1, currentPage - paginationRange)
+  const endPage = Math.min(lastPage, currentPage + paginationRange)
+
+  const paginationNumbers = []
+
+  if (startPage > 1) {
+    paginationNumbers.push(1)
+    if (startPage > 2) {
+      paginationNumbers.push('...')
+    }
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    paginationNumbers.push(i)
+  }
+
+  if (endPage < lastPage) {
+    if (endPage < lastPage - 1) {
+      paginationNumbers.push('...')
+    }
+    paginationNumbers.push(lastPage)
   }
 
   return (
@@ -451,30 +481,32 @@ const SchemaList = (props: {
                       </PaginationItem>
                     )}
 
-                    {Array.from({ length: lastPage }).map((_, index) => {
-                      const page = index + 1
-                      const isActive = page === schemaListAPIParameter.page
-                      return (
-                        <PaginationItem key={page}>
+                    {paginationNumbers.map((page, idx) => (
+                      <PaginationItem key={idx}>
+                        {page === '...' ? (
+                          <span className="text-muted-foreground px-3 py-2">
+                            …
+                          </span>
+                        ) : (
                           <PaginationLink
                             className={`${
-                              isActive
-                                ? 'bg-primary text-[var(--color-white)]'
+                              page === schemaListAPIParameter.page
+                                ? 'bg-primary text-white'
                                 : 'bg-background text-muted-foreground'
                             } rounded-lg px-4 py-2`}
                             href="#"
                             onClick={() =>
                               setSchemaListAPIParameter((prev) => ({
                                 ...prev,
-                                page,
+                                page: page as number,
                               }))
                             }
                           >
                             {page}
                           </PaginationLink>
-                        </PaginationItem>
-                      )
-                    })}
+                        )}
+                      </PaginationItem>
+                    ))}
 
                     {schemaListAPIParameter.page < lastPage && (
                       <PaginationItem>

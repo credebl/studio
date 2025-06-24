@@ -56,7 +56,7 @@ export default function AppSidebar(): React.JSX.Element {
 
   const collapsedLogoImageSrc =
     activeTheme === 'credebl'
-      ? '/images/favicon-credebl.ico'
+      ? '/images/CREDEBL_ICON.ico'
       : '/images/favicon-sovio.ico'
 
   const dispatch = useAppDispatch()

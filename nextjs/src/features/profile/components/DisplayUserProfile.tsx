@@ -130,7 +130,7 @@ const DisplayUserProfile = ({
             onClick={toggleEditProfile}
           >
             <span>
-              <Edit className="mr-12" />
+              <Edit className="text-foreground mr-12" />
             </span>
           </Button>
         </div>
