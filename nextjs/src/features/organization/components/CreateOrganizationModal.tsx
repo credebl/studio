@@ -82,6 +82,8 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   const searchParams = useSearchParams()
   const router = useRouter()
   const orgId = searchParams.get('orgId')
+  const redirectTo = searchParams.get('redirectTo')
+  const clientAlias = searchParams.get('clientAlias')
 
   const getCountries = async (): Promise<void> => {
     const response = await getAllCountries()
@@ -277,7 +279,11 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         setSuccess(data.message as string)
 
         setTimeout(() => {
-          router.push(`/organizations/agent-config?orgId=${orgId}`)
+          const redirectUrl =
+            redirectTo && clientAlias
+              ? `/organizations/agent-config?orgId=${orgId}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+              : `/organizations/agent-config?orgId=${orgId}`
+          router.push(redirectUrl)
         }, 3000)
       } else {
         setFailure(data?.message as string)

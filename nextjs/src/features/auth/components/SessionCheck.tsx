@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
@@ -13,18 +13,33 @@ const SessionCheck = ({
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
+  const pathname = usePathname()
 
   const redirectTo = searchParams.get('redirectTo') ?? '/dashboard'
+
+  const preventRedirectOnPaths = [
+    '/organizations/create-organization',
+    '/organizations/agent-config',
+    '/organizations/dashboard',
+  ]
 
   useEffect(() => {
     if (status === 'loading') {
       return
     }
 
-    if (session) {
+    const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
+      pathname.startsWith(page),
+    )
+
+    if (session && redirectTo && !isOnRestrictedPage) {
       router.push(redirectTo)
     }
-  }, [session, status, redirectTo, router])
+
+    if (session === null) {
+      localStorage.removeItem('persist:root')
+    }
+  }, [session, status, redirectTo, router, pathname])
 
   if (status === 'loading') {
     return <div>Loading session...</div>
