@@ -299,7 +299,6 @@ const SchemaList = (props: {
             page: 1,
             search: '',
             sortBy: 'id',
-            sortingOrder: 'desc',
             allSearch: '',
           },
           isAllSchemas,
