@@ -27,7 +27,6 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
-import { EmptyListMessage } from '@/components/EmptyListComponent'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
@@ -81,6 +80,7 @@ const VerificationCredentialList = (): JSX.Element => {
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
+      setLoading(false)
       return
     }
     setLoading(true)
@@ -130,6 +130,7 @@ const VerificationCredentialList = (): JSX.Element => {
 
     try {
       if (!orgId) {
+        setLoading(false)
         return
       }
       const response = await getVerificationList(orgId, {
@@ -459,40 +460,31 @@ const VerificationCredentialList = (): JSX.Element => {
         </div>
       )}
 
-      {!isWalletCreated && !loading ? (
-        <div className="flex items-center justify-center">
-          <EmptyListMessage
-            message={'No Wallet Details Found'}
-            description={'The owner is required to create a wallet'}
-          />
-        </div>
-      ) : (
-        <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-          <DataTable
-            isLoading={loading}
-            placeHolder="Filter by Connection Id and Schema Name"
-            data={verificationList}
-            columns={column}
-            index={'presentationId'}
-            pageIndex={proofPagination.pageIndex}
-            pageSize={proofPagination.pageSize}
-            pageCount={proofPagination.pageCount}
-            onPageChange={(index) =>
-              setProofPagination((prev) => ({ ...prev, pageIndex: index }))
-            }
-            onPageSizeChange={(size) => {
-              setProofPagination((prev) => ({
-                ...prev,
-                pageSize: size,
-                pageIndex: 0,
-              }))
-            }}
-            onSearchTerm={(term) =>
-              setProofPagination((prev) => ({ ...prev, searchTerm: term }))
-            }
-          />
-        </div>
-      )}
+      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <DataTable
+          isLoading={loading}
+          placeHolder="Filter by Connection Id and Schema Name"
+          data={verificationList}
+          columns={column}
+          index={'presentationId'}
+          pageIndex={proofPagination.pageIndex}
+          pageSize={proofPagination.pageSize}
+          pageCount={proofPagination.pageCount}
+          onPageChange={(index) =>
+            setProofPagination((prev) => ({ ...prev, pageIndex: index }))
+          }
+          onPageSizeChange={(size) => {
+            setProofPagination((prev) => ({
+              ...prev,
+              pageSize: size,
+              pageIndex: 0,
+            }))
+          }}
+          onSearchTerm={(term) =>
+            setProofPagination((prev) => ({ ...prev, searchTerm: term }))
+          }
+        />
+      </div>
 
       {userData && (
         <ProofRequest
