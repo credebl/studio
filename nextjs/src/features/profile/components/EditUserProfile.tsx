@@ -58,8 +58,16 @@ export default function EditUserProfile({
   }, [])
 
   const validationSchema = yup.object().shape({
-    firstName: yup.string().required('First name is required').min(2).max(50),
-    lastName: yup.string().required('Last name is required').min(2).max(50),
+    firstName: yup
+      .string()
+      .required('First name is required')
+      .min(2, 'First Name must be at least 2 characters')
+      .max(50, 'First Name must be at most 50 characters'),
+    lastName: yup
+      .string()
+      .required('Last name is required')
+      .min(2, 'Last Name must be at least 2 characters')
+      .max(50, 'Last Name must be at most 50 characters'),
   })
 
   const processImage = (file: File): void => {
