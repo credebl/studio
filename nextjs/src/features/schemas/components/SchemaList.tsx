@@ -211,7 +211,7 @@ const SchemaList = (props: {
 
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const did = data?.data?.org_agents?.[0]?.orgDid
-      const ledgerId = data?.data?.org_agents?.[0]?.ledgers?.id
+      const ledgerId = data?.data?.org_agents?.[0]?.ledgers?.id ?? ''
       setLedger(ledgerId)
 
       if (data?.data?.org_agents && data?.data?.org_agents.length > 0) {
