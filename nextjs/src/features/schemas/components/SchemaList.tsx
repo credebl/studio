@@ -83,7 +83,6 @@ const SchemaList = (props: {
 }): React.ReactElement => {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
-  const ledgerId = useAppSelector((state) => state.organization.ledgerId)
   const token = useAppSelector((state) => state.auth.token)
 
   const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
@@ -91,6 +90,7 @@ const SchemaList = (props: {
   const [, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false)
+  const [ledger, setLedger] = useState<string>('')
   const [schemaType, setSchemaType] = useState('')
   const [, setWalletStatus] = useState(false)
   const [totalItem, setTotalItem] = useState(0)
@@ -165,7 +165,7 @@ const SchemaList = (props: {
         schemaResponse = await getAllSchemas(
           schemaListAPIParameter,
           schemaType,
-          ledgerId,
+          ledger,
         )
       } else {
         schemaResponse = await getAllSchemasByOrgId(
@@ -211,6 +211,8 @@ const SchemaList = (props: {
 
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       const did = data?.data?.org_agents?.[0]?.orgDid
+      const ledgerId = data?.data?.org_agents?.[0]?.ledgers.id
+      setLedger(ledgerId)
 
       if (data?.data?.org_agents && data?.data?.org_agents.length > 0) {
         setWalletStatus(true)
