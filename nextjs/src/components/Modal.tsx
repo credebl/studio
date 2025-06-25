@@ -25,7 +25,9 @@ const modalVariants = cva(
   },
 )
 
-export interface ModalProps extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof modalVariants> {
+export interface ModalProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof modalVariants> {
   open: boolean
   onClose: () => void
   closeOnOutsideClick?: boolean

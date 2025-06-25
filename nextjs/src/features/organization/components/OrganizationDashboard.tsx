@@ -11,6 +11,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { getOrgDashboard, getOrganizationById } from '@/app/api/organization'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -21,7 +22,6 @@ import OrganizationDetails from './OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { useAppSelector } from '@/lib/hooks'
-import { useRouter } from 'next/navigation'
 
 type OrganizationDashboardProps = {
   orgId: string
@@ -44,6 +44,14 @@ export const OrganizationDashboard = ({
   )
   const activeOrgId = selecteDropdownOrgId ?? orgId
   const orgIdOfDashboard = orgId
+
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams?.get('redirectTo')
+  const clientAlias = searchParams?.get('clientAlias')
+  const redirectUrl =
+    redirectTo && clientAlias
+      ? `/organizations/agent-config?orgId=${orgIdOfDashboard}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+      : `/organizations/agent-config?orgId=${orgIdOfDashboard}`
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
@@ -278,13 +286,7 @@ export const OrganizationDashboard = ({
         ) : (
           <>
             {showSetupButton && (
-              <Button
-                onClick={() =>
-                  router.push(
-                    `/organizations/agent-config?orgId=${orgIdOfDashboard}`,
-                  )
-                }
-              >
+              <Button onClick={() => router.push(redirectUrl)}>
                 Setup Your Wallet
               </Button>
             )}

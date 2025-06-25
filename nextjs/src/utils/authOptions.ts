@@ -22,10 +22,29 @@ interface MyAuthOptions {
       session: Session
       token: JWT
     }): Promise<Session>
+    redirect({
+      url,
+      baseUrl,
+    }: {
+      url: string
+      baseUrl: string
+    }): Promise<string>
   }
   secret?: string
   session?: Partial<SessionOptions> | undefined
   pages?: { signIn: string }
+  cookies?: {
+    sessionToken: {
+      name: string
+      options: {
+        domain?: string
+        path: string
+        sameSite: 'lax' | 'strict' | 'none'
+        secure: boolean
+        httpOnly: boolean
+      }
+    }
+  }
 }
 
 interface jwtDataPayload extends JwtPayload {
@@ -171,6 +190,25 @@ export const authOptions: MyAuthOptions = {
       session.expiresAt = token.expiresAt
       return session
     },
+
+    async redirect({ url, baseUrl }) {
+      try {
+        const redirectUrl = new URL(url)
+
+        if (
+          ['localhost', '127.0.0.1'].includes(redirectUrl.hostname) &&
+          (redirectUrl.protocol === 'http:' ||
+            redirectUrl.protocol === 'https:')
+        ) {
+          return redirectUrl.toString()
+        }
+      } catch (err) {
+        // If not a full URL, treat it as relative path
+        return new URL(url, baseUrl).toString()
+      }
+
+      return baseUrl
+    },
   },
 
   secret: process.env.NEXTAUTH_SECRET,
@@ -181,5 +219,18 @@ export const authOptions: MyAuthOptions = {
 
   pages: {
     signIn: '/auth/sign-in',
+  },
+
+  cookies: {
+    sessionToken: {
+      name: 'next-auth.session-token',
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: false,
+        domain: '.localhost',
+      },
+    },
   },
 }
