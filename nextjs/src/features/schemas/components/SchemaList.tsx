@@ -259,7 +259,7 @@ const SchemaList = (props: {
     if (organizationId) {
       getSchemaList(schemaListAPIParameter, allSchemaFlag)
     }
-  }, [schemaListAPIParameter.page])
+  }, [schemaListAPIParameter.page, schemaListAPIParameter.allSearch, schemaListAPIParameter.search])
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
     const inputValue = event.target.value
@@ -464,7 +464,7 @@ const SchemaList = (props: {
                 </div>
               ))}
             </div>
-            {totalItem > itemPerPage && (
+            {totalItem > itemPerPage && schemaList.length === itemPerPage && (
               <div className="mt-6 flex justify-end">
                 <Pagination className="m-0 w-fit">
                   <PaginationContent>
