@@ -276,21 +276,21 @@ ul.timelinestatic > li {
 }
 
 .success-alert {
-  background-color: var(--success);
-  color: var(--success-text);
+  background-color: var(--color-green-100);
+  color: var(--color-green-600);
 }
 
 .failure-alert {
-  background-color: var(--error);
-  color: var(--error-text);
+  background-color: var(--color-red-100);
+  color: var(--color-red-600);
 }
 
 .success-alert div {
-  color: var(--success-text);
+  color: var(--color-green-600);
 }
 
 .failure-alert div {
-  color: var(--error-text);
+  color: var(--color-red-600);
 }
 
 .animate-text {
