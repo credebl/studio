@@ -45,7 +45,7 @@ export default function EmailVerificationForm({
 
       const payload = {
         email,
-        clientAlias: clientAliasValue ? clientAliasValue : '',
+        clientAlias: clientAliasValue ? clientAliasValue : 'SOVIO',
       }
 
       const userRsp = await sendVerificationMail(payload)

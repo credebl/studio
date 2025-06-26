@@ -15,12 +15,12 @@ const SessionCheck = ({
   const searchParams = useSearchParams()
   const pathname = usePathname()
 
-  const redirectTo = searchParams.get('redirectTo') ?? '/dashboard'
+  const redirectTo = searchParams.get('redirectTo')
 
   const preventRedirectOnPaths = [
     '/organizations/create-organization',
     '/organizations/agent-config',
-    '/organizations/dashboard',
+    '/organizations',
   ]
 
   useEffect(() => {
@@ -34,6 +34,8 @@ const SessionCheck = ({
 
     if (session && redirectTo && !isOnRestrictedPage) {
       router.push(redirectTo)
+    } else if (session && !redirectTo && !isOnRestrictedPage) {
+      router.push('/dashboard')
     }
 
     if (session === null) {
