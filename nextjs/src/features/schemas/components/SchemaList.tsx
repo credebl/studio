@@ -1,7 +1,7 @@
 'use client'
 
 import { DidMethod, SchemaTypes } from '@/common/enums'
-import { IW3cSchemaDetails, SchemaListItem } from '../type/schemas-interface'
+import { IAttributesDetails, IW3cSchemaDetails, SchemaListItem } from '../type/schemas-interface'
 import {
   Pagination,
   PaginationContent,
@@ -36,12 +36,6 @@ import { getOrganizationById } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
 import { useRouter } from 'next/navigation'
 
-interface IAttributesDetails {
-  attributeName: string
-  schemaDataType: string
-  displayName: string
-  isRequired: boolean
-}
 export interface ISchemaData {
   createDateTime: string
   name: string
@@ -185,7 +179,7 @@ const SchemaList = (props: {
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const schemaData = data?.data?.data
         if (data?.data?.data) {
-          setLastPage(data?.data?.lastPage)
+          setLastPage(data?.data?.lastPage - 1)
           setTotalItem(data?.data?.totalItems)
           setSchemaList([...schemaData])
         } else {
@@ -259,7 +253,11 @@ const SchemaList = (props: {
     if (organizationId) {
       getSchemaList(schemaListAPIParameter, allSchemaFlag)
     }
-  }, [schemaListAPIParameter.page])
+  }, [
+    schemaListAPIParameter.page,
+    schemaListAPIParameter.allSearch,
+    schemaListAPIParameter.search,
+  ])
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
     const inputValue = event.target.value
@@ -426,7 +424,7 @@ const SchemaList = (props: {
           </Button>
         </div>
 
-        {loading ? (
+        {loading && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
             {[...Array(4)].map((_, idx) => (
               <div key={idx} className="space-y-3 rounded-lg p-4 shadow-sm">
@@ -438,7 +436,9 @@ const SchemaList = (props: {
               </div>
             ))}
           </div>
-        ) : schemaList.length ? (
+        )}
+
+        {!loading && (schemaList.length ? (
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
               {schemaList.map((element) => (
@@ -464,68 +464,70 @@ const SchemaList = (props: {
                 </div>
               ))}
             </div>
-            {totalItem > itemPerPage && (
-              <div className="mt-6 flex justify-end">
-                <Pagination className="m-0 w-fit">
-                  <PaginationContent>
-                    {schemaListAPIParameter.page > 1 && (
-                      <PaginationItem>
-                        <PaginationPrevious
-                          href="#"
-                          onClick={() =>
-                            setSchemaListAPIParameter((prev) => ({
-                              ...prev,
-                              page: prev.page - 1,
-                            }))
-                          }
-                        />
-                      </PaginationItem>
-                    )}
-
-                    {paginationNumbers.map((page, idx) => (
-                      <PaginationItem key={idx}>
-                        {page === '...' ? (
-                          <span className="text-muted-foreground px-3 py-2">
-                            …
-                          </span>
-                        ) : (
-                          <PaginationLink
-                            className={`${
-                              page === schemaListAPIParameter.page
-                                ? 'bg-primary text-white'
-                                : 'bg-background text-muted-foreground'
-                            } rounded-lg px-4 py-2`}
+            {totalItem > itemPerPage &&
+              (schemaList.length === itemPerPage ||
+                schemaListAPIParameter.page === lastPage) && (
+                <div className="mt-6 flex justify-end">
+                  <Pagination className="m-0 w-fit">
+                    <PaginationContent>
+                      {schemaListAPIParameter.page > 1 && (
+                        <PaginationItem>
+                          <PaginationPrevious
                             href="#"
                             onClick={() =>
                               setSchemaListAPIParameter((prev) => ({
                                 ...prev,
-                                page: page as number,
+                                page: prev.page - 1,
                               }))
                             }
-                          >
-                            {page}
-                          </PaginationLink>
-                        )}
-                      </PaginationItem>
-                    ))}
+                          />
+                        </PaginationItem>
+                      )}
 
-                    {schemaListAPIParameter.page < lastPage && (
-                      <PaginationItem>
-                        <PaginationNext
-                          href="#"
-                          onClick={() =>
-                            setSchemaListAPIParameter((prev) => ({
-                              ...prev,
-                              page: prev.page + 1,
-                            }))
-                          }
-                        />
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            )}
+                      {paginationNumbers.map((page, idx) => (
+                        <PaginationItem key={idx}>
+                          {page === '...' ? (
+                            <span className="text-muted-foreground px-3 py-2">
+                              …
+                            </span>
+                          ) : (
+                            <PaginationLink
+                              className={`${
+                                page === schemaListAPIParameter.page
+                                  ? 'bg-primary text-white'
+                                  : 'bg-background text-muted-foreground'
+                              } rounded-lg px-4 py-2`}
+                              href="#"
+                              onClick={() =>
+                                setSchemaListAPIParameter((prev) => ({
+                                  ...prev,
+                                  page: page as number,
+                                }))
+                              }
+                            >
+                              {page}
+                            </PaginationLink>
+                          )}
+                        </PaginationItem>
+                      ))}
+
+                      {schemaListAPIParameter.page < lastPage && (
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            onClick={() =>
+                              setSchemaListAPIParameter((prev) => ({
+                                ...prev,
+                                page: prev.page + 1,
+                              }))
+                            }
+                          />
+                        </PaginationItem>
+                      )}
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
           </>
         ) : (
           <EmptyMessage
@@ -540,7 +542,7 @@ const SchemaList = (props: {
             }}
             disabled={orgRole !== 'admin' && orgRole !== 'owner'}
           />
-        )}
+        ))}
       </div>
     </PageContainer>
   )
