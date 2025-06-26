@@ -1,193 +1,222 @@
-import type { AxiosError, AxiosResponse } from 'axios';
-import {instance as axiosUser, EcosystemInstance as ecosystemAxiosUser} from './axiosIntercepter';
+import type { AxiosError, AxiosResponse } from 'axios'
+import {
+  instance as axiosUser,
+  EcosystemInstance as ecosystemAxiosUser,
+} from './axiosIntercepter'
+
+import { HeaderConfig } from '@/config/GetHeaderConfigs'
 
 export interface APIParameters {
-    url: string,
-    payload?: Record<never, unknown>
-    config?: Record<string, unknown>
+  url: string
+  payload?: Record<never, unknown>
+  config?: HeaderConfig
 }
 
-export const axiosGet = async ({ url, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await axiosUser.get(url, config);
-
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+const HandleResponse = (
+  responseData: AxiosResponse | undefined,
+): Promise<AxiosResponse> => {
+  if (responseData) {
+    const errorMessage =
+      (responseData.data as { message?: string })?.message ||
+      'Something went wrong, please try later...'
+    return Promise.reject(new Error(errorMessage))
+  }
+  return Promise.reject(
+    new Error('Please check your internet connectivity and try again'),
+  )
 }
-export const axiosPublicUserGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
-	try {
-			const response = await axiosUser.get(url);
+export const axiosGet = async ({
+  url,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.get(url, config)
 
-			return response
-	}
-	catch (error) {
-			const err = error as AxiosError
-			return HandleResponse(err.response ? err.response : err)
-	}
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
+export const axiosPublicUserGet = async ({
+  url,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.get(url)
 
-export const axiosPublicOrganisationGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
-	try {
-			const response = await axiosUser.get(url);
-
-			return response
-	}
-	catch (error) {
-			const err = error as AxiosError
-			return HandleResponse(err.response ? err.response : err)
-	}
-}
-
-
-export const axiosPost = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
-    try {		
-        const response = await axiosUser.post(url, payload, config);
-
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const axiosPatch = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await axiosUser.patch(url, payload, config);
+export const axiosPublicOrganisationGet = async ({
+  url,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.get(url)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const axiosPut = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await axiosUser.put(url, payload, config);
+export const axiosPost = async ({
+  url,
+  payload,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.post(url, payload, config)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const axiosDelete = async ({ url, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await axiosUser.delete(url, config);
+export const axiosPatch = async ({
+  url,
+  payload,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.patch(url, payload, config)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const ecosystemAxiosGet = async ({ url, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await ecosystemAxiosUser.get(url, config);
+export const axiosPut = async ({
+  url,
+  payload,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.put(url, payload, config)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
-}
-export const ecosystemAxiosPublicUserGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
-	try {
-			const response = await ecosystemAxiosUser.get(url);
-
-			return response
-	}
-	catch (error) {
-			const err = error as AxiosError
-			return HandleResponse(err.response ? err.response : err)
-	}
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const ecosystemAxiosPublicOrganisationGet = async ({ url }: APIParameters): Promise<AxiosResponse> => {
-	try {
-			const response = await ecosystemAxiosUser.get(url);
+export const axiosDelete = async ({
+  url,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await axiosUser.delete(url, config)
 
-			return response
-	}
-	catch (error) {
-			const err = error as AxiosError
-			return HandleResponse(err.response ? err.response : err)
-	}
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
+export const ecosystemAxiosGet = async ({
+  url,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.get(url, config)
 
-export const ecosystemAxiosPost = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
-    try {		
-        const response = await ecosystemAxiosUser.post(url, payload, config);
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
+}
+export const ecosystemAxiosPublicUserGet = async ({
+  url,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.get(url)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const ecosystemAxiosPatch = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await ecosystemAxiosUser.patch(url, payload, config);
+export const ecosystemAxiosPublicOrganisationGet = async ({
+  url,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.get(url)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const ecosystemAxiosPut = async ({ url, payload, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await ecosystemAxiosUser.put(url, payload, config);
+export const ecosystemAxiosPost = async ({
+  url,
+  payload,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.post(url, payload, config)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-export const ecosystemAxiosDelete = async ({ url, config }: APIParameters): Promise<AxiosResponse> => {
-    try {
-        const response = await ecosystemAxiosUser.delete(url, config);
+export const ecosystemAxiosPatch = async ({
+  url,
+  payload,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.patch(url, payload, config)
 
-        return response
-    }
-    catch (error) {
-        const err = error as AxiosError
-        return HandleResponse(err.response ? err.response : err)
-    }
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
 
-const HandleResponse = (responseData: any): Promise<AxiosResponse> => {
-    if (responseData) {
+export const ecosystemAxiosPut = async ({
+  url,
+  payload,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.put(url, payload, config)
 
-        return Promise.reject(new Error(
-            responseData?.data?.message
-              ? responseData?.data?.message
-              : responseData?.message
-                ? responseData?.message
-                : "Something went wrong, please try later..."
-          ));
-          
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
+}
 
-    } else {
-        return Promise.reject(new Error("Please check your internet connectivity and try again"))
-    }
+export const ecosystemAxiosDelete = async ({
+  url,
+  config,
+}: APIParameters): Promise<AxiosResponse> => {
+  try {
+    const response = await ecosystemAxiosUser.delete(url, config)
+
+    return response
+  } catch (error) {
+    const err = error as AxiosError
+    return HandleResponse(err.response)
+  }
 }
