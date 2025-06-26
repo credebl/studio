@@ -51,7 +51,8 @@ export const OrganizationDashboard = ({
     }
 
     setLoading(true)
-    const response = await getOrganizationById(orgIdOfDashboard as string)
+    const useOrgId = activeOrgId === orgIdOfDashboard ? orgId : activeOrgId
+    const response = await getOrganizationById(useOrgId as string)
     const { data } = response as AxiosResponse
 
     setLoading(false)
