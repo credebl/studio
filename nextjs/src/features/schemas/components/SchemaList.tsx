@@ -426,7 +426,7 @@ const SchemaList = (props: {
           </Button>
         </div>
 
-        {loading ? (
+        {loading && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
             {[...Array(4)].map((_, idx) => (
               <div key={idx} className="space-y-3 rounded-lg p-4 shadow-sm">
@@ -438,7 +438,9 @@ const SchemaList = (props: {
               </div>
             ))}
           </div>
-        ) : schemaList.length ? (
+        )}
+
+        {loading ? null : schemaList.length ? (
           <>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
               {schemaList.map((element) => (
