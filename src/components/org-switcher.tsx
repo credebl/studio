@@ -1,5 +1,6 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Check, ChevronsUpDown, Plus } from 'lucide-react'
 import {
   DropdownMenu,
@@ -18,7 +19,6 @@ import { setOrgId, setOrgRoles, setSelectedOrgId } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AxiosResponse } from 'axios'
-import Image from 'next/image'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationRoles } from '@/app/api/organization'
 import { useRouter } from 'next/navigation'
@@ -121,13 +121,18 @@ export function OrgSwitcher({
               {tenants.length > 0 && (
                 <div className="bg-popover border-muted flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border">
                   {selectedTenant?.logoUrl ? (
-                    <Image
-                      src={selectedTenant.logoUrl}
-                      alt={selectedTenant.name}
-                      width={32}
-                      height={32}
-                      className="object-cover"
-                    />
+                    <Avatar className="rounded-md">
+                      {selectedTenant.logoUrl ? (
+                        <AvatarImage
+                          src={selectedTenant.logoUrl}
+                          alt={selectedTenant.name}
+                        />
+                      ) : (
+                        <AvatarFallback className="text-2xl font-bold">
+                          {selectedTenant.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
                   ) : (
                     <span className="text-sm font-bold">
                       {getInitials(selectedTenant?.name)}
@@ -160,13 +165,15 @@ export function OrgSwitcher({
                 >
                   <div className="bg-muted text-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
                     {tenant.logoUrl ? (
-                      <Image
-                        src={tenant.logoUrl}
-                        alt={tenant.name}
-                        width={24}
-                        height={24}
-                        className="rounded object-cover"
-                      />
+                      <Avatar className="rounded-md">
+                        {tenant.logoUrl ? (
+                          <AvatarImage src={tenant.logoUrl} alt={tenant.name} />
+                        ) : (
+                          <AvatarFallback className="text-2xl font-bold">
+                            {tenant.name.substring(0, 2).toUpperCase()}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
                     ) : (
                       <span className="text-xs font-semibold">
                         {getInitials(tenant.name)}

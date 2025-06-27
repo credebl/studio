@@ -150,8 +150,8 @@ const OrganizationCardList = (): React.JSX.Element => {
                   >
                     <div className="flex-shrink-0">
                       {org.logoUrl ? (
-                        <div className="border-border relative h-10 w-10 overflow-hidden rounded-full border">
-                          <Avatar className="h-16 w-16 rounded-md">
+                        <div className="border-border relative overflow-hidden rounded-full border">
+                          <Avatar className="rounded-md">
                             {org.logoUrl ? (
                               <AvatarImage src={org.logoUrl} alt={org.name} />
                             ) : (
