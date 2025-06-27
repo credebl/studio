@@ -1,30 +1,35 @@
-FROM node:lts as build
-
-# Install Deno
-RUN apt-get update && \
-    apt-get install -y curl unzip && \
-    curl -fsSL https://deno.land/x/install/install.sh | sh && \
-    ln -s /root/.deno/bin/deno /usr/local/bin/deno
-
+# Base image
+FROM node:18-alpine AS base
+RUN npm i -g pnpm
+# Set working directory
 WORKDIR /app
-RUN deno --version
-COPY package.json package-lock.json ./
-RUN npm install
+
+# Copy package.json and package-lock.json
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install 
+
+# Copy the rest of the application files
 COPY . .
+
+# Build the Next.js application
 RUN npm run build
 
-# Stage 2
-FROM node:lts as prod
+# Production stage
+FROM node:18-alpine AS production
 
-# Install Deno
-RUN apt-get update && \
-    apt-get install -y curl unzip && \
-    curl -fsSL https://deno.land/x/install/install.sh | sh && \
-    ln -s /root/.deno/bin/deno /usr/local/bin/deno
-
+# Set working directory
 WORKDIR /app
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./
-COPY --from=build /app/dist ./dist
-EXPOSE 3000
-CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "./dist/server/entry.mjs"]
+
+# Copy only the necessary files from the build stage
+COPY --from=base /app/package.json ./
+COPY --from=base /app/.next ./.next
+COPY --from=base /app/public ./public
+COPY --from=base /app/node_modules ./node_modules
+
+# Expose the port the app runs on
+EXPOSE 3001
+
+# Start the application
+CMD ["npm", "start"]
