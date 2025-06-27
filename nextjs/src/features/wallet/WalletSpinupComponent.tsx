@@ -51,6 +51,9 @@ const WalletSpinup = (): React.JSX.Element => {
 
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
+  const redirectTo = searchParams.get('redirectTo')
+  const clientAlias = searchParams.get('clientAlias')
+
   useEffect(() => {
     if (orgId) {
       setCurrentOrgId(orgId)
@@ -319,7 +322,11 @@ const WalletSpinup = (): React.JSX.Element => {
           setWalletSpinStep(6)
           setWalletSpinupStatus()
         }, 1000)
-        router.push(`/organizations/${orgId}`)
+
+        const redirectUrl =
+          redirectTo && clientAlias ? redirectTo : `/organizations/${orgId}`
+
+        router.push(redirectUrl)
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
       })

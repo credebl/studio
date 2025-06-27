@@ -54,7 +54,7 @@ const ConfirmationModal = ({
               {warning ? (
                 <div className="">{warning}</div>
               ) : (
-                <div className='text-2xl'>Confirmation</div>
+                <div className="text-2xl">Confirmation</div>
               )}
             </div>
           </div>

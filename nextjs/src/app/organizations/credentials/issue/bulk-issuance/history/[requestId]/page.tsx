@@ -9,9 +9,5 @@ export default async function Page({
   params: Params
 }): Promise<React.JSX.Element> {
   const { requestId } = await params
-  return (
-    
-      <HistoryDetails {...{requestId}} /> 
-    
-  )
+  return <HistoryDetails {...{ requestId }} />
 }

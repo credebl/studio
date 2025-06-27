@@ -19,12 +19,12 @@ import {
 } from '@/app/api/Fido'
 import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth'
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { startRegistration } from '@simplewebauthn/browser'
-import { useRouter } from 'next/navigation'
 
 interface StepUserInfoProps {
   email: string
@@ -87,6 +87,10 @@ export default function UserInfoForm({
   const [success, setSuccess] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
 
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo')
+  const clientAlias = searchParams.get('clientAlias')
+
   const onSubmit = async (values: {
     firstName: string
     lastName: string
@@ -112,9 +116,12 @@ export default function UserInfoForm({
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setSuccess(data?.message || 'Account created successfully!')
+
         setTimeout(() => {
           router.push(
-            `/auth/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`,
+            redirectTo && clientAlias
+              ? `/auth/sign-in?signup=true&email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}&fidoFlag=false&method=password`
+              : `/auth/sign-up?email=${email}&fidoFlag=false&method=password`,
           )
         }, 2000)
       } else {
