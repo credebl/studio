@@ -205,6 +205,8 @@ export const getSchemaCredentials = async ({
   setFailure,
   setLoading,
   orgId,
+  allSchema = false,
+  ledgerId = '',
 }: IGetSchemaCredentials): Promise<void> => {
   try {
     let orgDid = ''
@@ -218,12 +220,12 @@ export const getSchemaCredentials = async ({
       orgDid = data?.data?.org_agents[0]?.orgDid
       // proceed with data
     }
-
-    const allSchemaSelectedFlag = 'false'
-    if (allSchemaSelectedFlag === 'false' || !allSchemaSelectedFlag) {
-      setIsAllSchemaFlagSelected(false)
-    } else if (allSchemaSelectedFlag === 'true') {
+    console.log("all schema", allSchema)
+    const allSchemaSelectedFlag = allSchema
+    if (allSchemaSelectedFlag) {
       setIsAllSchemaFlagSelected(true)
+    } else {
+      setIsAllSchemaFlagSelected(false)
     }
     let currentSchemaType = schemaType
     if (orgDid?.includes(DidMethod.POLYGON)) {
@@ -305,7 +307,7 @@ export const getSchemaCredentials = async ({
       const response = await getAllSchemas(
         schemaListAPIParameter,
         currentSchemaType,
-        orgId,
+        ledgerId,
       )
       const { data } = response as AxiosResponse
 
