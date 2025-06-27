@@ -71,6 +71,7 @@ export interface IContext {
   isFileUploaded: boolean
   uploadedFileName: string
   uploadMessage: IUploadMessage | null
+  ledgerId: string
 }
 
 export interface IInitialPage {

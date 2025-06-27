@@ -59,7 +59,10 @@ const BulkIssuance = (): JSX.Element => {
   const [mounted, setMounted] = useState<boolean>(false)
   const [schemaType, setSchemaType] = useState<SchemaTypes>()
   const [selectedTemplate, setSelectedTemplate] = useState<string | undefined>()
-  const [isAllSchema, setIsAllSchema] = useState<boolean>()
+  const allSchema = useAppSelector(
+    (state: RootState) => state.storageKeys.ALL_SCHEMAS,
+  )
+  const [isAllSchema, setIsAllSchema] = useState<boolean>(allSchema ?? false)
   const [attributes, setAttributes] = useState<IAttributes[]>([])
   const schemaListAPIParameters = {
     itemPerPage,
@@ -79,7 +82,9 @@ const BulkIssuance = (): JSX.Element => {
   const [currentPage, setCurrentPage] = useState(initialPageState)
 
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
-
+  const ledgerId = useAppSelector(
+    (state: RootState) => state.organization.ledgerId,
+  )
   const router = useRouter()
 
   const socketId = SOCKET.id || ''
@@ -224,6 +229,7 @@ const BulkIssuance = (): JSX.Element => {
     isFileUploaded,
     uploadedFileName,
     uploadMessage,
+    ledgerId,
   }
 
   useEffect(() => {

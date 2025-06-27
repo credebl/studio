@@ -17,7 +17,7 @@ interface GetAllSchemaHelperUtilProps {
   currentSchemaType: string
 }
 
-interface GetAllSchemaHelperReturn {
+export interface GetAllSchemaHelperReturn {
   value: string
   label: string
   schemaName: string

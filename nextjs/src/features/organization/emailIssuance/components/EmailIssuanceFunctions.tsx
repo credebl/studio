@@ -220,7 +220,6 @@ export const getSchemaCredentials = async ({
       orgDid = data?.data?.org_agents[0]?.orgDid
       // proceed with data
     }
-    console.log("all schema", allSchema)
     const allSchemaSelectedFlag = allSchema
     if (allSchemaSelectedFlag) {
       setIsAllSchemaFlagSelected(true)
