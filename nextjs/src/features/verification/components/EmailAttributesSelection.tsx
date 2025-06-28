@@ -155,12 +155,11 @@ const EmailAttributesSelection = (): JSX.Element => {
       attribute.selectedOption === '' ||
       attribute.selectedOption === 'Select'
     const isValueInvalid = attribute.value === null || attribute.value === ''
-
-    if (!isOptionInvalid && isValueInvalid) {
-      setErrMsg('Value is required')
-      return true
-    } else if (!isValueInvalid && isOptionInvalid) {
+    if (isOptionInvalid) {
       setErrMsg('Condition is required')
+      return true
+    } else if (isValueInvalid) {
+      setErrMsg('Value is missing or is not a number')
       return true
     }
     return false
@@ -199,7 +198,6 @@ const EmailAttributesSelection = (): JSX.Element => {
     setErrMsg(null)
 
     if (hasInvalidNumberAttributes()) {
-      setErrMsg('Please check the number fields.')
       return
     }
 
