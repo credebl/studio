@@ -1,5 +1,6 @@
 'use client'
 
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   Card,
   CardContent,
@@ -27,7 +28,6 @@ import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Organisation } from '../type/organization'
 import { OrganizationRoles } from '@/common/enums'
@@ -150,13 +150,16 @@ const OrganizationCardList = (): React.JSX.Element => {
                   >
                     <div className="flex-shrink-0">
                       {org.logoUrl ? (
-                        <div className="border-border relative h-10 w-10 overflow-hidden rounded-full border">
-                          <Image
-                            src={org.logoUrl}
-                            alt="Org Logo"
-                            fill
-                            className="object-cover"
-                          />
+                        <div className="border-border relative overflow-hidden rounded-full border">
+                          <Avatar className="rounded-md">
+                            {org.logoUrl ? (
+                              <AvatarImage src={org.logoUrl} alt={org.name} />
+                            ) : (
+                              <AvatarFallback className="text-2xl font-bold">
+                                {org.name.substring(0, 2).toUpperCase()}
+                              </AvatarFallback>
+                            )}
+                          </Avatar>
                         </div>
                       ) : (
                         <div className="border-border bg-muted text-foreground flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold">

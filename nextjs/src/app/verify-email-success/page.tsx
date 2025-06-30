@@ -1,5 +1,5 @@
 import React from 'react'
-import VerifyEmailPage from '@/features/auth/components/VerifyEmail'
+import VerifyEmailPage from '@/features/components/VerifyEmail'
 
 const page = (): React.JSX.Element => (
   <div>

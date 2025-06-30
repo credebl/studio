@@ -153,7 +153,7 @@ export default function UserInfoForm({
       const deviceDetailsResp = await addDeviceDetails(deviceBody)
       const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        router.push('/auth/sign-in')
+        router.push('/sign-in')
       }
       setTimeout(() => {
         setAddSuccess('')

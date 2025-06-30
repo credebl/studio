@@ -78,6 +78,12 @@ const EmailIssuance = (): JSX.Element => {
   const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] =
     useState<boolean>()
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
+  const allSchema = useAppSelector(
+    (state: RootState) => state.storageKeys.ALL_SCHEMAS,
+  )
+  const ledgerId = useAppSelector(
+    (state: RootState) => state.organization.ledgerId,
+  )
   const isCredSelected = Boolean(credentialSelected)
   const selectInputRef = React.useRef<SelectRef | null>(null)
   const [clear, setClear] = useState<boolean>(false)
@@ -113,6 +119,8 @@ const EmailIssuance = (): JSX.Element => {
       setFailure,
       setLoading,
       orgId,
+      allSchema,
+      ledgerId,
     })
   }, [isAllSchemaFlagSelected])
 

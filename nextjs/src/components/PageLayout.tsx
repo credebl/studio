@@ -17,9 +17,9 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
 
   // Define routes where PageLayout should be excluded
   const excludeLayoutRoutes = [
-    '/auth/sign-in',
-    '/auth/sign-up',
-    '/auth/verify-email-success',
+    '/sign-in',
+    '/sign-up',
+    '/verify-email-success',
     '/reset-password',
   ]
   return (
