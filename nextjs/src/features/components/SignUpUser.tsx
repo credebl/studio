@@ -17,8 +17,8 @@ export default function SignUpUser(): React.JSX.Element {
 
   const signInUrl =
     redirectTo && clientAlias
-      ? `/auth/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-      : '/auth/sign-in'
+      ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+      : '/sign-in'
 
   return (
     <div className="flex flex-col items-center justify-center">

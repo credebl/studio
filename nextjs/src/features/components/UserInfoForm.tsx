@@ -120,8 +120,8 @@ export default function UserInfoForm({
         setTimeout(() => {
           router.push(
             redirectTo && clientAlias
-              ? `/auth/sign-in?signup=true&email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}&fidoFlag=false&method=password`
-              : `/auth/sign-up?email=${email}&fidoFlag=false&method=password`,
+              ? `/sign-in?signup=true&email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}&fidoFlag=false&method=password`
+              : `/sign-up?email=${email}&fidoFlag=false&method=password`,
           )
         }, 2000)
       } else {

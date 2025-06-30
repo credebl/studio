@@ -69,8 +69,8 @@ export default function VerifyEmailPage(): React.JSX.Element {
 
     router.push(
       redirectTo && clientAlias
-        ? `/auth/sign-up?email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-        : `/auth/sign-up?email=${email}`,
+        ? `/sign-up?email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+        : `/sign-up?email=${email}`,
     )
   }
 
