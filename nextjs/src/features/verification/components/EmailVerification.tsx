@@ -24,6 +24,7 @@ import { Button } from '@/components/ui/button'
 import { DidMethod } from '@/common/enums'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createOobProofRequest } from '@/app/api/verification'
 import delSvg from '@/../public/svgs/del.svg'
@@ -470,8 +471,10 @@ const EmailVerification = (): JSX.Element => {
                           </Button>
                           <Button
                             type="submit"
+                            disabled={loading}
                             className="bg-primary focus:ring-primary text-primary-foreground items-center justify-center rounded-lg py-1 text-center text-sm font-medium focus:ring-4 focus:outline-none"
                           >
+                            {loading && <Loader size={20} />}
                             <RequestProofIcon />
                             Request Proof
                           </Button>
