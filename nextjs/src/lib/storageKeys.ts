@@ -63,7 +63,6 @@ const storageKeys = createSlice({
       state.W3C_SCHEMA_DETAILS = action.payload
     },
     setAllSchema: (state, action: PayloadAction<boolean>) => {
-      console.log('setAllSchema', action.payload)
       state.ALL_SCHEMAS = action.payload
     },
     setOrgDid: (state, action: PayloadAction<string>) => {
