@@ -80,9 +80,18 @@ export interface SchemaDetails {
   version: string
   schemaId: string
   credDefId: string
-  schemaAttributes?: DataTypeAttributes[]
+  schemaAttributes?: IAttribute[]
 }
 
+export interface AllSchemaDetails {
+  value: string
+  label: string
+  schemaName: string
+  type: string
+  schemaVersion: string
+  schemaIdentifier: string
+  attributes: IAttribute[]
+}
 export interface W3cSchemaDetails {
   schemaName: string
   version: string
@@ -204,6 +213,8 @@ export type Option = {
   schemaVersion: string
   schemaId: string
   credentialId: string
+  schemaIdentifier?: string
+  attributes?: IAttribute[]
 }
 
 export type IHandleSubmit = {

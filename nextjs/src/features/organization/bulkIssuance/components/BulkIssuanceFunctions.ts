@@ -266,13 +266,6 @@ export const getSchemaCredentials = async (
       // proceed with data
     }
 
-    const isAllSchemaSelectedFlag = false
-    if (isAllSchemaSelectedFlag === false || !isAllSchemaSelectedFlag) {
-      context.setIsAllSchema(false)
-    } else if (isAllSchemaSelectedFlag === 'true') {
-      context.setIsAllSchema(true)
-    }
-
     let currentSchemaType = context.schemaType
 
     if (
