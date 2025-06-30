@@ -114,7 +114,7 @@ export default function UserInfoForm({
         setSuccess(data?.message || 'Account created successfully!')
         setTimeout(() => {
           router.push(
-            `/auth/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`,
+            `/sign-in?signup=true&email=${email}&fidoFlag=false&method=password`,
           )
         }, 2000)
       } else {
@@ -146,7 +146,7 @@ export default function UserInfoForm({
       const deviceDetailsResp = await addDeviceDetails(deviceBody)
       const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        router.push('/auth/sign-in')
+        router.push('/sign-in')
       }
       setTimeout(() => {
         setAddSuccess('')

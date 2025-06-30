@@ -11,7 +11,7 @@ interface SessionProps {
   children: ReactNode
 }
 
-const signInPath = '/auth/sign-in'
+const signInPath = '/sign-in'
 const dashboardPath = '/dashboard'
 
 const SessionCheck: React.FC<SessionProps> = ({ children }) => {

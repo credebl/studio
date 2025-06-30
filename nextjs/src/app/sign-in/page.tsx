@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import React from 'react'
-import SignUpViewPage from '@/features/auth/components/SignUpViewPage'
+import SignInPage from '@/features/components/sigin-view'
 
 export const metadata: Metadata = {
   title: 'Authentication | Sign In',
@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function Page(): React.JSX.Element {
-  return <SignUpViewPage />
+  return <SignInPage />
 }

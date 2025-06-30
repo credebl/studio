@@ -65,7 +65,7 @@ export default function VerifyEmailPage(): React.JSX.Element {
   }, [searchParams])
 
   const handleRedirect = (): void => {
-    router.push(`/auth/sign-up?email=${email}`)
+    router.push(`/sign-up?email=${email}`)
   }
 
   return (

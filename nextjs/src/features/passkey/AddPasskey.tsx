@@ -18,7 +18,7 @@ import {
 import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import DeviceDetails from './DeviceDetails'
-import { Devices } from '../auth/components/UserInfoForm'
+import { Devices } from '../components/UserInfoForm'
 import PasskeyAddDevice from './PassKeyAddDevice'
 import PasskeyAlert from './PasskeyAlert'
 import { apiStatusCodes } from '@/config/CommonConstant'

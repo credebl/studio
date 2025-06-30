@@ -108,9 +108,9 @@ export const avatarColorPairs = [
 ]
 
 export const sessionExcludedPaths = [
-  '/auth/sign-in',
-  '/auth/sign-up',
-  '/auth/verify-email-success',
+  '/sign-in',
+  '/sign-up',
+  '/verify-email-success',
   '/reset-password',
 ]
 

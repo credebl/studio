@@ -180,6 +180,6 @@ export const authOptions: MyAuthOptions = {
   },
 
   pages: {
-    signIn: '/auth/sign-in',
+    signIn: '/sign-in',
   },
 }

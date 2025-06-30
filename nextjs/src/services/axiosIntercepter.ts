@@ -73,11 +73,11 @@ export function logoutAndRedirect(): void {
     const interval = setInterval(() => {
       if (!localStorage.getItem(rootKey)) {
         clearInterval(interval)
-        void signOut({ callbackUrl: '/auth/sign-in' })
+        void signOut({ callbackUrl: '/sign-in' })
       }
     }, 100)
   } else {
-    void signOut({ callbackUrl: '/auth/sign-in' })
+    void signOut({ callbackUrl: '/sign-in' })
   }
 }
 
