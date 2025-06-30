@@ -9,7 +9,7 @@ const SessionCheck = ({
   children,
 }: {
   children: React.ReactNode
-}): JSX.Element | null => {
+}): React.ReactElement | null => {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
