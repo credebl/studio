@@ -1,7 +1,11 @@
 'use client'
 
 import { DidMethod, SchemaTypes } from '@/common/enums'
-import { IAttributesDetails, IW3cSchemaDetails, SchemaListItem } from '../type/schemas-interface'
+import {
+  ISchemaDataSchemaList as ISchemaData,
+  IW3cSchemaDetails,
+  SchemaListItem,
+} from '../type/schemas-interface'
 import {
   Pagination,
   PaginationContent,
@@ -37,20 +41,6 @@ import { getUserProfile } from '@/app/api/Auth'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
-export interface ISchemaData {
-  createDateTime: string
-  name: string
-  version: string
-  attributes: IAttributesDetails[]
-  schemaLedgerId: string
-  createdBy: string
-  publisherDid: string
-  orgId: string
-  issuerId: string
-  organizationName: string
-  userName: string
-}
-
 interface UserOrgRole {
   orgId: string
   orgRole: {
@@ -79,14 +69,17 @@ const SchemaList = (props: {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const token = useAppSelector((state) => state.auth.token)
-  const allSchemaSliceData = useAppSelector((state) => state.storageKeys.ALL_SCHEMAS)
-
+  const allSchemaSliceData = useAppSelector(
+    (state) => state.storageKeys.ALL_SCHEMAS,
+  )
 
   const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
 
   const [, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
-  const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false)
+  const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(
+    allSchemaSliceData ?? false,
+  )
   const [ledger, setLedger] = useState<string>('')
   const [schemaType, setSchemaType] = useState('')
   const [, setWalletStatus] = useState(false)
@@ -157,7 +150,6 @@ const SchemaList = (props: {
     try {
       setLoading(true)
       let schemaResponse = undefined
-
       if (flag) {
         schemaResponse = await getAllSchemas(
           schemaListAPIParameter,
@@ -260,6 +252,8 @@ const SchemaList = (props: {
     schemaListAPIParameter.page,
     schemaListAPIParameter.allSearch,
     schemaListAPIParameter.search,
+    schemaType,
+    ledger,
   ])
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -444,111 +438,112 @@ const SchemaList = (props: {
           </div>
         )}
 
-        {!loading && (schemaList.length ? (
-          <>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
-              {schemaList.map((element) => (
-                <div
-                  className="px-0 sm:px-2"
-                  key={`SchemaList-${element?.schemaLedgerId}`}
-                >
-                  <SchemaCard
-                    schemaName={element?.name}
-                    version={element['version']}
-                    schemaId={element['schemaLedgerId']}
-                    issuerDid={element['issuerId']}
-                    attributes={element['attributes']}
-                    created={element['createDateTime']}
-                    showCheckbox={false}
-                    selectedSchemas={[]}
-                    onClickCallback={schemaSelectionCallback}
-                    onClickW3CCallback={W3CSchemaSelectionCallback}
-                    w3cSchema={w3cSchema}
-                    noLedger={isNoLedger}
-                    isVerification={verificationFlag}
-                  />
-                </div>
-              ))}
-            </div>
-            {totalItem > itemPerPage &&
-              (schemaList.length === itemPerPage ||
-                schemaListAPIParameter.page === lastPage) && (
-                <div className="mt-6 flex justify-end">
-                  <Pagination className="m-0 w-fit">
-                    <PaginationContent>
-                      {schemaListAPIParameter.page > 1 && (
-                        <PaginationItem>
-                          <PaginationPrevious
-                            href="#"
-                            onClick={() =>
-                              setSchemaListAPIParameter((prev) => ({
-                                ...prev,
-                                page: prev.page - 1,
-                              }))
-                            }
-                          />
-                        </PaginationItem>
-                      )}
-
-                      {paginationNumbers.map((page, idx) => (
-                        <PaginationItem key={idx}>
-                          {page === '...' ? (
-                            <span className="text-muted-foreground px-3 py-2">
-                              …
-                            </span>
-                          ) : (
-                            <PaginationLink
-                              className={`${
-                                page === schemaListAPIParameter.page
-                                  ? 'bg-primary text-white'
-                                  : 'bg-background text-muted-foreground'
-                              } rounded-lg px-4 py-2`}
+        {!loading &&
+          (schemaList.length ? (
+            <>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
+                {schemaList.map((element) => (
+                  <div
+                    className="px-0 sm:px-2"
+                    key={`SchemaList-${element?.schemaLedgerId}`}
+                  >
+                    <SchemaCard
+                      schemaName={element?.name}
+                      version={element['version']}
+                      schemaId={element['schemaLedgerId']}
+                      issuerDid={element['issuerId']}
+                      attributes={element['attributes']}
+                      created={element['createDateTime']}
+                      showCheckbox={false}
+                      selectedSchemas={[]}
+                      onClickCallback={schemaSelectionCallback}
+                      onClickW3CCallback={W3CSchemaSelectionCallback}
+                      w3cSchema={w3cSchema}
+                      noLedger={isNoLedger}
+                      isVerification={verificationFlag}
+                    />
+                  </div>
+                ))}
+              </div>
+              {totalItem > itemPerPage &&
+                (schemaList.length === itemPerPage ||
+                  schemaListAPIParameter.page === lastPage) && (
+                  <div className="mt-6 flex justify-end">
+                    <Pagination className="m-0 w-fit">
+                      <PaginationContent>
+                        {schemaListAPIParameter.page > 1 && (
+                          <PaginationItem>
+                            <PaginationPrevious
                               href="#"
                               onClick={() =>
                                 setSchemaListAPIParameter((prev) => ({
                                   ...prev,
-                                  page: page as number,
+                                  page: prev.page - 1,
                                 }))
                               }
-                            >
-                              {page}
-                            </PaginationLink>
-                          )}
-                        </PaginationItem>
-                      ))}
+                            />
+                          </PaginationItem>
+                        )}
 
-                      {schemaListAPIParameter.page < lastPage && (
-                        <PaginationItem>
-                          <PaginationNext
-                            href="#"
-                            onClick={() =>
-                              setSchemaListAPIParameter((prev) => ({
-                                ...prev,
-                                page: prev.page + 1,
-                              }))
-                            }
-                          />
-                        </PaginationItem>
-                      )}
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
-          </>
-        ) : (
-          <EmptyMessage
-            title="No Schemas"
-            description="Get started by creating a new Schema"
-            buttonContent="Create"
-            buttonIcon={<Plus className="h-4 w-4" />}
-            onClick={() => {
-              if (orgRole === 'admin' || orgRole === 'owner') {
-                route.push('/organizations/schemas/create')
-              }
-            }}
-            disabled={orgRole !== 'admin' && orgRole !== 'owner'}
-          />
-        ))}
+                        {paginationNumbers.map((page, idx) => (
+                          <PaginationItem key={idx}>
+                            {page === '...' ? (
+                              <span className="text-muted-foreground px-3 py-2">
+                                …
+                              </span>
+                            ) : (
+                              <PaginationLink
+                                className={`${
+                                  page === schemaListAPIParameter.page
+                                    ? 'bg-primary text-white'
+                                    : 'bg-background text-muted-foreground'
+                                } rounded-lg px-4 py-2`}
+                                href="#"
+                                onClick={() =>
+                                  setSchemaListAPIParameter((prev) => ({
+                                    ...prev,
+                                    page: page as number,
+                                  }))
+                                }
+                              >
+                                {page}
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        ))}
+
+                        {schemaListAPIParameter.page < lastPage && (
+                          <PaginationItem>
+                            <PaginationNext
+                              href="#"
+                              onClick={() =>
+                                setSchemaListAPIParameter((prev) => ({
+                                  ...prev,
+                                  page: prev.page + 1,
+                                }))
+                              }
+                            />
+                          </PaginationItem>
+                        )}
+                      </PaginationContent>
+                    </Pagination>
+                  </div>
+                )}
+            </>
+          ) : (
+            <EmptyMessage
+              title="No Schemas"
+              description="Get started by creating a new Schema"
+              buttonContent="Create"
+              buttonIcon={<Plus className="h-4 w-4" />}
+              onClick={() => {
+                if (orgRole === 'admin' || orgRole === 'owner') {
+                  route.push('/organizations/schemas/create')
+                }
+              }}
+              disabled={orgRole !== 'admin' && orgRole !== 'owner'}
+            />
+          ))}
       </div>
     </PageContainer>
   )
