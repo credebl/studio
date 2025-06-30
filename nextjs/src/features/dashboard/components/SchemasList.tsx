@@ -291,7 +291,7 @@ const SchemasList = ({
       <CardFooter className="mt-auto justify-end pt-2">
         <Link
           href="/organizations/schemas"
-          className="transition hover:underline hover:opacity-80"
+          className="url-link transition hover:underline hover:opacity-80"
         >
           View all
         </Link>
