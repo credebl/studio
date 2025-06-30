@@ -14,7 +14,7 @@ RUN pnpm install
 COPY . .
 
 # Build the Next.js application
-RUN npm run build
+RUN pnpm run build
 
 # Production stage
 FROM node:18-alpine AS production
