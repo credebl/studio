@@ -6,8 +6,8 @@ export const pathRoutes = {
   },
   auth: {
     signUp: '/authentication/sign-up',
-    sinIn: '/auth/sign-in',
-    verifyEmail: '/auth/verify',
+    sinIn: '/sign-in',
+    verifyEmail: '/verify',
   },
   users: {
     dashboard: '/dashboard',

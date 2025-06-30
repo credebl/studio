@@ -448,7 +448,7 @@ export default function SignInViewPage(): React.JSX.Element {
                 Don’t have an account?{' '}
               </span>
               <Link
-                href="/auth/sign-up"
+                href="/sign-up"
                 className="text-muted-foreground hover:text-inherit hover:underline"
               >
                 Create one
