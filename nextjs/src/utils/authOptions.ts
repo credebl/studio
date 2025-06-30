@@ -196,7 +196,9 @@ export const authOptions: MyAuthOptions = {
         const redirectUrl = new URL(url)
 
         if (
-          ['localhost', '127.0.0.1'].includes(redirectUrl.hostname) &&
+          [process.env.NEXTAUTH_COOKIE_DOMAIN, '127.0.0.1'].includes(
+            redirectUrl.hostname,
+          ) &&
           (redirectUrl.protocol === 'http:' ||
             redirectUrl.protocol === 'https:')
         ) {
@@ -229,7 +231,7 @@ export const authOptions: MyAuthOptions = {
         sameSite: 'lax',
         path: '/',
         secure: false,
-        domain: '.localhost',
+        domain: process.env.NEXTAUTH_COOKIE_DOMAIN,
       },
     },
   },

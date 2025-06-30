@@ -87,8 +87,6 @@ export default function SignInViewPage(): React.JSX.Element {
         isPassword: isPasswordTab,
       }
 
-      const redirectTo = searchParams?.get('redirectTo')
-
       const response = await signIn('credentials', {
         ...entityData,
         redirect: false,
