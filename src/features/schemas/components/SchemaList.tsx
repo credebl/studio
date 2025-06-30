@@ -2,7 +2,7 @@
 
 import { DidMethod, SchemaTypes } from '@/common/enums'
 import {
-  IAttributesDetails,
+  ISchemaDataSchemaList as ISchemaData,
   IW3cSchemaDetails,
   SchemaListItem,
 } from '../type/schemas-interface'
@@ -38,21 +38,8 @@ import SchemaCard from './SchemaCard'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOrganizationById } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
+import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
-
-export interface ISchemaData {
-  createDateTime: string
-  name: string
-  version: string
-  attributes: IAttributesDetails[]
-  schemaLedgerId: string
-  createdBy: string
-  publisherDid: string
-  orgId: string
-  issuerId: string
-  organizationName: string
-  userName: string
-}
 
 interface UserOrgRole {
   orgId: string
@@ -82,12 +69,17 @@ const SchemaList = (props: {
   const verificationFlag = props.verificationFlag ?? false
   const organizationId = useAppSelector((state) => state.organization.orgId)
   const token = useAppSelector((state) => state.auth.token)
+  const allSchemaSliceData = useAppSelector(
+    (state) => state.storageKeys.ALL_SCHEMAS,
+  )
 
   const [schemaList, setSchemaList] = useState<ISchemaData[]>([])
 
   const [, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
-  const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(false)
+  const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(
+    allSchemaSliceData ?? false,
+  )
   const [ledger, setLedger] = useState<string>('')
   const [schemaType, setSchemaType] = useState('')
   const [, setWalletStatus] = useState(false)
@@ -158,7 +150,6 @@ const SchemaList = (props: {
     try {
       setLoading(true)
       let schemaResponse = undefined
-
       if (flag) {
         schemaResponse = await getAllSchemas(
           schemaListAPIParameter,
@@ -261,6 +252,8 @@ const SchemaList = (props: {
     schemaListAPIParameter.page,
     schemaListAPIParameter.allSearch,
     schemaListAPIParameter.search,
+    schemaType,
+    ledger,
   ])
 
   const onSearch = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -281,6 +274,7 @@ const SchemaList = (props: {
 
     setSelectedValue(value)
     setAllSchemaFlag(isAllSchemas)
+    dispatch(setAllSchema(isAllSchemas))
 
     // Reset pagination and search parameters
     setSchemaListAPIParameter({
@@ -401,7 +395,9 @@ const SchemaList = (props: {
             <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
           </div>
           <Select
-            defaultValue="Organization's schema"
+            defaultValue={
+              allSchemaSliceData ? 'All schemas' : "Organization's schema"
+            }
             onValueChange={handleFilterChange}
           >
             <SelectTrigger className="min-h-[42px] w-[230px] rounded-lg border p-2.5 text-sm">

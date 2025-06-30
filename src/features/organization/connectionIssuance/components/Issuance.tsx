@@ -15,6 +15,10 @@ import type {
 import { DidMethod, SchemaTypeValue, SchemaTypes } from '@/common/enums'
 import { Form, Formik } from 'formik'
 import React, { useEffect, useState } from 'react'
+import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
+import getAllSchemaHelperUtil, {
+  GetAllSchemaHelperReturn,
+} from '../../emailIssuance/components/GetAllSchemaForIssuance'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
@@ -27,11 +31,11 @@ import { RootState } from '@/lib/store'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import SummaryCard from '@/components/SummaryCard'
 import SummaryCardW3c from '@/components/SummaryCardW3c'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { getSchemaCredDef } from '@/app/api/schema'
 import { handleSubmit } from './IssuanceFunctions'
 import { pathRoutes } from '@/config/pathRoutes'
+import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 
@@ -43,6 +47,14 @@ const IssueCred = (): React.JSX.Element => {
     schemaId: '',
     credDefId: '',
   })
+  const schemaListAPIParameter = {
+    itemPerPage,
+    page: 1,
+    search: '',
+    sortBy: 'id',
+    sortingOrder: 'desc',
+    allSearch: '',
+  }
   const [issuanceFormPayload, setIssuanceFormPayload] =
     useState<IssuanceFormPayload>({
       credentialData: [],
@@ -56,10 +68,17 @@ const IssueCred = (): React.JSX.Element => {
   const [schemaType, setSchemaType] = useState<SchemaTypeValue>()
   const [orgDid, setOrgDid] = useState<string>('')
   const orgId = useSelector((state: RootState) => state.organization.orgId)
-  const [credentialOptions, setCredentialOptions] = useState([])
+  const [credentialOptions, setCredentialOptions] = useState<Option[]>([])
   const selectedUser = useSelector(
     (state: RootState) => state.storageKeys.SELECTED_USER,
   )
+  const allSchema = useAppSelector(
+    (state: RootState) => state.storageKeys.ALL_SCHEMAS,
+  )
+  const ledgerId = useAppSelector(
+    (state: RootState) => state.organization.ledgerId,
+  )
+
   const router = useRouter()
   const createW3cIssuanceForm = (
     selectedUsers: SelectedUsers[],
@@ -203,29 +222,50 @@ const IssueCred = (): React.JSX.Element => {
   useEffect(() => {
     const execute = async (): Promise<void> => {
       const response = await fetchOrganizationDetails()
+      let credentials: AxiosResponse | GetAllSchemaHelperReturn[] | null = null
       if (response !== null) {
         const schemaValue = response
           ? SchemaTypes.schema_W3C
           : SchemaTypes.schema_INDY
-        const credentials = (await getSchemaCredDef(
-          schemaValue,
-          orgId,
-        )) as AxiosResponse
-        setCredentialOptions(
-          (credentials.data?.data ?? []).map(
-            (value: ICredentials, index: number) => ({
-              schemaVersion: value.schemaVersion,
-              value: index,
-              label: value.schemaCredDefName,
-              id: value.schemaAttributes,
-              schemaId: response
-                ? value.schemaIdentifier
-                : value.schemaLedgerId,
-              credentialId: value.credentialDefinitionId,
-              schemaName: value.schemaName,
-            }),
-          ),
-        )
+        if (schemaValue === SchemaTypes.schema_W3C && orgId && allSchema) {
+          credentials = await getAllSchemaHelperUtil({
+            schemaListAPIParameter,
+            ledgerId,
+            currentSchemaType: schemaValue,
+          })
+          setCredentialOptions(
+            credentials.map((value: GetAllSchemaHelperReturn, idx: number) => ({
+              ...value,
+              id: idx.toString(),
+              schemaId: '',
+              credentialId: '',
+              attributes:
+                typeof value.attributes === 'string'
+                  ? JSON.parse(value.attributes)
+                  : value.attributes,
+            })),
+          )
+        } else {
+          credentials = (await getSchemaCredDef(
+            schemaValue,
+            orgId,
+          )) as AxiosResponse
+          setCredentialOptions(
+            (credentials.data?.data ?? []).map(
+              (value: ICredentials, index: number) => ({
+                schemaVersion: value.schemaVersion,
+                value: index,
+                label: value.schemaCredDefName,
+                id: value.schemaAttributes,
+                schemaId: response
+                  ? value.schemaIdentifier
+                  : value.schemaLedgerId,
+                credentialId: value.credentialDefinitionId,
+                schemaName: value.schemaName,
+              }),
+            ),
+          )
+        }
       }
     }
     execute()
@@ -279,14 +319,24 @@ const IssueCred = (): React.JSX.Element => {
   })
 
   const handleSelect = (value: Option): void => {
-    const data = JSON.parse(value.id)
-    setSchemaDetails({
-      schemaName: value.schemaName,
-      version: value.schemaVersion,
-      schemaId: value.schemaId,
-      credDefId: value.credentialId,
-      schemaAttributes: data,
-    })
+    if (allSchema) {
+      setSchemaDetails({
+        schemaName: value.schemaName,
+        version: value.schemaVersion,
+        schemaId: value.schemaIdentifier ?? '',
+        credDefId: value.credentialId,
+        schemaAttributes: value.attributes ?? [],
+      })
+    } else {
+      const data = JSON.parse(value.id)
+      setSchemaDetails({
+        schemaName: value.schemaName,
+        version: value.schemaVersion,
+        schemaId: value.schemaId,
+        credDefId: value.credentialId,
+        schemaAttributes: data,
+      })
+    }
   }
 
   return (

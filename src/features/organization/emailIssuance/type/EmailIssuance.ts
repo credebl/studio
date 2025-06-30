@@ -261,4 +261,6 @@ export interface IGetSchemaCredentials {
   setFailure: React.Dispatch<React.SetStateAction<string | null>>
   setLoading: React.Dispatch<React.SetStateAction<boolean>>
   orgId: string
+  allSchema?: boolean
+  ledgerId?: string
 }

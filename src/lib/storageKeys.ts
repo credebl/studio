@@ -5,7 +5,7 @@ import { SelectedUsers } from '@/features/organization/connectionIssuance/type/I
 interface AuthState {
   W3C_SCHEMA_DATA?: W3cSchemaDetails | undefined
   W3C_SCHEMA_DETAILS?: W3cSchemaDetails
-  ALL_SCHEMAS?: string
+  ALL_SCHEMAS?: boolean
   ORG_DID?: string
   SCHEMA_ATTR?: SchemaDetails
   SCHEMA_ID?: string
@@ -19,6 +19,7 @@ interface SelectedUsersString {
 }
 
 const initialState: AuthState = {
+  ALL_SCHEMAS: false,
   W3C_SCHEMA_DATA: {
     schemaId: '',
     schemaName: '',
@@ -61,7 +62,7 @@ const storageKeys = createSlice({
     setSchemaDetails: (state, action: PayloadAction<W3cSchemaDetails>) => {
       state.W3C_SCHEMA_DETAILS = action.payload
     },
-    setAllSchema: (state, action: PayloadAction<string>) => {
+    setAllSchema: (state, action: PayloadAction<boolean>) => {
       state.ALL_SCHEMAS = action.payload
     },
     setOrgDid: (state, action: PayloadAction<string>) => {

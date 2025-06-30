@@ -8,6 +8,19 @@ export interface ISchemaData {
   schemaName: string
   attributes: IAttributes[]
 }
+export interface ISchemaDataSchemaList {
+  createDateTime: string
+  name: string
+  version: string
+  attributes: IAttributesDetails[]
+  schemaLedgerId: string
+  createdBy: string
+  publisherDid: string
+  orgId: string
+  issuerId: string
+  organizationName: string
+  userName: string
+}
 
 export interface IAttributesDetails {
   attributeName: string
