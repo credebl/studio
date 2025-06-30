@@ -18,7 +18,7 @@ import React, { useEffect, useState } from 'react'
 import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
 import getAllSchemaHelperUtil, {
   GetAllSchemaHelperReturn,
-} from '../../emailIssuance/components/GetAllSchema'
+} from '../../emailIssuance/components/GetAllSchemaForIssuance'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
