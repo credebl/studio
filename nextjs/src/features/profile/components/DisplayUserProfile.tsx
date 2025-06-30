@@ -124,13 +124,13 @@ const DisplayUserProfile = ({
           </div>
 
           <Button
-            className="bg-transparent hover:bg-transparent"
+            variant={'outline'}
             type="button"
             size="icon"
             onClick={toggleEditProfile}
           >
             <span>
-              <Edit className="text-foreground mr-12" />
+              <Edit className="" />
             </span>
           </Button>
         </div>
