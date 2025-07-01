@@ -37,6 +37,7 @@ export default function DeviceDetails({
   credentialID,
   refreshList,
   responseMessages,
+  disableRevoke,
 }: DeviceDetailsProps): React.JSX.Element {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
@@ -99,13 +100,13 @@ export default function DeviceDetails({
               variant="outline"
               size="icon"
               onClick={() => setOpenEditModal(true)}
-              className="h-7 w-7"
+              className="ml-4 h-7 w-7"
             >
               <Pencil className="h-4 w-4" />
             </Button>
           </div>
 
-          <p className="text-muted-foreground truncate text-sm">
+          <p className="text-muted-foreground mt-4 truncate text-sm">
             <Tooltip>
               <TooltipTrigger asChild>
                 <span>{dateConversion(createDateTime)}</span>
@@ -119,7 +120,15 @@ export default function DeviceDetails({
           </p>
 
           <div className="mt-2 flex justify-end">
-            <Button onClick={() => setOpenDeleteModal(true)}>Revoke</Button>
+            <div className="mt-2 flex justify-end">
+              <Button
+                onClick={() => setOpenDeleteModal(true)}
+                disabled={disableRevoke}
+                className={disableRevoke ? 'disabled:cursor-not-allowed' : ''}
+              >
+                Revoke
+              </Button>
+            </div>
           </div>
         </div>
       </div>
