@@ -39,7 +39,6 @@ export default function PasskeyAddDevice({
   registerWithPasskey,
 }: PasskeyAddDeviceProps): React.JSX.Element {
   const [fidoUserError, setFidoUserError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [nextStep, setNextStep] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [userEmail, setUserEmail] = useState('')
@@ -82,18 +81,6 @@ export default function PasskeyAddDevice({
         <DialogHeader>
           <DialogTitle>Create Passkey</DialogTitle>
         </DialogHeader>
-
-        {success && (
-          <div className="w-full" role="alert">
-            <AlertComponent
-              message={success}
-              type="success"
-              onAlertClose={() => {
-                setSuccess(null)
-              }}
-            />
-          </div>
-        )}
 
         {fidoUserError && (
           <div className="w-full" role="alert">
