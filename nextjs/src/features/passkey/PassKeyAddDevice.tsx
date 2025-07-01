@@ -15,11 +15,9 @@ import { Field, Form, Formik } from 'formik'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { RootState } from '@/lib/store'
 import { addPasskeyUserDetails } from '@/app/api/Fido'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { passwordEncryption } from '@/app/api/Auth'
-import { useSelector } from 'react-redux'
 import { useState } from 'react'
 
 interface PasswordValue {
@@ -31,10 +29,12 @@ interface PasskeyAddDeviceProps {
   setOpenModel: (flag: boolean) => void
   closeModal: (flag: boolean) => void
   registerWithPasskey: (flag: boolean) => Promise<void>
+  email: string | undefined
 }
 
 export default function PasskeyAddDevice({
   openModal,
+  email,
   setOpenModel,
   registerWithPasskey,
 }: PasskeyAddDeviceProps): React.JSX.Element {
@@ -43,7 +43,7 @@ export default function PasskeyAddDevice({
   const [nextStep, setNextStep] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState(false)
 
-  const userEmail = useSelector((state: RootState) => state.profile.email)
+  const userEmail = email
   const savePassword = async (values: PasswordValue): Promise<void> => {
     try {
       const payload = {
