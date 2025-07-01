@@ -10,7 +10,7 @@ import {
   PaginationPrevious,
 } from '@/components/ui/pagination'
 import React, { useEffect, useState } from 'react'
-import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
+import { setOrgId, setOrgInfo, setTenantData } from '@/lib/orgSlice'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -97,7 +97,13 @@ export const OrganizationList = (): React.JSX.Element => {
 
     if (selectedOrg) {
       dispatch(setOrgId(selectedOrg.id))
-
+      dispatch(
+        setTenantData({
+          id: selectedOrg.id,
+          name: selectedOrg.name,
+          logoUrl: selectedOrg.logoUrl,
+        }),
+      )
       const orgRoles = selectedOrg?.userOrgRoles
 
       dispatch(

@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useEffect, useState } from 'react'
 import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
@@ -13,21 +15,13 @@ import { getOrganizations } from '@/app/api/organization'
 
 export default function Header(): React.JSX.Element {
   const dispatch = useAppDispatch()
-  const [currentPage] = useState(currentPageNumber)
-  const [pageSize] = useState(itemPerPage)
-  const [searchTerm] = useState('')
   const [orgList, setOrgList] = useState<Organisation[]>([])
   const tenantId = useAppSelector((state) => state.organization.orgId)
 
   useEffect(() => {
     const fetchOrganizations = async (): Promise<void> => {
       try {
-        const response = await getOrganizations(
-          currentPage,
-          pageSize,
-          searchTerm,
-          '',
-        )
+        const response = await getOrganizations(currentPageNumber, itemPerPage)
         if (
           typeof response !== 'string' &&
           response?.data?.data?.organizations
@@ -63,7 +57,7 @@ export default function Header(): React.JSX.Element {
     }
 
     fetchOrganizations()
-  }, [dispatch, currentPage, pageSize, searchTerm, tenantId])
+  }, [])
 
   const handleSwitchTenant = (orgId: string): void => {
     const selected = orgList.find((org) => org.id === orgId)
