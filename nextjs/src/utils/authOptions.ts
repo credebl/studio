@@ -228,7 +228,7 @@ export const authOptions: MyAuthOptions = {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        secure: false,
+        secure: process.env.NEXTAUTH_PROTOCOL !== 'http',
         domain: process.env.NEXTAUTH_COOKIE_DOMAIN,
       },
     },
