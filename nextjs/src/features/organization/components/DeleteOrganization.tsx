@@ -102,7 +102,6 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
     try {
       const response = await getOrganizationReferences(orgId)
       const { data } = response as AxiosResponse
-
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const orgData = data?.data
         setOrganizationData(orgData)
@@ -201,14 +200,10 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
       // Assuming deleteOrganizationWallet needs orgId
       const response = await deleteOrganizationWallet(orgId as string)
       const { data } = response as AxiosResponse
-
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         toast.success(data?.message)
         setIsWalletPresent(false)
         await fetchOrganizationReferences()
-        setTimeout(() => {
-          window.location.reload()
-        }, 3000)
         setShowPopup(false)
       } else {
         setError(response as string)
@@ -342,7 +337,7 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
                 title={card.title}
                 description={card.description}
                 count={card.count}
-                isDisabled={card.isDisabled}
+                isDisabled={card.isDisabled || deleteLoading || loading}
                 onDeleteClick={() => {
                   setShowPopup(true)
                   setDeleteAction(() => card.deleteFunc)

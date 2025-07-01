@@ -2,7 +2,6 @@
 
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -11,7 +10,6 @@ import {
 } from '@/components/ui/dialog'
 
 import { Button } from '@/components/ui/button'
-import { X } from 'lucide-react'
 
 interface DeleteModalProps {
   openModal: boolean
@@ -42,16 +40,6 @@ const DeleteModal = ({
               ?
             </DialogDescription>
           </div>
-          <DialogClose asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-gray-500 hover:text-gray-900 dark:hover:text-white"
-            >
-              <X className="h-5 w-5" />
-              <span className="sr-only">Close</span>
-            </Button>
-          </DialogClose>
         </div>
       </DialogHeader>
 

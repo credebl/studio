@@ -9,16 +9,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import React, { useEffect } from 'react'
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-import { setOrgId, setOrgRoles, setSelectedOrgId } from '@/lib/orgSlice'
+import { setOrgRoles, setSelectedOrgId, setTenantData } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AxiosResponse } from 'axios'
+import React from 'react'
+import { RootState } from '@/lib/store'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationRoles } from '@/app/api/organization'
 import { useRouter } from 'next/navigation'
@@ -29,7 +30,7 @@ interface Tenant {
   logoUrl?: string
 }
 
-export function OrgSwitcher({
+const OrgSwitcherInner = ({
   tenants,
   defaultTenant,
   onTenantSwitch,
@@ -37,14 +38,14 @@ export function OrgSwitcher({
   tenants: Tenant[]
   defaultTenant?: Tenant
   onTenantSwitch?: (tenantId: string) => void
-}): React.ReactElement {
-  const [selectedTenant, setSelectedTenant] = React.useState<
-    Tenant | undefined
-  >(defaultTenant ?? tenants[0])
+}): React.ReactElement => {
+  const selectedTenant =
+    useAppSelector((state: RootState) => state.organization.selectedTenant) ??
+    defaultTenant ??
+    tenants[0]
 
   const dispatch = useAppDispatch()
   const router = useRouter()
-
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
 
   const currentTenant = React.useMemo(() => {
@@ -73,9 +74,8 @@ export function OrgSwitcher({
   }
 
   const handleTenantSwitch = (tenant: Tenant): void => {
-    dispatch(setOrgId(tenant.id))
     dispatch(setSelectedOrgId(tenant.id))
-    setSelectedTenant(tenant)
+    dispatch(setTenantData(tenant))
     getRoles(tenant.id)
     if (onTenantSwitch) {
       onTenantSwitch(tenant.id)
@@ -90,21 +90,6 @@ export function OrgSwitcher({
       .substring(0, 2)
       .toUpperCase()
   }
-
-  useEffect(() => {
-    if (selectedOrgId) {
-      getRoles(selectedOrgId)
-    }
-  }, [selectedOrgId])
-
-  useEffect(() => {
-    if (selectedOrgId && tenants.length > 0) {
-      const found = tenants.find((item) => item.id === selectedOrgId)
-      if (found) {
-        setSelectedTenant(found)
-      }
-    }
-  }, [selectedOrgId, tenants])
 
   return (
     <SidebarMenu>
@@ -214,3 +199,5 @@ export function OrgSwitcher({
     </SidebarMenu>
   )
 }
+
+export const OrgSwitcher = React.memo(OrgSwitcherInner)
