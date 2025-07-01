@@ -23,6 +23,8 @@ const SessionCheck = ({
     '/organizations',
     '/users',
     '/connections',
+    '/profile',
+    '/developers-setting',
   ]
 
   useEffect(() => {
