@@ -21,6 +21,8 @@ const SessionCheck = ({
     '/organizations/create-organization',
     '/organizations/agent-config',
     '/organizations',
+    '/users',
+    '/connections',
   ]
 
   useEffect(() => {
