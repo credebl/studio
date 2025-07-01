@@ -5,17 +5,13 @@ import * as Yup from 'yup'
 import { Formik, Form as FormikForm } from 'formik'
 import React, { useState } from 'react'
 import { apiStatusCodes, emailRegex } from '@/config/CommonConstant'
-import {
-  checkUserExist,
-  passwordEncryption,
-  sendVerificationMail,
-} from '@/app/api/Auth'
+import { checkUserExist, sendVerificationMail } from '@/app/api/Auth'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { envConfig } from '@/config/envConfig'
+import { useSearchParams } from 'next/navigation'
 
 interface StepEmailProps {
   readonly email: string
@@ -33,6 +29,9 @@ export default function EmailVerificationForm({
   const [emailSuccess, setEmailSuccess] = useState<string | null>(null)
   const [addFailure, setAddFailure] = useState<string | null>(null)
 
+  const searchParams = useSearchParams()
+  const clientAliasValue = searchParams?.get('clientAlias')
+
   const validationSchema = Yup.object().shape({
     email: Yup.string()
       .email('Invalid email address')
@@ -46,8 +45,9 @@ export default function EmailVerificationForm({
 
       const payload = {
         email,
-        clientId: passwordEncryption(envConfig.PLATFORM_DATA.clientId),
-        clientSecret: passwordEncryption(envConfig.PLATFORM_DATA.clientSecret),
+        clientAlias: clientAliasValue
+          ? clientAliasValue
+          : process.env.NEXT_PUBLIC_PUBLIC_PLATFORM_NAME,
       }
 
       const userRsp = await sendVerificationMail(payload)

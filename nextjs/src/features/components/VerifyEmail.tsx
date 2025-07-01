@@ -21,7 +21,6 @@ export default function VerifyEmailPage(): React.JSX.Element {
   const [email, setEmail] = useState<string>('')
 
   const hasVerifiedRef = useRef(false)
-
   useEffect(() => {
     if (hasVerifiedRef.current) {
       return
@@ -65,7 +64,14 @@ export default function VerifyEmailPage(): React.JSX.Element {
   }, [searchParams])
 
   const handleRedirect = (): void => {
-    router.push(`/sign-up?email=${email}`)
+    const redirectTo = searchParams.get('redirectTo')
+    const clientAlias = searchParams.get('clientAlias')
+
+    router.push(
+      redirectTo && clientAlias
+        ? `/sign-up?email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+        : `/sign-up?email=${email}`,
+    )
   }
 
   return (
