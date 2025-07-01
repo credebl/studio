@@ -124,7 +124,7 @@ const DisplayUserProfile = ({
           </div>
 
           <Button
-            variant={'outline'}
+            variant={'ghost'}
             type="button"
             size="icon"
             onClick={toggleEditProfile}
