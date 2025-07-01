@@ -1,47 +1,50 @@
 'use client'
 
-import React, { ReactNode, useEffect, useState } from 'react'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
-import Loader from '@/components/Loader'
-import { sessionExcludedPaths } from '@/config/CommonConstant'
+import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
-interface SessionProps {
-  children: ReactNode
-}
-
-const signInPath = '/sign-in'
-const dashboardPath = '/dashboard'
-
-const SessionCheck: React.FC<SessionProps> = ({ children }) => {
+const SessionCheck = ({
+  children,
+}: {
+  children: React.ReactNode
+}): React.ReactElement | null => {
+  const { data: session, status } = useSession()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const pathname = usePathname()
-  const { data: session } = useSession()
-  const token = session?.accessToken
 
-  const [checkingSession, setCheckingSession] = useState(true)
+  const redirectTo = searchParams.get('redirectTo')
+
+  const preventRedirectOnPaths = [
+    '/organizations/create-organization',
+    '/organizations/agent-config',
+    '/organizations',
+  ]
 
   useEffect(() => {
-    const isExcluded = sessionExcludedPaths.some((path) =>
-      pathname?.startsWith(path),
-    )
-
-    if (!token && !isExcluded) {
-      router.push(signInPath)
-    } else if (token && pathname === signInPath) {
-      router.push(dashboardPath)
+    if (status === 'loading') {
+      return
     }
 
-    setCheckingSession(false)
-  }, [pathname, token, router])
-
-  if (checkingSession) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader />
-      </div>
+    const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
+      pathname.startsWith(page),
     )
+
+    if (session && redirectTo && !isOnRestrictedPage) {
+      router.push(redirectTo)
+    } else if (session && !redirectTo && !isOnRestrictedPage) {
+      router.push('/dashboard')
+    }
+
+    if (session === null) {
+      localStorage.removeItem('persist:root')
+    }
+  }, [session, status, redirectTo, router, pathname])
+
+  if (status === 'loading') {
+    return <div>Loading session...</div>
   }
 
   return <>{children}</>

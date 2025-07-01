@@ -356,7 +356,7 @@ const AddPasskey = ({
                     setOpenModel={setOpenModel}
                     closeModal={closeModal}
                     registerWithPasskey={registerWithPasskey}
-                    email={userEmail}
+                    email={userEmail ?? null}
                   />
                 </div>
               </div>
