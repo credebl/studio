@@ -21,12 +21,7 @@ export default function Header(): React.JSX.Element {
   useEffect(() => {
     const fetchOrganizations = async (): Promise<void> => {
       try {
-        const response = await getOrganizations(
-          currentPageNumber,
-          itemPerPage,
-          '',
-          '',
-        )
+        const response = await getOrganizations(currentPageNumber, itemPerPage)
         if (
           typeof response !== 'string' &&
           response?.data?.data?.organizations
