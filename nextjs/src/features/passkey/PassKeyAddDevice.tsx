@@ -2,7 +2,6 @@
 
 import * as yup from 'yup'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog,
   DialogContent,
@@ -13,6 +12,7 @@ import { Eye, EyeOff } from 'lucide-react'
 import { Field, Form, Formik } from 'formik'
 import { useEffect, useState } from 'react'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -39,7 +39,6 @@ export default function PasskeyAddDevice({
   registerWithPasskey,
 }: PasskeyAddDeviceProps): React.JSX.Element {
   const [fidoUserError, setFidoUserError] = useState<string | null>(null)
-  const [success] = useState<string | null>(null)
   const [nextStep, setNextStep] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [userEmail, setUserEmail] = useState('')
@@ -60,7 +59,7 @@ export default function PasskeyAddDevice({
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setNextStep(true)
       } else if (res.toString().includes('401')) {
-        setFidoUserError('Invalid Credentials')
+        setFidoUserError(res as string)
       } else {
         setFidoUserError(res as string)
       }
@@ -83,12 +82,17 @@ export default function PasskeyAddDevice({
           <DialogTitle>Create Passkey</DialogTitle>
         </DialogHeader>
 
-        {fidoUserError || success ? (
-          <Alert variant={fidoUserError ? 'destructive' : 'default'}>
-            <AlertTitle>{fidoUserError ? 'Error' : 'Success'}</AlertTitle>
-            <AlertDescription>{fidoUserError || success}</AlertDescription>
-          </Alert>
-        ) : null}
+        {fidoUserError && (
+          <div className="w-full" role="alert">
+            <AlertComponent
+              message={fidoUserError}
+              type="failure"
+              onAlertClose={() => {
+                setFidoUserError(null)
+              }}
+            />
+          </div>
+        )}
 
         {!nextStep ? (
           <Formik
