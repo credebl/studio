@@ -151,7 +151,7 @@ export default function Connections(): JSX.Element {
         return (
           <Button
             variant="link"
-            className="text-foreground p-0 text-left"
+            className="text-foreground url-link p-0 text-left"
             onClick={() => openDrawer(connection)}
           >
             {connection.theirLabel || 'N/A'}
