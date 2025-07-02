@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -11,11 +12,15 @@ const SessionCheck = ({
   children: React.ReactNode
 }): React.ReactElement | null => {
   const { data: session, status } = useSession()
+  console.log('🚀 session check compoenent~ session:', session)
   const router = useRouter()
   const searchParams = useSearchParams()
+  console.log('🚀 ~ searchParams:', searchParams)
   const pathname = usePathname()
+  console.log('🚀 ~ pathname:', pathname)
 
   const redirectTo = searchParams.get('redirectTo')
+  console.log('🚀session check compoenent~ session ~ redirectTo:', redirectTo)
 
   const preventRedirectOnPaths = [
     '/organizations/create-organization',
@@ -28,6 +33,7 @@ const SessionCheck = ({
   ]
 
   useEffect(() => {
+    console.log('--inside--------useeffct------')
     if (status === 'loading') {
       return
     }
@@ -37,6 +43,7 @@ const SessionCheck = ({
     )
 
     if (session && redirectTo && !isOnRestrictedPage) {
+      console.log('-----in this code-------')
       router.push(redirectTo)
     } else if (session && !redirectTo && !isOnRestrictedPage) {
       router.push('/dashboard')
