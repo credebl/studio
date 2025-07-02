@@ -42,7 +42,7 @@ const ResetPassword = (): JSX.Element => {
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false)
   //   const [userToken, setUserToken] = useState<string>('')
-  const userToken = useAppSelector((state: RootState) => state.auth.authToken)
+  const userToken = useAppSelector((state: RootState) => state.auth.token)
   // const [field, meta, helpers] = useField(name)
 
   const [showSuggestion, setShowSuggestion] = useState(false)
