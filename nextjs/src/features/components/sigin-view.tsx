@@ -33,12 +33,13 @@ export default function SignInPage(): React.JSX.Element {
 
   return (
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
-      <div className="absolute top-8 left-8 z-20">
+      <div className="absolute top-1 left-0 z-20 md:top-8 md:left-4">
         <Image
           height={CredeblLogoHeight}
           width={CredeblLogoWidth}
           alt="Logo"
           src={logoImageSrc}
+          className="mx-0 h-10 w-fit px-2 md:h-auto md:w-50"
         />
       </div>
 
@@ -46,8 +47,9 @@ export default function SignInPage(): React.JSX.Element {
         <UserAuthForm />
       </div>
 
-      <footer className="text-muted-foreground mb-4 text-center text-sm">
-        © 2019 - {new Date().getFullYear()} AYANWORKS | All rights reserved.
+      <footer className="text-muted-foreground mb-1 text-center text-xs md:mb-4 md:text-sm">
+        © 2019 - {new Date().getFullYear()} AYANWORKS TECHNOLOGY SOLUTIONS
+        PRIVATE LIMITED.
       </footer>
     </div>
   )

@@ -355,3 +355,14 @@ ul.timelinestatic > li {
 .text-avatar-6 {
   color: #76ddef;
 }
+
+.url-link {
+  color: initial;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.url-link:hover {
+  color: #0265fd !important;
+  text-decoration: underline;
+}

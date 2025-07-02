@@ -8,12 +8,17 @@ import {
   ISchemaData,
 } from '../type/schemas-interface'
 import React, { useState } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import CopyDid from '@/config/CopyDid'
 import CustomCheckbox from '@/components/CustomCheckbox'
-import DataTooltip from '@/components/dataTooltip'
 import DateTooltip from '@/components/DateTooltip'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
@@ -192,22 +197,29 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          {props.w3cSchema ? (
-            <DataTooltip
-              data={props.attributes}
-              renderItem={(attribute: IAttributes) => attribute.attributeName}
-            >
-              <AttributesList
-                attributes={props.attributes}
-                limitedAttributes={props.limitedAttributes}
-              />
-            </DataTooltip>
-          ) : (
-            <AttributesList
-              attributes={props.attributes}
-              limitedAttributes={props.limitedAttributes}
-            />
-          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <AttributesList
+                    attributes={props.attributes}
+                    limitedAttributes={props.limitedAttributes}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                sideOffset={4}
+                className="break-words whitespace-normal"
+              >
+                <pre className="block font-semibold break-words whitespace-normal">
+                  {props.attributes
+                    .map((val: { attributeName: string }) => val.attributeName)
+                    .join(' , ')}
+                </pre>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
           {props.w3cSchema &&
             !props.isVerification &&

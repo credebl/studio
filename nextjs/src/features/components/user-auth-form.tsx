@@ -280,7 +280,7 @@ export default function SignInViewPage(): React.JSX.Element {
   }
 
   return (
-    <div className="relative flex w-full flex-col items-center justify-center">
+    <div className="relative mt-4 flex w-full flex-col items-center justify-end md:justify-center">
       {alert && (
         <div className="w-full max-w-md" role="alert">
           <AlertComponent
@@ -303,8 +303,8 @@ export default function SignInViewPage(): React.JSX.Element {
           />
         </div>
       )}
-      <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
-        <div className="mb-6 text-center">
+      <div className="bg-card border-border relative z-10 h-full w-full max-w-md overflow-hidden rounded-xl border p-4 pt-6 shadow-xl transition-transform duration-300 md:p-8">
+        <div className="mb-2 text-center md:mb-6">
           <p className="text-muted-foreground text-sm">
             Sign in to your account to continue
           </p>
@@ -314,7 +314,7 @@ export default function SignInViewPage(): React.JSX.Element {
           <Button
             type="button"
             variant="ghost"
-            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 hover:text-inherit ${
+            className={`flex h-8 flex-1 items-center justify-center gap-1 px-4 py-2 text-xs hover:text-inherit md:h-auto md:text-sm ${
               isPasswordTab
                 ? 'bg-card text-foreground hover:bg-background'
                 : 'bg-muted text-muted-foreground hover:bg-transparent'
@@ -327,7 +327,7 @@ export default function SignInViewPage(): React.JSX.Element {
           <Button
             type="button"
             variant="ghost"
-            className={`flex flex-1 items-center justify-center gap-1 px-4 py-2 hover:text-inherit ${
+            className={`flex h-8 flex-1 items-center justify-center gap-1 px-4 py-2 text-xs hover:text-inherit md:h-auto md:text-sm not-last:${
               !isPasswordTab
                 ? 'bg-card text-foreground hover:bg-background'
                 : 'bg-muted text-muted-foreground hover:bg-transparent'
@@ -346,7 +346,7 @@ export default function SignInViewPage(): React.JSX.Element {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="data-[error=true]:text-foreground">
+                  <FormLabel className="data-[error=true]:text-foreground text-xs md:text-sm">
                     Email
                   </FormLabel>
                   <FormControl>
@@ -356,7 +356,7 @@ export default function SignInViewPage(): React.JSX.Element {
                         {...field}
                         type="email"
                         placeholder="test@example.com"
-                        className="pl-10"
+                        className="pl-10 text-xs md:text-sm"
                         disabled={loading}
                       />
                     </div>
@@ -372,7 +372,9 @@ export default function SignInViewPage(): React.JSX.Element {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel className="text-xs md:text-sm">
+                      Password
+                    </FormLabel>
                     <FormControl>
                       <div className="relative">
                         <LockKeyhole className="text-muted-foreground absolute top-2.5 left-3 h-4 w-4" />
@@ -380,7 +382,7 @@ export default function SignInViewPage(): React.JSX.Element {
                           {...field}
                           type={showPassword ? 'text' : 'password'}
                           placeholder="••••••••"
-                          className="pr-10 pl-10"
+                          className="pr-10 pl-10 text-xs md:text-sm"
                           disabled={loading}
                         />
                         <button
@@ -403,59 +405,64 @@ export default function SignInViewPage(): React.JSX.Element {
             )}
 
             {isPasswordTab && (
-              <div className="text-right text-sm">
+              <div className="text-right text-xs md:text-sm">
                 <Button
                   type="button"
                   onClick={forgotUserPassword}
                   variant={'default'}
-                  className="focus-visible:ring-ring text-foreground w-fit bg-transparent px-2 text-left underline-offset-4 shadow-none hover:bg-transparent hover:underline focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
+                  className="focus-visible:ring-ring text-foreground url-link w-fit bg-transparent px-2 text-left text-xs underline-offset-4 shadow-none hover:bg-transparent hover:underline focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none md:text-sm [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
                 >
                   Forgot password?
                 </Button>
               </div>
             )}
 
-            <Button type="submit" disabled={loading} className="w-full">
+            <Button
+              type="submit"
+              disabled={loading}
+              className="w-full text-xs md:text-sm"
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 
-            <div className="my-6 flex items-center justify-center gap-4">
+            <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
               <hr className="border-border flex-grow border-t" />
-              <span className="text-muted-foreground text-sm">OR</span>
+              <span className="text-muted-foreground text-xs md:text-sm">
+                OR
+              </span>
               <hr className="border-border flex-grow border-t" />
             </div>
 
             <div className="mt-6 flex flex-col gap-3">
               <Button
                 type="button"
-                className=""
+                className="text-xs md:text-sm"
                 onClick={() => route.push('#')}
                 variant={'outline'}
               >
-                <Icons.google className="mr-2 h-4 w-4" />
+                <Icons.google className="mr-2 h-2 w-2 md:h-4 md:w-4" />
                 Sign in with Google
               </Button>
 
               <Button
                 type="button"
-                className=""
+                className="text-xs md:text-sm"
                 onClick={() => route.push('#')}
                 variant={'outline'}
               >
-                <Icons.gitHub className="mr-2 h-4 w-4" />
-                <span className="text-sm font-medium">Sign in with GitHub</span>
+                <Icons.gitHub className="mr-2 h-2 w-2 md:h-4 md:w-4" />
+                <span className="text-xs font-medium md:text-sm">
+                  Sign in with GitHub
+                </span>
               </Button>
             </div>
 
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-4 text-center text-xs md:text-sm">
               <span className="text-muted-foreground">
                 Don’t have an account?{' '}
               </span>
-              <Link
-                href={signUpUrl}
-                className="text-muted-foreground hover:text-inherit hover:underline"
-              >
+              <Link href={signUpUrl} className="url-link">
                 Create one
               </Link>
             </div>
