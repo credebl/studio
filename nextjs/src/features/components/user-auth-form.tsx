@@ -96,7 +96,8 @@ export default function SignInViewPage(): React.JSX.Element {
       console.log('🚀 ~ SignInViewPage ~ response----------:', response)
 
       if (response?.ok && response?.url) {
-        route.push(response.url)
+        // route.push(response.url)
+        window.location.href = response.url
       } else {
         const errorMsg = response?.error
           ? response.error === 'CredentialsSignin'

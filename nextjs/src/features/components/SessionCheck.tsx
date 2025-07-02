@@ -44,7 +44,8 @@ const SessionCheck = ({
 
     if (session && redirectTo && !isOnRestrictedPage) {
       console.log('-----in this code-------')
-      router.push(redirectTo)
+      // router.push(redirectTo)
+      window.location.href = redirectTo
     } else if (session && !redirectTo && !isOnRestrictedPage) {
       router.push('/dashboard')
     }
