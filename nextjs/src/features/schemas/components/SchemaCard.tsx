@@ -197,59 +197,29 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          {props.w3cSchema ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <AttributesList
-                      attributes={props.attributes}
-                      limitedAttributes={props.limitedAttributes}
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  sideOffset={4}
-                  className="break-words whitespace-normal"
-                >
-                  <pre className="block font-semibold break-words whitespace-normal">
-                    {props.attributes
-                      .map(
-                        (val: { attributeName: string }) => val.attributeName,
-                      )
-                      .join(' , ')}
-                  </pre>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <AttributesList
-                      attributes={props.attributes}
-                      limitedAttributes={props.limitedAttributes}
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="bottom"
-                  sideOffset={4}
-                  className="break-words whitespace-normal"
-                >
-                  <pre className="block font-semibold break-words whitespace-normal">
-                    {props.attributes
-                      .map(
-                        (val: { attributeName: string }) => val.attributeName,
-                      )
-                      .join(' , ')}
-                  </pre>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <AttributesList
+                    attributes={props.attributes}
+                    limitedAttributes={props.limitedAttributes}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                sideOffset={4}
+                className="break-words whitespace-normal"
+              >
+                <pre className="block font-semibold break-words whitespace-normal">
+                  {props.attributes
+                    .map((val: { attributeName: string }) => val.attributeName)
+                    .join(' , ')}
+                </pre>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
 
           {props.w3cSchema &&
             !props.isVerification &&
