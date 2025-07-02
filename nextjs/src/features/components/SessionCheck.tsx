@@ -11,11 +11,11 @@ const SessionCheck = ({
 }: {
   children: React.ReactNode
 }): React.ReactElement | null => {
-  const { data: session, status } = useSession()
+  const { data, data: session, status } = useSession()
+  console.log('----------🚀 ~ data:', data)
   console.log('🚀 session check compoenent~ session:', session)
   const router = useRouter()
   const searchParams = useSearchParams()
-  console.log('🚀 ~ searchParams:', searchParams)
   const pathname = usePathname()
   console.log('🚀 ~ pathname:', pathname)
 

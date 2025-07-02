@@ -92,6 +92,8 @@ export default function SignInViewPage(): React.JSX.Element {
         redirect: false,
         callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
+      // eslint-disable-next-line no-console
+      console.log('🚀 ~ SignInViewPage ~ response----------:', response)
 
       if (response?.ok && response?.url) {
         route.push(response.url)
