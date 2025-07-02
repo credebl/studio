@@ -223,7 +223,11 @@ export const authOptions: MyAuthOptions = {
 
   cookies: {
     sessionToken: {
-      name: 'next-auth.session-token',
+      // name: 'next-auth.session-token',
+      name:
+        process.env.NEXTAUTH_PROTOCOL === 'http'
+          ? 'next-auth.session-token'
+          : '__Secure-next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
