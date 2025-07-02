@@ -109,11 +109,15 @@ instance.interceptors.response.use(
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean
     }
+    const isPasswordCheckRoute = originalRequest?.url?.includes(
+      apiRoutes.auth.passkeyUserDetails,
+    )
 
     // Automatically logout on 401
     if (
       error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
-      !originalRequest?._retry
+      !originalRequest?._retry &&
+      !isPasswordCheckRoute
     ) {
       originalRequest._retry = true
 
