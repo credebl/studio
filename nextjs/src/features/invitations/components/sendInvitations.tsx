@@ -154,7 +154,10 @@ export default function SendInvitationModal({
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent
+        className="sm:max-w-2xl"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Send Invitation(s)</DialogTitle>
         </DialogHeader>
@@ -170,6 +173,7 @@ export default function SendInvitationModal({
         <Formik
           initialValues={{ email: '' }}
           validationSchema={validationSchema}
+          validateOnMount={false}
           onSubmit={(values, formikHandlers) => {
             formikHandlers.resetForm()
             validateAndAddEmail(values)
@@ -187,6 +191,7 @@ export default function SendInvitationModal({
                       as={Input}
                       id="email"
                       name="email"
+                      autoFocus={false}
                       placeholder="example@email.com"
                       className={`bg-background placeholder:text-muted-foreground/50 focus-visible:ring-1 ${
                         errors.email && touched.email

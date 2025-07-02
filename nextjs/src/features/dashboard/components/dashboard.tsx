@@ -40,7 +40,7 @@ export default function Dashboard(): React.JSX.Element {
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
   const [walletExists, setWalletExists] = useState(false)
 
-  const orgId = useAppSelector((state) => state.organization.orgId)
+  const orgId = useAppSelector((state) => state?.organization.orgId)
   const [, setUserOrg] = useState(null)
 
   const dispatch = useAppDispatch()

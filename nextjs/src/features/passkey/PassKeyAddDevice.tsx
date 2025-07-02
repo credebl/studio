@@ -2,7 +2,6 @@
 
 import * as yup from 'yup'
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import {
   Dialog,
   DialogContent,
@@ -11,16 +10,15 @@ import {
 } from '@/components/ui/dialog'
 import { Eye, EyeOff } from 'lucide-react'
 import { Field, Form, Formik } from 'formik'
+import { useEffect, useState } from 'react'
 
+import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { RootState } from '@/lib/store'
 import { addPasskeyUserDetails } from '@/app/api/Fido'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { passwordEncryption } from '@/app/api/Auth'
-import { useSelector } from 'react-redux'
-import { useState } from 'react'
 
 interface PasswordValue {
   Password: string
@@ -31,21 +29,27 @@ interface PasskeyAddDeviceProps {
   setOpenModel: (flag: boolean) => void
   closeModal: (flag: boolean) => void
   registerWithPasskey: (flag: boolean) => Promise<void>
+  email: string | null
 }
 
 export default function PasskeyAddDevice({
   openModal,
+  email,
   setOpenModel,
   registerWithPasskey,
 }: PasskeyAddDeviceProps): React.JSX.Element {
   const [fidoUserError, setFidoUserError] = useState<string | null>(null)
-  const [success] = useState<string | null>(null)
   const [nextStep, setNextStep] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState(false)
+  const [userEmail, setUserEmail] = useState('')
 
-  const userEmail = useSelector((state: RootState) => state.profile.email)
   const savePassword = async (values: PasswordValue): Promise<void> => {
     try {
+      if (!userEmail) {
+        setFidoUserError('User email is missing. Please refresh the page.')
+        return
+      }
+
       const payload = {
         password: passwordEncryption(values.Password),
       }
@@ -55,7 +59,7 @@ export default function PasskeyAddDevice({
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setNextStep(true)
       } else if (res.toString().includes('401')) {
-        setFidoUserError('Invalid Credentials')
+        setFidoUserError(res as string)
       } else {
         setFidoUserError(res as string)
       }
@@ -65,6 +69,12 @@ export default function PasskeyAddDevice({
     }
   }
 
+  useEffect(() => {
+    if (email) {
+      setUserEmail(email)
+    }
+  }, [email])
+
   return (
     <Dialog open={openModal} onOpenChange={setOpenModel}>
       <DialogContent>
@@ -72,12 +82,17 @@ export default function PasskeyAddDevice({
           <DialogTitle>Create Passkey</DialogTitle>
         </DialogHeader>
 
-        {fidoUserError || success ? (
-          <Alert variant={fidoUserError ? 'destructive' : 'default'}>
-            <AlertTitle>{fidoUserError ? 'Error' : 'Success'}</AlertTitle>
-            <AlertDescription>{fidoUserError || success}</AlertDescription>
-          </Alert>
-        ) : null}
+        {fidoUserError && (
+          <div className="w-full" role="alert">
+            <AlertComponent
+              message={fidoUserError}
+              type="failure"
+              onAlertClose={() => {
+                setFidoUserError(null)
+              }}
+            />
+          </div>
+        )}
 
         {!nextStep ? (
           <Formik

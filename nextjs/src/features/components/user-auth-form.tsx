@@ -11,14 +11,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import React, { useState } from 'react'
 import {
-  IUserSignInData,
   forgotPassword,
   getUserProfile,
   passwordEncryption,
 } from '@/app/api/Auth'
-import React, { useState } from 'react'
 import { signIn, useSession } from 'next-auth/react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -32,7 +32,6 @@ import { setProfile } from '@/lib/profileSlice'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
-import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 const signInSchema = z.object({
@@ -66,6 +65,51 @@ export default function SignInViewPage(): React.JSX.Element {
       password: '',
     },
   })
+
+  const searchParams = useSearchParams()
+
+  const redirectTo = searchParams?.get('redirectTo')
+  const clientAlias = searchParams?.get('clientAlias')
+
+  const signUpUrl =
+    redirectTo && clientAlias
+      ? `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+      : '/sign-up'
+
+  const handleSignIn = async (values: {
+    email: string
+    password?: string
+  }): Promise<void> => {
+    try {
+      const entityData = {
+        email: values.email,
+        password: await passwordEncryption(values.password || ''),
+        isPassword: isPasswordTab,
+      }
+
+      const response = await signIn('credentials', {
+        ...entityData,
+        redirect: false,
+        callbackUrl: redirectTo ? redirectTo : '/dashboard',
+      })
+
+      if (response?.ok && response?.url) {
+        route.push(response.url)
+      } else {
+        const errorMsg = response?.error
+          ? response.error === 'CredentialsSignin'
+            ? 'Invalid Credentials'
+            : response.error
+          : 'Sign in failed. Please try again.'
+        setAlert(errorMsg)
+
+        console.error('Sign in failed:', response?.error)
+      }
+    } catch (error) {
+      setAlert('Something went wrong during sign in. Please try again.')
+      console.error('Sign in error:', error)
+    }
+  }
 
   const getUserDetails = async (
     // eslint-disable-next-line camelcase
@@ -121,45 +165,6 @@ export default function SignInViewPage(): React.JSX.Element {
     } catch (error) {
       console.error('Error fetching user details', error)
       return undefined
-    }
-  }
-
-  const handleSignIn = async (values: {
-    email: string
-    password?: string
-  }): Promise<void> => {
-    try {
-      const entityData: IUserSignInData = isPasswordTab
-        ? {
-            email: values.email,
-            password: await passwordEncryption(values.password || ''),
-            isPasskey: false,
-            isPassword: isPasswordTab,
-          }
-        : {
-            email: values.email,
-            isPasskey: true,
-          }
-
-      const response = await signIn('credentials', {
-        ...entityData,
-        redirect: false,
-        callbackUrl: '/dashboard',
-      })
-
-      if (response?.ok && typeof response.url === 'string') {
-        route.push(response.url)
-      } else {
-        const errorMsg = response?.error
-          ? response.error === 'CredentialsSignin'
-            ? 'Invalid Credentials'
-            : response.error
-          : 'Sign in failed. Please try again.'
-        setAlert(errorMsg)
-      }
-    } catch (error) {
-      setAlert('Something went wrong during sign in. Please try again.')
-      console.error('Sign in error:', error)
     }
   }
 
@@ -457,7 +462,7 @@ export default function SignInViewPage(): React.JSX.Element {
               <span className="text-muted-foreground">
                 Don’t have an account?{' '}
               </span>
-              <Link href="/sign-up" className="url-link">
+              <Link href={signUpUrl} className="url-link">
                 Create one
               </Link>
             </div>

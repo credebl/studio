@@ -1,6 +1,5 @@
 'use client'
 
-import { Alert, AlertDescription } from '@/components/ui/alert'
 import { AxiosError, AxiosResponse } from 'axios'
 import {
   IDeviceData,
@@ -285,17 +284,32 @@ const AddPasskey = ({
                     <h1 className="text-xl font-medium text-gray-500 dark:text-white">
                       Add Passkey
                     </h1>
-                    <p className="mt-2 text-start text-sm font-normal text-gray-700 dark:text-white">
+                    <p className="mt-2 mb-2 text-start text-sm font-normal text-gray-700 dark:text-white">
                       With Passkey, no complex passwords to remember.
                     </p>
                   </div>
 
-                  {(editSuccess || editFailure) && (
-                    <Alert variant={editSuccess ? 'default' : 'destructive'}>
-                      <AlertDescription>
-                        {editSuccess || editFailure}
-                      </AlertDescription>
-                    </Alert>
+                  {editSuccess && (
+                    <div className="w-full" role="alert">
+                      <AlertComponent
+                        message={editSuccess}
+                        type="success"
+                        onAlertClose={() => {
+                          setEditSuccess(null)
+                        }}
+                      />
+                    </div>
+                  )}
+                  {editFailure && (
+                    <div className="w-full" role="alert">
+                      <AlertComponent
+                        message={editFailure}
+                        type="failure"
+                        onAlertClose={() => {
+                          setEditFailure(null)
+                        }}
+                      />
+                    </div>
                   )}
 
                   {deviceList &&
@@ -342,6 +356,7 @@ const AddPasskey = ({
                     setOpenModel={setOpenModel}
                     closeModal={closeModal}
                     registerWithPasskey={registerWithPasskey}
+                    email={userEmail ?? null}
                   />
                 </div>
               </div>
