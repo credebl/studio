@@ -42,7 +42,7 @@ export const SchemaNameCell = ({
           router.push('/organizations/schemas')
         }
       }}
-      className="cursor-pointer border-none bg-transparent p-0 text-sm hover:underline"
+      className="url-link cursor-pointer border-none bg-transparent p-0 text-sm"
     >
       {schemaName}
     </button>

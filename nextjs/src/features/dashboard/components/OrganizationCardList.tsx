@@ -347,7 +347,7 @@ const OrganizationCardList = (): React.JSX.Element => {
       <CardFooter className="mt-auto justify-end pt-2">
         <Link
           href="/organizations"
-          className="transition hover:underline hover:opacity-80"
+          className="url-link transition hover:underline hover:opacity-80"
         >
           View all
         </Link>
