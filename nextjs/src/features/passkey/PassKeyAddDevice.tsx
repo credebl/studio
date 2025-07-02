@@ -76,7 +76,16 @@ export default function PasskeyAddDevice({
   }, [email])
 
   return (
-    <Dialog open={openModal} onOpenChange={setOpenModel}>
+    <Dialog
+      open={openModal}
+      onOpenChange={(isOpen) => {
+        setOpenModel(isOpen)
+        if (!isOpen) {
+          setFidoUserError(null)
+          setNextStep(false)
+        }
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Passkey</DialogTitle>
@@ -138,7 +147,9 @@ export default function PasskeyAddDevice({
                 </div>
 
                 <div className="flex justify-end">
-                  <Button type="submit">Next</Button>
+                  <Button onClick={() => setFidoUserError(null)} type="submit">
+                    Next
+                  </Button>
                 </div>
               </Form>
             )}
