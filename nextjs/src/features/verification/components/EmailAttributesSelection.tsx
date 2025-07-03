@@ -155,11 +155,11 @@ const EmailAttributesSelection = (): JSX.Element => {
       attribute.selectedOption === '' ||
       attribute.selectedOption === 'Select'
     const isValueInvalid = attribute.value === null || attribute.value === ''
-    if (isOptionInvalid) {
-      setErrMsg('Condition is required')
-      return true
-    } else if (isValueInvalid) {
+    if (!isOptionInvalid && isValueInvalid) {
       setErrMsg('Value is missing or is not a number')
+      return true
+    } else if (!isValueInvalid && isOptionInvalid) {
+      setErrMsg('Condition is missing')
       return true
     }
     return false

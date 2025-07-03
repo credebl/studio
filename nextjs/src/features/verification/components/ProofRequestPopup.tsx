@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { JSX, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import AttributesListData from './AttributesListData'
@@ -65,7 +65,12 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
     (props?.userRoles ?? []).every((role) =>
       [Roles.MEMBER, Roles.ISSUER].includes(role as Roles),
     )
-
+  useEffect(() => {
+    if (props.openModal) {
+      setSuccesMsg('')
+      setNavigation(false)
+    }
+  }, [props.openModal])
   return (
     <Dialog
       open={props.openModal}
