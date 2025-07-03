@@ -31,7 +31,7 @@ interface UserDataItem {
 const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
   const [buttonLoader, setButtonLoader] = useState(false)
   const [navigation, setNavigation] = useState(false)
-  const [successMsg, setSuccesMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
   const [error, setError] = useState('')
   const orgId = useAppSelector((state) => state.organization.orgId)
   const router = useRouter()
@@ -42,7 +42,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
       const response = await verifyPresentation(id, orgId)
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setSuccesMsg(data.message)
+        setSuccessMsg(data.message)
         setNavigation(true)
       }
     } catch (err) {
@@ -67,7 +67,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
     )
   useEffect(() => {
     if (props.openModal) {
-      setSuccesMsg('')
+      setSuccessMsg('')
       setNavigation(false)
     }
   }, [props.openModal])
@@ -90,7 +90,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
             <AlertComponent
               message={successMsg}
               type="success"
-              onAlertClose={() => setSuccesMsg('')}
+              onAlertClose={() => setSuccessMsg('')}
             />
           )}
 
