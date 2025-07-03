@@ -191,15 +191,39 @@ export const authOptions: MyAuthOptions = {
       return session
     },
 
+    // async redirect({ url, baseUrl }) {
+    //   try {
+    //     const redirectUrl = new URL(url)
+
+    //     if (
+    //       [process.env.NEXTAUTH_COOKIE_DOMAIN].includes(redirectUrl.hostname) &&
+    //       (redirectUrl.protocol === 'http:' ||
+    //         redirectUrl.protocol === 'https:')
+    //     ) {
+    //       return redirectUrl.toString()
+    //     }
+    //   } catch (err) {
+    //     // If not a full URL, treat it as relative path
+    //     return new URL(url, baseUrl).toString()
+    //   }
+
+    //   return baseUrl
+    // },
+
     async redirect({ url, baseUrl }) {
       try {
         const redirectUrl = new URL(url)
 
-        if (
-          [process.env.NEXTAUTH_COOKIE_DOMAIN].includes(redirectUrl.hostname) &&
-          (redirectUrl.protocol === 'http:' ||
-            redirectUrl.protocol === 'https:')
-        ) {
+        const cookieDomain = process.env.NEXTAUTH_COOKIE_DOMAIN?.replace(
+          /^\./,
+          '',
+        )
+        const isAllowed =
+          cookieDomain &&
+          redirectUrl.hostname.endsWith(cookieDomain) &&
+          ['http:', 'https:'].includes(redirectUrl.protocol)
+
+        if (isAllowed) {
           return redirectUrl.toString()
         }
       } catch (err) {
