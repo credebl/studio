@@ -25,7 +25,7 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
-// import Link from 'next/link'
+import Link from 'next/link'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
@@ -69,12 +69,12 @@ export default function SignInViewPage(): React.JSX.Element {
   const searchParams = useSearchParams()
 
   const redirectTo = searchParams?.get('redirectTo')
-  // const clientAlias = searchParams?.get('clientAlias')
+  const clientAlias = searchParams?.get('clientAlias')
 
-  // const signUpUrl =
-  //   redirectTo && clientAlias
-  //     ? `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-  //     : '/sign-up'
+  const signUpUrl =
+    redirectTo && clientAlias
+      ? `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+      : '/sign-up'
 
   const handleSignIn = async (values: {
     email: string
@@ -465,13 +465,9 @@ export default function SignInViewPage(): React.JSX.Element {
               <span className="text-muted-foreground">
                 Don’t have an account?{' '}
               </span>
-              {/* <Link
-                href={signUpUrl}
-                className="text-muted-foreground hover:text-inherit hover:underline"
-              >
               <Link href={signUpUrl} className="url-link">
                 Create one
-              </Link> */}
+              </Link>
             </div>
           </form>
         </Form>
