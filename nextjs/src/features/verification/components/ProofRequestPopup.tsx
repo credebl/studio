@@ -31,7 +31,7 @@ interface UserDataItem {
 const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
   const [buttonLoader, setButtonLoader] = useState(false)
   const [navigation, setNavigation] = useState(false)
-  const [succesMsg, setSuccesMsg] = useState('')
+  const [successMsg, setSuccesMsg] = useState('')
   const [error, setError] = useState('')
   const orgId = useAppSelector((state) => state.organization.orgId)
   const router = useRouter()
@@ -86,9 +86,9 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
             </DialogTitle>
           </DialogHeader>
 
-          {!props.view && succesMsg && (
+          {!props.view && successMsg && (
             <AlertComponent
-              message={succesMsg}
+              message={successMsg}
               type="success"
               onAlertClose={() => setSuccesMsg('')}
             />
