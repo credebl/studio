@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { JSX, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import AttributesListData from './AttributesListData'
@@ -31,7 +31,7 @@ interface UserDataItem {
 const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
   const [buttonLoader, setButtonLoader] = useState(false)
   const [navigation, setNavigation] = useState(false)
-  const [succesMsg, setSuccesMsg] = useState('')
+  const [successMsg, setSuccessMsg] = useState('')
   const [error, setError] = useState('')
   const orgId = useAppSelector((state) => state.organization.orgId)
   const router = useRouter()
@@ -42,7 +42,7 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
       const response = await verifyPresentation(id, orgId)
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        setSuccesMsg(data.message)
+        setSuccessMsg(data.message)
         setNavigation(true)
       }
     } catch (err) {
@@ -65,7 +65,12 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
     (props?.userRoles ?? []).every((role) =>
       [Roles.MEMBER, Roles.ISSUER].includes(role as Roles),
     )
-
+  useEffect(() => {
+    if (props.openModal) {
+      setSuccessMsg('')
+      setNavigation(false)
+    }
+  }, [props.openModal])
   return (
     <Dialog
       open={props.openModal}
@@ -81,11 +86,11 @@ const ProofRequest = (props: IProofRrquestDetails): JSX.Element => {
             </DialogTitle>
           </DialogHeader>
 
-          {!props.view && succesMsg && (
+          {!props.view && successMsg && (
             <AlertComponent
-              message={succesMsg}
+              message={successMsg}
               type="success"
-              onAlertClose={() => setSuccesMsg('')}
+              onAlertClose={() => setSuccessMsg('')}
             />
           )}
 
