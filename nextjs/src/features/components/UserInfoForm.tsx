@@ -86,7 +86,6 @@ export default function UserInfoForm({
   const [, setDisableFlag] = useState<boolean>(false)
   const [, setAddFailure] = useState<string | null>(null)
   const [, setAddSuccess] = useState<string | null>(null)
-  const [, setErrMsg] = useState<string | null>(null)
   const router = useRouter()
   const [, setFidoLoader] = useState<boolean>(false)
   const [, setFidoError] = useState('')
@@ -166,10 +165,10 @@ export default function UserInfoForm({
         window.location.href =
           '/sign-in?signup=true&fidoFlag=true&method=passkey'
       } else {
-        setErrMsg(data?.message || 'Passkey registration failed')
+        setFailure(data?.message || 'Passkey registration failed')
       }
     } catch (error) {
-      setErrMsg('Error during passkey registration')
+      setFailure('Error during passkey registration')
     } finally {
       setLoading(false)
     }
@@ -274,7 +273,7 @@ export default function UserInfoForm({
 
         await verifyRegistrationMethod(verifyRegistrationObj, email)
       } else {
-        setErrMsg(
+        setFailure(
           (generateRegistrationResponse as AxiosResponse)?.data?.message ||
             'An error occurred',
         )
