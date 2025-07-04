@@ -24,7 +24,7 @@ export default function Providers({
       enableColorScheme
     >
       <ActiveThemeProvider initialTheme={activeThemeValue}>
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <SessionProvider session={session} key={session?.user.id}>{children}</SessionProvider>
       </ActiveThemeProvider>
     </ThemeProvider>
   )
