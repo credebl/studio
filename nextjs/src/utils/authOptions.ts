@@ -132,7 +132,8 @@ export const authOptions: MyAuthOptions = {
           }
 
           const user = await res.json()
-          console.log('res in Auth options',user)
+          // eslint-disable-next-line no-console
+          console.log('res in Auth options', user)
           if (user.statusCode === 200 && user.data) {
             const decodedToken = jwtDecode<jwtDataPayload>(
               user.data.access_token,
