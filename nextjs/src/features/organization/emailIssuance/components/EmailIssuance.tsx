@@ -54,14 +54,14 @@ const EmailIssuance = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
   const [credentialOptions, setCredentialOptions] =
     useState<ICredentialOptions>()
-  const schemaListAPIParameter = {
+  const [schemaListAPIParameter, setSchemaListAPIParameter] = useState({
     itemPerPage,
     page: 1,
     search: '',
     sortBy: 'id',
     sortingOrder: 'desc',
     allSearch: '',
-  }
+  })
   const [credentialSelected, setCredentialSelected] =
     useState<ICredentials | null>()
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -122,7 +122,7 @@ const EmailIssuance = (): JSX.Element => {
       allSchema,
       ledgerId,
     })
-  }, [isAllSchemaFlagSelected])
+  }, [isAllSchemaFlagSelected, schemaListAPIParameter.allSearch])
 
   useEffect(() => {
     const initFormData = {
@@ -154,6 +154,10 @@ const EmailIssuance = (): JSX.Element => {
       schemaIdentifier: value.schemaIdentifier ?? '',
     }
     handleSelectChange(fullValue)
+  }
+
+  const handleSearchChange = (value: string): void => {
+    setSchemaListAPIParameter((prev) => ({ ...prev, allSearch: value }))
   }
 
   const createSchemaTitle = { title: 'Create Schema', svg: <Create /> }
@@ -206,6 +210,13 @@ const EmailIssuance = (): JSX.Element => {
                           value={''}
                           clear={clear}
                           onValueChange={handleSelect}
+                          onSearchChange={handleSearchChange}
+                          enableInternalSearch={
+                            !(
+                              schemaType === SchemaTypes.schema_W3C &&
+                              isAllSchemaFlagSelected
+                            )
+                          }
                           placeholder="Select Schema Credential Definition"
                         />
                       )}

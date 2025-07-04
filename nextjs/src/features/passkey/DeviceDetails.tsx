@@ -104,9 +104,18 @@ export default function DeviceDetails({
             >
               <Pencil className="h-4 w-4" />
             </Button>
+            <div className="ml-auto">
+              <Button
+                onClick={() => setOpenDeleteModal(true)}
+                disabled={disableRevoke}
+                className={disableRevoke ? 'cursor-not-allowed opacity-50' : ''}
+              >
+                Revoke
+              </Button>
+            </div>
           </div>
 
-          <p className="text-muted-foreground mt-4 truncate text-sm">
+          <p className="text-muted-foreground truncate text-sm">
             <Tooltip>
               <TooltipTrigger asChild>
                 <span>{dateConversion(createDateTime)}</span>
@@ -118,18 +127,6 @@ export default function DeviceDetails({
           <p className="text-muted-foreground truncate text-sm">
             {credentialID}
           </p>
-
-          <div className="mt-2 flex justify-end">
-            <div className="mt-2 flex justify-end">
-              <Button
-                onClick={() => setOpenDeleteModal(true)}
-                disabled={disableRevoke}
-                className={disableRevoke ? 'disabled:cursor-not-allowed' : ''}
-              >
-                Revoke
-              </Button>
-            </div>
-          </div>
         </div>
       </div>
 

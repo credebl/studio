@@ -76,7 +76,7 @@ const VerificationCredentialList = (): JSX.Element => {
 
   const router = useRouter()
   const orgId = useAppSelector((state) => state.organization.orgId)
-  const orgRoles = useAppSelector((state) => state.organization.orgRoles)
+  const orgRoles = useAppSelector((state) => state.organization.orgInfo)
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
@@ -243,7 +243,7 @@ const VerificationCredentialList = (): JSX.Element => {
 
   useEffect(() => {
     const getUserRoles = (): void => {
-      setUserRoles(orgRoles)
+      setUserRoles(orgRoles?.roles || [])
     }
     getUserRoles()
     fetchOrganizationDetails()

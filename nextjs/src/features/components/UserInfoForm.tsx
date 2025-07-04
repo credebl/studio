@@ -25,6 +25,7 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { startRegistration } from '@simplewebauthn/browser'
+import { v4 as uuidv4 } from 'uuid'
 
 interface StepUserInfoProps {
   email: string
@@ -38,6 +39,13 @@ export interface RegistrationOptionInterface {
 
 export enum Devices {
   Linux = 'linux',
+}
+export interface AddPasswordDetails {
+  email: string
+  password: string
+  isPasskey: boolean
+  firstName: string | null
+  lastName: string | null
 }
 
 const validationSchema = Yup.object().shape({
@@ -78,7 +86,6 @@ export default function UserInfoForm({
   const [, setDisableFlag] = useState<boolean>(false)
   const [, setAddFailure] = useState<string | null>(null)
   const [, setAddSuccess] = useState<string | null>(null)
-  const [, setErrMsg] = useState<string | null>(null)
   const router = useRouter()
   const [, setFidoLoader] = useState<boolean>(false)
   const [, setFidoError] = useState('')
@@ -86,6 +93,8 @@ export default function UserInfoForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [success, setSuccess] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
+  const [passkeyFirstName, setPasskeyFirstName] = useState('')
+  const [passkeyLastName, setPasskeyLastName] = useState('')
 
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo')
@@ -134,6 +143,37 @@ export default function UserInfoForm({
     }
   }
 
+  const passkeySubmit = async (values: {
+    firstName: string
+    lastName: string
+  }): Promise<void> => {
+    const password: string = uuidv4()
+    const payload: AddPasswordDetails = {
+      email,
+      isPasskey: true,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      password: passwordEncryption(password),
+    }
+
+    setLoading(true)
+    try {
+      const userRsp = await addPasswordDetails(payload)
+      const { data } = userRsp as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        window.location.href =
+          '/sign-in?signup=true&fidoFlag=true&method=passkey'
+      } else {
+        setFailure(data?.message || 'Passkey registration failed')
+      }
+    } catch (error) {
+      setFailure('Error during passkey registration')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError
     if (
@@ -153,7 +193,10 @@ export default function UserInfoForm({
       const deviceDetailsResp = await addDeviceDetails(deviceBody)
       const { data } = deviceDetailsResp as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        router.push('/sign-in')
+        passkeySubmit({
+          firstName: passkeyFirstName,
+          lastName: passkeyLastName,
+        })
       }
       setTimeout(() => {
         setAddSuccess('')
@@ -230,7 +273,7 @@ export default function UserInfoForm({
 
         await verifyRegistrationMethod(verifyRegistrationObj, email)
       } else {
-        setErrMsg(
+        setFailure(
           (generateRegistrationResponse as AxiosResponse)?.data?.message ||
             'An error occurred',
         )
@@ -317,7 +360,10 @@ export default function UserInfoForm({
                 placeholder="First name"
                 name="firstName"
                 value={values.firstName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e)
+                  setPasskeyFirstName(e.target.value)
+                }}
                 onBlur={handleBlur}
                 className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]"
               />
@@ -332,7 +378,10 @@ export default function UserInfoForm({
                 placeholder="Last name"
                 name="lastName"
                 value={values.lastName}
-                onChange={handleChange}
+                onChange={(e) => {
+                  handleChange(e)
+                  setPasskeyLastName(e.target.value)
+                }}
                 onBlur={handleBlur}
                 className="bg-[var(--color-bg-primary)] text-[var(--color-text-primary)]"
               />
