@@ -408,6 +408,12 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                 }
                 buttonIcon={<Plus />}
                 buttonContent="Create"
+                disabled={
+                  !(
+                    userRoles.includes(Roles.OWNER) ||
+                    userRoles.includes(Roles.ADMIN)
+                  )
+                }
                 onClick={() => {
                   setIsOpenCreateCredDef(true)
                   setSuccess(null)

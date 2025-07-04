@@ -344,7 +344,6 @@ export const getSchemaCredentials = async (
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const credentialDefsData = data.data.data
-
         dropDownOptions = credentialDefsData.map(
           ({
             name,
