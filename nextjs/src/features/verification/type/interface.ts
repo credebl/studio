@@ -1,5 +1,7 @@
 import { Dispatch, JSX, SetStateAction } from 'react'
 
+import { Roles } from '@/common/enums'
+
 export interface RequestProof {
   _tags: {
     state: string
@@ -33,6 +35,14 @@ export interface IProofRrquestDetails {
   userData: UserDataItem[]
   view: boolean
   userRoles?: string[]
+}
+export interface IUserRoles {
+  id: string
+  name: Roles
+  description: string
+  composite: boolean
+  clientRole: boolean
+  containerId: string
 }
 
 export interface IDashboard {
