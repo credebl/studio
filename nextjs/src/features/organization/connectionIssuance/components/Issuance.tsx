@@ -254,9 +254,9 @@ const IssueCred = (): React.JSX.Element => {
             (credentials.data?.data ?? []).map(
               (value: ICredentials, index: number) => ({
                 schemaVersion: value.schemaVersion,
-                value: index,
+                value: value.schemaAttributes,
                 label: value.schemaCredDefName,
-                id: value.schemaAttributes,
+                id: index,
                 schemaId: response
                   ? value.schemaIdentifier
                   : value.schemaLedgerId,
@@ -328,7 +328,7 @@ const IssueCred = (): React.JSX.Element => {
         schemaAttributes: value.attributes ?? [],
       })
     } else {
-      const data = JSON.parse(value.id)
+      const data = JSON.parse(value.value)
       setSchemaDetails({
         schemaName: value.schemaName,
         version: value.schemaVersion,

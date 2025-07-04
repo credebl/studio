@@ -257,7 +257,6 @@ export const getSchemaCredentials = async ({
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const credentialDefs = data.data
-
         options = credentialDefs.map(
           (
             {
