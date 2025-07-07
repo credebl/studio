@@ -166,6 +166,7 @@ export default function AppSidebar(): React.JSX.Element {
                       <SidebarMenuButton
                         tooltip={item.title}
                         isActive={pathname === item.url}
+                        className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
                       >
                         {item.icon && <Icon />}
                         <span>{item.title}</span>
@@ -180,6 +181,7 @@ export default function AppSidebar(): React.JSX.Element {
                             <SidebarMenuSubButton
                               asChild
                               isActive={pathname === subItem.url}
+                              className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
                             >
                               <Link href={subItem.url}>
                                 <span>{subItem.title}</span>
@@ -197,6 +199,7 @@ export default function AppSidebar(): React.JSX.Element {
                     asChild
                     tooltip={item.title}
                     isActive={pathname === item.url}
+                    className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
                   >
                     <Link href={item.url}>
                       <Icon />
