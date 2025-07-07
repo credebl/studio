@@ -169,3 +169,22 @@ export enum ProofRequestState {
   done = 'done',
   abandoned = 'abandoned',
 }
+
+export enum AgentType {
+  SHARED = 'shared',
+  DEDICATED = 'dedicated',
+}
+
+// Define wallet spinup status enum
+export enum WalletSpinupStatus {
+  NOT_STARTED = 'not_started',
+  AGENT_CONFIG_SET = 'agent_config_set',
+  AGENT_SPINUP_INITIATED = 'agent_spinup_initiated',
+  AGENT_SPINUP_COMPLETED = 'agent_spinup_completed',
+  DID_PUBLISH_INITIATED = 'did_publish_initiated',
+  DID_PUBLISH_COMPLETED = 'did_publish_completed',
+  INVITATION_CREATION_STARTED = 'invitation_creation_started',
+  INVITATION_CREATION_SUCCESS = 'invitation_creation_success',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+}

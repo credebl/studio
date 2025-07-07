@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client'
 
+import { AgentType, DidMethod, WalletSpinupStatus } from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
 import {
@@ -13,7 +14,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import DedicatedAgentForm from './DedicatedAgentForm'
-import { DidMethod } from '../common/enum'
 import { IValuesShared } from '../organization/components/interfaces/organization'
 import { Organisation } from '../dashboard/type/organization'
 import PageContainer from '@/components/layout/page-container'
@@ -24,25 +24,6 @@ import WalletStepsComponent from './WalletSteps'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
-
-enum AgentType {
-  SHARED = 'shared',
-  DEDICATED = 'dedicated',
-}
-
-// Define wallet spinup status enum
-enum WalletSpinupStatus {
-  NOT_STARTED = 'not_started',
-  AGENT_CONFIG_SET = 'agent_config_set',
-  AGENT_SPINUP_INITIATED = 'agent_spinup_initiated',
-  AGENT_SPINUP_COMPLETED = 'agent_spinup_completed',
-  DID_PUBLISH_INITIATED = 'did_publish_initiated',
-  DID_PUBLISH_COMPLETED = 'did_publish_completed',
-  INVITATION_CREATION_STARTED = 'invitation_creation_started',
-  INVITATION_CREATION_SUCCESS = 'invitation_creation_success',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
-}
 
 const WalletSpinup = (): React.JSX.Element => {
   const [agentType, setAgentType] = useState<string>(AgentType.DEDICATED)
@@ -209,7 +190,6 @@ const WalletSpinup = (): React.JSX.Element => {
 
   useEffect(() => {
     // eslint-disable-next-line no-console
-    console.log('🚀 ~ useEffect ~ useEffect:')
     setBlockScreen(true)
     setIsInitialCheckComplete(false)
     fetchOrganizationDetails()
