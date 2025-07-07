@@ -51,11 +51,12 @@ const IssuancePopup = (props: IProps): JSX.Element => (
               type="submit"
               // isProcessing={props.isProcessing}
               disabled={props.isProcessing}
+              variant={'default'}
               onClick={() => {
                 props.onSuccess(true)
                 window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
               }}
-              className="bg-primary hover:!bg-primary/90 dark:bg-primary-700 dark:hover:bg-primary/90 dark:focus:ring-primary text-custom-900 ml-2 inline-flex items-center rounded-lg text-center focus:ring focus:outline-none"
+              className="ml-2 inline-flex items-center rounded-lg text-center"
             >
               <p className="text-lg font-normal">Yes, I&apos;m sure</p>
             </Button>

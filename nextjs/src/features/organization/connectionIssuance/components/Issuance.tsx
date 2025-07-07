@@ -68,7 +68,9 @@ const IssueCred = (): React.JSX.Element => {
   const [schemaType, setSchemaType] = useState<SchemaTypeValue>()
   const [orgDid, setOrgDid] = useState<string>('')
   const orgId = useSelector((state: RootState) => state.organization.orgId)
-  const [credentialOptions, setCredentialOptions] = useState<Option[]>([])
+  const [credentialOptions, setCredentialOptions] = useState<
+    GetAllSchemaHelperReturn[]
+  >([])
   const selectedUser = useSelector(
     (state: RootState) => state.storageKeys.SELECTED_USER,
   )
@@ -233,18 +235,7 @@ const IssueCred = (): React.JSX.Element => {
             ledgerId,
             currentSchemaType: schemaValue,
           })
-          setCredentialOptions(
-            credentials.map((value: GetAllSchemaHelperReturn, idx: number) => ({
-              ...value,
-              id: idx.toString(),
-              schemaId: '',
-              credentialId: '',
-              attributes:
-                typeof value.attributes === 'string'
-                  ? JSON.parse(value.attributes)
-                  : value.attributes,
-            })),
-          )
+          setCredentialOptions(credentials)
         } else {
           credentials = (await getSchemaCredDef(
             schemaValue,
@@ -254,9 +245,9 @@ const IssueCred = (): React.JSX.Element => {
             (credentials.data?.data ?? []).map(
               (value: ICredentials, index: number) => ({
                 schemaVersion: value.schemaVersion,
-                value: index,
+                value: value.schemaAttributes,
                 label: value.schemaCredDefName,
-                id: value.schemaAttributes,
+                id: index,
                 schemaId: response
                   ? value.schemaIdentifier
                   : value.schemaLedgerId,
@@ -319,7 +310,7 @@ const IssueCred = (): React.JSX.Element => {
   })
 
   const handleSelect = (value: Option): void => {
-    if (allSchema) {
+    if (allSchema && w3cSchema) {
       setSchemaDetails({
         schemaName: value.schemaName,
         version: value.schemaVersion,
@@ -328,7 +319,7 @@ const IssueCred = (): React.JSX.Element => {
         schemaAttributes: value.attributes ?? [],
       })
     } else {
-      const data = JSON.parse(value.id)
+      const data = JSON.parse(value.value)
       setSchemaDetails({
         schemaName: value.schemaName,
         version: value.schemaVersion,
@@ -372,6 +363,7 @@ const IssueCred = (): React.JSX.Element => {
               value={''}
               onValueChange={handleSelect}
               placeholder="Select Schema Credential Definition"
+              enableInternalSearch={true}
             />
             {schemaDetails.schemaId && (
               <>

@@ -41,6 +41,8 @@ interface SearchableSelectProps {
   emptyMessage?: string
   className?: string
   disabled?: boolean
+  onSearchChange?: (searchValue: string) => void
+  enableInternalSearch?: boolean
 }
 
 export function SearchableSelect({
@@ -51,17 +53,30 @@ export function SearchableSelect({
   emptyMessage = 'No results found.',
   disabled = false,
   clear = undefined,
+  onSearchChange,
+  enableInternalSearch = true,
 }: SearchableSelectProps): React.JSX.Element {
   const [open, setOpen] = React.useState(false)
   const [selected, setSelected] = React.useState<Option | undefined>(
     value ? options.find((option) => option.id === value) : undefined,
   )
-
+  const [searchValue, setSearchValue] = React.useState('')
+  const wait = React.useRef<NodeJS.Timeout>(undefined)
   React.useEffect(() => {
     if (clear !== undefined) {
       setSelected(undefined)
     }
   }, [clear])
+
+  const handleSearchChange = (search: string): void => {
+    setSearchValue(search)
+    if (!enableInternalSearch) {
+      clearTimeout(wait.current)
+      wait.current = setTimeout(() => {
+        onSearchChange?.(search)
+      }, 1000)
+    }
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -86,9 +101,11 @@ export function SearchableSelect({
         )}
         align="start"
       >
-        <Command className="bg-transparent">
+        <Command className="bg-transparent" shouldFilter={enableInternalSearch}>
           <CommandInput
             placeholder="Search..."
+            value={searchValue}
+            onValueChange={handleSearchChange}
             className={cn(
               'h-9 border-0 bg-transparent',
               'text-foreground placeholder:text-muted-foreground',

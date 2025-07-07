@@ -25,6 +25,9 @@ export interface GetAllSchemaHelperReturn {
   schemaVersion: string
   schemaIdentifier: string
   attributes: string | IAttributes[]
+  id: string
+  schemaId: string
+  credentialId: string
 }
 
 export default async function getAllSchemaHelperUtil({
