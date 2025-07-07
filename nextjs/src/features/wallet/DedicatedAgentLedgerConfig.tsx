@@ -433,7 +433,7 @@ const DedicatedLedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.POLYGON}
             title=""
-            description="Polygon blockchain"
+            description="Polygon Blockchain"
             icon={
               <Image
                 src="/images/polygon.png"
@@ -446,7 +446,7 @@ const DedicatedLedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.NO_LEDGER}
             title=""
-            description="Local key generation"
+            description="No Ledger"
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
