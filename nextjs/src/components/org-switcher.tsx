@@ -92,8 +92,8 @@ const OrgSwitcherInner = ({
   }
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
+    <SidebarMenu className="w-fit">
+      <SidebarMenuItem className="w-fit">
         <DropdownMenu>
           <DropdownMenuTrigger
             asChild
