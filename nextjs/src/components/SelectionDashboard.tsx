@@ -9,7 +9,11 @@ import { setVerificationRouteType } from '@/lib/verificationSlice'
 import { useAppDispatch } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
-const SelectionDashboard = ({ title, options }: IDashboard): JSX.Element => {
+const SelectionDashboard = ({
+  title,
+  options,
+  backButtonPath,
+}: IDashboard): JSX.Element => {
   const router = useRouter()
   const dispatch = useAppDispatch()
 
@@ -28,7 +32,7 @@ const SelectionDashboard = ({ title, options }: IDashboard): JSX.Element => {
         <h1 className="text-muted-foreground/90 text-xl font-semibold sm:text-2xl">
           {title}
         </h1>
-        <BackButton />
+        <BackButton path={backButtonPath} />
       </div>
       <div className="rounded-lg border px-6 pt-6 shadow-sm 2xl:col-span-2">
         <p className="text-muted-foreground/90 text-start text-xl font-medium">

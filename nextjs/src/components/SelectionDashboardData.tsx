@@ -71,7 +71,11 @@ const SelectionDashboardData = (): JSX.Element => {
     <SelectionDashboard
       title={isVerification ? 'Verify Credential' : 'Issue Credential'}
       options={isVerification ? verifyOptions : issueOptions}
-      backButtonPath={''}
+      backButtonPath={
+        isVerification
+          ? pathRoutes.organizations.credentials
+          : pathRoutes.back.credentials.credentials
+      }
     />
   )
 }
