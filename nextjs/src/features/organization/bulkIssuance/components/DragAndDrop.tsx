@@ -33,7 +33,7 @@ export default function DragAndDrop({
         <div>
           <label
             htmlFor="csv-file"
-            className={`flex h-36 w-40 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed  ${
+            className={`flex h-36 w-40 cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed ${
               !context.isCredSelected
                 ? 'border-gray-200'
                 : 'border-primary dark:border-white'
@@ -79,10 +79,10 @@ export default function DragAndDrop({
             <div className="w-fit">
               <label htmlFor="organizationlogo">
                 <div
-                  className={`border-input bg-background hover:bg-accent hover:text-accent-foreground mt-4 border px-4 py-2 shadow-sm rounded-md${
+                  className={`border-input bg-background mt-4 border px-4 py-2 shadow-sm rounded-md${
                     !context.isCredSelected
-                      ? 'disabled:pointer-events-none disabled:opacity-50'
-                      : ''
+                      ? 'disabled:pointer-events-none disabled:opacity-50 disabled:hover:bg-none'
+                      : 'hover:bg-accent hover:text-accent-foreground cursor-pointer'
                   }`}
                 >
                   Choose file

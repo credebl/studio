@@ -366,3 +366,8 @@ ul.timelinestatic > li {
   color: #0265fd !important;
   text-decoration: underline;
 }
+
+a,
+button {
+  cursor: pointer !important;
+}

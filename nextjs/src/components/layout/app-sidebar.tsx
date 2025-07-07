@@ -28,6 +28,7 @@ import { Icons } from '../icons'
 import Image from 'next/image'
 import Link from 'next/link'
 import { NavItem } from '../../../types'
+import { OrgSwitcher } from '../org-switcher'
 import { Organization } from '@/features/dashboard/type/organization'
 import { getOrganizations } from '@/app/api/organization'
 import { navItems } from '@/constants/data'
@@ -64,7 +65,7 @@ export default function AppSidebar(): React.JSX.Element {
   const [currentPage] = useState(currentPageNumber)
   const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
-  const [, setOrgList] = useState<Organization[]>([])
+  const [orgList, setOrgList] = useState<Organization[]>([])
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
 
@@ -121,6 +122,25 @@ export default function AppSidebar(): React.JSX.Element {
     fetchOrganizations()
   }, [dispatch, currentPage, pageSize, searchTerm, selectedOrgId])
 
+  const handleSwitchTenant = (orgId: string): void => {
+    const selected = orgList.find((org) => org.id === orgId)
+    if (selected) {
+      dispatch(setOrgId(selected.id))
+      dispatch(
+        setOrgInfo({
+          id: selected.id,
+          name: selected.name,
+          description: selected.description,
+          logoUrl: selected.logoUrl,
+          roles:
+            selected.userOrgRoles?.map(
+              (role: { orgRole: { name: string } }) => role?.orgRole?.name,
+            ) || [],
+        }),
+      )
+    }
+  }
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="group" data-collapsed>
@@ -150,6 +170,15 @@ export default function AppSidebar(): React.JSX.Element {
       </SidebarHeader>
 
       <SidebarContent className="overflow-x-hidden">
+        <OrgSwitcher
+          tenants={orgList.map((org) => ({
+            id: org.id,
+            name: org.name,
+            logoUrl: org.logoUrl,
+          }))}
+          defaultTenant={orgList.length > 0 ? orgList[0] : undefined}
+          onTenantSwitch={handleSwitchTenant}
+        />
         <SidebarGroup>
           <SidebarMenu>
             {navItems.map((item: NavItem) => {
