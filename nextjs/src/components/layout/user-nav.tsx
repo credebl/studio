@@ -76,9 +76,9 @@ export function UserNav(): React.JSX.Element | null {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+          <Avatar className="">
             <AvatarImage src={userProfile?.profileImg} alt="profileImg" />
-            <AvatarFallback>
+            <AvatarFallback className="text-md">
               {userProfile?.email?.[0]?.toUpperCase() ?? ''}
             </AvatarFallback>
           </Avatar>
