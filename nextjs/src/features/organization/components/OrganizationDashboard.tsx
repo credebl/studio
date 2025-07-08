@@ -116,7 +116,7 @@ export const OrganizationDashboard = ({
         <Card className="shadow-md">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex cursor-default items-center space-x-4">
                 <Avatar className="h-16 w-16 rounded-md">
                   {orgData?.logoUrl ? (
                     <AvatarImage src={orgData?.logoUrl} alt={orgData?.name} />
@@ -188,7 +188,7 @@ export const OrganizationDashboard = ({
             className="shadow transition-all hover:scale-102"
             onClick={() => router.push('/users')}
           >
-            <CardContent className="flex items-center justify-between p-6">
+            <CardContent className="flex cursor-pointer items-center justify-between p-6">
               <div>
                 <p className="font-medium">Users</p>
                 <h3 className="mt-2 text-4xl font-bold">
@@ -224,7 +224,7 @@ export const OrganizationDashboard = ({
               }
             }}
           >
-            <CardContent className="flex items-center justify-between p-6">
+            <CardContent className="flex cursor-pointer items-center justify-between p-6">
               <div>
                 <p className="font-medium">Schemas</p>
                 <h3 className="mt-2 text-4xl font-bold">
@@ -252,7 +252,7 @@ export const OrganizationDashboard = ({
           </Card>
 
           <Card className="shadow transition-all hover:scale-102">
-            <CardContent className="flex items-center justify-between p-6">
+            <CardContent className="flex cursor-pointer items-center justify-between p-6">
               <div>
                 <p className="font-medium">Credentials</p>
                 <h3 className="mt-2 text-4xl font-bold">

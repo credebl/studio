@@ -92,25 +92,26 @@ const OrgSwitcherInner = ({
   }
 
   return (
-    <SidebarMenu>
-      <SidebarMenuItem>
+    <SidebarMenu className="w-fit">
+      <SidebarMenuItem className="w-fit">
         <DropdownMenu>
           <DropdownMenuTrigger
             asChild
-            className="focus:ring-ring bg-popover hover:bg-popover outline-none hover:text-inherit focus:ring-1!"
+            className="focus:ring-ring bg-card hover:bg-card mx-2 my-2 h-9 rounded-xl border p-2 shadow outline-none hover:text-inherit focus:ring-1!"
           >
             <SidebarMenuButton
               size="lg"
               className="border-ring w-[200px] justify-start gap-2 border"
             >
               {tenants.length > 0 && (
-                <div className="bg-popover border-muted flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border">
+                <div className="bg-popover border-muted flex size-6 items-center justify-center overflow-hidden rounded-full">
                   {selectedTenant?.logoUrl ? (
-                    <Avatar className="rounded-md">
+                    <Avatar className="shrink rounded-md object-contain">
                       {selectedTenant.logoUrl ? (
                         <AvatarImage
                           src={selectedTenant.logoUrl}
                           alt={selectedTenant.name}
+                          className="w-full shrink object-contain"
                         />
                       ) : (
                         <AvatarFallback className="text-2xl font-bold">
@@ -138,7 +139,7 @@ const OrgSwitcherInner = ({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] border"
+            className="w-[--radix-dropdown-menu-trigger-width] min-w-[200px] border"
             align="start"
           >
             {tenants.length > 0 ? (
@@ -150,9 +151,13 @@ const OrgSwitcherInner = ({
                 >
                   <div className="bg-muted text-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
                     {tenant.logoUrl ? (
-                      <Avatar className="rounded-md">
+                      <Avatar className="shrink rounded-md">
                         {tenant.logoUrl ? (
-                          <AvatarImage src={tenant.logoUrl} alt={tenant.name} />
+                          <AvatarImage
+                            src={tenant.logoUrl}
+                            alt={tenant.name}
+                            className="object-contain"
+                          />
                         ) : (
                           <AvatarFallback className="text-2xl font-bold">
                             {tenant.name.substring(0, 2).toUpperCase()}
