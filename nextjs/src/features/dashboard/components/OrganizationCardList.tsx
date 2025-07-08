@@ -74,7 +74,7 @@ const OrganizationCardList = (): React.JSX.Element => {
   return (
     <Card className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <div className="space-y-1">
+        <div className="cursor-default space-y-1">
           <div className="flex items-center gap-x-2">
             <TooltipProvider>
               <Tooltip>
@@ -142,10 +142,10 @@ const OrganizationCardList = (): React.JSX.Element => {
               return (
                 <div
                   key={org.id}
-                  className="hover:bg-muted/50 border-border/50 relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl border p-3 shadow-xl transition-transform duration-300 hover:shadow-lg"
+                  className="border-border/50 relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl border p-3 shadow-xl transition-transform duration-300"
                 >
                   <button
-                    className="flex min-w-0 items-center gap-3 hover:cursor-pointer"
+                    className="url-link flex min-w-0 items-center gap-3 hover:cursor-pointer"
                     onClick={() => route.push(`/organizations/${org.id}`)}
                   >
                     <div className="flex-shrink-0">
@@ -155,7 +155,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                             {org.logoUrl ? (
                               <AvatarImage src={org.logoUrl} alt={org.name} />
                             ) : (
-                              <AvatarFallback className="text-2xl font-bold">
+                              <AvatarFallback className="url-link text-2xl font-bold">
                                 {org.name.substring(0, 2).toUpperCase()}
                               </AvatarFallback>
                             )}
@@ -173,7 +173,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                       )}
                     </div>
                     <span className="ml-3 flex items-center space-x-2 truncate">
-                      <span className="truncate">{org?.name}</span>
+                      <span className="url-link truncate">{org?.name}</span>
                       <span>
                         {org.roles.includes(
                           OrganizationRoles.organizationOwner,
