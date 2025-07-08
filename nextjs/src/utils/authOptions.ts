@@ -146,11 +146,11 @@ export const authOptions: MyAuthOptions = {
             return {
               id: user.data.session_state || user.data.email,
               email: decodedToken?.email,
-              name: decodedToken?.name || decodedToken?.email,
+              // name: decodedToken?.name || decodedToken?.email,
               accessToken: user.data.access_token,
-              refreshToken: user.data.refresh_token,
-              tokenType: user.data.token_type,
-              expiresAt: user.data.expires_in,
+              // refreshToken: user.data.refresh_token,
+              // tokenType: user.data.token_type,
+              // expiresAt: user.data.expires_in,
             }
           }
 
@@ -166,11 +166,11 @@ export const authOptions: MyAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
-        token.id = user.id
-        token.email = user.email
+        // token.id = user.id
+        // token.email = user.email
         token.accessToken = user.accessToken || ''
-        token.expiresAt = user.expiresAt
-        token.refreshToken = user.refreshToken
+        // token.expiresAt = user.expiresAt
+        // token.refreshToken = user.refreshToken
       }
       return token
     },
@@ -182,13 +182,13 @@ export const authOptions: MyAuthOptions = {
       session: Session
       token: JWT
     }): Promise<Session> {
-      session.user = {
-        id: token.id as string,
-        email: token.email as string,
-      }
+      // session.user = {
+      //   id: token.id as string,
+      //   email: token.email as string,
+      // }
       session.accessToken = token.accessToken as string
-      session.refreshToken = token.refreshToken as string
-      session.expiresAt = token.expiresAt
+      // session.refreshToken = token.refreshToken as string
+      // session.expiresAt = token.expiresAt
       return session
     },
 
