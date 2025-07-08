@@ -369,5 +369,5 @@ ul.timelinestatic > li {
 
 a,
 button {
-  cursor: pointer !important;
+  cursor: pointer;
 }
