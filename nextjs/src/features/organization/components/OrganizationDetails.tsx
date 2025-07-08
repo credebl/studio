@@ -1,3 +1,4 @@
+import { Check, Copy } from 'lucide-react'
 import {
   IConnection,
   IOrgAgent,
@@ -13,7 +14,6 @@ import {
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Copy } from 'lucide-react'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
 import DIDList from '@/features/wallet/DidListComponent'
 import Loader from '@/components/Loader'
@@ -35,6 +35,7 @@ const OrganizationDetails = ({
 
   const [loading, setLoading] = useState<boolean>(true)
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
+  const [copied, setCopied] = useState<boolean>(false)
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -49,28 +50,47 @@ const OrganizationDetails = ({
 
   useEffect(() => {
     createQrConnection()
+    return () => {
+      setCopied(false)
+    }
   }, [])
 
   const CopyDid = ({
     value,
     className,
     hideValue = false,
+    ellipsis = true,
   }: {
     value: string
     className?: string
     hideValue?: boolean
+    ellipsis?: boolean
   }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={`flex items-center gap-2 ${className}`}>
-          {!hideValue && <span className="max-w-xs truncate">{value}</span>}
+          {!hideValue && ellipsis ? (
+            <span className="max-w-sm truncate">{value}</span>
+          ) : (
+            <span className="max-w-md">{value}</span>
+          )}
           <Button
             variant="ghost"
             size="icon"
             className="h-6 w-6"
-            onClick={() => navigator.clipboard.writeText(value)}
+            onClick={() => {
+              navigator.clipboard.writeText(value)
+              setCopied(true)
+              setTimeout(() => {
+                setCopied(false)
+              }, 2000)
+            }}
           >
-            <Copy className="h-4 w-4" />
+            {copied ? (
+              <Check className="text-green-400" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
           </Button>
         </div>
       </TooltipTrigger>
@@ -119,6 +139,7 @@ const OrganizationDetails = ({
                   <CopyDid
                     value={agentData?.orgDid}
                     className="font-mono font-semibold"
+                    ellipsis={false}
                   />
                 ) : (
                   <span className="font-semibold">Not available</span>

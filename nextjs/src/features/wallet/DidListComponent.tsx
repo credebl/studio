@@ -130,7 +130,28 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   })
 
   const router = useRouter()
-
+  const getData = async (): Promise<void> => {
+    try {
+      const response = await getDids(orgId)
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const sortedDids = data?.data.sort(
+          (a: { isPrimaryDid: boolean }, b: { isPrimaryDid: boolean }) => {
+            if (a.isPrimaryDid && !b.isPrimaryDid) {
+              return -1
+            }
+            if (!a.isPrimaryDid && b.isPrimaryDid) {
+              return 1
+            }
+            return 0
+          },
+        )
+        setDidList(sortedDids)
+      }
+    } catch (error) {
+      console.error('Error fetching DIDs:', error)
+    }
+  }
   const setPrimaryDid = async (id: string, did: string): Promise<void> => {
     try {
       const payload: IUpdatePrimaryDid = {
@@ -141,7 +162,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        window.location.reload()
+        // window.location.reload()
+        getData()
       } else {
         setErrorMsg(response as string)
       }
@@ -182,29 +204,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   useEffect(() => {
     fetchOrganizations()
   }, [currentPage, pageSize, searchTerm])
-
-  const getData = async (): Promise<void> => {
-    try {
-      const response = await getDids(orgId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const sortedDids = data?.data.sort(
-          (a: { isPrimaryDid: boolean }, b: { isPrimaryDid: boolean }) => {
-            if (a.isPrimaryDid && !b.isPrimaryDid) {
-              return -1
-            }
-            if (!a.isPrimaryDid && b.isPrimaryDid) {
-              return 1
-            }
-            return 0
-          },
-        )
-        setDidList(sortedDids)
-      }
-    } catch (error) {
-      console.error('Error fetching DIDs:', error)
-    }
-  }
 
   useEffect(() => {
     getData()
@@ -579,31 +578,31 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         {didList.map((item: IDidListData, index: number) => (
           <div key={item.id} className={'grid h-20 items-center p-4'}>
             <div className="flex items-center justify-between gap-4">
-              <span className="w-16 shrink-0">DID {index + 1}</span>
-              <span>:</span>
+              <div className="flex gap-4">
+                <span className="w-16 shrink-0">DID {index + 1}</span>
+                <span>:</span>
 
-              {item?.did ? (
-                <CopyDid value={item.did} className="flex-1 font-mono" />
-              ) : (
-                <span className="flex-1 font-mono">Not available</span>
-              )}
-
-              {item.isPrimaryDid ? (
-                <Badge
-                  variant="default"
-                  className="ml-auto h-9 w-34 cursor-default text-sm"
-                >
-                  Primary DID
-                </Badge>
-              ) : (
-                <Button
-                  onClick={() => setPrimaryDid(item.id, item.did)}
-                  variant="outline"
-                  className="ml-auto"
-                >
-                  Set Primary DID
-                </Button>
-              )}
+                {item?.did ? (
+                  <CopyDid value={item.did} className="flex-1 font-mono" />
+                ) : (
+                  <span className="flex-1 font-mono">Not available</span>
+                )}
+              </div>
+              <div className={item.isPrimaryDid ? 'grow' : ''}>
+                {item.isPrimaryDid ? (
+                  <Badge variant="default" className="cursor-default text-sm">
+                    Primary DID
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={() => setPrimaryDid(item.id, item.did)}
+                    variant="outline"
+                    className="ml-auto"
+                  >
+                    Set Primary DID
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         ))}
