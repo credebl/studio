@@ -2,6 +2,7 @@
 
 import { CredeblLogoHeight, CredeblLogoWidth } from '@/config/CommonConstant'
 
+import Footer from '@/components/Footer'
 import Image from 'next/image'
 import { Metadata } from 'next'
 import React from 'react'
@@ -46,11 +47,7 @@ export default function SignInPage(): React.JSX.Element {
       <div className="flex flex-1 items-center justify-center px-4">
         <UserAuthForm />
       </div>
-
-      <footer className="text-muted-foreground mb-1 text-center text-xs md:mb-4 md:text-sm">
-        © 2019 - {new Date().getFullYear()} AYANWORKS TECHNOLOGY SOLUTIONS
-        PRIVATE LIMITED.
-      </footer>
+      <Footer />
     </div>
   )
 }

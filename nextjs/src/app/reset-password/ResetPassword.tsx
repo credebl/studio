@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import Footer from '@/components/Footer'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -292,9 +293,7 @@ const ResetPassword = (): JSX.Element => {
         </div>
       </div>
 
-      <footer className="text-muted-foreground fixed right-0 bottom-0 left-0 mb-4 text-center text-sm">
-        © 2019 - {new Date().getFullYear()} AYANWORKS | All rights reserved.
-      </footer>
+      <Footer fixed={true} />
     </div>
   )
 }

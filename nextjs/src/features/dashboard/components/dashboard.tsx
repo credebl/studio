@@ -12,6 +12,7 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
 import CredentialDefinition from './CredentialDefinition '
+import Footer from '@/components/Footer'
 import OrganizationCardList from './OrganizationCardList'
 import PageContainer from '@/components/layout/page-container'
 import RecentActivity from './RecentActivity'
@@ -231,6 +232,7 @@ export default function Dashboard(): React.JSX.Element {
           <RecentActivity />
         </div>
       </div>
+      <Footer />
     </PageContainer>
   )
 }
