@@ -556,6 +556,7 @@ const WalletSpinup = (): React.JSX.Element => {
 
                 {!showLedgerConfig && (
                   <>
+                    <Stepper currentStep={2} totalSteps={4} />
                     <div className="mb-6 flex items-center justify-between">
                       <div>
                         <h1 className="text-2xl font-semibold">Agent Setup</h1>
