@@ -3,8 +3,7 @@
 
 import * as yup from 'yup'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Field, Form, Formik, FormikHelpers } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import {
   Select,
   SelectContent,
@@ -29,10 +28,10 @@ import { IOrgFormValues } from './interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
+import LogoUploader from './LogoUploader'
 import PageContainer from '@/components/layout/page-container'
 import Stepper from '@/components/StepperComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { processImageFile } from '@/components/ProcessImage'
 
 type Countries = {
   id: number
@@ -166,29 +165,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       .required('Description is required'),
     website: yup.string().url('Enter a valid URL').nullable(),
     countryId: yup.number().required('Country is required'),
-    // Make state and city optional by default
     stateId: yup.number().nullable(),
     cityId: yup.number().nullable(),
   })
-
-  type ImageProcessCallback = (result: string | null, error?: string) => void
-
-  const handleImageChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: FormikHelpers<ImageProcessCallback>['setFieldValue'],
-  ): Promise<void> => {
-    setImgError('')
-
-    processImageFile(e, (result: string | null, error?: string) => {
-      if (result) {
-        setLogoPreview(result)
-        setFieldValue('logoPreview', result)
-      } else {
-        setImgError(error || 'Image processing failed')
-        setFieldValue('logoPreview', '')
-      }
-    })
-  }
 
   const handleUpdateOrganization = async (
     values: IOrgFormValues,
@@ -347,45 +326,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
             >
               {({ errors, touched, setFieldValue, values }) => (
                 <Form className="space-y-6">
-                  <div>
-                    <Label className="mb-2 block pb-4">Organization Logo</Label>
-                    <div className="border-input flex items-center gap-4 rounded-md border p-4">
-                      {logoPreview ? (
-                        <Avatar className="h-24 w-24">
-                          <AvatarImage
-                            src={logoPreview}
-                            alt="Logo Preview"
-                            className="object-cover"
-                          />
-                          <AvatarFallback>Logo</AvatarFallback>
-                        </Avatar>
-                      ) : (
-                        <Avatar className="h-24 w-24 rounded-none">
-                          <AvatarImage
-                            src={
-                              logoPreview ||
-                              orgData?.logoUrl ||
-                              '/images/upload_logo_file.svg'
-                            }
-                            alt="Logo Preview"
-                          />
-                        </Avatar>
-                      )}
-
-                      <div className="flex flex-col">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageChange(e, setFieldValue)}
-                        />
-                        {imgError && (
-                          <p className="text-destructive mt-1 text-sm">
-                            {imgError}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <LogoUploader
+                    logoPreview={logoPreview}
+                    setLogoPreview={setLogoPreview}
+                    setFieldValue={setFieldValue}
+                    imgError={imgError}
+                    setImgError={setImgError}
+                    existingLogoUrl={orgData?.logoUrl ?? undefined}
+                  />
 
                   <div>
                     <Label className="pb-4">
@@ -422,7 +370,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    {/* Country Select */}
                     <div>
                       <Label className="pb-2">
                         Country <span className="text-destructive">*</span>
@@ -468,7 +415,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       )}
                     </div>
 
-                    {/* State Select */}
                     <div>
                       <Label className="pb-2">
                         State{' '}
@@ -520,7 +466,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       )}
                     </div>
 
-                    {/* City Select */}
                     <div>
                       <Label className="pb-2">
                         City{' '}
