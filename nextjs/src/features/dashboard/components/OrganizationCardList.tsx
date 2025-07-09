@@ -5,10 +5,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { Check, Copy } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {
   Tooltip,
@@ -19,18 +19,20 @@ import {
 import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 
 import { Badge } from '@/components/ui/badge'
-import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import { Organisation } from '../type/organization'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ToolTipDataForOrganization } from './TooltipData'
 import { getOrganizations } from '@/app/api/organization'
-import { useRouter } from 'next/navigation'
+
+// import { useRouter } from 'next/navigation'
 
 const OrganizationCardList = (): React.JSX.Element => {
   const [orgList, setOrgList] = useState<Organisation[]>([])
   const [loading, setLoading] = useState(true)
+  const [copiedValue, setCopiedValue] = useState<string>('')
 
-  const route = useRouter()
+  // const route = useRouter()
 
   const [currentPage] = useState(currentPageNumber)
   const [pageSize] = useState(itemPerPage)
@@ -120,7 +122,7 @@ const OrganizationCardList = (): React.JSX.Element => {
             No Primary DID&apos;s found.
           </div>
         ) : (
-          <div className="">
+          <div className="pb-12">
             {orgList.slice(0, 3).map((org) => {
               const roles: string[] = org.userOrgRoles.map(
                 (role) => role.orgRole.name,
@@ -130,13 +132,13 @@ const OrganizationCardList = (): React.JSX.Element => {
               return (
                 <div
                   key={org.id}
-                  className="relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl p-3 transition-transform duration-300"
+                  className="relative flex h-full w-full items-center justify-between overflow-hidden rounded-xl border-b p-3 transition-transform duration-300 last:border-b-0"
                 >
-                  <button
+                  <div
                     className="flex min-w-0 items-center gap-3 hover:cursor-pointer"
-                    onClick={() => route.push(`/organizations/${org.id}`)}
+                    // onClick={() => route.push(`/organizations/${org.id}`)}
                   >
-                    <div className="flex-shrink-0">
+                    <div className="flex-shrink-0 cursor-default">
                       {org.logoUrl ? (
                         <div className="border-border relative overflow-hidden rounded-full border">
                           <Avatar className="size-10 rounded-md">
@@ -164,15 +166,35 @@ const OrganizationCardList = (): React.JSX.Element => {
                         </div>
                       )}
                     </div>
-                    <span className="ml-3 space-x-2 truncate">
+                    <span className="ml-3 cursor-default space-x-2 truncate">
                       <div className="truncate text-left font-semibold">
                         {org?.name}
                       </div>
                       <div className="text-muted-foreground text-left">
-                        {org.org_agents[0].orgDid}
+                        {org.org_agents[0].orgDid}{' '}
+                        <Button
+                          variant={'ghost'}
+                          className="p-0"
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              org.org_agents[0].orgDid,
+                            )
+                            setCopiedValue(org.org_agents[0].orgDid)
+                            setTimeout(() => {
+                              setCopiedValue('')
+                            }, 2000)
+                          }}
+                        >
+                          {copiedValue &&
+                          copiedValue === org.org_agents[0].orgDid ? (
+                            <Check />
+                          ) : (
+                            <Copy />
+                          )}
+                        </Button>
                       </div>
                     </span>
-                  </button>
+                  </div>
                   {/* <div className="flex items-center gap-2">
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -287,14 +309,14 @@ const OrganizationCardList = (): React.JSX.Element => {
         )}
       </CardContent>
 
-      <CardFooter className="mt-auto justify-end pt-2">
+      {/* <CardFooter className="mt-auto justify-end pt-2">
         <Link
           href="/organizations"
           className="url-link transition hover:underline hover:opacity-80"
         >
           View all
         </Link>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   )
 }
