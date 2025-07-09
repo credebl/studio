@@ -495,7 +495,7 @@ const SchemaList = (props: {
                               <PaginationLink
                                 className={`${
                                   page === schemaListAPIParameter.page
-                                    ? 'bg-primary text-white'
+                                    ? 'bg-primary'
                                     : 'bg-background text-muted-foreground'
                                 } rounded-lg px-4 py-2`}
                                 href="#"

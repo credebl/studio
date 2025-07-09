@@ -36,7 +36,7 @@ export const AlertComponent = ({
               <div className="flex w-full flex-wrap items-center justify-between">
                 <div>{message}</div>
                 {viewButton && (
-                  <div className="text-primary-700 mr-2 flex justify-end text-right text-base md:w-32 lg:w-48">
+                  <div className="mr-2 flex justify-end text-right text-base md:w-32 lg:w-48">
                     <a href={path}>View more... </a>
                   </div>
                 )}

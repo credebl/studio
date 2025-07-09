@@ -79,6 +79,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   const [loading, setLoading] = useState<boolean>(false)
   const [dataLoaded, setDataLoaded] = useState<boolean>(false)
   const [initializing, setInitializing] = useState<boolean>(true)
+  const [isBackLoading, setIsBackLoading] = useState(false)
 
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -664,9 +665,19 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     <Button
                       variant="secondary"
                       type="button"
-                      onClick={() => router.push('/organizations')}
+                      onClick={() => {
+                        setIsBackLoading(true)
+                        router.push('/organizations')
+                      }}
+                      disabled={isBackLoading}
                     >
-                      Back
+                      {isBackLoading ? (
+                        <>
+                          <Loader />
+                        </>
+                      ) : (
+                        'Back'
+                      )}
                     </Button>
 
                     {!isEditMode ? (

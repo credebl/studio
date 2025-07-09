@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Collapsible,
   CollapsibleContent,
@@ -22,6 +21,7 @@ import {
 import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { IconChevronRight } from '@tabler/icons-react'
 import { Icons } from '../icons'
@@ -32,11 +32,11 @@ import { Organization } from '@/features/dashboard/type/organization'
 import { getOrganizations } from '@/app/api/organization'
 import { navItems } from '@/constants/data'
 import { setSidebarCollapsed } from '@/lib/sidebarSlice'
-import { usePathname } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import { useThemeConfig } from '../active-theme'
 
 export default function AppSidebar(): React.JSX.Element {
+  const router = useRouter()
   const pathname = usePathname()
 
   const { activeTheme } = useThemeConfig()
@@ -124,7 +124,10 @@ export default function AppSidebar(): React.JSX.Element {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="group" data-collapsed>
-        <div className="relative transition-all duration-300">
+        <div
+          onClick={() => router.push('/dashboard')}
+          className="relative cursor-pointer transition-all duration-300"
+        >
           {isCollapsed ? (
             <div className="h-[40px] w-[150px] overflow-hidden">
               <Image
