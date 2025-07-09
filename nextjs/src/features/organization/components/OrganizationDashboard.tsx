@@ -38,6 +38,7 @@ export const OrganizationDashboard = ({
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
   const [showSetupButton, setSetupButton] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
+  const [isWalletSetupLoading, setIsWalletSetupLoading] = useState(false)
 
   const selecteDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
@@ -287,8 +288,20 @@ export const OrganizationDashboard = ({
         ) : (
           <>
             {showSetupButton && (
-              <Button onClick={() => router.push(redirectUrl)}>
-                Setup Your Wallet
+              <Button
+                onClick={() => {
+                  setIsWalletSetupLoading(true)
+                  router.push(redirectUrl)
+                }}
+                disabled={isWalletSetupLoading}
+              >
+                {isWalletSetupLoading ? (
+                  <>
+                    <Loader />
+                  </>
+                ) : (
+                  'Setup Your Wallet'
+                )}
               </Button>
             )}
           </>

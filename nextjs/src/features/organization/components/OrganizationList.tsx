@@ -29,6 +29,7 @@ export const OrganizationList = (): React.JSX.Element => {
   const [loading, setLoading] = useState(true)
   const [, setError] = useState<string | null>(null)
   const [searchText, setSearchText] = useState('')
+  const [isCreatingOrg, setIsCreatingOrg] = useState(false)
 
   const [currentPage, setCurrentPage] = useState({
     pageNumber: 1,
@@ -120,7 +121,11 @@ export const OrganizationList = (): React.JSX.Element => {
     router.push(`/organizations/${orgId}`)
   }
   const handleCreateOrg = (): void => {
-    router.push('organizations/create-organization')
+    setIsCreatingOrg(true)
+
+    setTimeout(() => {
+      router.push('/organizations/create-organization')
+    }, 300)
   }
 
   useEffect(() => {
@@ -139,12 +144,20 @@ export const OrganizationList = (): React.JSX.Element => {
             className="w-64"
           />
           <Button
-            disabled={currentPage.totalCount >= 10}
+            disabled={currentPage.totalCount >= 10 || isCreatingOrg}
             onClick={handleCreateOrg}
             className="gap-2"
           >
-            <Plus className="h-4 w-4" />
-            Create Organization
+            {isCreatingOrg ? (
+              <>
+                <Loader />
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                Create Organization
+              </>
+            )}
           </Button>
         </div>
       </div>
