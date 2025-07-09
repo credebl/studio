@@ -494,7 +494,7 @@ const DedicatedLedgerConfig = ({
             if (!values.privatekey) {
               values.privatekey = privateKeyValue
             }
-            await submitDedicatedWallet(values, privateKeyValue, domainValue)
+            submitDedicatedWallet(values, privateKeyValue, domainValue)
             actions.resetForm()
           } finally {
             setIsCreatingIdentity(false)
@@ -610,13 +610,7 @@ const DedicatedLedgerConfig = ({
                 disabled={isSubmitDisabled() || isCreatingIdentity}
                 type="submit"
               >
-                {isCreatingIdentity ? (
-                  <>
-                    <Loader />
-                  </>
-                ) : (
-                  'Create Identity'
-                )}
+                {isCreatingIdentity ? <Loader /> : 'Create Identity'}
               </Button>
             </div>
           </Form>
