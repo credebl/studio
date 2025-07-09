@@ -354,9 +354,8 @@ const LedgerConfig = ({
         </div>
         <div className="text-muted-foreground ml-auto text-sm">Step 3 of 4</div>
       </div>
-
       <Stepper currentStep={3} totalSteps={4} />
-     <RadioGroup
+      <RadioGroup
         value={haveDidShared ? 'haveDid' : 'createNew'}
         onValueChange={(value) => setHaveDidShared(value === 'haveDid')}
         className="mt-6 mb-6 flex items-center gap-6"
