@@ -24,6 +24,7 @@ import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
 import Image from 'next/image'
+import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
@@ -202,7 +203,7 @@ const LedgerConfig = ({
 
     return (
       <div className="relative w-full">
-        <Label className="pb-2">
+        <Label className="pb-6">
           Network <span className="text-destructive">*</span>
         </Label>
         <RadioGroup
@@ -250,7 +251,7 @@ const LedgerConfig = ({
 
     return (
       <div className="relative w-full">
-        <Label className="pb-2">
+        <Label className="pb-4">
           Method <span className="text-destructive">*</span>
         </Label>
         <RadioGroup
@@ -265,7 +266,7 @@ const LedgerConfig = ({
           }}
         >
           {Object.keys(methods).map((method) => (
-            <div key={method} className="flex items-center space-x-2">
+            <div key={method} className="flex items-center space-x-2 p-2.5">
               <RadioGroupItem
                 value={method}
                 id={`method-${method}`}
@@ -351,36 +352,34 @@ const LedgerConfig = ({
         </div>
         <div className="text-muted-foreground ml-auto text-sm">Step 3 of 4</div>
       </div>
-
       <Stepper currentStep={3} totalSteps={4} />
-      <div className="mt-6 mb-6 flex items-center gap-4">
-        <div className="flex items-center">
-          <input
+      <RadioGroup
+        value={haveDidShared ? 'haveDid' : 'createNew'}
+        onValueChange={(value) => setHaveDidShared(value === 'haveDid')}
+        className="mt-6 mb-6 flex items-center gap-6"
+      >
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem
+            value="createNew"
             id="createNewDid"
-            type="radio"
-            name="didOption"
-            className="text-primary focus:ring-primary checked:bg-primary checked:border-primary h-4 w-4 border-2 border-gray-300 dark:border-gray-600"
-            checked={!haveDidShared}
-            onChange={() => setHaveDidShared(false)}
+            className="text-primary focus:ring-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary border-2 border-gray-300 dark:border-gray-600"
           />
-          <label htmlFor="createNewDid" className="ml-2 text-sm font-medium">
+          <label htmlFor="createNewDid" className="text-sm font-medium">
             Create a new DID
           </label>
         </div>
-        <div className="ml-6 flex items-center">
-          <input
+
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem
+            value="haveDid"
             id="haveDidShared"
-            type="radio"
-            name="didOption"
-            className="text-primary focus:ring-primary checked:bg-primary checked:border-primary h-4 w-4 border-2 border-gray-300 dark:border-gray-600"
-            checked={haveDidShared}
-            onChange={() => setHaveDidShared(true)}
+            className="text-primary focus:ring-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary border-2 border-gray-300 dark:border-gray-600"
           />
-          <label htmlFor="haveDidShared" className="ml-2 text-sm font-medium">
+          <label htmlFor="haveDidShared" className="text-sm font-medium">
             I already have a DID
           </label>
         </div>
-      </div>
+      </RadioGroup>
 
       {!haveDidShared && (
         <Card className="mb-6">
@@ -407,7 +406,7 @@ const LedgerConfig = ({
             <label htmlFor="seed" className="mb-2 block text-sm font-medium">
               Seed <span className="text-destructive text-xs">*</span>
             </label>
-            <input
+            <Input
               id="seed"
               name="seed"
               type="text"
@@ -419,7 +418,7 @@ const LedgerConfig = ({
             <label htmlFor="did" className="mb-2 block text-sm font-medium">
               DID <span className="text-destructive text-xs">*</span>
             </label>
-            <input
+            <Input
               id="did"
               name="did"
               type="text"
@@ -520,6 +519,7 @@ const LedgerConfig = ({
                         <span className="text-destructive text-xs">*</span>
                       </label>
                       <Field
+                        as={Input}
                         id="label"
                         name="label"
                         value={walletLabel}
@@ -554,6 +554,7 @@ const LedgerConfig = ({
                         <span className="text-destructive text-xs">*</span>
                       </label>
                       <Field
+                        as={Input}
                         id="label"
                         name="label"
                         value={walletLabel}
