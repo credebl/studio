@@ -8,7 +8,6 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { Breadcrumbs } from '../breadcrumbs'
 import { OrgSwitcher } from '../org-switcher'
 import { Organisation } from '@/features/dashboard/type/organization'
-import { Separator } from '../ui/separator'
 import { SidebarTrigger } from '../ui/sidebar'
 import { UserNav } from './user-nav'
 import { getOrganizations } from '@/app/api/organization'
@@ -82,11 +81,6 @@ export default function Header(): React.JSX.Element {
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
-        <Separator orientation="vertical" className="mr-2 h-4" />
-        <Breadcrumbs />
-      </div>
-
-      <div className="flex items-center gap-2 px-4">
         <OrgSwitcher
           tenants={orgList.map((org) => ({
             id: org.id,
@@ -96,6 +90,10 @@ export default function Header(): React.JSX.Element {
           defaultTenant={orgList.length > 0 ? orgList[0] : undefined}
           onTenantSwitch={handleSwitchTenant}
         />
+        <Breadcrumbs />
+      </div>
+
+      <div className="flex items-center gap-2 px-4">
         {/* NOTE: Currently disabling search and mode toggle */}
         <div className="hidden md:flex">{/* <SearchInput /> */}</div>
         {/* <ModeToggle /> */}
