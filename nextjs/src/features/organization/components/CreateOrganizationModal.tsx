@@ -17,11 +17,7 @@ import {
   getOrganizationById,
   updateOrganization,
 } from '@/app/api/organization'
-import {
-  getAllCities,
-  getAllCountries,
-  getAllStates,
-} from '@/app/api/geolocation'
+import { fetchCities, fetchCountries, fetchStates } from '../helper/geoHelpers'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -87,59 +83,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
 
-  const getCountries = async (): Promise<void> => {
-    setLoading(true)
-    try {
-      const response = await getAllCountries()
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setCountries(data?.data || [])
-      } else {
-        setFailure(data?.message as string)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchStates = async (countryId: number): Promise<void> => {
-    try {
-      setLoading(true)
-      const response = await getAllStates(countryId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setStates(data.data || [])
-      } else {
-        setStates([])
-      }
-    } catch (err) {
-      console.error('Error fetching states:', err)
-      setStates([])
-    } finally {
-      setLoading(false)
-    }
-  }
-  const fetchCities = async (
-    countryId: number,
-    stateId: number,
-  ): Promise<void> => {
-    try {
-      setLoading(true)
-      const response = await getAllCities(countryId, stateId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setCities(data.data || [])
-      } else {
-        setCities([])
-      }
-    } catch (err) {
-      console.error('Error fetching cities:', err)
-      setCities([])
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
     try {
@@ -152,12 +95,15 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         setIsPublic(org.publicProfile)
         if (org?.countryId) {
           setSelectedCountryId(org.countryId)
-          await fetchStates(org.countryId)
+          const fetchedStates = await fetchStates(org.countryId)
+          setStates(fetchedStates)
         }
 
         if (org?.stateId && org?.countryId) {
           setSelectedStateId(org.stateId)
-          await fetchCities(org.countryId, org.stateId)
+
+          const fetchedCities = await fetchCities(org.countryId, org.stateId)
+          setCities(fetchedCities)
         }
       } else {
         setFailure(data?.message as string)
@@ -174,14 +120,21 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   useEffect(() => {
     const initializeData = async (): Promise<void> => {
       setInitializing(true)
-      await getCountries()
-      if (orgId) {
-        setIsEditMode(true)
-        await fetchOrganizationDetails()
-      } else {
-        setDataLoaded(true)
+      try {
+        const countryList = await fetchCountries()
+        setCountries(countryList)
+
+        if (orgId) {
+          setIsEditMode(true)
+          await fetchOrganizationDetails()
+        } else {
+          setDataLoaded(true)
+        }
+      } catch (e) {
+        setFailure((e as Error).message)
+      } finally {
+        setInitializing(false)
       }
-      setInitializing(false)
     }
 
     initializeData()
@@ -189,16 +142,16 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   // These useEffects handle state/city loading when user changes selections
   useEffect(() => {
-    if (selectedCountryId && !isEditMode) {
-      fetchStates(selectedCountryId)
+    if (selectedCountryId) {
+      fetchStates(selectedCountryId).then(setStates)
     }
-  }, [selectedCountryId, isEditMode])
+  }, [selectedCountryId])
 
   useEffect(() => {
-    if (selectedStateId && selectedCountryId && !isEditMode) {
-      fetchCities(selectedCountryId, selectedStateId)
+    if (selectedStateId && selectedCountryId) {
+      fetchCities(selectedCountryId, selectedStateId).then(setCities)
     }
-  }, [selectedStateId, selectedCountryId, isEditMode])
+  }, [selectedStateId, selectedCountryId])
 
   const validationSchema = yup.object().shape({
     name: yup
