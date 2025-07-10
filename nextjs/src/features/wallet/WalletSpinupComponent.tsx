@@ -127,54 +127,51 @@ const WalletSpinup = (): React.JSX.Element => {
     }
 
     setLoading(true)
+
     try {
       const response = await getOrganizationById(orgId)
       const { data } = response as AxiosResponse
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const agentData = data?.data?.org_agents
+      if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+        return
+      }
 
-        if (
-          data?.data?.org_agents?.length > 0 &&
-          data?.data?.org_agents[0]?.orgDid
-        ) {
-          setWalletStatus(true)
-          clearSpinupStatus() // Clear any pending spinup status
-          // eslint-disable-next-line no-console
-          console.log('🚀 ~ fetchOrganizationDetails ~ setWalletStatus:')
-          router.push(`/organizations/${orgId}`)
-          return
-        }
+      const orgData = data?.data
+      const agentData = orgData?.org_agents ?? []
 
-        setBlockScreen(false)
-        setIsInitialCheckComplete(true)
+      const [firstAgent] = agentData
 
-        if (
-          data?.data?.org_agents &&
-          data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase() ===
-            AgentType.DEDICATED
-        ) {
-          setIsConfiguredDedicated(true)
-          setAgentType(AgentType.DEDICATED)
-        }
+      if (firstAgent?.orgDid) {
+        setWalletStatus(true)
+        clearSpinupStatus()
+        router.push(`/organizations/${orgId}`)
+        return
+      }
 
-        if (agentData && agentData.length > 0 && data?.data?.orgDid) {
-          setOrgData(data?.data)
-        }
+      setBlockScreen(false)
+      setIsInitialCheckComplete(true)
 
-        // Check if there's a pending spinup process
-        const savedStatus = loadSpinupStatus()
-        if (
-          savedStatus &&
-          savedStatus.status !== WalletSpinupStatus.NOT_STARTED
-        ) {
-          setSpinupStatus(savedStatus.status)
-          setWalletSpinStep(savedStatus.step)
-          setAgentSpinupCall(true)
-          setLoading(true) // Keep loading state while resuming
-          // eslint-disable-next-line no-console
-          console.log('Resuming wallet spinup from step:', savedStatus.step)
-        }
+      const isDedicatedAgent =
+        firstAgent?.org_agent_type?.agent?.toLowerCase() === AgentType.DEDICATED
+
+      if (isDedicatedAgent) {
+        setIsConfiguredDedicated(true)
+        setAgentType(AgentType.DEDICATED)
+      }
+
+      if (agentData.length > 0 && orgData?.orgDid) {
+        setOrgData(orgData)
+      }
+
+      const savedStatus = loadSpinupStatus()
+      const shouldResumeSpinup =
+        savedStatus && savedStatus.status !== WalletSpinupStatus.NOT_STARTED
+
+      if (shouldResumeSpinup) {
+        setSpinupStatus(savedStatus.status)
+        setWalletSpinStep(savedStatus.step)
+        setAgentSpinupCall(true)
+        setLoading(true)
       }
     } catch (error) {
       console.error('Error fetching organization details:', error)
