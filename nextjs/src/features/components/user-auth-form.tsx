@@ -438,7 +438,8 @@ export default function SignInViewPage(): React.JSX.Element {
               <Button
                 type="button"
                 className="text-xs md:text-sm"
-                onClick={() => route.push('#')}
+                // onClick={() => route.push('#')}
+                onClick={() => signIn("keycloak")}
                 variant={'outline'}
               >
                 <Icons.google className="mr-2 h-2 w-2 md:h-4 md:w-4" />

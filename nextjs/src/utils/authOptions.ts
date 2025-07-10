@@ -3,6 +3,7 @@ import { Session, SessionOptions, User } from 'next-auth'
 
 import CredentialsProvider from 'next-auth/providers/credentials'
 import { JWT } from 'next-auth/jwt'
+import KeycloakProvider from "next-auth/providers/keycloak";
 import { Provider } from 'next-auth/providers/index'
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
@@ -54,6 +55,11 @@ interface jwtDataPayload extends JwtPayload {
 
 export const authOptions: MyAuthOptions = {
   providers: [
+    KeycloakProvider({
+      clientId: process.env.KEYCLOAK_CLIENT_ID!,
+      clientSecret: process.env.KEYCLOAK_CLIENT_SECRET!,
+      issuer: process.env.KEYCLOAK_ISSUER, // e.g. https://keycloak.example.com/realms/myrealm
+    }),
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
