@@ -35,6 +35,7 @@ import { Input } from '@/components/ui/input'
 import PageContainer from '@/components/layout/page-container'
 import { Plus } from 'lucide-react'
 import SchemaCard from './SchemaCard'
+import SidePanelComponent from '@/config/SidePanelCommon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOrganizationById } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
@@ -90,6 +91,9 @@ const SchemaList = (props: {
   const [w3cSchema, setW3CSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
   const [orgRole, setOrgRole] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [sideBarFields, setSideBarFields] = useState([])
+
 
   const route = useRouter()
   const dispatch = useAppDispatch()
@@ -451,7 +455,7 @@ const SchemaList = (props: {
                       schemaName={element?.name}
                       version={element['version']}
                       schemaId={element['schemaLedgerId']}
-                      issuerDid={element['issuerId']}
+                      issuerDid={element['organizationName']}
                       attributes={element['attributes']}
                       created={element['createDateTime']}
                       showCheckbox={false}
@@ -545,6 +549,11 @@ const SchemaList = (props: {
             />
           ))}
       </div>
+      <SidePanelComponent
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        fields={sideBarFields}
+      />
     </PageContainer>
   )
 }
