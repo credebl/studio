@@ -25,7 +25,7 @@ const SetDomainValueInput = ({
   formikHandlers,
 }: IProps): React.JSX.Element => (
   <div className="relative mb-3">
-    <div className="flex">
+    <div className="flex pb-4">
       <Label htmlFor="webdomain">Enter Domain</Label>
       <span className="text-destructive text-xs">*</span>
     </div>
