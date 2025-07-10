@@ -100,9 +100,7 @@ const OrganizationCardList = (): React.JSX.Element => {
           disabled={isCreatingOrg}
         >
           {isCreatingOrg ? (
-            <>
-              <Loader />
-            </>
+            <Loader />
           ) : (
             <>
               <Plus className="mr-2 h-4 w-4" />
