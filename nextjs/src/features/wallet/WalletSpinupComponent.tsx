@@ -133,6 +133,8 @@ const WalletSpinup = (): React.JSX.Element => {
       const { data } = response as AxiosResponse
 
       if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+        setBlockScreen(false)
+        setIsInitialCheckComplete(true)
         return
       }
 
