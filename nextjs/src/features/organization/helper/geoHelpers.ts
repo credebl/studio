@@ -29,13 +29,16 @@ export interface City {
 }
 
 export const fetchCountries = async (): Promise<Country[]> => {
-  const response = await getAllCountries()
-  const { data } = response as AxiosResponse
-
-  if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-    return data?.data || []
+  try {
+    const response = await getAllCountries()
+    const { data } = response as AxiosResponse
+    return data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
+      ? data.data || []
+      : []
+  } catch (error) {
+    console.error('Error fetching countries:', error)
+    return []
   }
-  throw new Error(data?.message || 'Failed to fetch countries')
 }
 
 export const fetchStates = async (countryId: number): Promise<State[]> => {
