@@ -671,13 +671,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       }}
                       disabled={isBackLoading}
                     >
-                      {isBackLoading ? (
-                        <>
-                          <Loader />
-                        </>
-                      ) : (
-                        'Back'
-                      )}
+                      {isBackLoading ? <Loader /> : 'Back'}
                     </Button>
 
                     {!isEditMode ? (

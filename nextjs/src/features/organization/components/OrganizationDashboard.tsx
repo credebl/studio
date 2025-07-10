@@ -295,13 +295,7 @@ export const OrganizationDashboard = ({
                 }}
                 disabled={isWalletSetupLoading}
               >
-                {isWalletSetupLoading ? (
-                  <>
-                    <Loader />
-                  </>
-                ) : (
-                  'Setup Your Wallet'
-                )}
+                {isWalletSetupLoading ? <Loader /> : 'Setup Your Wallet'}
               </Button>
             )}
           </>

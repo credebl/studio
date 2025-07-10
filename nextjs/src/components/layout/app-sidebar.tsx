@@ -124,9 +124,10 @@ export default function AppSidebar(): React.JSX.Element {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="group" data-collapsed>
-        <div
+        <button
           onClick={() => router.push('/dashboard')}
-          className="relative cursor-pointer transition-all duration-300"
+          className="focus-visible:ring-primary relative cursor-pointer rounded transition-all duration-300 focus:outline-none focus-visible:ring-2"
+          aria-label="Go to dashboard"
         >
           {isCollapsed ? (
             <div className="h-[40px] w-[150px] overflow-hidden">
@@ -149,7 +150,7 @@ export default function AppSidebar(): React.JSX.Element {
               />
             </div>
           )}
-        </div>
+        </button>
       </SidebarHeader>
 
       <SidebarContent className="overflow-x-hidden">

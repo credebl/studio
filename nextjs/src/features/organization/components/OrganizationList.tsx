@@ -149,9 +149,7 @@ export const OrganizationList = (): React.JSX.Element => {
             className="gap-2"
           >
             {isCreatingOrg ? (
-              <>
-                <Loader />
-              </>
+              <Loader />
             ) : (
               <>
                 <Plus className="h-4 w-4" />
