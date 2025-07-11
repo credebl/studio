@@ -88,6 +88,7 @@ export interface ISchemaCardProps {
   noLedger?: boolean
   isVerification?: boolean
   isVerificationUsingEmail?: boolean
+  onTitleClick?: () => void
 }
 
 export interface IW3cSchemaDetails {
@@ -211,4 +212,10 @@ export interface IRequiredAndDeleteProps {
   element: IAttributes
   remove: (index: number) => void
   areFirstInputsSelected: boolean
+}
+
+export interface ISidebarSliderData {
+  label: string
+  value: string
+  copyable?: boolean
 }
