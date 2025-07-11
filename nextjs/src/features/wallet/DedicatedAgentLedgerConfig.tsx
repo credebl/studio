@@ -33,6 +33,7 @@ import CopyDid from './CopyDid'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Loader from '@/components/Loader'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
@@ -83,6 +84,7 @@ const DedicatedLedgerConfig = ({
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
+  const [isCreatingIdentity, setIsCreatingIdentity] = useState(false)
   const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
@@ -433,7 +435,7 @@ const DedicatedLedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.POLYGON}
             title=""
-            description="Polygon blockchain"
+            description="Polygon Blockchain"
             icon={
               <Image
                 src="/images/polygon.png"
@@ -446,7 +448,7 @@ const DedicatedLedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.NO_LEDGER}
             title=""
-            description="Local key generation"
+            description="No Ledger"
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -484,14 +486,19 @@ const DedicatedLedgerConfig = ({
           values: IValuesShared,
           actions: FormikHelpers<IValuesShared>,
         ) => {
-          values.ledger = selectedLedger
-          values.method = selectedMethod
-          values.network = selectedNetwork
-          if (!values.privatekey) {
-            values.privatekey = privateKeyValue
+          setIsCreatingIdentity(true)
+          try {
+            values.ledger = selectedLedger
+            values.method = selectedMethod
+            values.network = selectedNetwork
+            if (!values.privatekey) {
+              values.privatekey = privateKeyValue
+            }
+            submitDedicatedWallet(values, privateKeyValue, domainValue)
+            actions.resetForm()
+          } finally {
+            setIsCreatingIdentity(false)
           }
-          submitDedicatedWallet(values, privateKeyValue, domainValue)
-          actions.resetForm()
         }}
       >
         {(formikHandlers: FormikProps<IValuesShared>): React.JSX.Element => (
@@ -599,13 +606,11 @@ const DedicatedLedgerConfig = ({
             {/* Action buttons */}
             <div className="items-right mt-8 flex">
               <Button
-                onClick={() => {
-                  formikHandlers.handleSubmit()
-                }}
-                disabled={isSubmitDisabled()}
+                onClick={() => formikHandlers.handleSubmit()}
+                disabled={isSubmitDisabled() || isCreatingIdentity}
                 type="submit"
               >
-                Create Identity
+                {isCreatingIdentity ? <Loader /> : 'Create Identity'}
               </Button>
             </div>
           </Form>

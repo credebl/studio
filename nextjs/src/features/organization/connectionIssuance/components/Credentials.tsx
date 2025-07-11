@@ -22,6 +22,7 @@ import { DataTable } from '../../../../components/ui/generic-table-component/dat
 import { DidMethod } from '@/features/common/enum'
 import { Features } from '@/common/enums'
 import { IssuedCredential } from '../type/Issuance'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { RefreshCw } from 'lucide-react'
 import RoleViewButton from '@/components/RoleViewButton'
@@ -51,6 +52,7 @@ const Credentials = (): JSX.Element => {
   const [walletCreated, setWalletCreated] = useState(false)
   const [isW3C, setIsW3C] = useState(false)
   const [reloading, setReloading] = useState<boolean>(false)
+  const [isIssuing, setIsIssuing] = useState(false)
 
   // Consolidated pagination state
   const [pagination, setPagination] = useState<PaginationState>({
@@ -63,7 +65,12 @@ const Credentials = (): JSX.Element => {
   })
 
   const schemeSelection = async (): Promise<void> => {
-    router.push(pathRoutes.organizations.Issuance.issue)
+    setIsIssuing(true)
+    try {
+      router.push(pathRoutes.organizations.Issuance.issue)
+    } finally {
+      setIsIssuing(false)
+    }
   }
 
   const getIssuedCredDefs = async (
@@ -293,10 +300,11 @@ const Credentials = (): JSX.Element => {
 
             {/* Issue Button */}
             <RoleViewButton
-              buttonTitle="Issue"
+              buttonTitle={isIssuing ? 'Issuing...' : 'Issue'}
               feature={Features.ISSUANCE}
-              svgComponent={issuanceSvgComponent()}
+              svgComponent={isIssuing ? <Loader /> : issuanceSvgComponent()}
               onClickEvent={schemeSelection}
+              loading={isIssuing}
             />
           </div>
         )}

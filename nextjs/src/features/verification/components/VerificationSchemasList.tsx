@@ -365,20 +365,35 @@ const VerificationSchemasList = (): JSX.Element => {
 
               <div className="mb-4 flex items-center justify-end">
                 <Button
-                  onClick={
-                    w3cSchema
-                      ? (): Promise<void> =>
-                          handleW3CSchemaDetails({
-                            selectedSchemaState,
-                            route,
-                          })
-                      : handleContinue
-                  }
-                  disabled={selectedSchemas.length === 0}
+                  onClick={async () => {
+                    if (selectedSchemas.length === 0) {
+                      return
+                    }
+                    setLoading(true)
+                    try {
+                      if (w3cSchema) {
+                        await handleW3CSchemaDetails({
+                          selectedSchemaState,
+                          route,
+                        })
+                      } else {
+                        await handleContinue()
+                      }
+                    } finally {
+                      setLoading(false)
+                    }
+                  }}
+                  disabled={selectedSchemas.length === 0 || loading}
                   className="flex items-center gap-2 rounded-md px-4 py-4 text-base font-medium sm:w-auto"
                 >
-                  <ArrowRight />
-                  Continue
+                  {loading ? (
+                    <Loader size={20} />
+                  ) : (
+                    <>
+                      <ArrowRight />
+                      Continue
+                    </>
+                  )}
                 </Button>
               </div>
               <div

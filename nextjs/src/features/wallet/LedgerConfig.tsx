@@ -31,6 +31,7 @@ import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
 import Image from 'next/image'
 import { Label } from '@/components/ui/label'
+import Loader from '@/components/Loader'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
@@ -56,6 +57,7 @@ const LedgerConfig = ({
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [, setNetworks] = useState([])
   const [walletLabel, setWalletLabel] = useState(walletName)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const fetchLedgerConfig = async (): Promise<void> => {
     try {
@@ -448,7 +450,7 @@ const LedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.POLYGON}
             title=""
-            description="Polygon blockchain"
+            description="Polygon Blockchain"
             icon={
               <Image
                 src="/images/polygon.png"
@@ -461,7 +463,7 @@ const LedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.NO_LEDGER}
             title=""
-            description="Local key generation"
+            description="No Ledger"
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -485,18 +487,26 @@ const LedgerConfig = ({
         initialValues={initialValues}
         enableReinitialize={true}
         validationSchema={yup.object().shape(validations)}
-        onSubmit={(
+        onSubmit={async (
           values: IValuesShared,
           actions: FormikHelpers<IValuesShared>,
         ) => {
-          values.ledger = selectedLedger
-          values.method = selectedMethod
-          values.network = selectedNetwork
-          if (!values.privatekey) {
-            values.privatekey = privateKeyValue
+          setIsSubmitting(true)
+          try {
+            values.ledger = selectedLedger
+            values.method = selectedMethod
+            values.network = selectedNetwork
+            if (!values.privatekey) {
+              values.privatekey = privateKeyValue
+            }
+
+            await submitSharedWallet(values, domainValue) // assuming async
+            actions.resetForm()
+          } catch (error) {
+            console.error('Submission failed:', error)
+          } finally {
+            setIsSubmitting(false)
           }
-          submitSharedWallet(values, domainValue)
-          actions.resetForm()
         }}
       >
         {(formikHandlers) => (
@@ -649,8 +659,11 @@ const LedgerConfig = ({
             )}
 
             <div className="mt-8 flex justify-end">
-              <Button disabled={isSubmitDisabled()} type="submit">
-                Create Identity
+              <Button
+                disabled={isSubmitDisabled() || isSubmitting}
+                type="submit"
+              >
+                {isSubmitting ? <Loader /> : 'Create Identity'}
               </Button>
             </div>
           </Form>

@@ -22,6 +22,7 @@ import { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import Loader from '@/components/Loader'
 import { Plus } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ToolTipDataForSchema } from './TooltipData'
@@ -70,6 +71,7 @@ const SchemasList = ({
   const token = useAppSelector((state) => state.auth.token)
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [orgRole, setOrgRole] = useState<string | null>(null)
+  const [isSchemaLoading, setIsSchemaLoading] = useState(false)
   const dispatch = useAppDispatch()
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
@@ -222,6 +224,7 @@ const SchemasList = ({
       setTooltipMessage('You do not have a valid role to create a schema.')
       setShowTooltip(true)
     } else {
+      setIsSchemaLoading(true)
       router.push('/organizations/schemas/create')
       return
     }
@@ -252,12 +255,22 @@ const SchemasList = ({
               <Button
                 onClick={handleCreateSchemaClick}
                 disabled={
+                  isSchemaLoading ||
                   !orgId ||
                   !walletExists ||
                   !(orgRole === 'owner' || orgRole === 'admin')
                 }
               >
-                <Plus className="h-4 w-4" /> New Schema
+                {isSchemaLoading ? (
+                  <>
+                    <Loader />
+                  </>
+                ) : (
+                  <>
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Schema
+                  </>
+                )}
               </Button>
             </TooltipTrigger>
             <TooltipContent>{tooltipMessage}</TooltipContent>

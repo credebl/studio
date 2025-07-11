@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { IConnectionListAPIParameter } from '@/app/api/connection'
 import { ITableData } from '@/features/connections/types/connections-interface'
+import Loader from '@/components/Loader'
 import { RootState } from '@/lib/store'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getFilesDataHistory } from '@/app/api/BulkIssuance'
@@ -190,17 +191,20 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
     enableSelection: false,
   }
 
+  const handleClick = (): void => {
+    setLoading(true)
+    router.push(pathRoutes.organizations.Issuance.history)
+  }
+
   const tableStyling: TableStyling = { metadata, columnData }
   const column = getColumns<ITableData>(tableStyling)
 
   return (
     <div className="p-4" id="connection_list">
       <div className="flex items-center justify-end">
-        <Button
-          onClick={() => router.push(pathRoutes.organizations.Issuance.history)}
-        >
-          <ArrowLeft />
-          Back
+        <Button onClick={handleClick} disabled={loading}>
+          {loading ? <Loader size={20} /> : <ArrowLeft />}
+          {!loading && 'Back'}
         </Button>
       </div>
       <div

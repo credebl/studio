@@ -21,6 +21,7 @@ import CopyDid from '@/config/CopyDid'
 import CreateCredDefPopup from './CreateCredDefPopup'
 import CredentialDefinitionCard from '@/components/CredentialDefinitionCard'
 import { EmptyMessage } from '@/components/EmptyMessage'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { Roles } from '@/common/enums'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -191,6 +192,11 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
     }
   }
 
+  const handleBack = (): void => {
+    setLoading(true)
+    router.back()
+  }
+
   return (
     <PageContainer>
       <div className="px-4 pt-2">
@@ -199,11 +205,12 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
             <h1 className="ml-1 text-xl font-semibold">Schemas</h1>
             <Button
               variant="default"
-              onClick={() => router.back()}
+              onClick={handleBack}
               className="mb-4 flex items-center gap-2 rounded-xl border px-4 py-2 transition-colors"
+              disabled={loading}
             >
-              <ArrowLeft size={18} />
-              Back
+              {loading ? <Loader size={20} /> : <ArrowLeft size={18} />}
+              {!loading && 'Back'}
             </Button>
           </div>
         </div>
@@ -336,14 +343,26 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                         variant="default"
                         title="Create new credential-definition"
                         onClick={() => {
+                          setLoading(true)
                           setIsOpenCreateCredDef(true)
                           setSuccess(null)
                           setFailure(null)
+                          setTimeout(() => setLoading(false), 500)
                         }}
+                        disabled={loading}
                         className="flex items-center rounded-lg py-1 text-center text-base font-medium sm:w-auto"
                       >
-                        <Plus />
-                        Create
+                        {loading ? (
+                          <>
+                            <Loader />
+                            Loading...
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="mr-2 h-4 w-4" />
+                            Create
+                          </>
+                        )}
                       </Button>
                     )}
                   </div>
