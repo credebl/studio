@@ -9,6 +9,7 @@ import {
   setAgentConfigDetails,
   spinupSharedAgent,
 } from '@/app/api/Agent'
+import { setOrgId, setTenantData } from '@/lib/orgSlice'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -24,6 +25,7 @@ import WalletStepsComponent from './WalletSteps'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
+import { useAppDispatch } from '@/lib/hooks'
 
 const WalletSpinup = (): React.JSX.Element => {
   const [agentType, setAgentType] = useState<string>(AgentType.DEDICATED)
@@ -49,7 +51,7 @@ const WalletSpinup = (): React.JSX.Element => {
   )
 
   const router = useRouter()
-
+  const dispatch = useAppDispatch()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
   const redirectTo = searchParams.get('redirectTo')
@@ -143,6 +145,14 @@ const WalletSpinup = (): React.JSX.Element => {
 
       const [firstAgent] = agentData
 
+      dispatch(setOrgId(data?.data?.id))
+      dispatch(
+        setTenantData({
+          id: data?.data?.id,
+          name: data?.data?.name,
+          logoUrl: data?.data?.logoUrl,
+        }),
+      )
       if (firstAgent?.orgDid) {
         setWalletStatus(true)
         clearSpinupStatus()

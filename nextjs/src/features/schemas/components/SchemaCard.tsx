@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import CopyDid from '@/config/CopyDid'
 import CustomCheckbox from '@/components/CustomCheckbox'
 import DateTooltip from '@/components/DateTooltip'
+import Loader from '@/components/Loader'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
@@ -28,6 +29,7 @@ import { pathRoutes } from '@/config/pathRoutes'
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const [isSelected, setIsSelected] = useState(false)
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const pathname = usePathname()
   const isVerificationPage = pathname.includes('verification')
@@ -225,12 +227,22 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
             !props.isVerification &&
             !props.isVerificationUsingEmail && (
               <Button
-                onClick={handleButtonClick}
+                onClick={() => {
+                  setIsLoading(true)
+                  handleButtonClick()
+                }}
                 className="h-8 w-full sm:w-auto"
                 variant="outline"
+                disabled={isLoading}
               >
-                <ShieldCheck className="mr-1 h-4 w-4" />
-                Issue
+                {isLoading ? (
+                  <Loader size={16} />
+                ) : (
+                  <>
+                    <ShieldCheck className="mr-1 h-4 w-4" />
+                    Issue
+                  </>
+                )}
               </Button>
             )}
         </div>

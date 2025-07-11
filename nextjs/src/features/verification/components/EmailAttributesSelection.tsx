@@ -22,6 +22,7 @@ import CustomCheckbox from '@/components/CustomCheckbox'
 import DataTable from '@/components/DataTable'
 import { DidMethod } from '@/common/enums'
 import { ITableData } from '@/components/DataTable/interface'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { TableHeader } from './SortDataTable'
 import { getOrganizationById } from '@/app/api/organization'
@@ -35,6 +36,8 @@ const EmailAttributesSelection = (): JSX.Element => {
   const [errMsg, setErrMsg] = useState<string | null>(null)
   const [display, setDisplay] = useState<boolean | undefined>(false)
   const [loading, setLoading] = useState<boolean>(true)
+
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [attributeData, setAttributeData] = useState<
     ISelectedAttributes[] | null
   >(null)
@@ -514,12 +517,24 @@ const EmailAttributesSelection = (): JSX.Element => {
 
         <div className="flex w-full items-center justify-end">
           <Button
-            onClick={handleSubmit}
-            disabled={!attributeData?.some((ele) => ele.isChecked)}
+            onClick={() => {
+              setIsSubmitting(true)
+              handleSubmit()
+              setTimeout(() => setIsSubmitting(false), 1000)
+            }}
+            disabled={
+              !attributeData?.some((ele) => ele.isChecked) || isSubmitting
+            }
             className="mt-2 ml-auto rounded-lg text-center text-base font-medium sm:w-auto"
           >
-            <ArrowRight />
-            Continue
+            {isSubmitting ? (
+              <Loader size={20} />
+            ) : (
+              <>
+                <ArrowRight />
+                Continue
+              </>
+            )}
           </Button>
         </div>
       </div>
