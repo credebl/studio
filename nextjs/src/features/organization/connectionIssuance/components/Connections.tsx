@@ -13,6 +13,7 @@ import { Card } from '@/components/ui/card'
 import ConnectionList from './ConnectionList'
 import DataTable from '@/components/DataTable'
 import DateTooltip from '@/components/DateTooltip'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { dateConversion } from '@/utils/DateConversion'
 import { pathRoutes } from '@/config/pathRoutes'
@@ -24,6 +25,9 @@ const Connections = (): JSX.Element => {
   const [selectedConnections, setSelectedConnections] = useState<
     ITableData[] | ITableHtml[]
   >([])
+  const [loading, setLoading] = useState<boolean>(false)
+
+  const [isBackLoading, setIsBackLoading] = useState(false)
 
   const selectedConnectionHeader = [
     { columnName: 'User' },
@@ -80,12 +84,24 @@ const Connections = (): JSX.Element => {
   }
 
   const continueToIssue = async (): Promise<void> => {
-    const selectedConnectionData = selectedConnections.map((ele) => ({
-      userName: String(ele.data[0].data),
-      connectionId: String(ele.data[1].data),
-    }))
-    dispatch(setSelectedUser(selectedConnectionData))
-    router.push(pathRoutes.organizations.Issuance.issuance)
+    setLoading(true)
+    try {
+      const selectedConnectionData = selectedConnections.map((ele) => ({
+        userName: String(ele.data[0].data),
+        connectionId: String(ele.data[1].data),
+      }))
+      dispatch(setSelectedUser(selectedConnectionData))
+      router.push(pathRoutes.organizations.Issuance.issuance)
+    } catch (err) {
+      console.error('Navigation failed:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleBackClick = (): void => {
+    setIsBackLoading(true)
+    router.push(pathRoutes.back.credentials.credentials)
   }
 
   return (
@@ -93,13 +109,15 @@ const Connections = (): JSX.Element => {
       <div className="pt-2">
         <div className="col-span-full mb-4 xl:mb-2">
           <div className="flex items-center justify-end px-4">
-            <Button
-              onClick={() =>
-                router.push(pathRoutes.back.credentials.credentials)
-              }
-            >
-              <ArrowLeft />
-              Back
+            <Button onClick={handleBackClick} disabled={isBackLoading}>
+              {isBackLoading ? (
+                <Loader size={20} />
+              ) : (
+                <>
+                  <ArrowLeft />
+                  Back
+                </>
+              )}
             </Button>
           </div>
         </div>
@@ -136,12 +154,19 @@ const Connections = (): JSX.Element => {
                 <div className="flex justify-end pt-3">
                   <Button
                     onClick={continueToIssue}
+                    disabled={loading}
                     className="bg-primary hover:!bg-primary/90 hover:bg-accent-00 rounded-lg text-center text-base sm:w-auto"
                   >
-                    <div className="">
-                      <ArrowRight />
-                    </div>
-                    Continue
+                    {loading ? (
+                      <Loader size={20} />
+                    ) : (
+                      <>
+                        <div className="">
+                          <ArrowRight />
+                        </div>
+                        Continue
+                      </>
+                    )}
                   </Button>
                 </div>
               ) : (

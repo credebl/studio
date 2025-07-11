@@ -304,6 +304,7 @@ const Credentials = (): JSX.Element => {
               feature={Features.ISSUANCE}
               svgComponent={isIssuing ? <Loader /> : issuanceSvgComponent()}
               onClickEvent={schemeSelection}
+              loading={isIssuing}
             />
           </div>
         )}
