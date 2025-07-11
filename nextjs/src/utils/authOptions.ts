@@ -148,9 +148,9 @@ export const authOptions: MyAuthOptions = {
               email: decodedToken?.email,
               // name: decodedToken?.name || decodedToken?.email,
               accessToken: user.data.access_token,
-              // refreshToken: user.data.refresh_token,
+              refreshToken: user.data.refresh_token,
               // tokenType: user.data.token_type,
-              // expiresAt: user.data.expires_in,
+              expiresAt: user.data.expires_in,
             }
           }
 
@@ -169,8 +169,8 @@ export const authOptions: MyAuthOptions = {
         // token.id = user.id
         // token.email = user.email
         token.accessToken = user.accessToken || ''
-        // token.expiresAt = user.expiresAt
-        // token.refreshToken = user.refreshToken
+        token.expiresAt = user.expiresAt
+        token.refreshToken = user.refreshToken
       }
       return token
     },
@@ -187,8 +187,8 @@ export const authOptions: MyAuthOptions = {
       //   email: token.email as string,
       // }
       session.accessToken = token.accessToken as string
-      // session.refreshToken = token.refreshToken as string
-      // session.expiresAt = token.expiresAt
+      session.refreshToken = token.refreshToken as string
+      session.expiresAt = token.expiresAt
       return session
     },
 
