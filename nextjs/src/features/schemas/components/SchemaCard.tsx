@@ -161,7 +161,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
         </div>
 
         <div className="min-w-0 space-y-1 text-sm">
-          <div
+          <button
             className="url-link flex items-start sm:items-center"
             onClick={props.onTitleClick}
           >
@@ -169,7 +169,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
             <div className="!url-link min-w-0 font-mono text-sm">
               {props.schemaId || ''}
             </div>
-          </div>
+          </button>
 
           <div className="flex items-start sm:items-center">
             <strong className="mr-2 shrink-0">Issuer:</strong>
