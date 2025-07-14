@@ -63,7 +63,7 @@ const VerificationCredentialList = (): JSX.Element => {
   const [view, setView] = useState(false)
   const [verifyLoading, setVerifyLoading] = useState(true)
   const [userRoles, setUserRoles] = useState<string[]>([])
-  const [verication, isVerification] = useState<boolean>(false)
+  const [verification, setVerification] = useState<boolean>(false)
 
   // Consolidated pagination state
   const [proofPagination, setProofPagination] = useState<PaginationState>({
@@ -213,7 +213,7 @@ const VerificationCredentialList = (): JSX.Element => {
   }
 
   const schemeSelection = (): void => {
-    isVerification(true)
+    setVerification(true)
     router.push('/organizations/verification/verify-credentials')
   }
 
@@ -431,7 +431,7 @@ const VerificationCredentialList = (): JSX.Element => {
               feature={Features.VERIFICATION}
               svgComponent={verificationSvgComponent()}
               onClickEvent={schemeSelection}
-              loading={verication}
+              loading={verification}
             />
           </div>
         )}

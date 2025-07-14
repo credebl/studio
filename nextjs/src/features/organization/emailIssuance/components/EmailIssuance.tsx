@@ -77,7 +77,7 @@ const EmailIssuance = (): JSX.Element => {
   const [credDefId, setCredDefId] = useState<string>()
   const [schemasIdentifier, setSchemasIdentifier] = useState<string>()
   const [schemaTypeValue, setSchemaTypeValue] = useState<SchemaTypeValue>()
-  const [emailLoading, isEmailLoading] = useState<boolean>(false)
+  const [emailLoading, setEmailLoading] = useState<boolean>(false)
   const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] =
     useState<boolean>()
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
@@ -189,7 +189,7 @@ const EmailIssuance = (): JSX.Element => {
               feature={Features.CRETAE_SCHEMA}
               svgComponent={<Plus />}
               onClickEvent={() => {
-                isEmailLoading(true)
+                setEmailLoading(true)
                 router.push(`${pathRoutes.organizations.createSchema}`)
               }}
               loading={emailLoading}
