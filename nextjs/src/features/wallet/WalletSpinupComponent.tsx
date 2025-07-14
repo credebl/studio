@@ -556,7 +556,6 @@ const WalletSpinup = (): React.JSX.Element => {
 
                 {!showLedgerConfig && (
                   <>
-                    <Stepper currentStep={2} totalSteps={4} />
                     <div className="mb-6 flex items-center justify-between">
                       <div>
                         <h1 className="text-2xl font-semibold">Agent Setup</h1>
@@ -564,7 +563,11 @@ const WalletSpinup = (): React.JSX.Element => {
                           Configure your digital agent
                         </p>
                       </div>
+                      <div className="text-muted-foreground ml-auto text-sm">
+                        Step 3 of 4
+                      </div>
                     </div>
+                    <Stepper currentStep={2} totalSteps={4} />
                   </>
                 )}
 

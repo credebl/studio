@@ -588,7 +588,9 @@ const LedgerConfig = ({
                     <label className="mb-2 block text-sm font-medium">
                       Generated DID Method
                     </label>
-                    <div className="rounded-lg p-3">{selectedDid}</div>
+                    <div className="text-muted-foreground rounded-lg">
+                      {selectedDid}
+                    </div>
                   </div>
                 )}
 

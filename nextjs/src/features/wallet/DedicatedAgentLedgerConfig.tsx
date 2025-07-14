@@ -514,7 +514,7 @@ const DedicatedLedgerConfig = ({
                       <Label className="mb-2 block text-sm font-medium">
                         Generated DID Method
                       </Label>
-                      <div className="text-foreground rounded-lg p-3">
+                      <div className="text-muted-foreground rounded-lg p-3">
                         {selectedDid}
                       </div>
                     </div>
