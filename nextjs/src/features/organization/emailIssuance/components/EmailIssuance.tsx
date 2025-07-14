@@ -70,11 +70,14 @@ const EmailIssuance = (): JSX.Element => {
   const [failure, setFailure] = useState<string | null>(null)
   const [issueLoader, setIssueLoader] = useState(false)
   const [mounted, setMounted] = useState<boolean>(false)
+  const [isResetting, setIsResetting] = useState(false)
+  const [isIssuing, setIsIssuing] = useState(false)
   const [schemaType, setSchemaType] = useState<SchemaTypes>()
   const [credentialType, setCredentialType] = useState<CredentialType>()
   const [credDefId, setCredDefId] = useState<string>()
   const [schemasIdentifier, setSchemasIdentifier] = useState<string>()
   const [schemaTypeValue, setSchemaTypeValue] = useState<SchemaTypeValue>()
+  const [emailLoading, setEmailLoading] = useState<boolean>(false)
   const [isAllSchemaFlagSelected, setIsAllSchemaFlagSelected] =
     useState<boolean>()
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
@@ -186,8 +189,10 @@ const EmailIssuance = (): JSX.Element => {
               feature={Features.CRETAE_SCHEMA}
               svgComponent={<Plus />}
               onClickEvent={() => {
+                setEmailLoading(true)
                 router.push(`${pathRoutes.organizations.createSchema}`)
               }}
+              loading={emailLoading}
             />
           </div>
           <div className="email-bulk-issuance flex flex-col justify-between gap-4">
@@ -376,27 +381,56 @@ const EmailIssuance = (): JSX.Element => {
                                       <div className="flex justify-end gap-4">
                                         <Button
                                           type="button"
-                                          disabled={loading}
-                                          variant={'outline'}
+                                          disabled={loading || isResetting}
+                                          variant="outline"
                                           className=""
-                                          onClick={() =>
-                                            handleReset({
-                                              setCredentialSelected,
-                                              selectInputRef,
-                                              setClear,
-                                            })
-                                          }
+                                          onClick={async () => {
+                                            setIsResetting(true)
+                                            try {
+                                              await handleReset({
+                                                setCredentialSelected,
+                                                selectInputRef,
+                                                setClear,
+                                              })
+                                            } finally {
+                                              setIsResetting(false)
+                                            }
+                                          }}
                                         >
-                                          <Reset />
-                                          Reset
+                                          {isResetting ? (
+                                            <Loader size={16} />
+                                          ) : (
+                                            <>
+                                              <Reset /> Reset
+                                            </>
+                                          )}
                                         </Button>
+
                                         <Button
                                           type="submit"
                                           className=""
-                                          disabled={!formikHandlers?.isValid}
+                                          disabled={
+                                            !formikHandlers?.isValid ||
+                                            isIssuing
+                                          }
+                                          onClick={async (e) => {
+                                            e.preventDefault()
+                                            setIsIssuing(true)
+                                            try {
+                                              await formikHandlers.handleSubmit()
+                                            } finally {
+                                              setIsIssuing(false)
+                                            }
+                                          }}
                                         >
-                                          <Issue />
-                                          <span>Issue</span>
+                                          {isIssuing ? (
+                                            <Loader size={16} />
+                                          ) : (
+                                            <>
+                                              <Issue />
+                                              <span>Issue</span>
+                                            </>
+                                          )}
                                         </Button>
                                       </div>
                                     </Form>

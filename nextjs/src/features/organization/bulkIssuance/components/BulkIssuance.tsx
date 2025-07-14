@@ -26,6 +26,7 @@ import Create from '@/features/schemas/components/Create'
 import DragAndDrop from './DragAndDrop'
 import { ICredentialOptions } from '../type/BulkIssuance'
 import IssuancePopup from './IssuancePopup'
+import Loader from '@/components/Loader'
 import ResetIssue from './ResetIssue'
 import RoleViewButton from '@/components/RoleViewButton'
 import { RootState } from '@/lib/store'
@@ -42,6 +43,7 @@ export interface SelectRef {
 }
 const BulkIssuance = (): JSX.Element => {
   const [csvData, setCsvData] = useState<string[][]>([])
+  const [createLoading, setCreateLoading] = useState<boolean>(false)
   const [requestId, setRequestId] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
   const [credentialOptionsData, setCredentialOptionsData] =
@@ -236,14 +238,18 @@ const BulkIssuance = (): JSX.Element => {
     getSchemaCredentials(schemaListAPIParameters, context)
   }, [isAllSchema])
 
+  const handleClick = (): void => {
+    setLoading(true)
+    router.push(pathRoutes.organizations.Issuance.issue)
+  }
+
   return (
     <div className="px-4 pt-2">
       <div className="col-span-full mb-4 xl:mb-2">
         <div className="flex items-center justify-end">
-          <Button
-            onClick={() => router.push(pathRoutes.organizations.Issuance.issue)}
-          >
-            <ArrowLeft /> Back
+          <Button onClick={handleClick} disabled={loading}>
+            {loading ? <Loader size={20} /> : <ArrowLeft />}
+            {!loading && 'Back'}
           </Button>
         </div>
       </div>
@@ -274,9 +280,11 @@ const BulkIssuance = (): JSX.Element => {
               feature={Features.CRETAE_SCHEMA}
               svgComponent={<Plus />}
               onClickEvent={() => {
+                setCreateLoading(true)
                 router.push(`${pathRoutes.organizations.createSchema}`)
               }}
               isPadding={createSchemaTitle.title !== 'Create Schema'}
+              loading={createLoading}
             />
           </div>
         </div>

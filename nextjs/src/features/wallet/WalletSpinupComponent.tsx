@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 'use client'
 
+import { AgentType, DidMethod, WalletSpinupStatus } from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
 import {
@@ -8,12 +9,12 @@ import {
   setAgentConfigDetails,
   spinupSharedAgent,
 } from '@/app/api/Agent'
+import { setOrgId, setTenantData } from '@/lib/orgSlice'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import DedicatedAgentForm from './DedicatedAgentForm'
-import { DidMethod } from '../common/enum'
 import { IValuesShared } from '../organization/components/interfaces/organization'
 import { Organisation } from '../dashboard/type/organization'
 import PageContainer from '@/components/layout/page-container'
@@ -24,15 +25,14 @@ import WalletStepsComponent from './WalletSteps'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { nanoid } from 'nanoid'
-
-enum AgentType {
-  SHARED = 'shared',
-  DEDICATED = 'dedicated',
-}
+import { useAppDispatch } from '@/lib/hooks'
 
 const WalletSpinup = (): React.JSX.Element => {
   const [agentType, setAgentType] = useState<string>(AgentType.DEDICATED)
   const [loading, setLoading] = useState<boolean>(false)
+  const [blockScreen, setBlockScreen] = useState<boolean>(true)
+  const [isInitialCheckComplete, setIsInitialCheckComplete] =
+    useState<boolean>(false) // New state
   const [walletSpinStep, setWalletSpinStep] = useState<number>(0)
   const [success, setSuccess] = useState<string | null>(null)
   const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false)
@@ -45,10 +45,13 @@ const WalletSpinup = (): React.JSX.Element => {
   const [, setIsShared] = useState<boolean>(false)
   const [, setIsConfiguredDedicated] = useState<boolean>(false)
   const [showLedgerConfig, setShowLedgerConfig] = useState(false)
-  const [walletStatus, setWalletStatus] = useState<boolean>(false)
+  const [, setWalletStatus] = useState<boolean>(false)
+  const [, setSpinupStatus] = useState<WalletSpinupStatus>(
+    WalletSpinupStatus.NOT_STARTED,
+  )
 
   const router = useRouter()
-
+  const dispatch = useAppDispatch()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
   const redirectTo = searchParams.get('redirectTo')
@@ -66,56 +69,138 @@ const WalletSpinup = (): React.JSX.Element => {
     apiKey: '',
   })
 
+  // Save spinup status to sessionStorage
+  const saveSpinupStatus = (status: WalletSpinupStatus, step: number): void => {
+    if (typeof window !== 'undefined' && orgId) {
+      const spinupData = {
+        status,
+        step,
+        timestamp: Date.now(),
+        orgId,
+        agentType,
+      }
+      sessionStorage.setItem(
+        `wallet_spinup_${orgId}`,
+        JSON.stringify(spinupData),
+      )
+    }
+  }
+
+  // Load spinup status from sessionStorage
+  const loadSpinupStatus = (): {
+    status: WalletSpinupStatus
+    step: number
+  } | null => {
+    if (typeof window !== 'undefined' && orgId) {
+      const stored = sessionStorage.getItem(`wallet_spinup_${orgId}`)
+      if (stored) {
+        try {
+          const spinupData = JSON.parse(stored)
+          // Check if data is not too old (e.g., within 1 hour)
+          if (Date.now() - spinupData.timestamp < 3600000) {
+            return { status: spinupData.status, step: spinupData.step }
+          }
+        } catch (error) {
+          console.error('Error parsing spinup status:', error)
+        }
+      }
+    }
+    return null
+  }
+
+  // Clear spinup status from sessionStorage
+  const clearSpinupStatus = (): void => {
+    if (typeof window !== 'undefined' && orgId) {
+      sessionStorage.removeItem(`wallet_spinup_${orgId}`)
+    }
+  }
+
   const maskSeeds = (seed: string): string => {
     const visiblePart = seed.slice(0, -10)
     const maskedPart = seed.slice(-10).replace(/./g, '*')
     return visiblePart + maskedPart
   }
+
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
+      setBlockScreen(false)
+      setIsInitialCheckComplete(true)
       return
-    }
-    if (walletStatus) {
-      router.push(`/organizations/${orgId}`)
     }
 
     setLoading(true)
+
     try {
       const response = await getOrganizationById(orgId)
       const { data } = response as AxiosResponse
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const agentData = data?.data?.org_agents
+      if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+        setBlockScreen(false)
+        setIsInitialCheckComplete(true)
+        return
+      }
 
-        if (
-          data?.data?.org_agents?.length > 0 &&
-          data?.data?.org_agents[0]?.orgDid
-        ) {
-          setWalletStatus(true)
-        }
+      const orgData = data?.data
+      const agentData = orgData?.org_agents ?? []
 
-        if (
-          data?.data?.org_agents &&
-          data?.data?.org_agents[0]?.org_agent_type?.agent?.toLowerCase() ===
-            AgentType.DEDICATED
-        ) {
-          setIsConfiguredDedicated(true)
-          setAgentType(AgentType.DEDICATED)
-        }
+      const [firstAgent] = agentData
 
-        if (agentData && agentData.length > 0 && data?.data?.orgDid) {
-          setOrgData(data?.data)
-        }
+      dispatch(setOrgId(data?.data?.id))
+      dispatch(
+        setTenantData({
+          id: data?.data?.id,
+          name: data?.data?.name,
+          logoUrl: data?.data?.logoUrl,
+        }),
+      )
+      if (firstAgent?.orgDid) {
+        setWalletStatus(true)
+        clearSpinupStatus()
+        router.push(`/organizations/${orgId}`)
+        return
+      }
+
+      setBlockScreen(false)
+      setIsInitialCheckComplete(true)
+
+      const isDedicatedAgent =
+        firstAgent?.org_agent_type?.agent?.toLowerCase() === AgentType.DEDICATED
+
+      if (isDedicatedAgent) {
+        setIsConfiguredDedicated(true)
+        setAgentType(AgentType.DEDICATED)
+      }
+
+      if (agentData.length > 0 && orgData?.orgDid) {
+        setOrgData(orgData)
+      }
+
+      const savedStatus = loadSpinupStatus()
+      const shouldResumeSpinup =
+        savedStatus && savedStatus.status !== WalletSpinupStatus.NOT_STARTED
+
+      if (shouldResumeSpinup) {
+        setSpinupStatus(savedStatus.status)
+        setWalletSpinStep(savedStatus.step)
+        setAgentSpinupCall(true)
+        setLoading(true)
       }
     } catch (error) {
       console.error('Error fetching organization details:', error)
       setFailure('Failed to fetch organization details')
+      setBlockScreen(false)
+      setIsInitialCheckComplete(true)
     } finally {
-      setLoading(false)
+      if (!loadSpinupStatus()) {
+        setLoading(false)
+      }
     }
   }
 
   useEffect(() => {
+    // eslint-disable-next-line no-console
+    setBlockScreen(true)
+    setIsInitialCheckComplete(false)
     fetchOrganizationDetails()
     const generatedSeeds = nanoid(32)
     const masked = maskSeeds(generatedSeeds)
@@ -140,6 +225,7 @@ const WalletSpinup = (): React.JSX.Element => {
   }
   const setWalletSpinupStatus = (): void => {
     setSuccess('Wallet created successfully')
+    clearSpinupStatus() // Clear status on successful completion
     fetchOrganizationDetails()
   }
 
@@ -159,6 +245,9 @@ const WalletSpinup = (): React.JSX.Element => {
     setShowProgressUI(true)
     setAgentSpinupCall(true)
     setWalletSpinStep(1)
+    setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
+    saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
+
     const agentPayload = {
       walletName: agentConfig.walletName,
       apiKey: agentConfig.apiKey,
@@ -172,11 +261,15 @@ const WalletSpinup = (): React.JSX.Element => {
       if (agentData?.statusCode !== apiStatusCodes.API_STATUS_CREATED) {
         setFailure('Failed to configure dedicated agent')
         setLoading(false)
+        setSpinupStatus(WalletSpinupStatus.FAILED)
+        saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
         return
       }
     } catch (err) {
       setFailure('Error configuring dedicated agent')
       setLoading(false)
+      setSpinupStatus(WalletSpinupStatus.FAILED)
+      saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       console.error(err)
       return
     }
@@ -216,11 +309,15 @@ const WalletSpinup = (): React.JSX.Element => {
         setShowProgressUI(false)
         setLoading(false)
         setFailure(spinupRes as string)
+        setSpinupStatus(WalletSpinupStatus.FAILED)
+        saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       }
     } catch (error) {
       setShowProgressUI(false)
       setLoading(false)
       setFailure('Error creating DID')
+      setSpinupStatus(WalletSpinupStatus.FAILED)
+      saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       console.error(error)
     }
   }
@@ -235,6 +332,11 @@ const WalletSpinup = (): React.JSX.Element => {
     }
 
     setLoading(true)
+    setAgentSpinupCall(true)
+    setWalletSpinStep(1)
+    setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
+    saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
+
     const ledgerName = values?.network?.split(':')[2]
     const network = values?.network?.split(':').slice(2).join(':')
     const polygonNetwork = values?.network?.split(':').slice(1).join(':')
@@ -266,14 +368,20 @@ const WalletSpinup = (): React.JSX.Element => {
         } else {
           setLoading(false)
           setFailure(spinupRes as string)
+          setSpinupStatus(WalletSpinupStatus.FAILED)
+          saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
         }
       } else {
         setLoading(false)
         setFailure(spinupRes as string)
+        setSpinupStatus(WalletSpinupStatus.FAILED)
+        saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       }
     } catch (error) {
       console.error('Error creating shared agent:', error)
       setLoading(false)
+      setSpinupStatus(WalletSpinupStatus.FAILED)
+      saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       if (error instanceof Error) {
         setFailure(`Error creating shared agent: ${error.message}`)
       } else {
@@ -288,24 +396,32 @@ const WalletSpinup = (): React.JSX.Element => {
         // eslint-disable-next-line no-console
         console.log('agent-spinup-process-initiated')
         setWalletSpinStep(1)
+        setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
+        saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
       })
 
       SOCKET.on('agent-spinup-process-completed', (data) => {
         // eslint-disable-next-line no-console
         console.log('agent-spinup-process-completed', JSON.stringify(data))
         setWalletSpinStep(2)
+        setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_COMPLETED)
+        saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_COMPLETED, 2)
       })
 
       SOCKET.on('did-publish-process-initiated', (data) => {
         // eslint-disable-next-line no-console
         console.log('did-publish-process-initiated', JSON.stringify(data))
         setWalletSpinStep(3)
+        setSpinupStatus(WalletSpinupStatus.DID_PUBLISH_INITIATED)
+        saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_INITIATED, 3)
       })
 
       SOCKET.on('did-publish-process-completed', (data) => {
         // eslint-disable-next-line no-console
         console.log('did-publish-process-completed', JSON.stringify(data))
         setWalletSpinStep(4)
+        setSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED)
+        saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED, 4)
       })
 
       SOCKET.on('invitation-url-creation-started', (data) => {
@@ -313,6 +429,8 @@ const WalletSpinup = (): React.JSX.Element => {
         console.log(' invitation-url-creation-started', JSON.stringify(data))
         setTimeout(() => {
           setWalletSpinStep(5)
+          setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED)
+          saveSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED, 5)
         }, 1000)
       })
 
@@ -320,6 +438,7 @@ const WalletSpinup = (): React.JSX.Element => {
         setLoading(false)
         setTimeout(() => {
           setWalletSpinStep(6)
+          setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_SUCCESS)
           setWalletSpinupStatus()
         }, 1000)
 
@@ -333,6 +452,8 @@ const WalletSpinup = (): React.JSX.Element => {
 
       SOCKET.on('error-in-wallet-creation-process', (data) => {
         setLoading(false)
+        setSpinupStatus(WalletSpinupStatus.FAILED)
+        saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
         setTimeout(() => {
           setFailure('Wallet Creation Failed')
         }, 5000)
@@ -354,18 +475,6 @@ const WalletSpinup = (): React.JSX.Element => {
       SOCKET.off('error-in-wallet-creation-process')
     }
   }, [])
-
-  // const generateAlphaNumeric = organizationName ? organizationName ?.split(' ')
-  //       .reduce(
-  //         (s, c) =>
-  //           s.charAt(0).toUpperCase() +
-  //           s.slice(1) +
-  //           (c.charAt(0).toUpperCase() + c.slice(1)),
-  //         '',
-  //       )
-  //   : '';
-
-  // const orgName = generateAlphaNumeric.slice(0, 19);
 
   let formComponent: React.JSX.Element = <></>
 
@@ -409,6 +518,14 @@ const WalletSpinup = (): React.JSX.Element => {
 
   return (
     <PageContainer>
+      {(blockScreen || !isInitialCheckComplete) && (
+        <div className="bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+            <p className="text-muted-foreground">Loading...</p>
+          </div>
+        </div>
+      )}
       <div className="flex min-h-screen items-start justify-center p-6">
         <div className="mx-auto mt-4">
           <Card>

@@ -120,6 +120,15 @@ const CredDefSelection = (): JSX.Element => {
     getSchemaAndCredDef()
   }, [])
 
+  const handleClick = async (): Promise<void> => {
+    setLoading(true)
+    try {
+      await router.push(`${pathRoutes.organizations.verification.connections}`)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="px-4 pt-2">
       <div className="col-span-full mb-4 xl:mb-2">
@@ -167,12 +176,11 @@ const CredDefSelection = (): JSX.Element => {
 
       <div className="mt-4 flex justify-end">
         <Button
-          onClick={() => {
-            router.push(`${pathRoutes.organizations.verification.connections}`)
-          }}
+          onClick={handleClick}
           className="flex items-center gap-2 rounded-lg px-4 py-4 text-base font-medium sm:w-auto"
+          disabled={loading}
         >
-          <ArrowRight />
+          {loading ? <Loader /> : <ArrowRight />}
           Continue
         </Button>
       </div>

@@ -31,6 +31,7 @@ import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import { ITableData } from '@/features/connections/types/connections-interface'
 import { IssuanceRetryIcon } from '@/config/svgs/issuanceRetryButton'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
@@ -336,19 +337,20 @@ const HistoryBulkIssuance = (): JSX.Element => {
   const tableStyling: TableStyling = { metadata, columnData }
   const column = getColumns<ITableData>(tableStyling)
 
+  const handleClick = (): void => {
+    setLoading(true)
+    router.push(pathRoutes.organizations.Issuance.bulkIssuance)
+  }
+
   return (
     <PageContainer>
       <div className="p-4" id="connection_list">
         <ToastContainer />
         <div className="flex items-center justify-end">
           <div className="flex items-center justify-end">
-            <Button
-              onClick={() =>
-                router.push(pathRoutes.organizations.Issuance.bulkIssuance)
-              }
-            >
-              <ArrowLeft />
-              Back
+            <Button onClick={handleClick} disabled={loading}>
+              {loading ? <Loader size={20} /> : <ArrowLeft />}
+              {!loading && 'Back'}
             </Button>
           </div>
         </div>
