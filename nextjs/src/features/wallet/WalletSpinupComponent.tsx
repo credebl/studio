@@ -529,7 +529,7 @@ const WalletSpinup = (): React.JSX.Element => {
       <div className="flex min-h-screen items-start justify-center p-6">
         <div className="mx-auto mt-4">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="mr-18 ml-18 p-6">
               <div className="space-y-4">
                 {success && (
                   <div className="w-full" role="alert">
@@ -563,11 +563,15 @@ const WalletSpinup = (): React.JSX.Element => {
                           Configure your digital agent
                         </p>
                       </div>
+                      <div className="text-muted-foreground ml-auto text-sm">
+                        Step 3 of 4
+                      </div>
                     </div>
+                    <Stepper currentStep={2} totalSteps={4} />
                   </>
                 )}
 
-                <div className="w-full">
+                <div className="max-w-6xl">
                   {!showLedgerConfig && !agentSpinupCall && (
                     <div className="mb-6">
                       <h3 className="mb-2 text-lg font-medium">Agent Type</h3>
