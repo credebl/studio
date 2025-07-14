@@ -291,6 +291,25 @@ const VerificationCredentialList = (): JSX.Element => {
       ),
     },
     {
+      id: 'emailId',
+      title: 'Email Id',
+      accessorKey: 'emailId',
+      columnFunction: [
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setProofPagination((prev) => ({
+              ...prev,
+              sortBy: 'emailId',
+              sortOrder: order,
+            }))
+          },
+        },
+      ],
+      cell: ({ row }) => (
+        <ConnectionIdCell connectionId={row.original.emailId} />
+      ),
+    },
+    {
       id: 'createDateTime',
       title: 'Requested On',
       accessorKey: 'createDateTime',
