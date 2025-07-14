@@ -212,3 +212,16 @@ export interface IRequiredAndDeleteProps {
   remove: (index: number) => void
   areFirstInputsSelected: boolean
 }
+
+export interface UserOrgRole {
+  orgId: string
+  orgRole: {
+    name: string
+  }
+}
+
+export interface GetUserProfileResponse {
+  data: {
+    userOrgRoles: UserOrgRole[]
+  }
+}

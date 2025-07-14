@@ -1,11 +1,12 @@
-/* eslint-disable max-lines */
 'use client'
 
 import { DidMethod, SchemaTypes } from '@/common/enums'
 import {
+  GetUserProfileResponse,
   ISchemaDataSchemaList as ISchemaData,
   IW3cSchemaDetails,
   SchemaListItem,
+  UserOrgRole,
 } from '../type/schemas-interface'
 import {
   Pagination,
@@ -43,18 +44,6 @@ import { getUserProfile } from '@/app/api/Auth'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
-interface UserOrgRole {
-  orgId: string
-  orgRole: {
-    name: string
-  }
-}
-
-interface GetUserProfileResponse {
-  data: {
-    userOrgRoles: UserOrgRole[]
-  }
-}
 const SchemaList = (props: {
   schemaSelectionCallback?: (
     schemaId: string,
