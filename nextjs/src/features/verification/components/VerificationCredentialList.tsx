@@ -1,7 +1,7 @@
 'use client'
 
 import {
-  ConnectionIdCell,
+  ConnectionDetail,
   DateCell,
 } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import {
@@ -250,63 +250,77 @@ const VerificationCredentialList = (): JSX.Element => {
   }, [orgId])
 
   const columnData: IColumnData[] = [
+    // {
+    //   id: 'presentationId',
+    //   title: 'Request Id',
+    //   accessorKey: 'presentationId',
+    //   columnFunction: [
+    //     'hide',
+    //     {
+    //       sortCallBack: async (order): Promise<void> => {
+    //         setProofPagination((prev) => ({
+    //           ...prev,
+    //           sortBy: 'presentationId',
+    //           sortOrder: order,
+    //         }))
+    //       },
+    //     },
+    //   ],
+    //   cell: ({ row }): React.JSX.Element => {
+    //     const { presentationId } = row.original
+    //     return <span>{presentationId || 'Not available'}</span>
+    //   },
+    // },
+    // {
+    //   id: 'connectionId',
+    //   title: 'Connection Id',
+    //   accessorKey: 'connectionId',
+    //   columnFunction: [
+    //     {
+    //       sortCallBack: async (order): Promise<void> => {
+    //         setProofPagination((prev) => ({
+    //           ...prev,
+    //           sortBy: 'connectionId',
+    //           sortOrder: order,
+    //         }))
+    //       },
+    //     },
+    //   ],
+    //   cell: ({ row }) => (
+    //     <ConnectionIdCell connectionId={row.original.connectionId} />
+    //   ),
+    // },
     {
-      id: 'presentationId',
-      title: 'Request Id',
-      accessorKey: 'presentationId',
+      id: 'connectionDetail',
+      title: 'Connection Detail',
+      accessorKey: 'connectionDetail',
       columnFunction: [
-        'hide',
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setProofPagination((prev) => ({
-              ...prev,
-              sortBy: 'presentationId',
-              sortOrder: order,
-            }))
-          },
-        },
-      ],
-      cell: ({ row }): React.JSX.Element => {
-        const { presentationId } = row.original
-        return <span>{presentationId || 'Not available'}</span>
-      },
-    },
-    {
-      id: 'connectionId',
-      title: 'Connection Id',
-      accessorKey: 'connectionId',
-      columnFunction: [
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setProofPagination((prev) => ({
-              ...prev,
-              sortBy: 'connectionId',
-              sortOrder: order,
-            }))
-          },
-        },
+        // {
+        //   sortCallBack: async (order): Promise<void> => {
+        //     setProofPagination((prev) => ({
+        //       ...prev,
+        //       sortBy: 'emailId',
+        //       sortOrder: order,
+        //     }))
+        //   },
+        // },
       ],
       cell: ({ row }) => (
-        <ConnectionIdCell connectionId={row.original.connectionId} />
-      ),
-    },
-    {
-      id: 'emailId',
-      title: 'Email Id',
-      accessorKey: 'emailId',
-      columnFunction: [
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setProofPagination((prev) => ({
-              ...prev,
-              sortBy: 'emailId',
-              sortOrder: order,
-            }))
-          },
-        },
-      ],
-      cell: ({ row }) => (
-        <ConnectionIdCell connectionId={row.original.emailId} />
+        <button
+          className="url-link"
+          onClick={() => {
+            // eslint-disable-next-line no-console
+            console.log(row.original)
+          }}
+        >
+          <ConnectionDetail
+            connectionId={
+              row.original.emailId && row.original.emailId !== 'Not Available'
+                ? row.original.emailId
+                : (row.original.theirLabel ?? '--/--')
+            }
+          />
+        </button>
       ),
     },
     {
