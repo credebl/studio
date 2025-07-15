@@ -2,7 +2,7 @@
 
 import * as z from 'zod'
 
-import { Eye, EyeOff, KeyRound, Loader2, LockKeyhole, Mail } from 'lucide-react'
+import { Eye, EyeOff, KeyRound, LockKeyhole, Mail } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button'
 import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
+import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
@@ -422,7 +423,7 @@ export default function SignInViewPage(): React.JSX.Element {
               disabled={loading}
               className="w-full text-xs md:text-sm"
             >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {loading && <Loader />}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 

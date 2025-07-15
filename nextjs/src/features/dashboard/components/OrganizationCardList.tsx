@@ -29,6 +29,7 @@ import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
+import Loader from '@/components/Loader'
 import { Organisation } from '../type/organization'
 import { OrganizationRoles } from '@/common/enums'
 import { Plus } from 'lucide-react'
@@ -46,6 +47,7 @@ const OrganizationCardList = (): React.JSX.Element => {
   const [currentPage] = useState(currentPageNumber)
   const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
+  const [isCreatingOrg, setIsCreatingOrg] = useState(false)
 
   const fetchOrganizations = async (): Promise<void> => {
     try {
@@ -91,10 +93,20 @@ const OrganizationCardList = (): React.JSX.Element => {
           <CardDescription>Manage your organizations</CardDescription>
         </div>
         <Button
-          onClick={() => route.push('/organizations/create-organization')}
-          // className="text-primary-foreground bg-primary"
+          onClick={() => {
+            setIsCreatingOrg(true)
+            route.push('/organizations/create-organization')
+          }}
+          disabled={isCreatingOrg}
         >
-          <Plus className="h-4 w-4" /> New Organization
+          {isCreatingOrg ? (
+            <Loader />
+          ) : (
+            <>
+              <Plus className="mr-2 h-4 w-4" />
+              New Organization
+            </>
+          )}
         </Button>
       </CardHeader>
 

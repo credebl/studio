@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
+import Loader from '@/components/Loader'
 import React from 'react'
 
 interface IProps {
@@ -9,6 +10,7 @@ interface IProps {
 
 const GenerateButtonPolygon = ({
   generatePolygonKeyValuePair,
+  loading,
 }: IProps): React.JSX.Element => (
   <div className="relative my-3 grid w-fit grid-cols-2 gap-x-9 md:gap-56">
     <div className="mt-4">
@@ -22,8 +24,9 @@ const GenerateButtonPolygon = ({
       type="button"
       className=""
       onClick={generatePolygonKeyValuePair}
+      disabled={loading}
     >
-      Generate
+      {loading ? <Loader /> : 'Generate'}
     </Button>
   </div>
 )

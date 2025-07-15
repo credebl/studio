@@ -3,8 +3,7 @@
 
 import * as yup from 'yup'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Field, Form, Formik, FormikHelpers } from 'formik'
+import { Field, Form, Formik } from 'formik'
 import {
   Select,
   SelectContent,
@@ -17,11 +16,7 @@ import {
   getOrganizationById,
   updateOrganization,
 } from '@/app/api/organization'
-import {
-  getAllCities,
-  getAllCountries,
-  getAllStates,
-} from '@/app/api/geolocation'
+import { fetchCities, fetchCountries, fetchStates } from '../helper/geoHelpers'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -33,10 +28,10 @@ import { IOrgFormValues } from './interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
+import LogoUploader from './LogoUploader'
 import PageContainer from '@/components/layout/page-container'
 import Stepper from '@/components/StepperComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { processImageFile } from '@/components/ProcessImage'
 
 type Countries = {
   id: number
@@ -75,63 +70,17 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   const [success, setSuccess] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [isEditMode, setIsEditMode] = useState<boolean>(false)
-  const [, setMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
+  const [createLoading, setCreateLoading] = useState<boolean>(false)
   const [dataLoaded, setDataLoaded] = useState<boolean>(false)
   const [initializing, setInitializing] = useState<boolean>(true)
+  const [isBackLoading, setIsBackLoading] = useState(false)
 
   const searchParams = useSearchParams()
   const router = useRouter()
   const orgId = searchParams.get('orgId')
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
-
-  const getCountries = async (): Promise<void> => {
-    const response = await getAllCountries()
-    const { data } = response as AxiosResponse
-
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      setCountries(data?.data || [])
-      setFailure(null)
-      setMessage(data?.message)
-    } else {
-      setFailure(data?.message as string)
-      setMessage(response as string)
-    }
-  }
-
-  const fetchStates = async (countryId: number): Promise<void> => {
-    try {
-      const response = await getAllStates(countryId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setStates(data.data || [])
-      } else {
-        setStates([])
-      }
-    } catch (err) {
-      console.error('Error fetching states:', err)
-      setStates([])
-    }
-  }
-
-  const fetchCities = async (
-    countryId: number,
-    stateId: number,
-  ): Promise<void> => {
-    try {
-      const response = await getAllCities(countryId, stateId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        setCities(data.data || [])
-      } else {
-        setCities([])
-      }
-    } catch (err) {
-      console.error('Error fetching cities:', err)
-      setCities([])
-    }
-  }
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
@@ -145,40 +94,46 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         setIsPublic(org.publicProfile)
         if (org?.countryId) {
           setSelectedCountryId(org.countryId)
-          await fetchStates(org.countryId)
+          const fetchedStates = await fetchStates(org.countryId)
+          setStates(fetchedStates)
         }
 
         if (org?.stateId && org?.countryId) {
           setSelectedStateId(org.stateId)
-          await fetchCities(org.countryId, org.stateId)
-        }
 
-        // Mark data as loaded after all async operations
-        setDataLoaded(true)
+          const fetchedCities = await fetchCities(org.countryId, org.stateId)
+          setCities(fetchedCities)
+        }
       } else {
         setFailure(data?.message as string)
-        setDataLoaded(true)
       }
     } catch (error) {
       console.error('Error fetching organization details:', error)
       setFailure('Failed to load organization details')
-      setDataLoaded(true)
     } finally {
       setLoading(false)
+      setDataLoaded(true)
     }
   }
 
   useEffect(() => {
     const initializeData = async (): Promise<void> => {
       setInitializing(true)
-      await getCountries()
-      if (orgId) {
-        setIsEditMode(true)
-        await fetchOrganizationDetails()
-      } else {
-        setDataLoaded(true)
+      try {
+        const countryList = await fetchCountries()
+        setCountries(countryList)
+
+        if (orgId) {
+          setIsEditMode(true)
+          await fetchOrganizationDetails()
+        } else {
+          setDataLoaded(true)
+        }
+      } catch (e) {
+        setFailure((e as Error).message)
+      } finally {
+        setInitializing(false)
       }
-      setInitializing(false)
     }
 
     initializeData()
@@ -186,16 +141,16 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
   // These useEffects handle state/city loading when user changes selections
   useEffect(() => {
-    if (selectedCountryId && !isEditMode) {
-      fetchStates(selectedCountryId)
+    if (selectedCountryId) {
+      fetchStates(selectedCountryId).then(setStates)
     }
-  }, [selectedCountryId, isEditMode])
+  }, [selectedCountryId])
 
   useEffect(() => {
-    if (selectedStateId && selectedCountryId && !isEditMode) {
-      fetchCities(selectedCountryId, selectedStateId)
+    if (selectedStateId && selectedCountryId) {
+      fetchCities(selectedCountryId, selectedStateId).then(setCities)
     }
-  }, [selectedStateId, selectedCountryId, isEditMode])
+  }, [selectedStateId, selectedCountryId])
 
   const validationSchema = yup.object().shape({
     name: yup
@@ -210,33 +165,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       .required('Description is required'),
     website: yup.string().url('Enter a valid URL').nullable(),
     countryId: yup.number().required('Country is required'),
-    stateId: yup.number().required('State is required'),
-    cityId: yup.number().required('City is required'),
+    stateId: yup.number().nullable(),
+    cityId: yup.number().nullable(),
   })
-
-  type ImageProcessCallback = (result: string | null, error?: string) => void
-
-  const handleImageChange = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: FormikHelpers<ImageProcessCallback>['setFieldValue'],
-  ): Promise<void> => {
-    setImgError('')
-
-    processImageFile(e, (result: string | null, error?: string) => {
-      if (result) {
-        setLogoPreview(result)
-        setFieldValue('logoPreview', result)
-      } else {
-        setImgError(error || 'Image processing failed')
-        setFieldValue('logoPreview', '')
-      }
-    })
-  }
 
   const handleUpdateOrganization = async (
     values: IOrgFormValues,
   ): Promise<void> => {
-    setLoading(true)
+    setCreateLoading(true)
     try {
       setSuccess(null)
       setFailure(null)
@@ -247,8 +183,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         logo: logoPreview || values?.logoUrl || '',
         website: values.website || '',
         countryId: values.countryId,
-        stateId: values.stateId,
-        cityId: values.cityId,
+        // Only include state/city if they exist and are selected
+        stateId: states.length > 0 ? values.stateId : null,
+        cityId: cities.length > 0 ? values.cityId : null,
         isPublic,
       }
 
@@ -270,14 +207,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       console.error('Error updating organization:', error)
       setFailure('An unexpected error occurred. Please try again.')
     } finally {
-      setLoading(false)
+      setCreateLoading(false)
     }
   }
 
   const handleCreateAndContinue = async (
     values: IOrgFormValues,
   ): Promise<void> => {
-    setLoading(true)
+    setCreateLoading(true)
     try {
       setSuccess(null)
       setFailure(null)
@@ -288,8 +225,8 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         logo: logoPreview || '',
         website: values.website || '',
         countryId: values.countryId,
-        stateId: values.stateId,
-        cityId: values.cityId,
+        stateId: states.length > 0 ? values.stateId : null,
+        cityId: cities.length > 0 ? values.cityId : null,
       }
 
       const resCreateOrg = await createOrganization(orgData)
@@ -313,7 +250,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       console.error('Error creating organization:', error)
       setFailure('An unexpected error occurred. Please try again.')
     } finally {
-      setLoading(false)
+      setCreateLoading(false)
     }
   }
 
@@ -387,47 +324,16 @@ export default function OrganizationOnboarding(): React.JSX.Element {
               validationSchema={validationSchema}
               onSubmit={handleCreateAndContinue}
             >
-              {({ errors, touched, setFieldValue, values, isValid, dirty }) => (
+              {({ errors, touched, setFieldValue, values }) => (
                 <Form className="space-y-6">
-                  <div>
-                    <Label className="mb-2 block pb-4">Organization Logo</Label>
-                    <div className="border-input flex items-center gap-4 rounded-md border p-4">
-                      {logoPreview ? (
-                        <Avatar className="h-24 w-24">
-                          <AvatarImage
-                            src={logoPreview}
-                            alt="Logo Preview"
-                            className="object-cover"
-                          />
-                          <AvatarFallback>Logo</AvatarFallback>
-                        </Avatar>
-                      ) : (
-                        <Avatar className="h-24 w-24 rounded-none">
-                          <AvatarImage
-                            src={
-                              logoPreview ||
-                              orgData?.logoUrl ||
-                              '/images/upload_logo_file.svg'
-                            }
-                            alt="Logo Preview"
-                          />
-                        </Avatar>
-                      )}
-
-                      <div className="flex flex-col">
-                        <Input
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => handleImageChange(e, setFieldValue)}
-                        />
-                        {imgError && (
-                          <p className="text-destructive mt-1 text-sm">
-                            {imgError}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  <LogoUploader
+                    logoPreview={logoPreview}
+                    setLogoPreview={setLogoPreview}
+                    setFieldValue={setFieldValue}
+                    imgError={imgError}
+                    setImgError={setImgError}
+                    existingLogoUrl={orgData?.logoUrl ?? undefined}
+                  />
 
                   <div>
                     <Label className="pb-4">
@@ -464,7 +370,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                    {/* Country Select */}
                     <div>
                       <Label className="pb-2">
                         Country <span className="text-destructive">*</span>
@@ -484,7 +389,6 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                           setFieldValue('stateId', null)
                           setFieldValue('cityId', null)
 
-                          // Fetch states for the selected country
                           if (countryId) {
                             await fetchStates(countryId)
                           }
@@ -511,10 +415,12 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       )}
                     </div>
 
-                    {/* State Select */}
                     <div>
                       <Label className="pb-2">
-                        State <span className="text-destructive">*</span>
+                        State{' '}
+                        {states.length > 0 && (
+                          <span className="text-destructive">*</span>
+                        )}
                       </Label>
                       <Select
                         value={values.stateId ? values.stateId.toString() : ''}
@@ -523,9 +429,9 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                           setSelectedStateId(stateId)
                           setFieldValue('stateId', stateId)
                           setFieldValue('cityId', null)
+
                           setCities([])
 
-                          // Fetch cities for the selected state
                           if (selectedCountryId && stateId) {
                             await fetchCities(selectedCountryId, stateId)
                           }
@@ -552,6 +458,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                           )}
                         </SelectContent>
                       </Select>
+
                       {errors.stateId && touched.stateId && (
                         <p className="text-destructive mt-1 text-xs">
                           {errors.stateId}
@@ -559,10 +466,12 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       )}
                     </div>
 
-                    {/* City Select */}
                     <div>
                       <Label className="pb-2">
-                        City <span className="text-destructive">*</span>
+                        City{' '}
+                        {cities.length > 0 && (
+                          <span className="text-destructive">*</span>
+                        )}
                       </Label>
                       <Select
                         value={values.cityId ? values.cityId.toString() : ''}
@@ -664,26 +573,44 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     <Button
                       variant="secondary"
                       type="button"
-                      onClick={() => router.push('/organizations')}
+                      onClick={() => {
+                        setIsBackLoading(true)
+                        router.push('/organizations')
+                      }}
+                      disabled={isBackLoading}
                     >
-                      Back
+                      {isBackLoading ? <Loader /> : 'Cancel'}
                     </Button>
 
                     {!isEditMode ? (
                       <Button
                         type="submit"
-                        disabled={!isValid || !dirty || loading}
+                        disabled={
+                          !values.name ||
+                          !values.description ||
+                          !values.countryId ||
+                          (states.length > 0 && !values.stateId) ||
+                          (cities.length > 0 && !values.cityId) ||
+                          loading
+                        }
                       >
-                        {loading ? <Loader /> : 'Create Organization'}
+                        {createLoading ? <Loader /> : 'Create Organization'}
                       </Button>
                     ) : (
                       <div className="flex">
                         <Button
                           type="button"
                           onClick={() => handleUpdateOrganization(values)}
-                          disabled={loading}
+                          disabled={
+                            !values.name ||
+                            !values.description ||
+                            !values.countryId ||
+                            (states.length > 0 && !values.stateId) ||
+                            (cities.length > 0 && !values.cityId) ||
+                            loading
+                          }
                         >
-                          {loading ? <Loader /> : 'Save'}
+                          {createLoading ? <Loader /> : 'Save'}
                         </Button>
                       </div>
                     )}

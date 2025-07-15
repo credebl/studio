@@ -2,9 +2,11 @@
 
 import { DidMethod, SchemaTypes } from '@/common/enums'
 import {
+  GetUserProfileResponse,
   ISchemaDataSchemaList as ISchemaData,
   IW3cSchemaDetails,
   SchemaListItem,
+  UserOrgRole,
 } from '../type/schemas-interface'
 import {
   Pagination,
@@ -32,6 +34,7 @@ import { EmptyMessage } from '@/components/EmptyMessage'
 import { GetAllSchemaListParameter } from '@/features/dashboard/type/schema'
 import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
+import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { Plus } from 'lucide-react'
 import SchemaCard from './SchemaCard'
@@ -41,18 +44,6 @@ import { getUserProfile } from '@/app/api/Auth'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
-interface UserOrgRole {
-  orgId: string
-  orgRole: {
-    name: string
-  }
-}
-
-interface GetUserProfileResponse {
-  data: {
-    userOrgRoles: UserOrgRole[]
-  }
-}
 const SchemaList = (props: {
   schemaSelectionCallback?: (
     schemaId: string,
@@ -376,6 +367,13 @@ const SchemaList = (props: {
     paginationNumbers.push(lastPage)
   }
 
+  const handleClick = (): void => {
+    if (orgRole === 'admin' || orgRole === 'owner') {
+      setLoading(true)
+      route.push('/organizations/schemas/create')
+    }
+  }
+
   return (
     <PageContainer>
       <div className="px-4 pt-2">
@@ -412,15 +410,12 @@ const SchemaList = (props: {
             </SelectContent>
           </Select>
           <Button
-            onClick={() => {
-              if (orgRole === 'admin' || orgRole === 'owner') {
-                route.push('/organizations/schemas/create')
-              }
-            }}
-            disabled={orgRole !== 'admin' && orgRole !== 'owner'}
+            onClick={handleClick}
+            disabled={loading || (orgRole !== 'admin' && orgRole !== 'owner')}
             className="w-full sm:w-auto"
           >
-            <Plus /> Create
+            {loading ? <Loader size={20} /> : <Plus className="mr-2 h-4 w-4" />}
+            {loading ? 'Loading...' : 'Create'}
           </Button>
         </div>
 
@@ -495,7 +490,7 @@ const SchemaList = (props: {
                               <PaginationLink
                                 className={`${
                                   page === schemaListAPIParameter.page
-                                    ? 'bg-primary text-white'
+                                    ? 'bg-primary'
                                     : 'bg-background text-muted-foreground'
                                 } rounded-lg px-4 py-2`}
                                 href="#"
@@ -534,14 +529,17 @@ const SchemaList = (props: {
             <EmptyMessage
               title="No Schemas"
               description="Get started by creating a new Schema"
-              buttonContent="Create"
-              buttonIcon={<Plus className="h-4 w-4" />}
+              buttonContent={!loading ? 'Create' : undefined}
+              buttonIcon={
+                loading ? <Loader size={20} /> : <Plus className="h-4 w-4" />
+              }
               onClick={() => {
                 if (orgRole === 'admin' || orgRole === 'owner') {
+                  setLoading(true)
                   route.push('/organizations/schemas/create')
                 }
               }}
-              disabled={orgRole !== 'admin' && orgRole !== 'owner'}
+              disabled={(orgRole !== 'admin' && orgRole !== 'owner') || loading}
             />
           ))}
       </div>

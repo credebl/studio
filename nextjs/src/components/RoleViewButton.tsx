@@ -2,6 +2,7 @@ import { Features, Roles } from '@/common/enums'
 import { JSX, ReactElement } from 'react'
 
 import { Button } from './ui/button'
+import Loader from './Loader'
 import { useAppSelector } from '@/lib/hooks'
 
 interface RoleViewButtonProps {
@@ -13,6 +14,7 @@ interface RoleViewButtonProps {
   isOutline?: boolean
   isPadding?: boolean
   disabled?: boolean
+  loading?: boolean
 }
 
 const RoleViewButton = ({
@@ -23,6 +25,7 @@ const RoleViewButton = ({
   feature,
   isOutline,
   disabled,
+  loading,
 }: RoleViewButtonProps): JSX.Element => {
   const roles = useAppSelector(
     (state) => state.organization.orgInfo?.roles || [],
@@ -59,6 +62,7 @@ const RoleViewButton = ({
       onClick={isRoleAccess() ? onClickEvent : undefined}
       disabled={disabled || !isRoleAccess()}
     >
+      {loading && <Loader size={20} />}
       {svgComponent}
       {buttonTitle}
     </Button>

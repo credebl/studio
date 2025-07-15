@@ -68,6 +68,7 @@ const IssueCred = (): React.JSX.Element => {
   const [schemaType, setSchemaType] = useState<SchemaTypeValue>()
   const [orgDid, setOrgDid] = useState<string>('')
   const orgId = useSelector((state: RootState) => state.organization.orgId)
+  const [isLoading, setIsLoading] = useState(false)
   const [credentialOptions, setCredentialOptions] = useState<
     GetAllSchemaHelperReturn[]
   >([])
@@ -330,15 +331,18 @@ const IssueCred = (): React.JSX.Element => {
     }
   }
 
+  const handleBackClick = (): void => {
+    setIsLoading(true)
+    router.push(pathRoutes.back.issuance.connections)
+  }
+
   return (
     <PageContainer>
       <div className="px-4 pt-2">
         <div className="col-span-full mb-4 xl:mb-2">
           <div className="flex items-center justify-end px-4">
-            <Button
-              onClick={() => router.push(pathRoutes.back.issuance.connections)}
-            >
-              <ArrowLeft />
+            <Button onClick={handleBackClick} disabled={isLoading}>
+              {isLoading ? <Loader size={20} /> : <ArrowLeft />}
               Back
             </Button>
           </div>
@@ -451,8 +455,14 @@ const IssueCred = (): React.JSX.Element => {
                           disabled={issuanceLoader || !isValid}
                           className=""
                         >
-                          <ArrowRight />
-                          <span className="">Issue</span>
+                          {issuanceLoader ? (
+                            <Loader size={20} />
+                          ) : (
+                            <>
+                              <ArrowRight />
+                              <span className="">Issue</span>
+                            </>
+                          )}
                         </Button>
                       </div>
                     </Form>
