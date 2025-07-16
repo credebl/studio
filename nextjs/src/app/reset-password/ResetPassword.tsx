@@ -21,6 +21,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import Footer from '@/components/Footer'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -122,7 +123,7 @@ const ResetPassword = (): JSX.Element => {
                 <div className="flex w-full justify-center">
                   <Card className="relative z-10 w-full max-w-lg overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300 lg:max-w-md">
                     <div className="flex w-full flex-col gap-4 lg:mt-8">
-                      <div className="text-custom-900 dark:text-custom-100 font-inter flex justify-center text-center text-3xl leading-10 font-bold">
+                      <div className="font-inter flex justify-center text-center text-3xl leading-10 font-bold">
                         Reset Password
                       </div>
                       <div className="font-inter h-5.061 text-muted-foreground flex w-full flex-shrink-0 flex-col items-center justify-center text-base leading-5 font-medium">
@@ -292,9 +293,7 @@ const ResetPassword = (): JSX.Element => {
         </div>
       </div>
 
-      <footer className="text-muted-foreground fixed right-0 bottom-0 left-0 mb-4 text-center text-sm">
-        © 2019 - {new Date().getFullYear()} AYANWORKS | All rights reserved.
-      </footer>
+      <Footer fixed={true} />
     </div>
   )
 }

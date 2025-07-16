@@ -27,6 +27,29 @@ export interface UserActivity {
   deletedAt: Date | string
 }
 
+// 👇 Helper function to convert date to "Created X ago"
+const getTimeAgo = (dateStr: string): string => {
+  const date = new Date(dateStr)
+  const now = new Date()
+  const diffMs = now.getTime() - date.getTime()
+
+  const seconds = Math.floor(diffMs / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+
+  if (seconds < 60) {
+    return 'Created just now'
+  }
+  if (minutes < 60) {
+    return `Created ${minutes} minute${minutes > 1 ? 's' : ''} ago`
+  }
+  if (hours < 24) {
+    return `Created ${hours} hour${hours > 1 ? 's' : ''} ago`
+  }
+  return `Created ${days} day${days > 1 ? 's' : ''} ago`
+}
+
 const RecentActivity = (): React.JSX.Element => {
   const [activityList, setActivityList] = useState<UserActivity[]>([])
   const [loading, setLoading] = useState(true)
@@ -64,16 +87,19 @@ const RecentActivity = (): React.JSX.Element => {
           <div key={index} className="flex gap-3">
             <div className="relative mt-1">
               <div className="flex h-2 w-2 items-center justify-center">
-                <div className="absolute h-2 w-2 rounded-full" />
+                <div className="bg-primary absolute h-2 w-2 rounded-full" />
               </div>
-              <div className="ml-1 h-full w-px" />
+              <div className="bg-muted ml-1 h-full w-px" />
             </div>
             <div className="space-y-1">
               <div className="max-w-[400px] truncate font-medium">
                 {activity.action || 'Performed an action'}
               </div>
-              <div className="text-muted-foreground">
-                {new Date(activity.createDateTime).toLocaleString()}
+              {/* <div className="max-w-full font-medium break-words">
+                {activity.action || 'Performed an action'}
+              </div> */}
+              <div className="text-muted-foreground text-sm italic">
+                {getTimeAgo(activity.createDateTime)}
               </div>
             </div>
           </div>

@@ -19,6 +19,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import CustomCheckbox from '@/components/CustomCheckbox'
 import DateTooltip from '@/components/DateTooltip'
+import Loader from '@/components/Loader'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
@@ -27,6 +28,7 @@ import { pathRoutes } from '@/config/pathRoutes'
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const [isSelected, setIsSelected] = useState(false)
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const pathname = usePathname()
   const isVerificationPage = pathname.includes('verification')
@@ -173,7 +175,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
 
           <div className="flex items-start sm:items-center">
             <strong className="mr-2 shrink-0">Issuer:</strong>
-            <div className="min-w-0 truncate">{props.issuerDid || ''}</div>
+            <div className="min-w-0 truncate">{props.issuerName || ''}</div>
           </div>
 
           {!props.noLedger && (
@@ -219,12 +221,22 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
             !props.isVerification &&
             !props.isVerificationUsingEmail && (
               <Button
-                onClick={handleButtonClick}
+                onClick={() => {
+                  setIsLoading(true)
+                  handleButtonClick()
+                }}
                 className="h-8 w-full sm:w-auto"
                 variant="outline"
+                disabled={isLoading}
               >
-                <ShieldCheck className="mr-1 h-4 w-4" />
-                Issue
+                {isLoading ? (
+                  <Loader size={16} />
+                ) : (
+                  <>
+                    <ShieldCheck className="mr-1 h-4 w-4" />
+                    Issue
+                  </>
+                )}
               </Button>
             )}
         </div>

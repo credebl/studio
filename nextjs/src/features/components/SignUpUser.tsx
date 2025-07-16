@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 
 import EmailVerificationForm from './EmailVerificationForm'
+import Footer from '@/components/Footer'
 import Link from 'next/link'
 import UserInfoForm from './UserInfoForm'
 import { useSearchParams } from 'next/navigation'
@@ -68,6 +69,7 @@ export default function SignUpUser(): React.JSX.Element {
           </Link>
         </div>
       </div>
+      <Footer fixed={true} />
     </div>
   )
 }
