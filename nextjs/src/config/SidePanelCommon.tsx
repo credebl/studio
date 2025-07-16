@@ -41,7 +41,7 @@ export default function SidePanelComponent({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full max-w-xl min-w-[500px] space-y-6 p-4"
+        className="w-full max-w-xl min-w-[500px] space-y-2 p-4"
       >
         <SheetHeader>
           <SheetTitle className="text-xl font-semibold">{title}</SheetTitle>
@@ -61,7 +61,7 @@ export default function SidePanelComponent({
                   {field.badge ? (
                     <Badge variant="default">{field.value}</Badge>
                   ) : (
-                    <div className="font-medium break-words">{field.value}</div>
+                    <div className="font-medium break-all">{field.value}</div>
                   )}
                   {field.copyable && typeof field.value === 'string' && (
                     <Button
