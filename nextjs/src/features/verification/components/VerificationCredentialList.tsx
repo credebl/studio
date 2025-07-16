@@ -11,6 +11,7 @@ import {
   TableStyling,
   getColumns,
 } from '@/components/ui/generic-table-component/columns'
+import { ISidebarSliderData, RequestProof } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
 import {
   ProofRequestState,
@@ -31,8 +32,8 @@ import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
 import { RefreshCw } from 'lucide-react' // Import refresh icon
-import { RequestProof } from '../type/interface'
 import RoleViewButton from '@/components/RoleViewButton'
+import SidePanelComponent from '@/config/SidePanelCommon'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
@@ -55,6 +56,8 @@ const VerificationCredentialList = (): JSX.Element => {
   const [verificationList, setVerificationList] = useState<RequestProof[]>([])
   const [isWalletCreated, setIsWalletCreated] = useState(false)
   const [reloading, setReloading] = useState<boolean>(false) // Add reloading state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [fields, setSelectedFields] = useState<ISidebarSliderData[]>([])
 
   // Modal state
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -292,7 +295,7 @@ const VerificationCredentialList = (): JSX.Element => {
     // },
     {
       id: 'connectionDetail',
-      title: 'Connection Detail',
+      title: 'Holder',
       accessorKey: 'connectionDetail',
       columnFunction: [
         // {
@@ -311,6 +314,29 @@ const VerificationCredentialList = (): JSX.Element => {
           onClick={() => {
             // eslint-disable-next-line no-console
             console.log(row.original)
+            setSelectedFields(() => {
+              const data = [
+                {
+                  label: 'Request Id',
+                  value: row.original.presentationId,
+                  copyable: true,
+                },
+                {
+                  label: 'Schema Name',
+                  value: row.original.schemaName,
+                  copyable: true,
+                },
+              ]
+              if (row.original.theirLabel) {
+                data.push({
+                  label: 'Connection Id',
+                  value: row.original.connectionId,
+                  copyable: true,
+                })
+              }
+              return data
+            })
+            setIsDrawerOpen(true)
           }}
         >
           <ConnectionDetail
@@ -518,7 +544,11 @@ const VerificationCredentialList = (): JSX.Element => {
           }
         />
       </div>
-
+      <SidePanelComponent
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        fields={fields}
+      />
       {userData && (
         <ProofRequest
           openModal={openModal}

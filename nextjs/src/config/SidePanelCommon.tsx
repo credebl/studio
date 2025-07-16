@@ -39,7 +39,10 @@ export default function SidePanelComponent({
 }: Props): React.JSX.Element {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full max-w-xl space-y-6">
+      <SheetContent
+        side="right"
+        className="w-full max-w-xl min-w-[500px] space-y-2 p-4"
+      >
         <SheetHeader>
           <SheetTitle className="text-xl font-semibold">{title}</SheetTitle>
           <SheetDescription className="text-muted-foreground text-sm">
@@ -48,7 +51,7 @@ export default function SidePanelComponent({
         </SheetHeader>
 
         <Card>
-          <CardContent className="space-y-4 p-4">
+          <CardContent className="space-y-4 p-8">
             {fields.map((field, index) => (
               <div key={index} className="space-y-1">
                 <div className="text-muted-foreground text-sm">
@@ -58,7 +61,7 @@ export default function SidePanelComponent({
                   {field.badge ? (
                     <Badge variant="default">{field.value}</Badge>
                   ) : (
-                    <div className="font-medium break-words">{field.value}</div>
+                    <div className="font-medium break-all">{field.value}</div>
                   )}
                   {field.copyable && typeof field.value === 'string' && (
                     <Button
