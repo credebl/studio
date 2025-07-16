@@ -4,18 +4,11 @@ import { DidMethod, SchemaTypes } from '@/common/enums'
 import {
   GetUserProfileResponse,
   ISchemaDataSchemaList as ISchemaData,
+  ISidebarSliderData,
   IW3cSchemaDetails,
   SchemaListItem,
   UserOrgRole,
 } from '../type/schemas-interface'
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
   Select,
@@ -38,6 +31,8 @@ import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { Plus } from 'lucide-react'
 import SchemaCard from './SchemaCard'
+import SchemaListPagination from './SchemaListPagination'
+import SidePanelComponent from '@/config/SidePanelCommon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOrganizationById } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
@@ -81,6 +76,8 @@ const SchemaList = (props: {
   const [w3cSchema, setW3CSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
   const [orgRole, setOrgRole] = useState<string | null>(null)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [sideBarFields, setSideBarFields] = useState<ISidebarSliderData[]>([])
 
   const route = useRouter()
   const dispatch = useAppDispatch()
@@ -446,7 +443,8 @@ const SchemaList = (props: {
                       schemaName={element?.name}
                       version={element['version']}
                       schemaId={element['schemaLedgerId']}
-                      issuerDid={element['issuerId']}
+                      issuerName={element['organizationName'] || 'N/A'}
+                      issuerDid={element['issuerId'] || 'N/A'}
                       attributes={element['attributes']}
                       created={element['createDateTime']}
                       showCheckbox={false}
@@ -456,6 +454,27 @@ const SchemaList = (props: {
                       w3cSchema={w3cSchema}
                       noLedger={isNoLedger}
                       isVerification={verificationFlag}
+                      onTitleClick={(e: React.MouseEvent): void => {
+                        e.stopPropagation()
+                        setIsDrawerOpen(true)
+                        setSideBarFields([
+                          {
+                            label: 'Schema ID',
+                            value: element.schemaLedgerId,
+                            copyable: true,
+                          },
+                          {
+                            label: 'Publisher DID',
+                            value: element.publisherDid,
+                            copyable: true,
+                          },
+                          {
+                            label: 'Issuer ID',
+                            value: element.issuerId,
+                            copyable: true,
+                          },
+                        ])
+                      }}
                     />
                   </div>
                 ))}
@@ -463,66 +482,14 @@ const SchemaList = (props: {
               {totalItem > itemPerPage &&
                 (schemaList.length === itemPerPage ||
                   schemaListAPIParameter.page === lastPage) && (
-                  <div className="mt-6 flex justify-end">
-                    <Pagination className="m-0 w-fit">
-                      <PaginationContent>
-                        {schemaListAPIParameter.page > 1 && (
-                          <PaginationItem>
-                            <PaginationPrevious
-                              href="#"
-                              onClick={() =>
-                                setSchemaListAPIParameter((prev) => ({
-                                  ...prev,
-                                  page: prev.page - 1,
-                                }))
-                              }
-                            />
-                          </PaginationItem>
-                        )}
-
-                        {paginationNumbers.map((page, idx) => (
-                          <PaginationItem key={idx}>
-                            {page === '...' ? (
-                              <span className="text-muted-foreground px-3 py-2">
-                                …
-                              </span>
-                            ) : (
-                              <PaginationLink
-                                className={`${
-                                  page === schemaListAPIParameter.page
-                                    ? 'bg-primary'
-                                    : 'bg-background text-muted-foreground'
-                                } rounded-lg px-4 py-2`}
-                                href="#"
-                                onClick={() =>
-                                  setSchemaListAPIParameter((prev) => ({
-                                    ...prev,
-                                    page: page as number,
-                                  }))
-                                }
-                              >
-                                {page}
-                              </PaginationLink>
-                            )}
-                          </PaginationItem>
-                        ))}
-
-                        {schemaListAPIParameter.page < lastPage && (
-                          <PaginationItem>
-                            <PaginationNext
-                              href="#"
-                              onClick={() =>
-                                setSchemaListAPIParameter((prev) => ({
-                                  ...prev,
-                                  page: prev.page + 1,
-                                }))
-                              }
-                            />
-                          </PaginationItem>
-                        )}
-                      </PaginationContent>
-                    </Pagination>
-                  </div>
+                  <SchemaListPagination
+                    {...{
+                      schemaListAPIParameter,
+                      paginationNumbers,
+                      setSchemaListAPIParameter,
+                      lastPage,
+                    }}
+                  />
                 )}
             </>
           ) : (
@@ -543,6 +510,13 @@ const SchemaList = (props: {
             />
           ))}
       </div>
+      <SidePanelComponent
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        title={'Schema Details'}
+        description={'Detailed view of selected Schema'}
+        fields={sideBarFields}
+      />
     </PageContainer>
   )
 }
