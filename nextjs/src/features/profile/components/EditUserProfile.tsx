@@ -13,7 +13,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { calculateSize, dataURItoBlob } from '@/utils/CompressImage'
 
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import type { IUserProfile } from '@/components/profile/interfaces'
 import { Input } from '@/components/ui/input'
 import { updateUserProfile } from '@/app/api/Auth'
@@ -163,8 +162,8 @@ export default function EditUserProfile({
   }
 
   return (
-    <Card className="p-4">
-      <div className="bg-card rounded-lg p-6">
+    <div className="p-4">
+      <div className="rounded-lg p-6">
         <Formik
           initialValues={{
             profileImg: userProfileInfo.profileImg || '',
@@ -275,28 +274,30 @@ export default function EditUserProfile({
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-4">
+              {/* Sticky footer for Save/Cancel */}
+              <div className="bg-background absolute bottom-0 left-0 w-full space-y-2 border-t px-6 py-4">
+                <Button
+                  type="submit"
+                  form="edit-profile-form"
+                  disabled={loading || !formik.isValid}
+                  className="w-full"
+                >
+                  {loading ? 'Saving...' : 'Save Changes'}
+                </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  className="flex items-center px-4 py-2 transition-colors"
                   disabled={loading}
+                  className="w-full"
                 >
                   Cancel
-                </Button>
-                <Button
-                  type="submit"
-                  disabled={loading || !formik.isValid}
-                  className="flex items-center px-4 py-2"
-                >
-                  {loading ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>
             </Form>
           )}
         </Formik>
       </div>
-    </Card>
+    </div>
   )
 }

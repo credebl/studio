@@ -1,11 +1,12 @@
 'use client'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Edit, Mail, User } from 'lucide-react'
+import { Edit, Mail } from 'lucide-react'
 import React, { useMemo } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import RecentActivity from '@/features/dashboard/components/RecentActivity'
 import { getRandomAvatarColor } from '@/utils/avatarColors'
 
 interface OrgRole {
@@ -56,144 +57,120 @@ const DisplayUserProfile = ({
   }, [userProfileInfo])
 
   return (
-    <Card className="flex h-full flex-col p-8 sm:py-6">
-      <div className="bg-background mx-auto w-full rounded-lg">
-        <div className="mb-8 flex items-start justify-between">
-          <div className="flex items-center justify-center gap-32 space-x-6">
-            <div className="">
-              {userProfileInfo?.profileImg ? (
-                <img
-                  src={userProfileInfo.profileImg}
-                  alt="Profile Preview"
-                  className="h-48 w-48 rounded-full object-cover"
-                />
-              ) : (
-                <Avatar className="h-48 w-48">
-                  <AvatarImage
-                    src=""
-                    alt={userProfileInfo?.email || 'Unknown'}
-                  />
-                  <AvatarFallback className="text-4xl">
-                    {userProfileInfo?.firstName?.[0]?.toUpperCase() ||
-                      userProfileInfo?.lastName?.[0]?.toUpperCase() ||
-                      '?'}
-                  </AvatarFallback>
-                </Avatar>
-              )}
-            </div>
-
-            <div className="flex flex-1 flex-col space-y-4">
-              <div>
-                <h2 className="text-foreground mb-1 text-3xl font-bold">
-                  {userProfileInfo?.firstName} {userProfileInfo?.lastName}
-                </h2>
-                <p className="text-muted-foreground mb-2 flex items-center gap-2 text-lg font-medium">
-                  <User width={16} height={16} />
-                  {userProfileInfo?.username}
-                </p>
-
-                <p className="text-muted-foreground mb-2 flex items-center gap-2 text-lg font-medium">
-                  <Mail width={16} height={16} />
-                  {userProfileInfo?.email}
-                </p>
-              </div>
-
-              <div className="flex space-x-8">
-                <div className="text-center">
-                  <div className="text-foreground text-2xl font-bold">
-                    {userProfileInfo?.userOrgRoles?.filter(
-                      (role) => role.orgRole.name === 'owner',
-                    ).length || 0}
-                  </div>
-                  <div className="text-muted-foreground text-sm font-medium">
-                    Organizations Owned
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-foreground text-2xl font-bold">
-                    {userProfileInfo?.userOrgRoles?.filter(
-                      (role) => role.orgRole.name === 'member',
-                    ).length || 0}
-                  </div>
-                  <div className="text-muted-foreground text-sm font-medium">
-                    Member organizations
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
+        <Card className="relative col-span-1 flex flex-col items-center space-y-4 p-6 text-center shadow">
           <Button
-            variant={'ghost'}
-            type="button"
+            variant="ghost"
             size="icon"
             onClick={toggleEditProfile}
+            className="absolute top-4 right-4"
           >
-            <span>
-              <Edit className="" />
-            </span>
+            <Edit className="h-4 w-4" />
           </Button>
-        </div>
+          {userProfileInfo?.profileImg ? (
+            <img
+              src={userProfileInfo.profileImg}
+              alt="Profile"
+              className="h-28 w-28 rounded-full object-cover"
+            />
+          ) : (
+            <Avatar className="h-28 w-28">
+              <AvatarImage src="" alt={userProfileInfo?.email || 'Unknown'} />
+              <AvatarFallback className="text-2xl">
+                {userProfileInfo?.firstName?.[0]?.toUpperCase() ||
+                  userProfileInfo?.lastName?.[0]?.toUpperCase() ||
+                  '?'}
+              </AvatarFallback>
+            </Avatar>
+          )}
 
-        <div className="space-y-6">
-          <div className="rounded-lg">
-            <div className="mt-4">
-              {orgPresent && orgPresent.length > 0 ? (
-                <>
-                  <div className="text-foreground mb-4 text-lg font-semibold">
-                    Organizations associated
-                  </div>
-                  <hr />
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {orgPresent.map((role) => {
-                      const { bg, text } = getRandomAvatarColor(
-                        role.organisation.name,
-                      )
-                      return (
-                        <Card
-                          key={role.id}
-                          className="inline-flex items-center border px-3 py-1 text-xs font-medium"
-                        >
-                          {role.organisation.logoUrl ? (
-                            <img
-                              src={role.organisation.logoUrl}
-                              alt={role.organisation.name}
-                              className="h-5 w-5 rounded-full object-cover"
-                            />
-                          ) : (
-                            <Avatar className="h-8 w-8">
-                              <AvatarFallback
-                                className={`${bg} ${text} text-xs font-bold`}
-                              >
-                                {role.organisation.name
-                                  .substring(0, 2)
-                                  .toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                          )}
-                          <span className="pl-2">{role.organisation.name}</span>
-                        </Card>
-                      )
-                    })}
-                  </div>
-                </>
-              ) : (
-                <div className="flex h-full items-center justify-center border-t pt-6">
-                  <div className="text-center">
-                    <div className="mb-4 text-2xl font-bold">
-                      No Organization
-                    </div>
-                    <p className="text-lg">
-                      Get started by creating a new Organization
-                    </p>
-                  </div>
-                </div>
-              )}
+          <div>
+            <h2 className="text-2xl font-bold">
+              {userProfileInfo?.firstName} {userProfileInfo?.lastName}
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              {userProfileInfo?.username}
+            </p>
+            <p className="text-muted-foreground flex items-center justify-center gap-1 text-sm">
+              <Mail className="h-4 w-4" />
+              {userProfileInfo?.email}
+            </p>
+          </div>
+
+          {/* Stats */}
+          <div className="text-muted-foreground mt-2 grid w-full grid-cols-2 gap-4 text-sm">
+            <div className="text-center">
+              <p className="text-lg font-semibold">
+                {userProfileInfo?.userOrgRoles?.filter(
+                  (role) => role.orgRole.name === 'owner',
+                ).length || 0}
+              </p>
+              <p>Organizations Owned</p>
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-semibold">
+                {userProfileInfo?.userOrgRoles?.filter(
+                  (role) => role.orgRole.name === 'member',
+                ).length || 0}
+              </p>
+              <p>Member Organizations</p>
             </div>
           </div>
+        </Card>
+
+        <div className="col-span-1 md:col-span-2">
+          <RecentActivity />
         </div>
       </div>
-    </Card>
+
+      <Card className="p-6">
+        {orgPresent && orgPresent.length > 0 ? (
+          <>
+            <h3 className="mb-4 text-lg font-semibold">
+              Organizations Associated
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {orgPresent.map((role) => {
+                const { bg, text } = getRandomAvatarColor(
+                  role.organisation.name,
+                )
+                return (
+                  <Card
+                    key={role.id}
+                    className="inline-flex items-center border px-3 py-1 text-xs font-medium"
+                  >
+                    {role.organisation.logoUrl ? (
+                      <img
+                        src={role.organisation.logoUrl}
+                        alt={role.organisation.name}
+                        className="h-12 w-12 rounded-full object-cover"
+                      />
+                    ) : (
+                      <Avatar className="h-12 w-12">
+                        <AvatarFallback
+                          className={`${bg} ${text} text-xs font-bold`}
+                        >
+                          {role.organisation.name.substring(0, 2).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
+                    <span className="pl-2">{role.organisation.name}</span>
+                  </Card>
+                )
+              })}
+            </div>
+          </>
+        ) : (
+          <div className="text-center">
+            <div className="mb-2 text-2xl font-bold">No Organization</div>
+            <p className="text-sm">
+              Get started by creating a new organization.
+            </p>
+          </div>
+        )}
+      </Card>
+    </div>
   )
 }
 
