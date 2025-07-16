@@ -15,6 +15,7 @@ import { calculateSize, dataURItoBlob } from '@/utils/CompressImage'
 import { Button } from '@/components/ui/button'
 import type { IUserProfile } from '@/components/profile/interfaces'
 import { Input } from '@/components/ui/input'
+import Loader from '@/components/Loader'
 import { updateUserProfile } from '@/app/api/Auth'
 
 interface Values {
@@ -275,21 +276,21 @@ export default function EditUserProfile({
               </div>
 
               {/* Sticky footer for Save/Cancel */}
-              <div className="bg-background absolute bottom-0 left-0 w-full space-y-2 border-t px-6 py-4">
+
+              <div className="bg-background absolute bottom-0 left-0 flex w-full flex-col gap-2 space-y-2 border-t px-6 py-4">
                 <Button
                   type="submit"
-                  form="edit-profile-form"
                   disabled={loading || !formik.isValid}
                   className="w-full"
                 >
-                  {loading ? 'Saving...' : 'Save Changes'}
+                  {loading ? <Loader /> : 'Save Changes'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
                   onClick={handleCancel}
-                  disabled={loading}
                   className="w-full"
+                  disabled={loading}
                 >
                   Cancel
                 </Button>
