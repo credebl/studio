@@ -1,6 +1,12 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import AddPasskey from '@/features/passkey/AddPasskey'
@@ -76,17 +82,6 @@ export default function UserProfile(): React.JSX.Element {
       return <div className="p-6">No profile data available</div>
     }
 
-    if (isEditProfileOpen) {
-      return (
-        <EditUserProfile
-          key={`edit-${prePopulatedUserProfile.id}`} // Force re-render with key
-          toggleEditProfile={toggleEditProfile}
-          userProfileInfo={prePopulatedUserProfile}
-          updateProfile={updateProfile}
-        />
-      )
-    }
-
     return (
       <DisplayUserProfile
         key={`display-${prePopulatedUserProfile.id}`} // Force re-render with key
@@ -97,7 +92,7 @@ export default function UserProfile(): React.JSX.Element {
   }
 
   return (
-    <div className="mx-auto p-6">
+    <div className="p-6">
       <h1 className="text-foreground mb-6 text-2xl font-semibold">
         User Profile
       </h1>
@@ -109,20 +104,37 @@ export default function UserProfile(): React.JSX.Element {
         className="mb-6 w-full"
       >
         <TabsList>
-          <TabsTrigger value="profile" className="relative">
-            Profile
-          </TabsTrigger>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="passkey">Passkey</TabsTrigger>
         </TabsList>
       </Tabs>
 
-      <div className="bg-card rounded-lg px-6">
-        {activeTab === 'profile' ? (
-          renderProfileContent()
-        ) : (
-          <AddPasskey email={userEmail} />
-        )}
-      </div>
+      {activeTab === 'profile' ? (
+        <>
+          {renderProfileContent()}
+
+          {/* ✅ Drawer always rendered, controlled by open state */}
+          {prePopulatedUserProfile && (
+            <Sheet open={isEditProfileOpen} onOpenChange={toggleEditProfile}>
+              <SheetContent
+                side="right"
+                className="w-[500px] overflow-y-auto sm:w-[600px]"
+              >
+                <SheetHeader>
+                  <SheetTitle>Edit Profile</SheetTitle>
+                </SheetHeader>
+                <EditUserProfile
+                  toggleEditProfile={toggleEditProfile}
+                  userProfileInfo={prePopulatedUserProfile}
+                  updateProfile={updateProfile}
+                />
+              </SheetContent>
+            </Sheet>
+          )}
+        </>
+      ) : (
+        <AddPasskey email={userEmail} />
+      )}
     </div>
   )
 }

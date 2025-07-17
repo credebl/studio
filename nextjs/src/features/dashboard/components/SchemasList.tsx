@@ -233,7 +233,7 @@ const SchemasList = ({
   }
 
   return (
-    <Card className="border-border relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
+    <Card className="border-border relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 transition-transform duration-300">
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

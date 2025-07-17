@@ -272,7 +272,7 @@ const AddPasskey = ({
       )}
       <div className="relative flex h-full flex-auto flex-col p-3 sm:p-4">
         <div className="mx-auto w-full rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
-          <div className="px-6 py-6">
+          <div className="rounded-xl px-6 py-6">
             {loader ? (
               <div className="mb-4 flex items-center justify-center">
                 <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-solid border-t-transparent"></div>
