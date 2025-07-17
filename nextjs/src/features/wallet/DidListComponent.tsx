@@ -181,7 +181,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        // window.location.reload()
         getData()
       } else {
         setErrorMsg(response as string)
