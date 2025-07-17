@@ -1,10 +1,11 @@
+import PageContainer from '@/components/layout/page-container'
 import React from 'react'
 import UserProfile from '@/features/profile/components/UserProfile'
 
 const page = (): React.JSX.Element => (
-  <div>
+  <PageContainer>
     <UserProfile />
-  </div>
+  </PageContainer>
 )
 
 export default page

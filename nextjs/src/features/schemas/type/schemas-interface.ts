@@ -2,6 +2,7 @@ import { SchemaType, SchemaTypeValue } from '@/common/enums'
 
 import { FormikProps } from 'formik'
 import { IPopup } from '../components/Create'
+import React from 'react'
 
 export interface ISchemaData {
   schemaId: string
@@ -51,6 +52,7 @@ export interface ISchemaCardProps {
   version: string
   schemaId: string
   issuerDid: string
+  issuerName?: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   attributes: any
   created: string
@@ -88,6 +90,7 @@ export interface ISchemaCardProps {
   noLedger?: boolean
   isVerification?: boolean
   isVerificationUsingEmail?: boolean
+  onTitleClick?: (e: React.MouseEvent) => void
 }
 
 export interface IW3cSchemaDetails {
@@ -211,4 +214,22 @@ export interface IRequiredAndDeleteProps {
   element: IAttributes
   remove: (index: number) => void
   areFirstInputsSelected: boolean
+}
+
+export interface ISidebarSliderData {
+  label: string
+  value: string
+  copyable?: boolean
+}
+export interface UserOrgRole {
+  orgId: string
+  orgRole: {
+    name: string
+  }
+}
+
+export interface GetUserProfileResponse {
+  data: {
+    userOrgRoles: UserOrgRole[]
+  }
 }

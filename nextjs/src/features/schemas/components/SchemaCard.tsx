@@ -17,9 +17,9 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
-import CopyDid from '@/config/CopyDid'
 import CustomCheckbox from '@/components/CustomCheckbox'
 import DateTooltip from '@/components/DateTooltip'
+import Loader from '@/components/Loader'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
@@ -28,6 +28,7 @@ import { pathRoutes } from '@/config/pathRoutes'
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const [isSelected, setIsSelected] = useState(false)
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
 
   const pathname = usePathname()
   const isVerificationPage = pathname.includes('verification')
@@ -162,24 +163,19 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
         </div>
 
         <div className="min-w-0 space-y-1 text-sm">
-          <div className="flex items-start sm:items-center">
+          <button
+            className="url-link flex items-start sm:items-center"
+            onClick={props.onTitleClick}
+          >
             <strong className="mr-2 shrink-0">Schema ID:</strong>
-            <div className="min-w-0 truncate">
-              <CopyDid
-                value={props.schemaId || ''}
-                className="text-foreground truncate font-mono text-sm"
-              />
+            <div className="!url-link min-w-0 font-mono text-sm">
+              {props.schemaId || ''}
             </div>
-          </div>
+          </button>
 
           <div className="flex items-start sm:items-center">
-            <strong className="mr-2 shrink-0">Issuer DID:</strong>
-            <div className="min-w-0 truncate">
-              <CopyDid
-                value={props.issuerDid || ''}
-                className="text-foreground truncate font-mono text-sm"
-              />
-            </div>
+            <strong className="mr-2 shrink-0">Issuer:</strong>
+            <div className="min-w-0 truncate">{props.issuerName || ''}</div>
           </div>
 
           {!props.noLedger && (
@@ -225,12 +221,22 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
             !props.isVerification &&
             !props.isVerificationUsingEmail && (
               <Button
-                onClick={handleButtonClick}
+                onClick={() => {
+                  setIsLoading(true)
+                  handleButtonClick()
+                }}
                 className="h-8 w-full sm:w-auto"
                 variant="outline"
+                disabled={isLoading}
               >
-                <ShieldCheck className="mr-1 h-4 w-4" />
-                Issue
+                {isLoading ? (
+                  <Loader size={16} />
+                ) : (
+                  <>
+                    <ShieldCheck className="mr-1 h-4 w-4" />
+                    Issue
+                  </>
+                )}
               </Button>
             )}
         </div>

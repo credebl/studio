@@ -28,6 +28,7 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { EmptyMessage } from '@/components/EmptyMessage'
 import { Features } from '@/common/enums'
+import { ISidebarSliderData } from '@/features/schemas/type/schemas-interface'
 import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import Loader from '@/components/Loader'
@@ -35,11 +36,12 @@ import PageContainer from '@/components/layout/page-container'
 import RoleViewButton from '@/components/RoleViewButton'
 import SchemaCard from '@/features/schemas/components/SchemaCard'
 import SchemaListPagination from './SchemaListPagination'
+import SidePanelComponent from '@/config/SidePanelCommon'
 import { pathRoutes } from '@/config/pathRoutes'
 import { useRouter } from 'next/navigation'
 
 const VerificationSchemasList = (): JSX.Element => {
-  const [schemasList, setSchemasList] = useState([])
+  const [schemasList, setSchemasList] = useState<ISchemaData[]>([])
   const [schemasDetailsErr, setSchemasDetailsErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
   const [allSchemasFlag, setAllSchemasFlag] = useState<boolean>(false)
@@ -68,6 +70,9 @@ const VerificationSchemasList = (): JSX.Element => {
   const selectedSchemaState = useAppSelector(
     (state) => state.verification.selectedSchemas,
   )
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [sideBarFields, setSideBarFields] = useState<ISidebarSliderData[]>([])
+
   const getSchemaListDetails = async (): Promise<void> => {
     try {
       setLoading(true)
@@ -340,6 +345,7 @@ const VerificationSchemasList = (): JSX.Element => {
                         version={element['version']}
                         schemaId={element['schemaLedgerId']}
                         issuerDid={element['issuerId']}
+                        issuerName={element['organizationName'] || 'N/A'}
                         attributes={element['attributes']}
                         created={element['createDateTime']}
                         showCheckbox={true}
@@ -347,6 +353,27 @@ const VerificationSchemasList = (): JSX.Element => {
                         w3cSchema={w3cSchema}
                         noLedger={isNoLedger}
                         isVerificationUsingEmail={true}
+                        onTitleClick={(e: React.MouseEvent): void => {
+                          e.stopPropagation()
+                          setIsDrawerOpen(true)
+                          setSideBarFields([
+                            {
+                              label: 'Schema ID',
+                              value: element.schemaLedgerId,
+                              copyable: true,
+                            },
+                            {
+                              label: 'Publisher DID',
+                              value: element.publisherDid,
+                              copyable: true,
+                            },
+                            {
+                              label: 'Issuer ID',
+                              value: element.issuerId,
+                              copyable: true,
+                            },
+                          ])
+                        }}
                         onChange={(checked) => {
                           w3cSchema
                             ? handleW3cSchemas(checked, element)
@@ -365,20 +392,35 @@ const VerificationSchemasList = (): JSX.Element => {
 
               <div className="mb-4 flex items-center justify-end">
                 <Button
-                  onClick={
-                    w3cSchema
-                      ? (): Promise<void> =>
-                          handleW3CSchemaDetails({
-                            selectedSchemaState,
-                            route,
-                          })
-                      : handleContinue
-                  }
-                  disabled={selectedSchemas.length === 0}
+                  onClick={async () => {
+                    if (selectedSchemas.length === 0) {
+                      return
+                    }
+                    setLoading(true)
+                    try {
+                      if (w3cSchema) {
+                        await handleW3CSchemaDetails({
+                          selectedSchemaState,
+                          route,
+                        })
+                      } else {
+                        await handleContinue()
+                      }
+                    } finally {
+                      setLoading(false)
+                    }
+                  }}
+                  disabled={selectedSchemas.length === 0 || loading}
                   className="flex items-center gap-2 rounded-md px-4 py-4 text-base font-medium sm:w-auto"
                 >
-                  <ArrowRight />
-                  Continue
+                  {loading ? (
+                    <Loader size={20} />
+                  ) : (
+                    <>
+                      <ArrowRight />
+                      Continue
+                    </>
+                  )}
                 </Button>
               </div>
               <div
@@ -421,6 +463,13 @@ const VerificationSchemasList = (): JSX.Element => {
           )}
         </div>
       </div>
+      <SidePanelComponent
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        title={'Schema Details'}
+        description={'Detailed view of selected Schema'}
+        fields={sideBarFields}
+      />
     </PageContainer>
   )
 }

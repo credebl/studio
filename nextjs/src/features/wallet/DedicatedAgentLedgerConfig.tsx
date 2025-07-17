@@ -14,25 +14,18 @@ import {
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import React, { useEffect, useState } from 'react'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   apiStatusCodes,
   polygonFaucet,
   polygonScan,
 } from '@/config/CommonConstant'
 
-import { ArrowLeft } from 'lucide-react'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CopyDid from './CopyDid'
 import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Loader from '@/components/Loader'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
@@ -83,6 +76,7 @@ const DedicatedLedgerConfig = ({
   const [mappedData, setMappedData] = useState<ILedgerConfigData | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
+  const [isCreatingIdentity, setIsCreatingIdentity] = useState(false)
   const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
@@ -228,17 +222,17 @@ const DedicatedLedgerConfig = ({
         (network) => network === Network.TESTNET,
       )
     }
+    const selectedValue = formikHandlers.values.network
 
     return (
       <div className="space-y-2">
         <Label htmlFor="network" className="text-sm font-medium">
           Network <RequiredAsterisk />
         </Label>
-        <Select
-          value={selectedNetwork || undefined}
+        <RadioGroup
+          value={selectedValue}
           onValueChange={(value) => {
             formikHandlers.setFieldValue('network', value)
-            // Find the didMethod for the selected network
             const didMethod = Object.entries(networkOptions).find(
               ([did]) => did === value,
             )?.[0]
@@ -248,17 +242,19 @@ const DedicatedLedgerConfig = ({
             )
           }}
         >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Network" />
-          </SelectTrigger>
-          <SelectContent>
-            {filteredNetworks.map((network) => (
-              <SelectItem key={network} value={networkOptions[network]}>
+          {filteredNetworks.map((network) => (
+            <div key={network} className="flex items-center space-x-2">
+              <RadioGroupItem
+                value={network}
+                id={`network-${network}`}
+                className="text-primary focus:ring-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary border-2 border-gray-300 dark:border-gray-600"
+              />
+              <Label htmlFor={`network-${network}`} className="text-sm">
                 {network}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
         {formikHandlers.errors.network && formikHandlers.touched.network && (
           <div className="text-destructive mt-1 text-xs">
             {formikHandlers.errors.network as string}
@@ -276,35 +272,37 @@ const DedicatedLedgerConfig = ({
     }
 
     const methods = mappedData[selectedLedger as keyof ILedgerConfigData]
-
     if (!methods) {
       return null
     }
+    const selectedValue = formikHandlers.values.method
 
     return (
       <div className="space-y-2">
         <Label htmlFor="method" className="text-sm font-medium">
           Method <RequiredAsterisk />
         </Label>
-        <Select
-          value={formikHandlers.values.method || undefined}
+        <RadioGroup
+          value={selectedValue}
           onValueChange={(value) => {
             formikHandlers.setFieldValue('method', value)
             handleMethodChange(value)
             setDomainValue('')
           }}
         >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Select Method" />
-          </SelectTrigger>
-          <SelectContent>
-            {Object.keys(methods).map((method) => (
-              <SelectItem key={method} value={method}>
+          {Object.keys(methods).map((method) => (
+            <div key={method} className="flex items-center space-x-2">
+              <RadioGroupItem
+                value={method}
+                id={`method-${method}`}
+                className="text-primary focus:ring-primary data-[state=checked]:bg-primary data-[state=checked]:border-primary border-2 border-gray-300 dark:border-gray-600"
+              />
+              <Label htmlFor={`method-${method}`} className="text-sm">
                 {method}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              </Label>
+            </div>
+          ))}
+        </RadioGroup>
         {formikHandlers.errors.method && formikHandlers.touched.method && (
           <div className="text-destructive mt-1 text-xs">
             {formikHandlers.errors.method as string}
@@ -338,12 +336,9 @@ const DedicatedLedgerConfig = ({
   )
 
   return (
-    <div className="bg-background mx-auto max-w-4xl rounded-lg p-6 shadow-sm">
+    <div className="">
       {/* Header with back button */}
       <div className="mb-4 flex items-center">
-        <Button variant="ghost" size="icon" className="mr-3">
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
         <div>
           <h2 className="text-xl font-medium">Ledger Configuration</h2>
           <p className="text-muted-foreground text-sm">
@@ -433,7 +428,7 @@ const DedicatedLedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.POLYGON}
             title=""
-            description="Polygon blockchain"
+            description="Polygon Blockchain"
             icon={
               <Image
                 src="/images/polygon.png"
@@ -446,7 +441,7 @@ const DedicatedLedgerConfig = ({
           <LedgerCard
             ledger={Ledgers.NO_LEDGER}
             title=""
-            description="Local key generation"
+            description="No Ledger"
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -484,14 +479,19 @@ const DedicatedLedgerConfig = ({
           values: IValuesShared,
           actions: FormikHelpers<IValuesShared>,
         ) => {
-          values.ledger = selectedLedger
-          values.method = selectedMethod
-          values.network = selectedNetwork
-          if (!values.privatekey) {
-            values.privatekey = privateKeyValue
+          setIsCreatingIdentity(true)
+          try {
+            values.ledger = selectedLedger
+            values.method = selectedMethod
+            values.network = selectedNetwork
+            if (!values.privatekey) {
+              values.privatekey = privateKeyValue
+            }
+            submitDedicatedWallet(values, privateKeyValue, domainValue)
+            actions.resetForm()
+          } finally {
+            setIsCreatingIdentity(false)
           }
-          submitDedicatedWallet(values, privateKeyValue, domainValue)
-          actions.resetForm()
         }}
       >
         {(formikHandlers: FormikProps<IValuesShared>): React.JSX.Element => (
@@ -514,7 +514,7 @@ const DedicatedLedgerConfig = ({
                       <Label className="mb-2 block text-sm font-medium">
                         Generated DID Method
                       </Label>
-                      <div className="text-foreground rounded-lg p-3">
+                      <div className="text-muted-foreground rounded-lg p-3">
                         {selectedDid}
                       </div>
                     </div>
@@ -599,13 +599,11 @@ const DedicatedLedgerConfig = ({
             {/* Action buttons */}
             <div className="items-right mt-8 flex">
               <Button
-                onClick={() => {
-                  formikHandlers.handleSubmit()
-                }}
-                disabled={isSubmitDisabled()}
+                onClick={() => formikHandlers.handleSubmit()}
+                disabled={isSubmitDisabled() || isCreatingIdentity}
                 type="submit"
               >
-                Create Identity
+                {isCreatingIdentity ? <Loader /> : 'Create Identity'}
               </Button>
             </div>
           </Form>
