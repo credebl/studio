@@ -40,6 +40,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { dateConversion } from '@/utils/DateConversion'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
@@ -49,6 +50,8 @@ interface IDidListData {
   id: string
   did: string
   isPrimaryDid: boolean
+  createDateTime: string
+  lastChangedDateTime: string
 }
 
 interface IUpdatePrimaryDid {
@@ -90,6 +93,22 @@ interface Organization {
   name: string
   userOrgRoles: UserOrgRole[]
 }
+const DateTooltip = ({
+  date,
+  children,
+}: {
+  date: string
+  children: React.ReactNode
+}): React.JSX.Element => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <span>{children}</span>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{new Date(date).toLocaleString()}</p>
+    </TooltipContent>
+  </Tooltip>
+)
 const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
@@ -603,6 +622,18 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                   </Button>
                 )}
               </div>
+            </div>
+            <div className="flex gap-2">
+              <p className="text-muted-foreground text-sm">Created</p>
+              <DateTooltip
+                date={item.lastChangedDateTime ?? item.createDateTime}
+              >
+                <div className="text-muted-foreground text-sm">
+                  {dateConversion(
+                    item.lastChangedDateTime ?? item.createDateTime,
+                  )}
+                </div>
+              </DateTooltip>
             </div>
           </div>
         ))}

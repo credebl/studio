@@ -72,7 +72,7 @@ const OrganizationDetails = ({
           {!hideValue && ellipsis ? (
             <span className="max-w-sm truncate">{value}</span>
           ) : (
-            <span className="max-w-md">{value}</span>
+            <span className="">{value}</span>
           )}
           <Button
             variant="ghost"
