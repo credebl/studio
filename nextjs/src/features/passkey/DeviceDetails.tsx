@@ -1,6 +1,3 @@
-'use client'
-
-import { Laptop, Pencil } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
@@ -10,9 +7,11 @@ import { deleteDeviceById, editDeviceDetails } from '@/app/api/Fido'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import DeleteModal from './DeleteModal'
+import { EditIcon } from '@/config/svgs/EditIcon'
 import EditModal from './EditModal'
-import { Separator } from '@/components/ui/separator'
+import { Laptop } from 'lucide-react'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
 import { useState } from 'react'
@@ -86,51 +85,51 @@ export default function DeviceDetails({
 
   return (
     <>
-      <div className="flex items-start space-x-4 py-4">
-        <div className="flex-shrink-0">
-          <Laptop className="text-muted-foreground h-6 w-6" />
-        </div>
-
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex">
-            <p className="truncate text-base font-semibold">
-              {deviceFriendlyName}
-            </p>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setOpenEditModal(true)}
-              className="ml-4 h-7 w-7"
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <div className="ml-auto">
-              <Button
-                onClick={() => setOpenDeleteModal(true)}
-                disabled={disableRevoke}
-                className={disableRevoke ? 'cursor-not-allowed opacity-50' : ''}
-              >
-                Revoke
-              </Button>
+      <tr className="border-t text-sm text-gray-700">
+        <td className="px-6 py-4">
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+              <Laptop className="h-4 w-4 text-gray-500" />
             </div>
+            <span>{deviceFriendlyName}</span>
           </div>
+        </td>
 
-          <p className="text-muted-foreground truncate text-sm">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>{dateConversion(createDateTime)}</span>
-              </TooltipTrigger>
-              <TooltipContent>{createDateTime}</TooltipContent>
-            </Tooltip>
-          </p>
+        <td className="px-6 py-4">{credentialID}</td>
 
-          <p className="text-muted-foreground truncate text-sm">
-            {credentialID}
-          </p>
-        </div>
-      </div>
+        <td className="px-6 py-4">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>{dateConversion(createDateTime)}</span>
+            </TooltipTrigger>
+            <TooltipContent>{createDateTime}</TooltipContent>
+          </Tooltip>
+        </td>
 
-      <Separator />
+        <td className="space-x-2 px-6 py-4 text-right">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setOpenEditModal(true)}
+            className="h-8 w-8"
+          >
+            <EditIcon />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setOpenDeleteModal(true)}
+            disabled={disableRevoke}
+            className={
+              disableRevoke
+                ? 'h-8 w-8 cursor-not-allowed opacity-50'
+                : 'h-8 w-8'
+            }
+          >
+            <DeleteIcon />
+          </Button>
+        </td>
+      </tr>
 
       <DeleteModal
         openModal={openDeleteModal}
@@ -143,6 +142,7 @@ export default function DeviceDetails({
         openModal={openEditModal}
         closeModal={() => setOpenEditModal(false)}
         onSucess={handleEditConfirm}
+        initialName={deviceFriendlyName}
       />
     </>
   )

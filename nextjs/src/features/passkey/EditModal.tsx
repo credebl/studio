@@ -20,6 +20,7 @@ const EditModal = (props: {
   openModal: boolean
   closeModal: (flag: boolean) => void
   onSucess: (name: string) => void
+  initialName?: string
 }): React.JSX.Element => {
   interface nameValue {
     name: string
@@ -48,7 +49,8 @@ const EditModal = (props: {
         <div className="px-4 pt-2 pb-5">
           <Formik
             innerRef={formikRef}
-            initialValues={{ name: '' }}
+            initialValues={{ name: props.initialName || '' }}
+            enableReinitialize
             validationSchema={yup.object().shape({
               name: yup.string().required('Name is required').trim(),
             })}

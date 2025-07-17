@@ -41,6 +41,7 @@ const {
   NEXT_PUBLIC_MODE,
   PUBLIC_REDIRECT_FROM_URL,
   PUBLIC_REDIRECTION_TARGET_URL,
+  NEXT_PUBLIC_CURRENT_RELEASE,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any = envVariables
 
@@ -58,10 +59,10 @@ export const envConfig = {
   PLATFORM_DATA: {
     nameAsLogo:
       PUBLIC_SHOW_NAME_AS_LOGO || process.env.PUBLIC_SHOW_NAME_AS_LOGO,
-
+    version:
+      NEXT_PUBLIC_CURRENT_RELEASE || process.env.NEXT_PUBLIC_CURRENT_RELEASE,
     polygonTestnet:
       PUBLIC_POLYGON_TESTNET_URL || process.env.PUBLIC_POLYGON_TESTNET_URL,
-
     polygonMainnet:
       PUBLIC_POLYGON_MAINNET_URL || process.env.PUBLIC_POLYGON_MAINNET_URL,
 
