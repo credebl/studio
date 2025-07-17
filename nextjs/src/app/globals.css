@@ -335,6 +335,12 @@ ul.timelinestatic > li {
 .bg-avatar-6 {
   background-color: #e0f9fd;
 }
+.bg-avatar-7 {
+  background-color: #f5e8ff;
+}
+.bg-avatar-8 {
+  background-color: #e6f7ff;
+}
 
 /* Avatar text colors */
 .text-avatar-1 {
@@ -344,7 +350,7 @@ ul.timelinestatic > li {
   color: #b8b2f7;
 }
 .text-avatar-3 {
-  color: #c1c2c5;
+  color: #b0b3b9;
 }
 .text-avatar-4 {
   color: #82ddaa;
@@ -354,6 +360,12 @@ ul.timelinestatic > li {
 }
 .text-avatar-6 {
   color: #76ddef;
+}
+.text-avatar-7 {
+  color: #dfa3f5;
+}
+.text-avatar-8 {
+  color: #339af0;
 }
 
 .url-link {

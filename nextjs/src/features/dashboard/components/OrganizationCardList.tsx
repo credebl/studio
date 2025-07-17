@@ -74,7 +74,7 @@ const OrganizationCardList = (): React.JSX.Element => {
   }, [currentPage, pageSize, searchTerm])
 
   return (
-    <Card className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
+    <Card className="relative flex h-full w-full flex-col overflow-hidden rounded-xl border py-4 transition-transform duration-300">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="cursor-default space-y-1">
           <div className="flex items-center gap-x-2">
