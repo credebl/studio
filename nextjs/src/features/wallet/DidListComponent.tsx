@@ -40,6 +40,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { dateConversion } from '@/utils/DateConversion'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
@@ -49,6 +50,8 @@ interface IDidListData {
   id: string
   did: string
   isPrimaryDid: boolean
+  createDateTime: string
+  lastChangedDateTime: string
 }
 
 interface IUpdatePrimaryDid {
@@ -90,6 +93,22 @@ interface Organization {
   name: string
   userOrgRoles: UserOrgRole[]
 }
+const DateTooltip = ({
+  date,
+  children,
+}: {
+  date: string
+  children: React.ReactNode
+}): React.JSX.Element => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <span>{children}</span>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>{new Date(date).toLocaleString()}</p>
+    </TooltipContent>
+  </Tooltip>
+)
 const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
@@ -130,7 +149,28 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   })
 
   const router = useRouter()
-
+  const getData = async (): Promise<void> => {
+    try {
+      const response = await getDids(orgId)
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const sortedDids = data?.data.sort(
+          (a: { isPrimaryDid: boolean }, b: { isPrimaryDid: boolean }) => {
+            if (a.isPrimaryDid && !b.isPrimaryDid) {
+              return -1
+            }
+            if (!a.isPrimaryDid && b.isPrimaryDid) {
+              return 1
+            }
+            return 0
+          },
+        )
+        setDidList(sortedDids)
+      }
+    } catch (error) {
+      console.error('Error fetching DIDs:', error)
+    }
+  }
   const setPrimaryDid = async (id: string, did: string): Promise<void> => {
     try {
       const payload: IUpdatePrimaryDid = {
@@ -141,7 +181,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        window.location.reload()
+        getData()
       } else {
         setErrorMsg(response as string)
       }
@@ -182,29 +222,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   useEffect(() => {
     fetchOrganizations()
   }, [currentPage, pageSize, searchTerm])
-
-  const getData = async (): Promise<void> => {
-    try {
-      const response = await getDids(orgId)
-      const { data } = response as AxiosResponse
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const sortedDids = data?.data.sort(
-          (a: { isPrimaryDid: boolean }, b: { isPrimaryDid: boolean }) => {
-            if (a.isPrimaryDid && !b.isPrimaryDid) {
-              return -1
-            }
-            if (!a.isPrimaryDid && b.isPrimaryDid) {
-              return 1
-            }
-            return 0
-          },
-        )
-        setDidList(sortedDids)
-      }
-    } catch (error) {
-      console.error('Error fetching DIDs:', error)
-    }
-  }
 
   useEffect(() => {
     getData()
@@ -579,31 +596,43 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         {didList.map((item: IDidListData, index: number) => (
           <div key={item.id} className={'grid h-20 items-center p-4'}>
             <div className="flex items-center justify-between gap-4">
-              <span className="w-16 shrink-0">DID {index + 1}</span>
-              <span>:</span>
+              <div className="flex gap-4">
+                <span className="w-16 shrink-0">DID {index + 1}</span>
+                <span>:</span>
 
-              {item?.did ? (
-                <CopyDid value={item.did} className="flex-1 font-mono" />
-              ) : (
-                <span className="flex-1 font-mono">Not available</span>
-              )}
-
-              {item.isPrimaryDid ? (
-                <Badge
-                  variant="default"
-                  className="ml-auto h-9 w-34 cursor-default text-sm"
-                >
-                  Primary DID
-                </Badge>
-              ) : (
-                <Button
-                  onClick={() => setPrimaryDid(item.id, item.did)}
-                  variant="outline"
-                  className="ml-auto"
-                >
-                  Set Primary DID
-                </Button>
-              )}
+                {item?.did ? (
+                  <CopyDid value={item.did} className="flex-1 font-mono" />
+                ) : (
+                  <span className="flex-1 font-mono">Not available</span>
+                )}
+              </div>
+              <div className={item.isPrimaryDid ? 'grow' : ''}>
+                {item.isPrimaryDid ? (
+                  <Badge variant="default" className="cursor-default text-sm">
+                    Primary DID
+                  </Badge>
+                ) : (
+                  <Button
+                    onClick={() => setPrimaryDid(item.id, item.did)}
+                    variant="outline"
+                    className="ml-auto"
+                  >
+                    Set Primary DID
+                  </Button>
+                )}
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <p className="text-muted-foreground text-sm">Created</p>
+              <DateTooltip
+                date={item.lastChangedDateTime ?? item.createDateTime}
+              >
+                <div className="text-muted-foreground text-sm">
+                  {dateConversion(
+                    item.lastChangedDateTime ?? item.createDateTime,
+                  )}
+                </div>
+              </DateTooltip>
             </div>
           </div>
         ))}
