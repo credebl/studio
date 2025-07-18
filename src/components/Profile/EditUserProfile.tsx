@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState} from "react";
-import type { IUserProfile } from "./interfaces";
-import { getFromLocalStorage, setToLocalStorage, updateUserProfile } from "../../api/Auth";
-import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
-import type { AxiosResponse } from "axios";
-import CustomAvatar from '../Avatar'
-import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import * as yup from "yup"
+
 import { Alert, Button } from "flowbite-react";
 import { Form, Formik } from "formik";
-import type { FormikHelpers as FormikActions } from 'formik';
+import { IMG_MAX_HEIGHT, IMG_MAX_WIDTH, imageSizeAccepted, storageKeys } from "../../config/CommonConstant";
+import { calculateSize, dataURItoBlob } from "../../utils/CompressImage";
+import { getFromLocalStorage, setToLocalStorage, updateUserProfile } from "../../api/Auth";
+import { useEffect, useRef, useState } from "react";
 
-import * as yup from "yup"
+import type { AxiosResponse } from "axios";
+import CustomAvatar from '../Avatar'
+import type { FormikHelpers as FormikActions } from 'formik';
+import type { IUserProfile } from "./interfaces";
 
 interface Values {
   profileImg: string;

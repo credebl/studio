@@ -1,12 +1,13 @@
-import { useState } from "react"
 import { deleteDeviceById, editDeviceDetails } from "../api/Fido"
-import DeleteModal from "./DeletePopup"
-import EditModal from "./EditPopup";
+
 import { Alert } from "flowbite-react";
 import type { AxiosResponse } from "axios";
+import DateTooltip from "../components/Tooltip";
+import DeleteModal from "./DeletePopup"
+import EditModal from "./EditPopup";
 import { apiStatusCodes } from "../config/CommonConstant";
 import { dateConversion } from "../utils/DateConversion";
-import DateTooltip from "../components/Tooltip";
+import { useState } from "react"
 
 interface IResponseMessages {type: "error" | "success", message: string}
 

@@ -27,7 +27,7 @@ module.exports = {
 				'react'
 			],
 
-			parser: ['@typescript-eslint/parser', 'babel-eslint'],
+			parser: '@typescript-eslint/parser',
 			parserOptions: {
 				project: ['./tsconfig.json'] /* Specify it only for TypeScript files */,
 				ecmaVersion: 'latest',
@@ -89,7 +89,7 @@ module.exports = {
 				'plugin:astro/recommended',
 				'prettier',
 			],
-			parser: ['astro-eslint-parser', 'babel-eslint'],
+			parser: 'astro-eslint-parser',
 			parserOptions: {
 				/* Prevents "unresolved" when using "paths" */
 				// project: ['./tsconfig.json'],
