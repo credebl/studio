@@ -57,7 +57,7 @@ export const resetPassword = async (
   email: string | null,
 ): Promise<AxiosResponse | string> => {
   const details = {
-    url: `${apiRoutes.auth.resetPassword}/${email}`,
+    url: `${apiRoutes.auth.resetPasswordEndpoint}/${email}`,
     payload,
   }
   try {
@@ -73,7 +73,7 @@ export const forgotPassword = async (payload: {
   email: string
 }): Promise<AxiosResponse | string> => {
   const details = {
-    url: apiRoutes.auth.forgotPassword,
+    url: apiRoutes.auth.forgotPasswordEndpoint,
     payload,
   }
   try {
@@ -110,7 +110,7 @@ export const resetPasswordKeyCloak = async (
   const config = getHeaderConfigs()
 
   const details = {
-    url: apiRoutes.auth.keyClockResetPassword,
+    url: apiRoutes.auth.resetPasswordEndpoint,
     payload,
     config,
   }
