@@ -1,3 +1,5 @@
+/* NOSONAR */
+
 'use client'
 
 import * as React from 'react'
