@@ -99,7 +99,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
         </div>
 
         <div className="mt-auto inline-flex items-center overflow-hidden text-base font-semibold overflow-ellipsis">
-          Revocable:
+          Revocable:{' '}
           <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm">
             {props?.revocable ? 'Yes' : 'No'}
           </span>
