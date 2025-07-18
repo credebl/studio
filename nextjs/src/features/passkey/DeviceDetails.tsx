@@ -1,46 +1,48 @@
-'use client'
-
-import { Laptop, Pencil } from 'lucide-react'
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { deleteDeviceById, editDeviceDetails } from '@/app/api/Fido'
+import { useEffect, useState } from 'react'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import DataTable from '@/components/DataTable'
+import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import DeleteModal from './DeleteModal'
+import { EditIcon } from '@/config/svgs/EditIcon'
 import EditModal from './EditModal'
-import { Separator } from '@/components/ui/separator'
+import { Laptop } from 'lucide-react'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
-import { useState } from 'react'
 
 interface IResponseMessages {
   type: 'error' | 'success'
   message: string
 }
 
-interface DeviceDetailsProps {
+interface DeviceRow {
   deviceFriendlyName: string
   createDateTime: string
-  credentialID: string
+  credentialId: string
+}
+interface DeviceDetailsTableProps {
+  devices: DeviceRow[]
   refreshList: () => void
   disableRevoke: boolean
   responseMessages: (value: IResponseMessages) => void
 }
 
 export default function DeviceDetails({
-  deviceFriendlyName,
-  createDateTime,
-  credentialID,
+  devices,
   refreshList,
-  responseMessages,
   disableRevoke,
-}: DeviceDetailsProps): React.JSX.Element {
+  responseMessages,
+}: DeviceDetailsTableProps): React.JSX.Element {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
+  const [selectedDevice, setSelectedDevice] = useState<DeviceRow | null>(null)
 
   const deleteDevice = async (credentialId: string): Promise<void> => {
     try {
@@ -55,15 +57,18 @@ export default function DeviceDetails({
   }
 
   const handleDeleteConfirm = async (confirmed: boolean): Promise<void> => {
-    if (confirmed) {
-      await deleteDevice(credentialID)
+    if (confirmed && selectedDevice?.credentialId) {
+      await deleteDevice(selectedDevice.credentialId)
     }
     setOpenDeleteModal(false)
   }
 
   const handleEditConfirm = async (newDeviceName: string): Promise<void> => {
+    if (!selectedDevice) {
+      return
+    }
     try {
-      const encodedUrl = encodeURIComponent(credentialID)
+      const encodedUrl = encodeURIComponent(selectedDevice.credentialId)
       const payload = {
         enCodedUrl: encodedUrl,
         updatedDeviceName: newDeviceName,
@@ -84,66 +89,110 @@ export default function DeviceDetails({
     setOpenEditModal(false)
   }
 
-  return (
-    <>
-      <div className="flex items-start space-x-4 py-4">
-        <div className="flex-shrink-0">
-          <Laptop className="text-muted-foreground h-6 w-6" />
-        </div>
+  const headers = [
+    { columnName: 'Device' },
+    { columnName: 'Credential ID' },
+    { columnName: 'Created' },
+    { columnName: 'Actions' },
+  ]
 
-        <div className="flex min-w-0 flex-1 flex-col">
-          <div className="flex">
-            <p className="truncate text-base font-semibold">
-              {deviceFriendlyName}
-            </p>
+  const rows = devices.map((device) => ({
+    data: [
+      {
+        data: (
+          <div className="flex items-center gap-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+              <Laptop className="h-4 w-4 text-gray-500" />
+            </div>
+            <span>{device.deviceFriendlyName}</span>
+          </div>
+        ),
+        inputType: 'custom',
+      },
+      {
+        data: device.credentialId,
+        inputType: 'custom',
+      },
+      {
+        data: (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span>{dateConversion(device.createDateTime)}</span>
+            </TooltipTrigger>
+            <TooltipContent>{device.createDateTime}</TooltipContent>
+          </Tooltip>
+        ),
+        inputType: 'custom',
+      },
+      {
+        data: (
+          <div className="space-x-2">
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setOpenEditModal(true)}
-              className="ml-4 h-7 w-7"
+              onClick={() => {
+                setSelectedDevice(device)
+                setOpenEditModal(true)
+              }}
+              className="h-8 w-8"
+              aria-label="Edit device"
             >
-              <Pencil className="h-4 w-4" />
+              <EditIcon />
             </Button>
-            <div className="ml-auto">
-              <Button
-                onClick={() => setOpenDeleteModal(true)}
-                disabled={disableRevoke}
-                className={disableRevoke ? 'cursor-not-allowed opacity-50' : ''}
-              >
-                Revoke
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                setSelectedDevice(device)
+                setOpenDeleteModal(true)
+              }}
+              disabled={disableRevoke}
+              className={
+                disableRevoke
+                  ? 'h-8 w-8 cursor-not-allowed opacity-50'
+                  : 'h-8 w-8'
+              }
+              aria-label="Delete device"
+            >
+              <DeleteIcon />
+            </Button>
           </div>
+        ),
+        inputType: 'custom',
+      },
+    ],
+  }))
 
-          <p className="text-muted-foreground truncate text-sm">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span>{dateConversion(createDateTime)}</span>
-              </TooltipTrigger>
-              <TooltipContent>{createDateTime}</TooltipContent>
-            </Tooltip>
-          </p>
+  useEffect(() => {
+    if (!selectedDevice) {
+      setOpenDeleteModal(false)
+      setOpenEditModal(false)
+    }
+  }, [selectedDevice])
 
-          <p className="text-muted-foreground truncate text-sm">
-            {credentialID}
-          </p>
-        </div>
-      </div>
+  return (
+    <>
+      {devices.length > 0 && (
+        <DataTable header={headers} data={rows} loading={false} />
+      )}
 
-      <Separator />
+      {selectedDevice && (
+        <DeleteModal
+          openModal={openDeleteModal}
+          closeModal={() => setOpenDeleteModal(false)}
+          onSuccess={handleDeleteConfirm}
+          deviceName={selectedDevice.deviceFriendlyName}
+        />
+      )}
 
-      <DeleteModal
-        openModal={openDeleteModal}
-        closeModal={() => setOpenDeleteModal(false)}
-        onSucess={handleDeleteConfirm}
-        deviceName={deviceFriendlyName}
-      />
-
-      <EditModal
-        openModal={openEditModal}
-        closeModal={() => setOpenEditModal(false)}
-        onSucess={handleEditConfirm}
-      />
+      {selectedDevice && (
+        <EditModal
+          openModal={openEditModal}
+          closeModal={() => setOpenEditModal(false)}
+          onSuccess={handleEditConfirm}
+          initialName={selectedDevice.deviceFriendlyName}
+        />
+      )}
     </>
   )
 }

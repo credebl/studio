@@ -18,6 +18,7 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import DeviceDetails from './DeviceDetails'
 import { Devices } from '../components/UserInfoForm'
+import { ExternalLink } from 'lucide-react'
 import PasskeyAddDevice from './PassKeyAddDevice'
 import PasskeyAlert from './PasskeyAlert'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -280,13 +281,53 @@ const AddPasskey = ({
             ) : (
               <div>
                 <div className="form-container">
-                  <div>
-                    <h1 className="text-xl font-medium text-gray-500 dark:text-white">
-                      Add Passkey
-                    </h1>
-                    <p className="mt-2 mb-2 text-start text-sm font-normal text-gray-700 dark:text-white">
-                      With Passkey, no complex passwords to remember.
-                    </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                    <div className="mb-4">
+                      <h1 className="text-xl font-medium text-gray-500 dark:text-white">
+                        Add Passkey
+                      </h1>
+                      <p className="text-sm font-normal text-gray-700 dark:text-white">
+                        With passkey, you don&apos;t need to remember complex
+                        password.{' '}
+                        <a
+                          href="https://www.passkeycentral.org/introduction-to-passkeys/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-blue-600 hover:underline"
+                        >
+                          Learn more
+                          <ExternalLink className="ml-1 h-4 w-4" />
+                        </a>
+                      </p>
+                      {isDevice && (
+                        <div className="mt-2">
+                          <PasskeyAlert />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-4 sm:mt-0">
+                      <Button
+                        onClick={addDevice}
+                        type="button"
+                        className="flex items-center"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="mr-2"
+                          width="18"
+                          height="18"
+                          fill="none"
+                          viewBox="0 0 18 18"
+                        >
+                          <path
+                            stroke="currentColor"
+                            d="M11.03 4.32a3.82 3.82 0 1 1-7.64 0 3.82 3.82 0 0 1 7.64 0Zm6.473 4.047a2.94 2.94 0 0 1-.486 1.62c-.315.476-.76.838-1.273 1.044l-.691.276.517.535.812.842-1.053 1.091-.335.348.335.347 1.053 1.091-1.619 1.678-.888-.92v-5.241l-.28-.138a2.774 2.774 0 0 1-1.098-.98 2.958 2.958 0 0 1-.168-2.917c.226-.455.566-.838.98-1.109a2.65 2.65 0 0 1 2.775-.081 2.79 2.79 0 0 1 1.038 1.05c.25.443.383.948.38 1.463Zm-1.55-1.761-.42.27.42-.27a1.434 1.434 0 0 0-.638-.542 1.396 1.396 0 0 0-1.566.32 1.491 1.491 0 0 0-.305 1.578c.105.265.286.494.52.656a1.403 1.403 0 0 0 1.813-.183 1.484 1.484 0 0 0 .175-1.83Zm-7.48 3.934c.664 0 1.32.122 1.934.359a5.18 5.18 0 0 0 1.332 1.626v4.213H.5v-1.3c0-1.291.537-2.535 1.5-3.456a5.284 5.284 0 0 1 3.649-1.443h2.824Z"
+                          />
+                        </svg>
+                        Add Passkey
+                      </Button>
+                    </div>
                   </div>
 
                   {editSuccess && (
@@ -312,45 +353,12 @@ const AddPasskey = ({
                     </div>
                   )}
 
-                  {deviceList &&
-                    deviceList.length > 0 &&
-                    deviceList.map((element) => (
-                      <div key={element.credentialId}>
-                        <DeviceDetails
-                          deviceFriendlyName={element.deviceFriendlyName}
-                          createDateTime={element.createDateTime}
-                          credentialID={element.credentialId}
-                          refreshList={userDeviceData}
-                          disableRevoke={disableFlag}
-                          responseMessages={handleResponseMessages}
-                        />
-                      </div>
-                    ))}
-
-                  <div>
-                    <Button
-                      onClick={addDevice}
-                      type="button"
-                      className="mt-10 flex items-center"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="mr-4"
-                        width="18"
-                        height="18"
-                        fill="none"
-                        viewBox="0 0 18 18"
-                      >
-                        <path
-                          stroke="currentColor"
-                          d="M11.03 4.32a3.82 3.82 0 1 1-7.64 0 3.82 3.82 0 0 1 7.64 0Zm6.473 4.047a2.94 2.94 0 0 1-.486 1.62c-.315.476-.76.838-1.273 1.044l-.691.276.517.535.812.842-1.053 1.091-.335.348.335.347 1.053 1.091-1.619 1.678-.888-.92v-5.241l-.28-.138a2.774 2.774 0 0 1-1.098-.98 2.958 2.958 0 0 1-.168-2.917c.226-.455.566-.838.98-1.109a2.65 2.65 0 0 1 2.775-.081 2.79 2.79 0 0 1 1.038 1.05c.25.443.383.948.38 1.463Zm-1.55-1.761-.42.27.42-.27a1.434 1.434 0 0 0-.638-.542 1.396 1.396 0 0 0-1.566.32 1.491 1.491 0 0 0-.305 1.578c.105.265.286.494.52.656a1.403 1.403 0 0 0 1.813-.183 1.484 1.484 0 0 0 .175-1.83Zm-7.48 3.934c.664 0 1.32.122 1.934.359a5.18 5.18 0 0 0 1.332 1.626v4.213H.5v-1.3c0-1.291.537-2.535 1.5-3.456a5.284 5.284 0 0 1 3.649-1.443h2.824Z"
-                        />
-                      </svg>
-                      Add Passkey
-                    </Button>
-                    {isDevice && <PasskeyAlert />}
-                  </div>
-
+                  <DeviceDetails
+                    devices={deviceList}
+                    refreshList={userDeviceData}
+                    disableRevoke={disableFlag}
+                    responseMessages={handleResponseMessages}
+                  />
                   <PasskeyAddDevice
                     openModal={openModel}
                     setOpenModel={setOpenModel}
