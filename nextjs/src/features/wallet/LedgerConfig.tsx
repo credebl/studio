@@ -512,7 +512,7 @@ const LedgerConfig = ({
         {(formikHandlers) => (
           <Form className="space-y-6">
             {selectedLedger && (
-              <div className="rounded-lg p-6 shadow">
+              <div className="rounded-lg border p-6 shadow">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   {renderMethodOptions(formikHandlers)}
 

@@ -564,7 +564,7 @@ const WalletSpinup = (): React.JSX.Element => {
                         </p>
                       </div>
                       <div className="text-muted-foreground ml-auto text-sm">
-                        Step 3 of 4
+                        Step 2 of 4
                       </div>
                     </div>
                     <Stepper currentStep={2} totalSteps={4} />

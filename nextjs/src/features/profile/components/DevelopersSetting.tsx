@@ -12,6 +12,7 @@ import CopyDid from '@/config/CopyDid'
 import Loader from '@/components/Loader'
 import { Roles } from '@/common/enums'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
 import { getOrganizations } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
 import { useAppSelector } from '@/lib/hooks'
@@ -88,6 +89,16 @@ const ClientCredentials = (): React.JSX.Element => {
   useEffect(() => {
     fetchOrganizations()
   }, [currentPage, pageSize, searchTerm])
+
+  useEffect(() => {
+    if (success) {
+      const timeout = setTimeout(() => {
+        setSuccess(null)
+      }, 4000)
+
+      return () => clearTimeout(timeout)
+    }
+  }, [success])
 
   const createClientCredentials = async (): Promise<void> => {
     if (!orgId) {
@@ -210,94 +221,112 @@ const ClientCredentials = (): React.JSX.Element => {
           </div>
         ) : (
           orgId && (
-            <Card className="mx-auto w-full rounded-lg">
+            <div className="mx-auto w-full rounded-lg">
               <div className="px-6 py-6">
-                <form action="#">
-                  <div className="form-container">
-                    <div className="mb-4">
-                      <h1 className="text-xl font-medium">Client Id</h1>
-                      <div className="my-2 flex text-sm leading-normal">
+                <Card className="h-full rounded-2xl border p-6 shadow-sm">
+                  <form>
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <h1 className="text-foreground text-base font-semibold">
+                          Client Id
+                        </h1>
                         {clientId && (
                           <CopyDid
-                            className="truncate text-base"
+                            className="truncate font-mono text-sm"
                             value={clientId}
                           />
                         )}
                       </div>
-                    </div>
 
-                    <div>
-                      <div className="items-center justify-between py-4 sm:flex sm:space-x-2">
-                        <div>
-                          <h1 className="mb-3 text-xl font-medium">
+                      {/* Client Secret and Button */}
+                      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-8">
+                        <div className="space-y-1">
+                          <h1 className="text-foreground text-base font-semibold">
                             Client Secret
                           </h1>
-                          <span className="text-foreground">
+                          <span className="text-muted-foreground text-sm">
                             You need a client secret to authenticate as the
                             organization to the API.
                           </span>
                         </div>
 
                         {Array.isArray(userRoles) &&
-                          userRoles.includes(Roles.OWNER) && (
-                            <div className="mt-4 shrink-0 items-center text-start sm:mt-0">
-                              {buttonDisplay && (
-                                <Button
-                                  onClick={createClientCredentials}
-                                  variant="default"
-                                  className="bg-primary"
-                                >
-                                  {regenerate
-                                    ? 'Regenerate Client Secret'
-                                    : 'Generate Client Secret'}
-                                </Button>
-                              )}
-                            </div>
+                          userRoles.includes(Roles.OWNER) &&
+                          buttonDisplay && (
+                            <Button
+                              onClick={createClientCredentials}
+                              variant="default"
+                              className="w-full shrink-0 sm:w-auto"
+                            >
+                              {regenerate
+                                ? 'Regenerate Client Secret'
+                                : 'Generate Client Secret'}
+                            </Button>
                           )}
                       </div>
 
-                      {clientId && (
+                      {clientId && clientSecret && (
                         <>
-                          <hr />
-                          <div className="mt-4">
-                            {warning && (
-                              <AlertComponent
-                                message={warning}
-                                type="warning"
-                                onAlertClose={() => setWarning(null)}
-                              />
-                            )}
-                          </div>
-
-                          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
-                            <div className="flex items-center gap-4">
-                              <ClientSecretKeySvg />
-
-                              <div className="truncate">
-                                <h1 className="ml-4 truncate text-base">
-                                  {!hideCopy ? (
-                                    clientSecret && (
-                                      <CopyDid
-                                        className="truncate text-base"
-                                        value={clientSecret}
-                                      />
-                                    )
-                                  ) : (
-                                    <span className="truncate">
-                                      {clientSecret}
-                                    </span>
-                                  )}
-                                </h1>
-                              </div>
+                          {warning && (
+                            <AlertComponent
+                              message={warning}
+                              type="warning"
+                              onAlertClose={() => setWarning(null)}
+                            />
+                          )}
+                          <div className="mt-4 flex items-center gap-4">
+                            <ClientSecretKeySvg />
+                            <div className="truncate">
+                              {!hideCopy && clientSecret ? (
+                                <CopyDid
+                                  className="truncate font-mono text-sm"
+                                  value={clientSecret}
+                                />
+                              ) : (
+                                <span className="text-muted-foreground truncate font-mono text-sm">
+                                  {clientSecret}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </>
                       )}
                     </div>
-                  </div>
-                </form>
+                  </form>
+                </Card>
               </div>
-            </Card>
+              <div className="flex w-full flex-col gap-6 px-6 py-6 md:flex-row">
+                <Card className="w-full rounded-2xl border p-6 shadow-sm md:w-1/2">
+                  <h2 className="text-foreground mb-2 text-base font-semibold">
+                    API Documentation
+                  </h2>
+                  <p className="text-muted-foreground mb-4 text-sm">
+                    Learn how to authenticate, make requests, and manage your
+                    credentials.
+                  </p>
+                  <a
+                    href="https://docs.credebl.id/docs/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-medium text-blue-600 hover:underline"
+                  >
+                    View Documentation →
+                  </a>
+                </Card>
+
+                <Card className="w-full rounded-2xl border p-6 shadow-sm md:w-1/2">
+                  <h2 className="text-foreground mb-2 text-base font-semibold">
+                    Application Version
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    Current Version:{' '}
+                    <span className="font-medium">
+                      {envConfig.PLATFORM_DATA.version}
+                    </span>
+                  </p>
+                </Card>
+              </div>
+            </div>
           )
         )}
       </div>
