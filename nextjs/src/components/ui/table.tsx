@@ -12,13 +12,17 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
       data-slot="table-container"
       className="relative w-full overflow-x-auto"
     >
-      {/* fake head to avoid SonarLint complaint */}
-      {/* <thead><tr><th></th></tr></thead> */}
       <table
         data-slot="table"
         className={cn('w-full caption-bottom text-sm', className)}
         {...props}
-      />
+      >
+        <thead className="sr-only">
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+      </table>
     </div>
   )
 }
