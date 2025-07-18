@@ -1,5 +1,3 @@
-/* NOSONAR */
-
 @import 'tailwindcss';
 
 @import 'tw-animate-css';
@@ -110,8 +108,8 @@
   --shadow-2xl: 2px 2px 4px 0px hsl(196 83% 10% / 0.38);
 }
 
+/* stylelint-disable-next-line at-rule-no-unknown */
 @theme inline {
-  /*NOSONAR*/
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
