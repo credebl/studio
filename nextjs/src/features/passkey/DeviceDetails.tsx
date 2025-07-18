@@ -4,9 +4,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { deleteDeviceById, editDeviceDetails } from '@/app/api/Fido'
+import { useEffect, useState } from 'react'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import DataTable from '@/components/DataTable'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import DeleteModal from './DeleteModal'
 import { EditIcon } from '@/config/svgs/EditIcon'
@@ -14,32 +16,33 @@ import EditModal from './EditModal'
 import { Laptop } from 'lucide-react'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
-import { useState } from 'react'
 
 interface IResponseMessages {
   type: 'error' | 'success'
   message: string
 }
 
-interface DeviceDetailsProps {
+interface DeviceRow {
   deviceFriendlyName: string
   createDateTime: string
-  credentialID: string
+  credentialId: string
+}
+interface DeviceDetailsTableProps {
+  devices: DeviceRow[]
   refreshList: () => void
   disableRevoke: boolean
   responseMessages: (value: IResponseMessages) => void
 }
 
 export default function DeviceDetails({
-  deviceFriendlyName,
-  createDateTime,
-  credentialID,
+  devices,
   refreshList,
-  responseMessages,
   disableRevoke,
-}: DeviceDetailsProps): React.JSX.Element {
+  responseMessages,
+}: DeviceDetailsTableProps): React.JSX.Element {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
+  const [selectedDevice, setSelectedDevice] = useState<DeviceRow | null>(null)
 
   const deleteDevice = async (credentialId: string): Promise<void> => {
     try {
@@ -54,15 +57,18 @@ export default function DeviceDetails({
   }
 
   const handleDeleteConfirm = async (confirmed: boolean): Promise<void> => {
-    if (confirmed) {
-      await deleteDevice(credentialID)
+    if (confirmed && selectedDevice?.credentialId) {
+      await deleteDevice(selectedDevice.credentialId)
     }
     setOpenDeleteModal(false)
   }
 
   const handleEditConfirm = async (newDeviceName: string): Promise<void> => {
+    if (!selectedDevice) {
+      return
+    }
     try {
-      const encodedUrl = encodeURIComponent(credentialID)
+      const encodedUrl = encodeURIComponent(selectedDevice.credentialId)
       const payload = {
         enCodedUrl: encodedUrl,
         updatedDeviceName: newDeviceName,
@@ -83,67 +89,108 @@ export default function DeviceDetails({
     setOpenEditModal(false)
   }
 
-  return (
-    <>
-      <tr className="border-t text-sm text-gray-700">
-        <td className="px-6 py-4">
+  const headers = [
+    { columnName: 'Device' },
+    { columnName: 'Credential ID' },
+    { columnName: 'Created' },
+    { columnName: 'Actions' },
+  ]
+
+  const rows = devices.map((device) => ({
+    data: [
+      {
+        data: (
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
               <Laptop className="h-4 w-4 text-gray-500" />
             </div>
-            <span>{deviceFriendlyName}</span>
+            <span>{device.deviceFriendlyName}</span>
           </div>
-        </td>
-
-        <td className="px-6 py-4">{credentialID}</td>
-
-        <td className="px-6 py-4">
+        ),
+        inputType: 'custom',
+      },
+      {
+        data: device.credentialId,
+        inputType: 'custom',
+      },
+      {
+        data: (
           <Tooltip>
             <TooltipTrigger asChild>
-              <span>{dateConversion(createDateTime)}</span>
+              <span>{dateConversion(device.createDateTime)}</span>
             </TooltipTrigger>
-            <TooltipContent>{createDateTime}</TooltipContent>
+            <TooltipContent>{device.createDateTime}</TooltipContent>
           </Tooltip>
-        </td>
+        ),
+        inputType: 'custom',
+      },
+      {
+        data: (
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                setSelectedDevice(device)
+                setOpenEditModal(true)
+              }}
+              className="h-8 w-8"
+            >
+              <EditIcon />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => {
+                setSelectedDevice(device)
+                setOpenDeleteModal(true)
+              }}
+              disabled={disableRevoke}
+              className={
+                disableRevoke
+                  ? 'h-8 w-8 cursor-not-allowed opacity-50'
+                  : 'h-8 w-8'
+              }
+            >
+              <DeleteIcon />
+            </Button>
+          </div>
+        ),
+        inputType: 'custom',
+      },
+    ],
+  }))
 
-        <td className="space-x-2 px-6 py-4 text-right">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setOpenEditModal(true)}
-            className="h-8 w-8"
-          >
-            <EditIcon />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setOpenDeleteModal(true)}
-            disabled={disableRevoke}
-            className={
-              disableRevoke
-                ? 'h-8 w-8 cursor-not-allowed opacity-50'
-                : 'h-8 w-8'
-            }
-          >
-            <DeleteIcon />
-          </Button>
-        </td>
-      </tr>
+  useEffect(() => {
+    if (!selectedDevice) {
+      setOpenDeleteModal(false)
+      setOpenEditModal(false)
+    }
+  }, [selectedDevice])
 
-      <DeleteModal
-        openModal={openDeleteModal}
-        closeModal={() => setOpenDeleteModal(false)}
-        onSucess={handleDeleteConfirm}
-        deviceName={deviceFriendlyName}
-      />
+  return (
+    <>
+      {devices.length > 0 && (
+        <DataTable header={headers} data={rows} loading={false} />
+      )}
 
-      <EditModal
-        openModal={openEditModal}
-        closeModal={() => setOpenEditModal(false)}
-        onSucess={handleEditConfirm}
-        initialName={deviceFriendlyName}
-      />
+      {selectedDevice && (
+        <DeleteModal
+          openModal={openDeleteModal}
+          closeModal={() => setOpenDeleteModal(false)}
+          onSucess={handleDeleteConfirm}
+          deviceName={selectedDevice.deviceFriendlyName}
+        />
+      )}
+
+      {selectedDevice && (
+        <EditModal
+          openModal={openEditModal}
+          closeModal={() => setOpenEditModal(false)}
+          onSucess={handleEditConfirm}
+          initialName={selectedDevice.deviceFriendlyName}
+        />
+      )}
     </>
   )
 }

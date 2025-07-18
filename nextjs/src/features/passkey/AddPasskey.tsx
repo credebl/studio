@@ -353,30 +353,12 @@ const AddPasskey = ({
                     </div>
                   )}
 
-                  <table className="w-full table-auto rounded-xl border border-gray-200">
-                    <thead className="bg-gray-50 text-left text-sm font-semibold text-gray-600">
-                      <tr>
-                        <th className="px-6 py-3">Name</th>
-                        <th className="px-6 py-3">Credential ID</th>
-                        <th className="px-6 py-3">Created</th>
-                        <th className="px-6 py-3 text-right">Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {deviceList.map((device) => (
-                        <DeviceDetails
-                          key={device.credentialId}
-                          deviceFriendlyName={device.deviceFriendlyName}
-                          createDateTime={device.createDateTime}
-                          credentialID={device.credentialId}
-                          refreshList={userDeviceData}
-                          disableRevoke={disableFlag}
-                          responseMessages={handleResponseMessages}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-
+                  <DeviceDetails
+                    devices={deviceList}
+                    refreshList={userDeviceData}
+                    disableRevoke={disableFlag}
+                    responseMessages={handleResponseMessages}
+                  />
                   <PasskeyAddDevice
                     openModal={openModel}
                     setOpenModel={setOpenModel}
