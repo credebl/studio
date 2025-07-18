@@ -14,7 +14,7 @@ export const apiRoutes = {
     fidoDevice: 'auth/passkey',
     fidoAuthentication: 'auth/passkey/authentication-options',
     fidoVerifyAuthentication: 'auth/passkey/verify-authentication/',
-    resetPasswordEndpoint: 'auth/reset-password',
+    resetPasswordEndpoint: 'auth/resetPassword',
     forgotPasswordEndpoint: 'auth/forgot-password',
     resetPasswordPath: 'auth/password-reset',
     refreshToken: '/auth/refresh-token',
