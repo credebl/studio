@@ -140,15 +140,15 @@ export function DataTableSliderFilter<TData>({
         <Button variant="outline" size="sm" className="border-dashed">
           {columnFilterValue ? (
             // NOSONAR
-            <div
-              role="button"
+            <button
+              type="button"
               aria-label={`Clear ${title} filter`}
               tabIndex={0}
               className="focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:outline-none"
               onClick={onReset}
             >
               <XCircle />
-            </div>
+            </button>
           ) : (
             <PlusCircle />
           )}
