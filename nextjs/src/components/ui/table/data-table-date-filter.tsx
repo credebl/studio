@@ -1,17 +1,18 @@
 'use client'
 
-import type { Column } from '@tanstack/react-table'
-import { CalendarIcon, XCircle } from 'lucide-react'
 import * as React from 'react'
-import type { DateRange } from 'react-day-picker'
 
-import { Button } from '@/components/ui/button'
-import { Calendar } from '@/components/ui/calendar'
+import { CalendarIcon, XCircle } from 'lucide-react'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import type { Column } from '@tanstack/react-table'
+import type { DateRange } from 'react-day-picker'
 import { Separator } from '@/components/ui/separator'
 import { formatDate } from '@/lib/format'
 
@@ -189,6 +190,7 @@ export function DataTableDateFilter<TData>({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="border-dashed">
           {hasValue ? (
+            // NOSONAR
             <div
               role="button"
               aria-label={`Clear ${title} filter`}

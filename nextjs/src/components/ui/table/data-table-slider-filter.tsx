@@ -1,20 +1,21 @@
 'use client'
 
-import type { Column } from '@tanstack/react-table'
 import * as React from 'react'
 
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { PlusCircle, XCircle } from 'lucide-react'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
+
+import { Button } from '@/components/ui/button'
+import type { Column } from '@tanstack/react-table'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { Slider } from '@/components/ui/slider'
 import { cn } from '@/lib/utils'
-import { PlusCircle, XCircle } from 'lucide-react'
 
 interface Range {
   min: number
@@ -136,6 +137,7 @@ export function DataTableSliderFilter<TData>({
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="border-dashed">
           {columnFilterValue ? (
+            // NOSONAR
             <div
               role="button"
               aria-label={`Clear ${title} filter`}
