@@ -19,7 +19,7 @@ import { useRef } from 'react'
 const EditModal = (props: {
   openModal: boolean
   closeModal: (flag: boolean) => void
-  onSucess: (name: string) => void
+  onSuccess: (name: string) => void
   initialName?: string
 }): React.JSX.Element => {
   interface nameValue {
@@ -29,7 +29,7 @@ const EditModal = (props: {
   const formikRef = useRef<any>(null)
 
   const saveName = (values: nameValue): void => {
-    props.onSucess(values.name)
+    props.onSuccess(values.name)
     props.closeModal(false)
   }
 

@@ -14,14 +14,14 @@ import { Button } from '@/components/ui/button'
 interface DeleteModalProps {
   openModal: boolean
   closeModal: (flag: boolean) => void
-  onSucess: (flag: boolean) => void
+  onSuccess: (flag: boolean) => void
   deviceName: string
 }
 
 const DeleteModal = ({
   openModal,
   closeModal,
-  onSucess,
+  onSuccess,
   deviceName,
 }: DeleteModalProps): React.JSX.Element => (
   <Dialog open={openModal} onOpenChange={closeModal}>
@@ -47,7 +47,7 @@ const DeleteModal = ({
         <Button variant="outline" onClick={() => closeModal(false)}>
           No, cancel
         </Button>
-        <Button variant="destructive" onClick={() => onSucess(true)}>
+        <Button variant="destructive" onClick={() => onSuccess(true)}>
           Yes, I am sure
         </Button>
       </DialogFooter>

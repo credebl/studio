@@ -135,6 +135,7 @@ export default function DeviceDetails({
                 setOpenEditModal(true)
               }}
               className="h-8 w-8"
+              aria-label="Edit device"
             >
               <EditIcon />
             </Button>
@@ -151,6 +152,7 @@ export default function DeviceDetails({
                   ? 'h-8 w-8 cursor-not-allowed opacity-50'
                   : 'h-8 w-8'
               }
+              aria-label="Delete device"
             >
               <DeleteIcon />
             </Button>
@@ -178,7 +180,7 @@ export default function DeviceDetails({
         <DeleteModal
           openModal={openDeleteModal}
           closeModal={() => setOpenDeleteModal(false)}
-          onSucess={handleDeleteConfirm}
+          onSuccess={handleDeleteConfirm}
           deviceName={selectedDevice.deviceFriendlyName}
         />
       )}
@@ -187,7 +189,7 @@ export default function DeviceDetails({
         <EditModal
           openModal={openEditModal}
           closeModal={() => setOpenEditModal(false)}
-          onSucess={handleEditConfirm}
+          onSuccess={handleEditConfirm}
           initialName={selectedDevice.deviceFriendlyName}
         />
       )}
