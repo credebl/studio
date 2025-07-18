@@ -14,7 +14,7 @@ const apiRoutes = {
     fidoDevice: 'auth/passkey',
     fidoAuthentication: 'auth/passkey/authentication-options',
     fidoVerifyAuthentication: 'auth/passkey/verify-authentication/',
-    resetPasswordEndpoint: 'auth/resetPassword', // NOSONAR
+    resetPasswordEndpoint: 'auth/reset-password', // NOSONAR
     forgotPasswordEndpoint: 'auth/forgot-password', // NOSONAR
     resetPasswordPath: 'auth/password-reset', // NOSONAR
     refreshToken: '/auth/refresh-token',
