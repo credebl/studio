@@ -1,13 +1,12 @@
 # Prevent sensitive files from being copied into the Docker image
 
 # Node modules
-node_modules
 .pnpm-store
 
 # Environment and config files
-.env
-.env.*
-*.env
+#.env
+#.env.*
+#*.env
 
 # Git and editor files
 .git
@@ -22,4 +21,3 @@ pnpm-debug.log
 .cache
 dist
 out
-.next
