@@ -66,7 +66,7 @@ const CredentialDefinition = (): React.JSX.Element => {
   }
 
   return (
-    <Card className="border-border relative h-full w-full overflow-hidden rounded-xl border py-4 shadow-xl transition-transform duration-300">
+    <Card className="border-border relative h-full w-full overflow-hidden rounded-xl border py-4 transition-transform duration-300">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="space-y-1">
           <div className="flex items-center gap-x-2">
