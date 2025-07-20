@@ -14,15 +14,10 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 
 # Install dependencies
-# sonarcloud: disable=ShellScriptExecutionRisk
 RUN pnpm install
 
 # Copy the rest of the source code
 COPY . .
-# COPY .next ./.next
-# COPY public ./public
-# COPY node_modules ./node_modules
-
 
 # Build the Next.js application
 RUN pnpm run build

@@ -15,3 +15,15 @@ pnpm-debug.log
 .cache
 dist
 out
+
+
+# Ignore sensitive and dev-only files
+.env
+.env.*
+.npmrc
+.git
+*.md
+
+# Ignore build & deps
+node_modules
+.next
