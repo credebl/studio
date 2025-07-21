@@ -568,6 +568,7 @@ const BulkIssuance = () => {
 							feature={Features.CRETAE_SCHEMA}
 							svgComponent={createSchemaTitle.svg}
 							onClickEvent={() => {
+								setLoading(true);
 								window.location.href = `${pathRoutes.organizations.createSchema}`;
 							}}
 							isPadding={createSchemaTitle.title !== 'Create Schema'}
