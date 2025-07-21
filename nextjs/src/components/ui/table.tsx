@@ -1,4 +1,4 @@
-/* NOSONAR */
+// sonarlint:disable: typescript:S5256
 'use client'
 
 import * as React from 'react'
