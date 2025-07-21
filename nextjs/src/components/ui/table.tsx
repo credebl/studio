@@ -17,11 +17,11 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
         className={cn('w-full caption-bottom text-sm', className)}
         {...props}
       >
-        <thead className="sr-only">
+        {/* <thead className="sr-only">
           <tr>
             <th></th>
           </tr>
-        </thead>
+        </thead> */}
       </table>
     </div>
   )
