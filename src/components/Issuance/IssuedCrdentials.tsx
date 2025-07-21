@@ -6,7 +6,6 @@ import { DidMethod, IssueCredential, IssueCredentialUserText } from '../../commo
 import { AlertComponent } from '../AlertComponent';
 import type { AxiosResponse } from 'axios';
 import BreadCrumbs from '../BreadCrumbs';
-import { Button, Pagination } from 'flowbite-react';
 import DateTooltip from '../Tooltip';
 import { EmptyListMessage } from '../EmptyListComponent';
 import type { ITableData } from '../../commonComponents/datatable/interface';
@@ -220,7 +219,7 @@ const CredentialList = () => {
 		});
 	};
 
-	const schemeSelection = async () => {
+	const schemeSelection = async () => {	
 		if(w3cSchema){
 			window.location.href = pathRoutes.organizations.Issuance.schema;
 		}
