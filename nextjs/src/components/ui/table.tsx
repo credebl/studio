@@ -1,4 +1,3 @@
-// sonarlint:disable: typescript:S5256
 'use client'
 
 import * as React from 'react'
@@ -11,7 +10,6 @@ function Table({ className, ...props }: React.ComponentProps<'table'>) {
       data-slot="table-container"
       className="relative w-full overflow-x-auto"
     >
-      {/* NOSONAR */}
       <table
         data-slot="table"
         className={cn('w-full caption-bottom text-sm', className)}
