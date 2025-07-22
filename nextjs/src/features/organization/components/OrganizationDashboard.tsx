@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Card, CardContent } from '@/components/ui/card'
 import { IOrgDashboard, IOrganisation } from './interfaces/organization'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useTransition } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -39,6 +39,7 @@ export const OrganizationDashboard = ({
   const [showSetupButton, setSetupButton] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
   const [isWalletSetupLoading, setIsWalletSetupLoading] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
   const selecteDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
@@ -59,12 +60,10 @@ export const OrganizationDashboard = ({
       return
     }
 
-    setLoading(true)
     const useOrgId = activeOrgId === orgIdOfDashboard ? orgId : activeOrgId
     const response = await getOrganizationById(useOrgId as string)
     const { data } = response as AxiosResponse
 
-    setLoading(false)
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (
         data?.data?.org_agents?.length > 0 &&
@@ -75,18 +74,18 @@ export const OrganizationDashboard = ({
         setSetupButton(true)
       }
       setOrgData(data?.data)
+      startTransition(() => {
+        router.push(`/organizations/${useOrgId}`)
+      })
     } else {
       setError(response as string)
     }
-    setLoading(false)
   }
 
   const fetchOrganizationDashboardDetails = async (): Promise<void> => {
-    setLoading(true)
     if (orgId) {
       const response = await getOrgDashboard(orgIdOfDashboard as string)
       const { data } = response as AxiosResponse
-      setLoading(false)
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setOrgDashboard(data?.data)
@@ -94,7 +93,6 @@ export const OrganizationDashboard = ({
         setError(response as string)
       }
     }
-    setLoading(false)
   }
 
   const handleEditOrg = (): void => {
@@ -106,9 +104,18 @@ export const OrganizationDashboard = ({
   }
 
   useEffect(() => {
-    fetchOrganizationDetails()
-    fetchOrganizationDashboardDetails()
+    async function loadData(): Promise<void> {
+      setLoading(true)
+      await fetchOrganizationDetails()
+      await fetchOrganizationDashboardDetails()
+      setLoading(false)
+    }
+    loadData()
   }, [activeOrgId])
+
+  if (isPending || loading) {
+    return <Loader />
+  }
 
   return (
     <PageContainer>
