@@ -35,7 +35,9 @@ export function Breadcrumbs(): React.JSX.Element | null {
   }
 
   function copyToClipboard(text: string): void {
-    window.navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(text).catch((err) => {
+      console.error('Failed to copy text: ', err)
+    })
     setCopied(true)
     setTimeout(() => {
       setCopied(false)
