@@ -60,7 +60,6 @@ export const OrganizationDashboard = ({
       return
     }
 
-    // setLoading(true)
     const useOrgId = activeOrgId === orgIdOfDashboard ? orgId : activeOrgId
     const response = await getOrganizationById(useOrgId as string)
     const { data } = response as AxiosResponse
@@ -81,11 +80,9 @@ export const OrganizationDashboard = ({
     } else {
       setError(response as string)
     }
-    // setLoading(false)
   }
 
   const fetchOrganizationDashboardDetails = async (): Promise<void> => {
-    // setLoading(true)
     if (orgId) {
       const response = await getOrgDashboard(orgIdOfDashboard as string)
       const { data } = response as AxiosResponse
@@ -96,7 +93,6 @@ export const OrganizationDashboard = ({
         setError(response as string)
       }
     }
-    // setLoading(false)
   }
 
   const handleEditOrg = (): void => {
