@@ -19,6 +19,8 @@ export const totalRecords = 'totalRecords'
 export const successfulRecords = 'successfulRecords'
 export const currentPageNumber = 1
 export const polygonFaucet = 'https://faucet.polygon.technology/'
+export const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,
