@@ -343,7 +343,7 @@ const VerificationCredentialList = (): JSX.Element => {
             connectionId={
               row.original.emailId && row.original.emailId !== 'Not Available'
                 ? row.original.emailId
-                : (row.original.theirLabel ?? '--/--')
+                : (row.original.connections.theirLabel ?? '--/--')
             }
           />
         </button>
