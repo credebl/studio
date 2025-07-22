@@ -108,7 +108,9 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
     }
 
     if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
-      router.push(`/organizations/schemas/${props.schemaId}`)
+      router.push(
+        `/organizations/schemas/${props.schemaId}?alias=${props.schemaName}`,
+      )
     }
 
     if (props.onClickCallback) {
