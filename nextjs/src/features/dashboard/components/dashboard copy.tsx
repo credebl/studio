@@ -1,7 +1,6 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getUserEcosystemInvitations,
   getUserInvitations,
@@ -12,11 +11,12 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
+import CredentialDefinition from './CredentialDefinition '
 import Footer from '@/components/Footer'
-import { IOrganisation } from '@/features/organization/components/interfaces/organization'
-import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
-import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
+import OrganizationCardList from './OrganizationCardList'
 import PageContainer from '@/components/layout/page-container'
+import RecentActivity from './RecentActivity'
+import SchemasList from './SchemasList'
 import { Skeleton } from '@/components/ui/skeleton'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
@@ -39,9 +39,7 @@ export default function Dashboard(): React.JSX.Element {
   )
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
-  const [, setWalletExists] = useState(false)
-  const [activeTab, setActiveTab] = useState('Overview')
-  const [orgData, setOrgData] = useState<IOrganisation | null>(null)
+  const [walletExists, setWalletExists] = useState(false)
 
   const orgId = useAppSelector((state) => state?.organization.orgId)
   const [, setUserOrg] = useState(null)
@@ -223,29 +221,16 @@ export default function Dashboard(): React.JSX.Element {
             </div>
           )
         )}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList>
-            <TabsTrigger value="Overview" className="relative">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="Wallet">Wallet</TabsTrigger>
-          </TabsList>
-          <TabsContent
-            value="Overview"
-            className="mt-2 space-y-4 rounded-md border"
-          >
-            <OrganizationDashboard
-              orgId={orgId}
-              setOrgDataForDetails={setOrgData}
-            />
-          </TabsContent>
-          <TabsContent
-            value="Wallet"
-            className="mt-2 space-y-4 rounded-md border p-4"
-          >
-            <OrganizationDetails orgData={orgData} />
-          </TabsContent>
-        </Tabs>
+
+        <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <OrganizationCardList />
+          <SchemasList walletExists={walletExists} />
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <CredentialDefinition />
+          <RecentActivity />
+        </div>
       </div>
       <Footer />
     </PageContainer>

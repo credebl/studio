@@ -1,10 +1,16 @@
 import { Check, Copy } from 'lucide-react'
 import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import {
   IConnection,
   IOrgAgent,
   IOrganisation,
 } from './interfaces/organization'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -12,14 +18,19 @@ import {
 } from '@/components/ui/tooltip'
 
 import type { AxiosResponse } from 'axios'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
 import DIDList from '@/features/wallet/DidListComponent'
+import DataTable from '@/components/DataTable'
+import DidPanel from './DidPanel'
+import { ITableData } from '@/components/DataTable/interface'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
+import { useAppSelector } from '@/lib/hooks'
 
 const OrganizationDetails = ({
   orgData,
@@ -36,6 +47,11 @@ const OrganizationDetails = ({
   const [loading, setLoading] = useState<boolean>(true)
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
   const [copied, setCopied] = useState<boolean>(false)
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const selectedDropdownOrgId = useAppSelector(
+    (state) => state.organization.orgId,
+  )
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -54,6 +70,18 @@ const OrganizationDetails = ({
       setCopied(false)
     }
   }, [])
+
+  const previousOrgId = useRef<string | null>(null)
+
+  useEffect(() => {
+    if (
+      previousOrgId.current !== null &&
+      previousOrgId.current !== selectedDropdownOrgId
+    ) {
+      window.location.reload()
+    }
+    previousOrgId.current = selectedDropdownOrgId
+  }, [selectedDropdownOrgId])
 
   const CopyDid = ({
     value,
@@ -117,74 +145,92 @@ const OrganizationDetails = ({
     </Tooltip>
   )
 
+  const tableData: ITableData[] = [
+    {
+      data: [
+        {
+          data: (
+            <div className="ml-8 flex items-center space-x-4">
+              {agentData?.walletName || 'Not available'}
+            </div>
+          ),
+        },
+        {
+          data: (
+            <div className="flex gap-2">
+              {agentData?.orgDid ? (
+                <CopyDid
+                  value={agentData?.orgDid}
+                  className="font-mono font-semibold"
+                  ellipsis={false}
+                />
+              ) : (
+                <span className="font-semibold">Not available</span>
+              )}{' '}
+              <Badge className="rounded-full border" variant={'outline'}>
+                Created :
+                {agentData?.createDateTime ? (
+                  <DateTooltip date={agentData.createDateTime}>
+                    {dateConversion(agentData.createDateTime)}
+                  </DateTooltip>
+                ) : (
+                  <DateTooltip date={new Date().toISOString()}>
+                    {dateConversion(new Date().toISOString())}
+                  </DateTooltip>
+                )}
+              </Badge>
+            </div>
+          ),
+        },
+        {
+          data: agentData?.ledgers?.name || '-',
+        },
+        {
+          data: agentData?.org_agent_type?.agent
+            ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
+              agentData.org_agent_type.agent.slice(1).toLowerCase()
+            : '',
+        },
+        {
+          data: (
+            <Button className="" onClick={() => setOpenModal(true)}>
+              Scan QR
+            </Button>
+          ),
+        },
+      ],
+    },
+  ]
+
   return (
     <div className="">
-      <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
+      <div className="flex justify-between">
+        <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
+        <Button onClick={() => setIsDrawerOpen(true)}>Did List</Button>
+      </div>
 
-      <Card className="p-6">
-        <div className="flex items-start justify-between gap-96">
-          {/* Wallet Details */}
-          <div className="gap-y-4">
-            <div className="space-y-8">
-              <div className="flex items-center">
-                <span className="w-40">Wallet Name</span>
-                <span className="mx-2">:</span>
-                <span className="font-semibold">{agentData?.walletName}</span>
-              </div>
+      <DataTable
+        header={[
+          { columnName: 'Wallet Name' },
+          { columnName: 'Org DID' },
+          { columnName: 'Network' },
+          { columnName: 'Agent Type' },
+          { columnName: '' },
+        ]}
+        data={tableData}
+        loading={loading}
+        isEmailVerification={true}
+      />
 
-              <div className="flex items-center">
-                <span className="w-40">Org DID</span>
-                <span className="mx-2">:</span>
-                {agentData?.orgDid ? (
-                  <CopyDid
-                    value={agentData?.orgDid}
-                    className="font-mono font-semibold"
-                    ellipsis={false}
-                  />
-                ) : (
-                  <span className="font-semibold">Not available</span>
-                )}
-              </div>
-
-              <div className="flex items-center">
-                <span className="w-40">Network</span>
-                <span className="mx-2">:</span>
-                <span className="font-semibold">
-                  {agentData?.ledgers?.name || '-'}
-                </span>
-              </div>
-
-              <div className="flex items-center">
-                <span className="w-40">Agent Type</span>
-                <span className="mx-2">:</span>
-                <span className="font-semibold">
-                  {agentData?.org_agent_type?.agent
-                    ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
-                      agentData.org_agent_type.agent.slice(1).toLowerCase()
-                    : ''}
-                </span>
-              </div>
-
-              <div className="flex items-center">
-                <span className="w-40">Created On</span>
-                <span className="mx-2">:</span>
-                <span className="font-semibold">
-                  {agentData?.createDateTime ? (
-                    <DateTooltip date={agentData.createDateTime}>
-                      {dateConversion(agentData.createDateTime)}
-                    </DateTooltip>
-                  ) : (
-                    <DateTooltip date={new Date().toISOString()}>
-                      {dateConversion(new Date().toISOString())}
-                    </DateTooltip>
-                  )}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* QR Code - aligned inline with details */}
-          <div className={`w-48 ${loading ? 'border' : ''}`}>
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent
+          className="h-90 w-90 sm:max-w-2xl"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle className="text-center">Scan QR</DialogTitle>
+          </DialogHeader>
+          <div className={`w-48 ${loading ? 'border' : ''} m-auto`}>
             {loading ? (
               <div className="flex h-48 w-48 items-center justify-center">
                 <Loader />
@@ -200,12 +246,16 @@ const OrganizationDetails = ({
               )
             )}
           </div>
-        </div>
-
-        <div className="mt-10">
-          <DIDList orgId={orgId} />
-        </div>
-      </Card>
+        </DialogContent>
+      </Dialog>
+      <DidPanel
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        title={'DID Details'}
+        description={'Detailed view of selected Schema'}
+      >
+        <DIDList orgId={orgId} />
+      </DidPanel>
 
       {agentData?.orgDid?.startsWith('did:web') && (
         <Card className="p-6">
