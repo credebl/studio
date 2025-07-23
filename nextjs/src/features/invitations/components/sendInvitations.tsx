@@ -249,7 +249,7 @@ export default function SendInvitationModal({
                           <TooltipTrigger asChild>
                             <p className="font-medium">
                               {invitation.email.slice(0, 30)}
-                              {invitation.email.length > 29 && ' . . .'}
+                              {invitation.email.length > 30 && ' . . .'}
                             </p>
                           </TooltipTrigger>
                           <TooltipContent side="top">
