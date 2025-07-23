@@ -15,6 +15,12 @@ import {
   RoleI,
   SendInvitationModalProps,
 } from '../interfaces/invitation-interface'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -238,7 +244,19 @@ export default function SendInvitationModal({
                       <MailIcon className="text-muted-foreground h-9 w-9" />
                     </div>
                     <div>
-                      <p className="font-medium">{invitation.email}</p>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <p className="font-medium">
+                              {invitation.email.slice(0, 30)}
+                              {invitation.email.length > 30 && ' . . .'}
+                            </p>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            {invitation.email}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <p className="text-muted-foreground text-sm">
                         Role: Member
                       </p>
