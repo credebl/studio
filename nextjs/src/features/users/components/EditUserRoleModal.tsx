@@ -206,7 +206,7 @@ const EditUserRoleModal = ({
                       <TooltipTrigger asChild>
                         <span className="text-sm">
                           {(user?.email ?? '').slice(0, 30)}
-                          {user?.email.length > 29 && ' . . .'}
+                          {(user?.email ?? '').length > 29 && ' . . .'}
                         </span>
                       </TooltipTrigger>
                       <TooltipContent side="top">{user?.email}</TooltipContent>
