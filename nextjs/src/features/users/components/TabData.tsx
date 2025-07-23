@@ -1,6 +1,12 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import React, { JSX, useCallback } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -189,7 +195,19 @@ function TabData({
                     </Avatar>
                     <div>
                       <h3 className="text-base font-semibold">
-                        {invitation.email}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <p className="font-medium">
+                                {invitation.email.slice(0, 30)}
+                                {invitation.email.length > 29 && ' . . .'}
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              {invitation.email}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </h3>
                       <div className="flex-grow text-start">
                         <DateTooltip date={invitation.createDateTime}>
