@@ -111,7 +111,7 @@ export const authOptions: MyAuthOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(sanitizedPayload),
-                credentials: 'include'
+                credentials: 'include',
               },
             )
           } else {
@@ -240,7 +240,7 @@ export const authOptions: MyAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 
   session: {
-    strategy: 'database',
+    strategy: 'jwt',
   },
 
   pages: {
@@ -250,7 +250,7 @@ export const authOptions: MyAuthOptions = {
   cookies: {
     sessionToken: {
       // name: 'next-auth.session-token',
-      name:'session_id',
+      name: 'session_id',
       options: {
         httpOnly: true,
         sameSite: 'lax',

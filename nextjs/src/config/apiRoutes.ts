@@ -18,7 +18,7 @@ export const apiRoutes = {
     forgotPassword: 'auth/forgot-password',
     resetPassword: 'auth/password-reset',
     refreshToken: '/auth/refresh-token',
-    fetchSessionDetails: '/auth/session'
+    fetchSessionDetails: '/auth/sessionDetails',
   },
 
   users: {
