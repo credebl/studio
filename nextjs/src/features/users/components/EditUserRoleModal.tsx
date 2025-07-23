@@ -12,6 +12,12 @@ import {
 import React, { useEffect, useState } from 'react'
 import { RoleNames, apiStatusCodes } from '@/config/CommonConstant'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
   editOrganizationUserRole,
   getOrganizationRoles,
 } from '@/app/api/organization'
@@ -179,9 +185,33 @@ const EditUserRoleModal = ({
               <div className="mb-2 flex items-center pb-4">
                 <div className="flex-grow">
                   <p className="truncate text-base font-semibold">
-                    {user?.firstName} {user?.lastName}
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="font-medium">
+                            {`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.slice(
+                              0,
+                              30,
+                            )}
+                            {`${user?.firstName ?? ''} ${user?.lastName ?? ''}`
+                              .length > 29 && ' . . .'}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">{`${user?.firstName ?? ''} ${user?.lastName ?? ''}`}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </p>
-                  <span className="text-sm">{user?.email}</span>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="text-sm">
+                          {(user?.email ?? '').slice(0, 30)}
+                          {user?.email.length > 29 && ' . . .'}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top">{user?.email}</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>{' '}
                 </div>
               </div>
 
