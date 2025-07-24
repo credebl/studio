@@ -238,10 +238,10 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id
 
-        dispatch(setOrgId(data.id))
+        dispatch(setOrgId(orgId))
         dispatch(
           setTenantData({
-            id: data.id,
+            id: orgId,
             name: data.name,
             logoUrl: data.logoUrl,
           }),

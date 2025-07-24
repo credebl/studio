@@ -31,6 +31,7 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
 import { useAppSelector } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
 
 const OrganizationDetails = ({
   orgData,
@@ -52,6 +53,7 @@ const OrganizationDetails = ({
   const selectedDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
   )
+  const router = useRouter()
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -78,7 +80,7 @@ const OrganizationDetails = ({
       previousOrgId.current !== null &&
       previousOrgId.current !== selectedDropdownOrgId
     ) {
-      window.location.reload()
+      router.push('/dashboard')
     }
     previousOrgId.current = selectedDropdownOrgId
   }, [selectedDropdownOrgId])

@@ -223,8 +223,7 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
         toast.success(data?.message)
         await fetchOrganizationReferences()
         setShowPopup(false)
-
-        window.location.href = pathRoutes.organizations.root
+        router.push(pathRoutes.users.dashboard)
       } else {
         setError(response as string)
       }

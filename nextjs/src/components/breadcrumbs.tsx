@@ -25,6 +25,7 @@ export function Breadcrumbs(): React.JSX.Element | null {
     if (pathname === '/dashboard') {
       return true
     }
+    return false
   }, [pathname])
   const orgId = useAppSelector((state) => state.organization.orgId)
 
