@@ -6,6 +6,7 @@ declare module 'next-auth' {
     refreshToken?: string
     expiresAt?: number
     user: User
+    sessionId?: string
   }
 
   interface User {
@@ -14,6 +15,7 @@ declare module 'next-auth' {
     accessToken?: string
     refreshToken?: string
     expiresAt?: number
+    sessionId?: string
   }
 }
 

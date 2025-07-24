@@ -27,6 +27,7 @@ import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import Loader from '@/components/Loader'
+// import apiRoutes from '@/app/api/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
@@ -34,6 +35,8 @@ import { startAuthentication } from '@simplewebauthn/browser'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+
+// import { envConfig } from '@/config/envConfig'
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
@@ -93,6 +96,16 @@ export default function SignInViewPage(): React.JSX.Element {
         redirect: false,
         callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
+
+      // const response = await fetch(
+      //   `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
+      //   {
+      //     method: 'POST',
+      //     headers: { 'Content-Type': 'application/json' },
+      //     body: JSON.stringify(entityData),
+      //     credentials: 'include',
+      //   },
+      // )
       // eslint-disable-next-line no-console
       console.log('🚀 ~ SignInViewPage ~ response----------:', response)
 

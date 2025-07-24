@@ -15,7 +15,8 @@ export const SessionSyncer = ({
 }): JSX.Element => {
   const { data: session } = useSession()
   const dispatch = useAppDispatch()
-  const setSessionDetails = (sessionDetails: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const setSessionDetails = (sessionDetails: any): void => {
     if (sessionDetails && sessionDetails?.accessToken) {
       dispatch(setToken(sessionDetails?.accessToken))
     }
@@ -24,32 +25,29 @@ export const SessionSyncer = ({
       dispatch(setRefreshToken(sessionDetails?.refreshToken))
     }
   }
-  const fetchSeesionDetails = async () => {
+  const fetchSeesionDetails = async (): Promise<void> => {
     try {
-      let resp = await fetch(`${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.fetchSessionDetails}`,
+      await fetch(
+        `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.fetchSessionDetails}`,
         {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: 'include'
-        }
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        },
       )
-      console.log('resp', resp)
-      setSessionDetails(resp)
-
-
+      // setSessionDetails(resp)
     } catch (error) {
-
+      console.error('error::', error)
     }
   }
 
   useEffect(() => {
-    console.log('Session', session)
-    if (session?.user) {
+    if (session) {
       fetchSeesionDetails()
+      setSessionDetails(session)
     } else {
-      console.log('session not found')
+      console.error('user not found')
     }
-
   }, [session?.user])
 
   return <>{children}</>

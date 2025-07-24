@@ -144,15 +144,16 @@ export const authOptions: MyAuthOptions = {
               return null
             }
 
-            return {
-              id: user.data.session_state || user.data.email,
-              email: decodedToken?.email,
-              // name: decodedToken?.name || decodedToken?.email,
-              accessToken: user.data.access_token,
-              refreshToken: user.data.refresh_token,
-              // tokenType: user.data.token_type,
-              expiresAt: user.data.expires_in,
-            }
+            return user
+            // return {
+            //   id: user.data.session_state || user.data.email,
+            //   email: decodedToken?.email,
+            //   // name: decodedToken?.name || decodedToken?.email,
+            //   accessToken: user.data.access_token,
+            //   refreshToken: user.data.refresh_token,
+            //   // tokenType: user.data.token_type,
+            //   expiresAt: user.data.expires_in,
+            // }
           }
 
           return null
@@ -169,9 +170,10 @@ export const authOptions: MyAuthOptions = {
       if (user) {
         // token.id = user.id
         // token.email = user.email
-        token.accessToken = user.accessToken || ''
-        token.expiresAt = user.expiresAt
-        token.refreshToken = user.refreshToken
+        // token.accessToken = user.accessToken || ''
+        // token.expiresAt = user.expiresAt
+        // token.refreshToken = user.refreshToken
+        token.sessionId = user.sessionId
       }
       return token
     },
@@ -187,9 +189,10 @@ export const authOptions: MyAuthOptions = {
       //   id: token.id as string,
       //   email: token.email as string,
       // }
-      session.accessToken = token.accessToken as string
-      session.refreshToken = token.refreshToken as string
-      session.expiresAt = token.expiresAt
+      // session.accessToken = token.accessToken as string
+      // session.refreshToken = token.refreshToken as string
+      // session.expiresAt = token.expiresAt
+      session.sessionId = token.sessionId as string
       return session
     },
 
