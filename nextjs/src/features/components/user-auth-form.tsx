@@ -97,18 +97,6 @@ export default function SignInViewPage(): React.JSX.Element {
         callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
 
-      // const response = await fetch(
-      //   `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
-      //   {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify(entityData),
-      //     credentials: 'include',
-      //   },
-      // )
-      // eslint-disable-next-line no-console
-      console.log('🚀 ~ SignInViewPage ~ response----------:', response)
-
       if (response?.ok && response?.url) {
         // route.push(response.url)
         window.location.href = response.url

@@ -144,16 +144,10 @@ export const authOptions: MyAuthOptions = {
               return null
             }
 
-            return user
-            // return {
-            //   id: user.data.session_state || user.data.email,
-            //   email: decodedToken?.email,
-            //   // name: decodedToken?.name || decodedToken?.email,
-            //   accessToken: user.data.access_token,
-            //   refreshToken: user.data.refresh_token,
-            //   // tokenType: user.data.token_type,
-            //   expiresAt: user.data.expires_in,
-            // }
+            return {
+              id: user.data.session_state || user.data.email,
+              sessionId: user.data.sessionId,
+            }
           }
 
           return null
@@ -168,11 +162,6 @@ export const authOptions: MyAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
-        // token.id = user.id
-        // token.email = user.email
-        // token.accessToken = user.accessToken || ''
-        // token.expiresAt = user.expiresAt
-        // token.refreshToken = user.refreshToken
         token.sessionId = user.sessionId
       }
       return token
@@ -185,35 +174,9 @@ export const authOptions: MyAuthOptions = {
       session: Session
       token: JWT
     }): Promise<Session> {
-      // session.user = {
-      //   id: token.id as string,
-      //   email: token.email as string,
-      // }
-      // session.accessToken = token.accessToken as string
-      // session.refreshToken = token.refreshToken as string
-      // session.expiresAt = token.expiresAt
       session.sessionId = token.sessionId as string
       return session
     },
-
-    // async redirect({ url, baseUrl }) {
-    //   try {
-    //     const redirectUrl = new URL(url)
-
-    //     if (
-    //       [process.env.NEXTAUTH_COOKIE_DOMAIN].includes(redirectUrl.hostname) &&
-    //       (redirectUrl.protocol === 'http:' ||
-    //         redirectUrl.protocol === 'https:')
-    //     ) {
-    //       return redirectUrl.toString()
-    //     }
-    //   } catch (err) {
-    //     // If not a full URL, treat it as relative path
-    //     return new URL(url, baseUrl).toString()
-    //   }
-
-    //   return baseUrl
-    // },
 
     async redirect({ url, baseUrl }) {
       try {
@@ -232,7 +195,6 @@ export const authOptions: MyAuthOptions = {
           return redirectUrl.toString()
         }
       } catch (err) {
-        // If not a full URL, treat it as relative path
         return new URL(url, baseUrl).toString()
       }
 
@@ -252,8 +214,10 @@ export const authOptions: MyAuthOptions = {
 
   cookies: {
     sessionToken: {
-      // name: 'next-auth.session-token',
-      name: 'session_id',
+      name:
+        process.env.NEXTAUTH_PROTOCOL === 'http'
+          ? 'next-auth.session-token'
+          : '__Secure-next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
