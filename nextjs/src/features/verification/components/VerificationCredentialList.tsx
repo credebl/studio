@@ -191,7 +191,6 @@ const VerificationCredentialList = (): JSX.Element => {
         setOpenModal(false)
         setProofReqSuccess(data.message)
         await getVerificationListData()
-        // setTimeout(() => getVerificationListData(), 2000)
       } else {
         setError(response as string)
       }
