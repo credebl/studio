@@ -14,15 +14,16 @@ import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
 import Footer from '@/components/Footer'
 import { IOrganisation } from '@/features/organization/components/interfaces/organization'
+import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
 import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
-import { Skeleton } from '@/components/ui/skeleton'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setLedgerId } from '@/lib/orgSlice'
+import { useRouter } from 'next/navigation'
 
 const initialPageState = {
   pageNumber: 1,
@@ -42,11 +43,12 @@ export default function Dashboard(): React.JSX.Element {
   const [, setWalletExists] = useState(false)
   const [activeTab, setActiveTab] = useState('Overview')
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
-
+  const [isWalletSetupLoading, setWalletSetupLoading] = useState<boolean>(false)
   const orgId = useAppSelector((state) => state?.organization.orgId)
   const [, setUserOrg] = useState(null)
 
   const dispatch = useAppDispatch()
+  const router = useRouter()
 
   const getAllInvitations = async (): Promise<void> => {
     try {
@@ -162,6 +164,8 @@ export default function Dashboard(): React.JSX.Element {
 
   const handleCreateWallet = (): void => {
     // redirect or open wallet creation
+    setWalletSetupLoading(true)
+    router.push(`/organizations/agent-config?orgId=${orgId}`)
   }
 
   return (
@@ -197,11 +201,7 @@ export default function Dashboard(): React.JSX.Element {
         </div>
 
         {walletLoading ? (
-          <div className="bg-muted relative mb-6 flex min-h-[150px] flex-col justify-between overflow-hidden rounded-md p-6 shadow-sm">
-            <Skeleton className="mb-2 h-6 w-2/3" />
-            <Skeleton className="mb-4 h-4 w-1/2" />
-            <Skeleton className="h-10 w-[180px]" />
-          </div>
+          <div className=""></div>
         ) : (
           walletData.length === 0 && (
             <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
@@ -215,8 +215,12 @@ export default function Dashboard(): React.JSX.Element {
                     you to issue and verify credentials for your users.
                   </p>
                 </div>
-                <Button onClick={handleCreateWallet} className="min-w-[180px]">
-                  Create Wallet
+                <Button
+                  disabled={isWalletSetupLoading}
+                  onClick={handleCreateWallet}
+                  className="min-w-[180px]"
+                >
+                  {isWalletSetupLoading && <Loader />} Setup Your Wallet
                   <CreateWalletIcon />
                 </Button>
               </div>
@@ -228,7 +232,12 @@ export default function Dashboard(): React.JSX.Element {
             <TabsTrigger value="Overview" className="relative">
               Overview
             </TabsTrigger>
-            <TabsTrigger value="Wallet">Wallet</TabsTrigger>
+            <TabsTrigger
+              value="Wallet"
+              disabled={walletData && walletData.length === 0}
+            >
+              Wallet
+            </TabsTrigger>
           </TabsList>
           <TabsContent
             value="Overview"

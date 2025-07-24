@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/sheet'
 
 import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 
 type Props = {
   open: boolean
@@ -35,8 +36,9 @@ export default function SidePanelComponent({
           <SheetTitle className="text-xl font-semibold">{title}</SheetTitle>
           <SheetDescription className="text-muted-foreground text-sm"></SheetDescription>
         </SheetHeader>
-
-        <div className="p-4">{children}</div>
+        <Card className="overflow-y-auto">
+          <div className="p-4">{children}</div>
+        </Card>
 
         <div className="flex justify-end">
           <SheetClose asChild>
