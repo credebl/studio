@@ -1,10 +1,6 @@
 'use client'
 
 import {
-  ConnectionDetail,
-  DateCell,
-} from '@/features/organization/connectionIssuance/components/CredentialTableCells'
-import {
   IColumnData,
   ITableMetadata,
   SortActions,
@@ -28,6 +24,7 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
+import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
@@ -35,6 +32,7 @@ import { RefreshCw } from 'lucide-react' // Import refresh icon
 import RoleViewButton from '@/components/RoleViewButton'
 import SidePanelComponent from '@/config/SidePanelCommon'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { decryptValue } from './SchemaListUtils'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
@@ -253,101 +251,58 @@ const VerificationCredentialList = (): JSX.Element => {
   }, [orgId])
 
   const columnData: IColumnData[] = [
-    // {
-    //   id: 'presentationId',
-    //   title: 'Request Id',
-    //   accessorKey: 'presentationId',
-    //   columnFunction: [
-    //     'hide',
-    //     {
-    //       sortCallBack: async (order): Promise<void> => {
-    //         setProofPagination((prev) => ({
-    //           ...prev,
-    //           sortBy: 'presentationId',
-    //           sortOrder: order,
-    //         }))
-    //       },
-    //     },
-    //   ],
-    //   cell: ({ row }): React.JSX.Element => {
-    //     const { presentationId } = row.original
-    //     return <span>{presentationId || 'Not available'}</span>
-    //   },
-    // },
-    // {
-    //   id: 'connectionId',
-    //   title: 'Connection Id',
-    //   accessorKey: 'connectionId',
-    //   columnFunction: [
-    //     {
-    //       sortCallBack: async (order): Promise<void> => {
-    //         setProofPagination((prev) => ({
-    //           ...prev,
-    //           sortBy: 'connectionId',
-    //           sortOrder: order,
-    //         }))
-    //       },
-    //     },
-    //   ],
-    //   cell: ({ row }) => (
-    //     <ConnectionIdCell connectionId={row.original.connectionId} />
-    //   ),
-    // },
     {
       id: 'connectionDetail',
       title: 'Holder',
       accessorKey: 'connectionDetail',
-      columnFunction: [
-        // {
-        //   sortCallBack: async (order): Promise<void> => {
-        //     setProofPagination((prev) => ({
-        //       ...prev,
-        //       sortBy: 'emailId',
-        //       sortOrder: order,
-        //     }))
-        //   },
-        // },
-      ],
-      cell: ({ row }) => (
-        <button
-          className="url-link"
-          onClick={() => {
-            // eslint-disable-next-line no-console
-            console.log(row.original)
-            setSelectedFields(() => {
-              const data = [
-                {
-                  label: 'Request Id',
-                  value: row.original.presentationId,
-                  copyable: true,
-                },
-                {
-                  label: 'Schema Name',
-                  value: row.original.schemaName,
-                  copyable: true,
-                },
-              ]
-              if (row.original.theirLabel) {
-                data.push({
-                  label: 'Connection Id',
-                  value: row.original.connectionId,
-                  copyable: true,
-                })
-              }
-              return data
-            })
-            setIsDrawerOpen(true)
-          }}
-        >
-          <ConnectionDetail
-            connectionId={
-              row.original.emailId && row.original.emailId !== 'Not Available'
-                ? row.original.emailId
-                : (row.original.connections.theirLabel ?? '--/--')
-            }
-          />
-        </button>
-      ),
+      columnFunction: [],
+      cell: ({ row }): JSX.Element => {
+        const isEncrypted = (value: string): boolean =>
+          typeof value === 'string' && value.startsWith('U2FsdGVkX1')
+        let email = row.original.emailId
+        const connection = String(
+          row.original.connections?.theirLabel ?? '--/--',
+        )
+        if (email && email !== 'Not Available' && isEncrypted(email)) {
+          email = decryptValue(String(email))
+        }
+        return (
+          <button
+            className="url-link"
+            onClick={() => {
+              setSelectedFields(() => {
+                const data = [
+                  {
+                    label: 'Request Id',
+                    value: row.original.presentationId,
+                    copyable: true,
+                  },
+                  {
+                    label: 'Schema Name',
+                    value: row.original.schemaName,
+                    copyable: true,
+                  },
+                ]
+                if (row.original.connections?.theirLabel) {
+                  data.push({
+                    label: 'Connection Id',
+                    value: row.original.connectionId,
+                    copyable: true,
+                  })
+                }
+                return data
+              })
+              setIsDrawerOpen(true)
+            }}
+          >
+            {String(
+              email && email !== 'Not Available'
+                ? `**${email.slice(2)}`
+                : connection,
+            )}
+          </button>
+        )
+      },
     },
     {
       id: 'createDateTime',
@@ -523,7 +478,7 @@ const VerificationCredentialList = (): JSX.Element => {
         <DataTable
           isLoading={loading}
           placeHolder="Filter by Connection Id and Schema Name"
-          data={verificationList}
+          data={verificationList ?? []}
           columns={column}
           index={'presentationId'}
           pageIndex={proofPagination.pageIndex}
