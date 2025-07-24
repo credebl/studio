@@ -313,7 +313,6 @@ const VerificationCredentialList = (): JSX.Element => {
           className="url-link"
           onClick={() => {
             // eslint-disable-next-line no-console
-            console.log(row.original)
             setSelectedFields(() => {
               const data = [
                 {
