@@ -40,10 +40,10 @@ export const OrganizationDashboard = ({
   const [, setSetupButton] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
 
-  const selecteDropdownOrgId = useAppSelector(
+  const selectedDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
   )
-  const activeOrgId = selecteDropdownOrgId ?? orgId
+  const activeOrgId = selectedDropdownOrgId ?? orgId
   const orgIdOfDashboard = orgId
 
   const fetchOrganizationDetails = async (): Promise<void> => {
@@ -106,7 +106,7 @@ export const OrganizationDashboard = ({
     <div className="container mx-auto space-y-6 px-4 py-6">
       <Card className="shadow-md">
         <CardContent className="p-6">
-          {selecteDropdownOrgId === '' || !selecteDropdownOrgId ? (
+          {selectedDropdownOrgId === '' || !selectedDropdownOrgId ? (
             <span className="text-muted-foreground">No organization Data</span>
           ) : (
             <div className="flex items-center justify-between">
