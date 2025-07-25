@@ -106,70 +106,74 @@ export const OrganizationDashboard = ({
     <div className="container mx-auto space-y-6 px-4 py-6">
       <Card className="shadow-md">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex cursor-default items-center space-x-4">
-              <Avatar className="h-16 w-16 rounded-md">
-                {orgData?.logoUrl ? (
-                  <AvatarImage src={orgData?.logoUrl} alt={orgData?.name} />
-                ) : (
-                  <AvatarFallback className="text-2xl font-bold">
-                    {orgData?.name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              <div className="min-w-0 space-y-1">
-                <h2 className="text-2xl font-bold break-all">
-                  {orgData?.name}
-                </h2>
-                <div className="text-muted-foreground break-all">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <p>
-                          {typeof orgData?.description === 'string' &&
-                          orgData?.description?.length > 150
-                            ? `${orgData?.description.substring(0, 150)}...`
-                            : orgData?.description}{' '}
-                        </p>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="bottom"
-                        sideOffset={4}
-                        className="max-w-3xl"
-                      >
-                        <div>{orgData?.description}</div>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+          {selecteDropdownOrgId === '' || !selecteDropdownOrgId ? (
+            <span className="text-muted-foreground">No organization Data</span>
+          ) : (
+            <div className="flex items-center justify-between">
+              <div className="flex cursor-default items-center space-x-4">
+                <Avatar className="h-16 w-16 rounded-md">
+                  {orgData?.logoUrl ? (
+                    <AvatarImage src={orgData?.logoUrl} alt={orgData?.name} />
+                  ) : (
+                    <AvatarFallback className="text-2xl font-bold">
+                      {orgData?.name.substring(0, 2).toUpperCase()}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div className="min-w-0 space-y-1">
+                  <h2 className="text-2xl font-bold break-all">
+                    {orgData?.name}
+                  </h2>
+                  <div className="text-muted-foreground break-all">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <p>
+                            {typeof orgData?.description === 'string' &&
+                            orgData?.description?.length > 150
+                              ? `${orgData?.description.substring(0, 150)}...`
+                              : orgData?.description}{' '}
+                          </p>
+                        </TooltipTrigger>
+                        <TooltipContent
+                          side="bottom"
+                          sideOffset={4}
+                          className="max-w-3xl"
+                        >
+                          <div>{orgData?.description}</div>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <p className="mt-2 text-sm">
+                    Profile view:{' '}
+                    <span className="font-semibold">
+                      {orgData?.publicProfile ? 'public' : 'private'}
+                    </span>
+                  </p>
                 </div>
-                <p className="mt-2 text-sm">
-                  Profile view:{' '}
-                  <span className="font-semibold">
-                    {orgData?.publicProfile ? 'public' : 'private'}
-                  </span>
-                </p>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  className="bg-transparent hover:bg-transparent"
+                  type="button"
+                  size="icon"
+                  onClick={handleEditOrg}
+                >
+                  <Edit className="text-foreground" />
+                </Button>
+                <Button
+                  size="icon"
+                  onClick={handleDeleteOrg}
+                  aria-label="Delete organization"
+                  className="bg-transparent hover:bg-transparent"
+                >
+                  <DeleteIcon />
+                </Button>
               </div>
             </div>
-
-            <div className="flex gap-3">
-              <Button
-                className="bg-transparent hover:bg-transparent"
-                type="button"
-                size="icon"
-                onClick={handleEditOrg}
-              >
-                <Edit className="text-foreground" />
-              </Button>
-              <Button
-                size="icon"
-                onClick={handleDeleteOrg}
-                aria-label="Delete organization"
-                className="bg-transparent hover:bg-transparent"
-              >
-                <DeleteIcon />
-              </Button>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
 

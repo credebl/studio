@@ -30,7 +30,9 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { deleteConnectionRecords } from '@/app/api/connection'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
+import { setTenantData } from '@/lib/orgSlice'
 import { toast } from 'sonner'
+import { useAppDispatch } from '@/lib/hooks'
 
 interface IOrgCount {
   verificationRecordsCount?: number
@@ -58,6 +60,7 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
   >('')
   const [description, setDescription] = useState<string>('')
   const [, setOrgName] = useState<string>('')
+  const dispatch = useAppDispatch()
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
@@ -223,6 +226,7 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
         toast.success(data?.message)
         await fetchOrganizationReferences()
         setShowPopup(false)
+        dispatch(setTenantData(null))
         router.push(pathRoutes.users.dashboard)
       } else {
         setError(response as string)
