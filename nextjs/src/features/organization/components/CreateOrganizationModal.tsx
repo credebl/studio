@@ -17,6 +17,7 @@ import {
   updateOrganization,
 } from '@/app/api/organization'
 import { fetchCities, fetchCountries, fetchStates } from '../helper/geoHelpers'
+import { setOrgId, setTenantData } from '@/lib/orgSlice'
 import { useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -32,6 +33,7 @@ import LogoUploader from './LogoUploader'
 import PageContainer from '@/components/layout/page-container'
 import Stepper from '@/components/StepperComponent'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { useAppDispatch } from '@/lib/hooks'
 
 type Countries = {
   id: number
@@ -81,6 +83,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
   const orgId = searchParams.get('orgId')
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
+  const dispatch = useAppDispatch()
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     setLoading(true)
@@ -234,6 +237,15 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const orgId = data?.data?.id || data?.data?._id
+
+        dispatch(setOrgId(orgId))
+        dispatch(
+          setTenantData({
+            id: orgId,
+            name: data.name,
+            logoUrl: data.logoUrl,
+          }),
+        )
         setSuccess(data.message as string)
 
         setTimeout(() => {

@@ -50,7 +50,7 @@ const orgSlice = createSlice({
     setOrgRoles: (state, action: PayloadAction<string[]>) => {
       state.orgRoles = action.payload
     },
-    setTenantData: (state, action: PayloadAction<Tenant>) => {
+    setTenantData: (state, action: PayloadAction<Tenant | null>) => {
       state.selectedTenant = action.payload
     },
     clearOrgId: (state) => {
