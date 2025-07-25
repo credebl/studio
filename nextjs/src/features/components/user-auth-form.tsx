@@ -17,7 +17,6 @@ import {
   getUserProfile,
   passwordEncryption,
 } from '@/app/api/Auth'
-import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -31,11 +30,12 @@ import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
+import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
+import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useAppSelector } from '@/lib/hooks'
 
 // import { envConfig } from '@/config/envConfig'
 

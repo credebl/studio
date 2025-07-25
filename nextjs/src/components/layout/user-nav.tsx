@@ -27,9 +27,9 @@ import { persistor } from '@/lib/store'
 import { resetOrgState } from '@/lib/orgSlice'
 import { resetVerificationState } from '@/lib/verificationSlice'
 import { setUserProfileDetails } from '@/lib/userSlice'
+import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { useAppSelector } from '@/lib/hooks'
 
 export function UserNav(): React.JSX.Element | null {
   const dispatch = useDispatch()

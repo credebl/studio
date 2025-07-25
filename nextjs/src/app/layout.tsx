@@ -93,15 +93,11 @@ export default async function RootLayout({
               session={session}
               activeThemeValue={activeThemeValue as string}
             >
-              {/* <SessionSyncer>
-                <SessionCheck> */}
               <SessionManager>
                 <Toaster />
                 <FaviconUpdater />
                 <PageLayout>{children}</PageLayout>
               </SessionManager>
-              {/* </SessionCheck>
-              </SessionSyncer> */}
             </Providers>
           </StoreProvider>
         </NuqsAdapter>
