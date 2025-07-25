@@ -29,21 +29,22 @@ import { resetVerificationState } from '@/lib/verificationSlice'
 import { setUserProfileDetails } from '@/lib/userSlice'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
+import { useAppSelector } from '@/lib/hooks'
 
 export function UserNav(): React.JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
-  const { data: session } = useSession()
+  const token = useAppSelector((state) => state.auth.token)
+
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
-      if (!session?.accessToken) {
+      if (!token) {
         return
       }
       try {
-        const response = await getUserProfile(session?.accessToken)
+        const response = await getUserProfile(token)
         if (
           typeof response !== 'string' &&
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
@@ -58,9 +59,9 @@ export function UserNav(): React.JSX.Element | null {
     }
 
     fetchProfile()
-  }, [session?.accessToken])
+  }, [token])
 
-  if (!session?.accessToken) {
+  if (!token) {
     return null
   }
 

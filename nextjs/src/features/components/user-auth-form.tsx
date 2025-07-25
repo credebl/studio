@@ -35,6 +35,7 @@ import { startAuthentication } from '@simplewebauthn/browser'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useAppSelector } from '@/lib/hooks'
 
 // import { envConfig } from '@/config/envConfig'
 
@@ -59,7 +60,7 @@ export default function SignInViewPage(): React.JSX.Element {
   const [alert, setAlert] = useState<null | string>(null)
   const [success, setSuccess] = useState<null | string>(null)
 
-  const { data: session } = useSession()
+  const token = useAppSelector((state) => state.auth.token)
   const dispatch = useDispatch()
   const route = useRouter()
   const signInForm = useForm<SignInFormValues>({
@@ -216,10 +217,10 @@ export default function SignInViewPage(): React.JSX.Element {
       })
 
       if (verificationResp?.ok && verificationResp?.status === 200) {
-        if (!session?.accessToken) {
+        if (!token) {
           return
         }
-        const userRole = await getUserDetails(session?.accessToken)
+        const userRole = await getUserDetails(token)
 
         if (!userRole?.role?.name) {
           setAlert('Invalid user role')

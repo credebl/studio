@@ -24,7 +24,7 @@ export const SessionManager = ({
   children,
 }: {
   children: React.ReactNode
-}): JSX.Element => {
+}): React.ReactElement => {
   // const { data: session, status } = useSession()
   const { data: session, status } = useSession({
     required: false,
@@ -75,9 +75,7 @@ export const SessionManager = ({
     )
 
     if (status === 'authenticated' && session?.sessionId) {
-      setTimeout(() => {
-        fetchSessionDetails(session.sessionId as string)
-      }, 100)
+      fetchSessionDetails(session.sessionId as string)
     } else if (status === 'unauthenticated') {
       localStorage.removeItem('persist:root')
     }
