@@ -1,16 +1,13 @@
 'use client'
 
 import {
-  ConnectionIdCell,
-  DateCell,
-} from '@/features/organization/connectionIssuance/components/CredentialTableCells'
-import {
   IColumnData,
   ITableMetadata,
   SortActions,
   TableStyling,
   getColumns,
 } from '@/components/ui/generic-table-component/columns'
+import { ISidebarSliderData, RequestProof } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
 import {
   ProofRequestState,
@@ -27,13 +24,15 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
+import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
 import { RefreshCw } from 'lucide-react' // Import refresh icon
-import { RequestProof } from '../type/interface'
 import RoleViewButton from '@/components/RoleViewButton'
+import SidePanelComponent from '@/config/SidePanelCommon'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { decryptValue } from './SchemaListUtils'
 import { getOrganizationById } from '@/app/api/organization'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
@@ -55,6 +54,8 @@ const VerificationCredentialList = (): JSX.Element => {
   const [verificationList, setVerificationList] = useState<RequestProof[]>([])
   const [isWalletCreated, setIsWalletCreated] = useState(false)
   const [reloading, setReloading] = useState<boolean>(false) // Add reloading state
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [fields, setSelectedFields] = useState<ISidebarSliderData[]>([])
 
   // Modal state
   const [openModal, setOpenModal] = useState<boolean>(false)
@@ -63,7 +64,6 @@ const VerificationCredentialList = (): JSX.Element => {
   const [view, setView] = useState(false)
   const [verifyLoading, setVerifyLoading] = useState(true)
   const [userRoles, setUserRoles] = useState<string[]>([])
-  const [verification, setVerification] = useState<boolean>(false)
 
   // Consolidated pagination state
   const [proofPagination, setProofPagination] = useState<PaginationState>({
@@ -191,7 +191,6 @@ const VerificationCredentialList = (): JSX.Element => {
         setOpenModal(false)
         setProofReqSuccess(data.message)
         await getVerificationListData()
-        // setTimeout(() => getVerificationListData(), 2000)
       } else {
         setError(response as string)
       }
@@ -213,7 +212,6 @@ const VerificationCredentialList = (): JSX.Element => {
   }
 
   const schemeSelection = (): void => {
-    setVerification(true)
     router.push('/organizations/verification/verify-credentials')
   }
 
@@ -253,44 +251,57 @@ const VerificationCredentialList = (): JSX.Element => {
 
   const columnData: IColumnData[] = [
     {
-      id: 'presentationId',
-      title: 'Request Id',
-      accessorKey: 'presentationId',
-      columnFunction: [
-        'hide',
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setProofPagination((prev) => ({
-              ...prev,
-              sortBy: 'presentationId',
-              sortOrder: order,
-            }))
-          },
-        },
-      ],
-      cell: ({ row }): React.JSX.Element => {
-        const { presentationId } = row.original
-        return <span>{presentationId || 'Not available'}</span>
+      id: 'connectionDetail',
+      title: 'Holder',
+      accessorKey: 'connectionDetail',
+      columnFunction: [],
+      cell: ({ row }): JSX.Element => {
+        const isEncrypted = (value: string): boolean =>
+          typeof value === 'string' && value.startsWith('U2FsdGVkX1')
+        let email = row.original.emailId
+        const connection = String(
+          row.original.connections?.theirLabel ?? '--/--',
+        )
+        if (email && email !== 'Not Available' && isEncrypted(email)) {
+          email = decryptValue(String(email))
+        }
+        return (
+          <button
+            className="url-link"
+            onClick={() => {
+              setSelectedFields(() => {
+                const data = [
+                  {
+                    label: 'Request Id',
+                    value: row.original.presentationId,
+                    copyable: true,
+                  },
+                  {
+                    label: 'Schema Name',
+                    value: row.original.schemaName,
+                    copyable: true,
+                  },
+                ]
+                if (row.original.connections?.theirLabel) {
+                  data.push({
+                    label: 'Connection Id',
+                    value: row.original.connectionId,
+                    copyable: true,
+                  })
+                }
+                return data
+              })
+              setIsDrawerOpen(true)
+            }}
+          >
+            {String(
+              email && email !== 'Not Available'
+                ? `**${email.slice(2)}`
+                : connection,
+            )}
+          </button>
+        )
       },
-    },
-    {
-      id: 'connectionId',
-      title: 'Connection Id',
-      accessorKey: 'connectionId',
-      columnFunction: [
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setProofPagination((prev) => ({
-              ...prev,
-              sortBy: 'connectionId',
-              sortOrder: order,
-            }))
-          },
-        },
-      ],
-      cell: ({ row }) => (
-        <ConnectionIdCell connectionId={row.original.connectionId} />
-      ),
     },
     {
       id: 'createDateTime',
@@ -431,7 +442,6 @@ const VerificationCredentialList = (): JSX.Element => {
               feature={Features.VERIFICATION}
               svgComponent={verificationSvgComponent()}
               onClickEvent={schemeSelection}
-              loading={verification}
             />
           </div>
         )}
@@ -467,7 +477,7 @@ const VerificationCredentialList = (): JSX.Element => {
         <DataTable
           isLoading={loading}
           placeHolder="Filter by Connection Id and Schema Name"
-          data={verificationList}
+          data={verificationList ?? []}
           columns={column}
           index={'presentationId'}
           pageIndex={proofPagination.pageIndex}
@@ -488,7 +498,11 @@ const VerificationCredentialList = (): JSX.Element => {
           }
         />
       </div>
-
+      <SidePanelComponent
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        fields={fields}
+      />
       {userData && (
         <ProofRequest
           openModal={openModal}
