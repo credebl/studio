@@ -143,47 +143,43 @@ const OrgSwitcherInner = ({
             align="start"
           >
             {tenants.length > 0 ? (
-              tenants.map((tenant) => (
-                <DropdownMenuItem
-                  key={tenant.id}
-                  onSelect={() => handleTenantSwitch(tenant)}
-                  className="flex items-center gap-2"
-                >
-                  <div className="bg-muted text-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
-                    {tenant.logoUrl ? (
-                      <Avatar className="shrink rounded-md">
-                        {tenant.logoUrl ? (
-                          <AvatarImage
-                            src={tenant.logoUrl}
-                            alt={tenant.name}
-                            className="object-contain"
-                          />
-                        ) : (
-                          <AvatarFallback className="text-2xl font-bold">
-                            {tenant.name.substring(0, 2).toUpperCase()}
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                    ) : (
-                      <span className="text-xs font-semibold">
-                        {getInitials(tenant.name)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="max-w-[200px] min-w-0 flex-1 truncate">
-                    {tenant.name}
-                  </div>
+              <div>
+                {tenants.map((tenant) => (
+                  <DropdownMenuItem
+                    key={tenant.id}
+                    onSelect={() => handleTenantSwitch(tenant)}
+                    className="flex items-center gap-2"
+                  >
+                    <div className="bg-muted text-foreground flex size-6 shrink-0 items-center justify-center rounded-md">
+                      {tenant.logoUrl ? (
+                        <Avatar className="shrink rounded-md">
+                          {tenant.logoUrl ? (
+                            <AvatarImage
+                              src={tenant.logoUrl}
+                              alt={tenant.name}
+                              className="object-contain"
+                            />
+                          ) : (
+                            <AvatarFallback className="text-2xl font-bold">
+                              {tenant.name.substring(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                          )}
+                        </Avatar>
+                      ) : (
+                        <span className="text-xs font-semibold">
+                          {getInitials(tenant.name)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="max-w-[200px] min-w-0 flex-1 truncate">
+                      {tenant.name}
+                    </div>
 
-                  {tenant.id === currentTenant?.id && (
-                    <Check className="ml-auto shrink-0" />
-                  )}
-                </DropdownMenuItem>
-              ))
-            ) : (
-              <>
-                <DropdownMenuItem className="text-muted-foreground">
-                  No organization found
-                </DropdownMenuItem>
+                    {tenant.id === currentTenant?.id && (
+                      <Check className="ml-auto shrink-0" />
+                    )}
+                  </DropdownMenuItem>
+                ))}
 
                 <DropdownMenuSeparator />
 
@@ -195,6 +191,12 @@ const OrgSwitcherInner = ({
                 >
                   <Plus size={16} />
                   Create Organization
+                </DropdownMenuItem>
+              </div>
+            ) : (
+              <>
+                <DropdownMenuItem className="text-muted-foreground">
+                  No organization found
                 </DropdownMenuItem>
               </>
             )}

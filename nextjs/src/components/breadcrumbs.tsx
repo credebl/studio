@@ -12,7 +12,7 @@ import React, { Fragment, useMemo } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 import { IconSlash } from '@tabler/icons-react'
-import { UUID_REGEX } from '@/config/CommonConstant'
+import { useAppSelector } from '@/lib/hooks'
 import { useBreadcrumbs } from '@/hooks/use-breadcrumbs'
 
 export function Breadcrumbs(): React.JSX.Element | null {
@@ -22,13 +22,12 @@ export function Breadcrumbs(): React.JSX.Element | null {
   const searchParams = useSearchParams()
   const alias = React.useMemo(() => searchParams.get('alias'), [searchParams])
   const isOrganizationUUIDPath = useMemo(() => {
-    const parts = pathname.split('/').filter(Boolean) // remove empty strings
-    return (
-      parts.length === 2 &&
-      parts[0] === 'organizations' &&
-      UUID_REGEX.test(parts[1])
-    )
+    if (pathname === '/dashboard') {
+      return true
+    }
+    return false
   }, [pathname])
+  const orgId = useAppSelector((state) => state.organization.orgId)
 
   if (items.length === 0) {
     return null
@@ -50,7 +49,7 @@ export function Breadcrumbs(): React.JSX.Element | null {
         {isOrganizationUUIDPath ? (
           <>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink onClick={() => copyToClipboard(items[1].title)}>
+              <BreadcrumbLink onClick={() => copyToClipboard(orgId)}>
                 <div className="relative">
                   Overview
                   {copied && (
