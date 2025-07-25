@@ -156,7 +156,7 @@ const WalletSpinup = (): React.JSX.Element => {
       if (firstAgent?.orgDid) {
         setWalletStatus(true)
         clearSpinupStatus()
-        router.push(`/organizations/${orgId}`)
+        router.push('/dashboard')
         return
       }
 
@@ -443,7 +443,7 @@ const WalletSpinup = (): React.JSX.Element => {
         }, 1000)
 
         const redirectUrl =
-          redirectTo && clientAlias ? redirectTo : `/organizations/${orgId}`
+          redirectTo && clientAlias ? redirectTo : '/dashboard'
 
         router.push(redirectUrl)
         // eslint-disable-next-line no-console
