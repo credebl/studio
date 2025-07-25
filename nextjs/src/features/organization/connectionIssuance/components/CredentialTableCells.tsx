@@ -101,3 +101,11 @@ export const StatusCellForCredential = ({
     </span>
   )
 }
+
+export const ConnectionDetail = ({
+  connectionId,
+}: {
+  connectionId: string
+}): React.JSX.Element => (
+  <span className="text-sm">{connectionId ?? 'Not Available'}</span>
+)
