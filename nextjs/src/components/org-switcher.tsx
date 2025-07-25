@@ -187,7 +187,7 @@ const OrgSwitcherInner = ({
                   onSelect={() =>
                     router.push('/organizations/create-organization')
                   }
-                  className="text-primary-foreground flex cursor-pointer items-center gap-2"
+                  className="flex cursor-pointer items-center gap-2"
                 >
                   <Plus size={16} />
                   Create Organization

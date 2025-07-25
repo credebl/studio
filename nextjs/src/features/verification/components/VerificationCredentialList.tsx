@@ -273,12 +273,12 @@ const VerificationCredentialList = (): JSX.Element => {
                 const data = [
                   {
                     label: 'Request Id',
-                    value: row.original.presentationId,
+                    value: row.original.presentationId || 'Not Available',
                     copyable: true,
                   },
                   {
                     label: 'Schema Name',
-                    value: row.original.schemaName,
+                    value: row.original.schemaName || 'Not Available',
                     copyable: true,
                   },
                 ]
@@ -416,9 +416,7 @@ const VerificationCredentialList = (): JSX.Element => {
     <PageContainer>
       <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Verification List
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">Verification</h2>
           <p className="text-muted-foreground">
             Here&apos;s a list of verification requests
           </p>

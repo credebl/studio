@@ -43,6 +43,28 @@ export const handleReset = ({
   }
 }
 
+const fetchOrganizationDetails = async (orgId: string): Promise<string> => {
+  if (!orgId) {
+    return ''
+  }
+
+  const response = await getOrganizationById(orgId as string)
+  const { data } = response as AxiosResponse
+
+  if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+    if (
+      data?.data?.org_agents?.length > 0 &&
+      data?.data?.org_agents[0]?.orgDid
+    ) {
+      return data?.data?.org_agents[0]?.orgDid
+    } else {
+      return ''
+    }
+  } else {
+    return ''
+  }
+}
+
 export const confirmOOBCredentialIssuance = async ({
   setIssueLoader,
   schemaType,
@@ -87,6 +109,10 @@ export const confirmOOBCredentialIssuance = async ({
       transformedData.credentialDefinitionId = credDefId
       transformedData.isReuseConnection = true
     } else if (schemaType === SchemaTypes.schema_W3C) {
+      const orgDID = await fetchOrganizationDetails(orgId)
+      if (orgDID === '' || !orgDID) {
+        throw new Error('Missing orgId for payload')
+      }
       existingData.formData.forEach((entry: FormDatum) => {
         const credentialOffer = {
           emailId: entry.email,
@@ -101,7 +127,7 @@ export const confirmOOBCredentialIssuance = async ({
             ].filter((v): v is string => typeof v === 'string'),
 
             issuer: {
-              id: orgId,
+              id: orgDID,
             },
             issuanceDate: new Date().toISOString(),
 
