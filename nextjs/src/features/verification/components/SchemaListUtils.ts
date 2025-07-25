@@ -3,6 +3,7 @@ import { IFetchOrganizationDetails, ISchema } from '../type/interface'
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import { AxiosResponse } from 'axios'
+import CryptoJS from 'crypto-js'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
@@ -73,4 +74,22 @@ export const handleW3CSchemaDetails = async ({
 
   store.dispatch(setW3CSchemaAttributes(w3cSchemaAttributes))
   route.push(`${pathRoutes.organizations.verification.w3cAttributes}`)
+}
+
+export const decryptValue = (value: string): string => {
+  if (value === 'Not Available') {
+    return value
+  }
+
+  try {
+    const returnValue = CryptoJS.AES.decrypt(
+      value,
+      `${process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY}`,
+    )
+    const decryptedString = returnValue.toString(CryptoJS.enc.Utf8)
+    return decryptedString
+  } catch (error) {
+    console.error('JSON Parsing Error:', error)
+  }
+  return '--'
 }

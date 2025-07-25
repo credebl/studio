@@ -217,3 +217,9 @@ export interface IFetchOrganizationDetails {
   setSchemaType: Dispatch<SetStateAction<string>>
   setIsNoLedger: Dispatch<SetStateAction<boolean>>
 }
+
+export interface ISidebarSliderData {
+  label: string
+  value: string
+  copyable?: boolean
+}
