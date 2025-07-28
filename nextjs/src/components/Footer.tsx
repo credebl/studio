@@ -10,7 +10,7 @@ const Footer: React.FC<IFooter> = ({ fixed = false }) => (
       fixed ? 'fixed bottom-0 w-full' : ''
     }`}
   >
-    © 2015 - {new Date().getFullYear()} AYANWORKS TECHNOLOGY SOLUTIONS PRIVATE
+    © {new Date().getFullYear()} AYANWORKS TECHNOLOGY SOLUTIONS PRIVATE
     LIMITED.
   </footer>
 )
