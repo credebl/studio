@@ -86,7 +86,7 @@ const DisplayUserProfile = ({
           )}
 
           <div>
-            <h2 className="text-2xl font-bold">
+            <h2 className="max-w-full text-2xl font-bold break-all">
               {userProfileInfo?.firstName} {userProfileInfo?.lastName}
             </h2>
             <p className="text-muted-foreground text-sm">
