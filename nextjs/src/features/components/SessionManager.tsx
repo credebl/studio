@@ -60,9 +60,12 @@ export const SessionManager = ({
         },
       )
       const data = await resp.json()
+      // eslint-disable-next-line
+      console.log(`------session details::::${JSON.stringify(data)}`)
       setSessionDetails(data)
     } catch (error) {
       console.error('Failed to fetch session details:', error)
+      throw error
     }
   }
 
