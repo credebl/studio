@@ -111,7 +111,7 @@ export const confirmOOBCredentialIssuance = async ({
     } else if (schemaType === SchemaTypes.schema_W3C) {
       const orgDID = await fetchOrganizationDetails(orgId)
       if (orgDID === '' || !orgDID) {
-        throw new Error('Missing orgId for payload')
+        throw new Error('Missing orgDid for payload')
       }
       existingData.formData.forEach((entry: FormDatum) => {
         const credentialOffer = {
