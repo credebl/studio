@@ -403,26 +403,26 @@ export default function UserInfoForm({
             <CheckCircle className="absolute top-3 right-3 h-5 w-5 text-[var(--color-bg-success)]" />
           </div>
 
-          <div className="flex overflow-hidden rounded-md border border-[var(--color-border)]">
-            <Button
+          <div className="bg-muted mb-4 flex h-10 overflow-hidden rounded-md p-1 text-sm font-medium">
+            <button
               type="button"
-              className={`flex-1 rounded-none ${
+              className={`flex flex-1 items-center justify-center rounded-none p-1 ${
                 usePassword
-                  ? 'bg-muted text-muted-foreground'
-                  : 'bg-card text-foreground'
+                  ? 'bg-background text-foreground ring-offset-background shadow-xs'
+                  : ''
               }`}
               onClick={() => setUsePassword(true)}
             >
               <Lock className="mr-2 h-4 w-4" />
               Password
-            </Button>
+            </button>
 
-            <Button
+            <button
               type="button"
-              className={`flex-1 rounded-none ${
+              className={`flex flex-1 items-center justify-center rounded-none p-1 ${
                 !usePassword
-                  ? 'bg-muted text-muted-foreground'
-                  : 'bg-card text-foreground'
+                  ? 'bg-background text-foreground ring-offset-background shadow-xs'
+                  : ''
               }`}
               onClick={() => {
                 setUsePassword(false)
@@ -431,7 +431,7 @@ export default function UserInfoForm({
             >
               <KeyRound className="mr-2 h-4 w-4" />
               Passkey
-            </Button>
+            </button>
           </div>
 
           {usePassword ? (
