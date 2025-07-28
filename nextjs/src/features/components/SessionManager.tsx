@@ -1,12 +1,12 @@
 'use client'
 
 import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
 import { passwordEncryption } from '@/app/api/Auth'
-import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
@@ -60,6 +60,7 @@ export const SessionManager = ({
         },
       )
       const data = await resp.json()
+      // eslint-disable-next-line 
       console.log(`------session details::::${JSON.stringify(data)}`)
       setSessionDetails(data)
     } catch (error) {
@@ -72,12 +73,14 @@ export const SessionManager = ({
     if (status === 'loading') {
       return
     }
-    console.log('session',session)
+    // eslint-disable-next-line 
+    console.log('session', session)
     const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
       pathname.startsWith(page),
     )
-    console.log('token',token)
-    if (status === 'authenticated' && session?.sessionId&& !token) {
+    // eslint-disable-next-line 
+    console.log('token', token)
+    if (status === 'authenticated' && session?.sessionId && !token) {
       fetchSessionDetails(session.sessionId as string)
     } else if (status === 'unauthenticated') {
       localStorage.removeItem('persist:root')
