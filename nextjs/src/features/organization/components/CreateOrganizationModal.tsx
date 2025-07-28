@@ -601,7 +601,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                         <Button
                           type="button"
                           onClick={() => handleUpdateOrganization(values)}
-                          disabled={loading}
+                          disabled={
+                            !values.name ||
+                            !values.description ||
+                            !values.countryId ||
+                            (states.length > 0 && !values.stateId) ||
+                            (cities.length > 0 && !values.cityId) ||
+                            loading
+                          }
                         >
                           {createLoading ? <Loader /> : 'Save'}
                         </Button>
