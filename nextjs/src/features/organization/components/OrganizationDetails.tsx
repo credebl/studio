@@ -208,7 +208,7 @@ const OrganizationDetails = ({
     <div className="">
       <div className="flex justify-between">
         <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
-        <Button onClick={() => setIsDrawerOpen(true)}>Did List</Button>
+        <Button onClick={() => setIsDrawerOpen(true)}>DID List</Button>
       </div>
 
       <DataTable
