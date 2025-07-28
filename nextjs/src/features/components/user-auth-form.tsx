@@ -311,33 +311,31 @@ export default function SignInViewPage(): React.JSX.Element {
           </p>
         </div>
 
-        <div className="bg-muted mb-4 flex overflow-hidden rounded-md p-1 text-sm font-medium">
-          <Button
+        <div className="bg-muted mb-4 flex h-10 overflow-hidden rounded-md p-1 text-sm font-medium">
+          <button
             type="button"
-            variant="ghost"
-            className={`flex h-8 flex-1 items-center justify-center gap-1 px-4 py-2 text-xs hover:text-inherit md:h-auto md:text-sm ${
+            className={`flex flex-1 items-center justify-center gap-2 rounded-none p-1 ${
               isPasswordTab
-                ? 'bg-card text-foreground hover:bg-background'
-                : 'bg-muted text-muted-foreground hover:bg-transparent'
+                ? 'bg-background text-foreground ring-offset-background shadow-xs'
+                : ''
             }`}
             onClick={() => setIsPasswordTab(true)}
           >
             <LockKeyhole className="h-4 w-4" />
             Password
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            variant="ghost"
-            className={`flex h-8 flex-1 items-center justify-center gap-1 px-4 py-2 text-xs hover:text-inherit md:h-auto md:text-sm not-last:${
+            className={`flex flex-1 items-center justify-center gap-2 rounded-none p-1 ${
               !isPasswordTab
-                ? 'bg-card text-foreground hover:bg-background'
-                : 'bg-muted text-muted-foreground hover:bg-transparent'
+                ? 'bg-background text-foreground ring-offset-background shadow-xs'
+                : ''
             }`}
             onClick={() => setIsPasswordTab(false)}
           >
             <KeyRound className="h-4 w-4" />
             Passkey
-          </Button>
+          </button>
         </div>
 
         <Form {...signInForm}>
