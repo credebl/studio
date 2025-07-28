@@ -1,13 +1,13 @@
 'use client'
 
 import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { useEffect, useRef } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
 import { passwordEncryption } from '@/app/api/Auth'
 import { useAppDispatch } from '@/lib/hooks'
-import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
 const preventRedirectOnPaths = [
@@ -34,6 +34,7 @@ export const SessionManager = ({
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const dispatch = useAppDispatch()
+  const hasCheckedSession = useRef(false)
 
   const redirectTo = searchParams.get('redirectTo')
 
@@ -65,33 +66,66 @@ export const SessionManager = ({
     }
   }
 
+  // useEffect(() => {
+  //   if (status === 'loading') {
+  //     return
+  //   }
+
+  //   const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
+  //     pathname.startsWith(page),
+  //   )
+
+  //   if (status === 'authenticated' && session?.sessionId) {
+  //     fetchSessionDetails(session.sessionId as string)
+  //   } else if (status === 'unauthenticated') {
+  //     localStorage.removeItem('persist:root')
+  //   }
+
+  //   if (status === 'authenticated') {
+  //     if (redirectTo && !isOnRestrictedPage) {
+  //       window.location.href = redirectTo
+  //     } else if (!redirectTo && !isOnRestrictedPage) {
+  //       router.push('/dashboard')
+  //     }
+  //   }
+
+  //   if (session === null) {
+  //     localStorage.removeItem('persist:root')
+  //   }
+  // }, [session, status, redirectTo, router, pathname])
+
   useEffect(() => {
     if (status === 'loading') {
       return
     }
 
-    const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
-      pathname.startsWith(page),
-    )
+    if (!hasCheckedSession.current) {
+      hasCheckedSession.current = true
+      setTimeout(() => {
+        if (status === 'authenticated' && session?.sessionId) {
+          fetchSessionDetails(session.sessionId)
+        } else if (status === 'unauthenticated') {
+          localStorage.removeItem('persist:root')
+        }
 
-    if (status === 'authenticated' && session?.sessionId) {
-      fetchSessionDetails(session.sessionId as string)
-    } else if (status === 'unauthenticated') {
-      localStorage.removeItem('persist:root')
-    }
+        const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
+          pathname.startsWith(page),
+        )
 
-    if (status === 'authenticated') {
-      if (redirectTo && !isOnRestrictedPage) {
-        window.location.href = redirectTo
-      } else if (!redirectTo && !isOnRestrictedPage) {
-        router.push('/dashboard')
-      }
-    }
+        if (status === 'authenticated') {
+          if (redirectTo && !isOnRestrictedPage) {
+            window.location.href = redirectTo
+          } else if (!redirectTo && !isOnRestrictedPage) {
+            router.push('/dashboard')
+          }
+        }
 
-    if (session === null) {
-      localStorage.removeItem('persist:root')
+        if (session === null) {
+          localStorage.removeItem('persist:root')
+        }
+      }, 500)
     }
-  }, [session, status, redirectTo, router, pathname])
+  }, [status, session])
 
   if (status === 'loading') {
     return <div>Loading session...</div>
