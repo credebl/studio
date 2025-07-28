@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
 import { passwordEncryption } from '@/app/api/Auth'
-import { useAppDispatch } from '@/lib/hooks'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
@@ -36,6 +36,7 @@ export const SessionManager = ({
   const dispatch = useAppDispatch()
 
   const redirectTo = searchParams.get('redirectTo')
+  const token = useAppSelector((state) => state.auth.token)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setSessionDetails = (sessionDetails: any): void => {
@@ -59,9 +60,11 @@ export const SessionManager = ({
         },
       )
       const data = await resp.json()
+      console.log(`------session details::::${JSON.stringify(data)}`)
       setSessionDetails(data)
     } catch (error) {
       console.error('Failed to fetch session details:', error)
+      throw error
     }
   }
 
@@ -69,12 +72,12 @@ export const SessionManager = ({
     if (status === 'loading') {
       return
     }
-
+    console.log('session',session)
     const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
       pathname.startsWith(page),
     )
-
-    if (status === 'authenticated' && session?.sessionId) {
+    console.log('token',token)
+    if (status === 'authenticated' && session?.sessionId&& !token) {
       fetchSessionDetails(session.sessionId as string)
     } else if (status === 'unauthenticated') {
       localStorage.removeItem('persist:root')
