@@ -198,6 +198,15 @@ const OrgSwitcherInner = ({
                 <DropdownMenuItem className="text-muted-foreground">
                   No organization found
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() =>
+                    router.push('/organizations/create-organization')
+                  }
+                  className="flex cursor-pointer items-center gap-2"
+                >
+                  <Plus size={16} />
+                  Create Organization
+                </DropdownMenuItem>
               </>
             )}
           </DropdownMenuContent>
