@@ -82,7 +82,7 @@ export const StatusCellForCredential = ({
       text = IssueCredentialUserText.abandoned
       break
     case IssueCredential.requestReceived:
-      className = 'bg-primary text-foreground'
+      className = 'bg-primary/20 text-foreground'
       text = IssueCredentialUserText.received
       break
     case IssueCredential.proposalReceived:
