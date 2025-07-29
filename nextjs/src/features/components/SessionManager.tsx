@@ -38,8 +38,8 @@ export const SessionManager = ({
 
   const redirectTo = searchParams.get('redirectTo')
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const setSessionDetails = (
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sessionDetails: any,
     redirectTo: string | null,
   ): void => {
@@ -54,7 +54,6 @@ export const SessionManager = ({
     }
     if (redirectTo && !isOnRestrictedPage) {
       window.location.href = redirectTo
-
     } else if (!redirectTo && !isOnRestrictedPage) {
       router.push('/dashboard')
     }
