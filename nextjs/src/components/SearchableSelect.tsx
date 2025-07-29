@@ -88,7 +88,7 @@ export function SearchableSelect({
           disabled={disabled}
           className="flex min-w-lg justify-between"
         >
-          <span className="truncate">
+          <span className="max-w-md truncate">
             {selected ? selected.label : placeholder}
           </span>
           <ChevronDown className="text-muted-foreground" />

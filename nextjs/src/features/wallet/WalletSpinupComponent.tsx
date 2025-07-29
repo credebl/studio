@@ -3,6 +3,7 @@
 
 import { AgentType, DidMethod, WalletSpinupStatus } from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import React, { useEffect, useState } from 'react'
 import {
   createDid,
@@ -576,86 +577,84 @@ const WalletSpinup = (): React.JSX.Element => {
                     <div className="mb-6">
                       <h3 className="mb-2 text-lg font-medium">Agent Type</h3>
 
-                      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                        {/* Dedicated Agent Card */}
-                        <Card
-                          className="p-4 shadow transition-all hover:scale-102"
-                          onClick={() => onRadioSelect(AgentType.DEDICATED)}
-                        >
-                          <div className="mb-4 flex items-start">
-                            <input
-                              id="dedicated-agent-radio"
-                              type="radio"
-                              value={AgentType.DEDICATED}
-                              checked={agentType === AgentType.DEDICATED}
-                              onChange={() =>
-                                onRadioSelect(AgentType.DEDICATED)
-                              }
-                              name="agent-type"
-                              className="mt-1 h-4 w-4"
-                            />
-                          </div>
-                          <label
-                            htmlFor="dedicated-agent-radio"
-                            className="text-lg font-bold"
-                          >
-                            Dedicated Agent
-                          </label>
-                          <p className="my-2 ml-7 text-sm dark:text-white">
-                            Private agent instance exclusively for your{' '}
-                            <br></br> organization
-                          </p>
-                          <ul className="ml-7 space-y-1">
-                            <li className="text-sm">
-                              • Higher performance and reliability
-                            </li>
-                            <li className="text-sm">
-                              • Enhanced privacy and security
-                            </li>
-                            <li className="text-sm">
-                              • Full control over the agent infrastructure
-                            </li>
-                          </ul>
-                        </Card>
+                      <RadioGroup
+                        value={agentType}
+                        defaultValue={agentType}
+                        onValueChange={(value) => onRadioSelect(value)}
+                        className=""
+                      >
+                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                          {/* Dedicated Agent Card */}
 
-                        {/* Shared Agent Card */}
-                        <Card
-                          className="p-4 shadow transition-all hover:scale-102"
-                          onClick={() => onRadioSelect(AgentType.SHARED)}
-                        >
-                          <div className="mb-4 flex items-start">
-                            <input
-                              id="shared-agent-radio"
-                              type="radio"
-                              value={AgentType.SHARED}
-                              checked={agentType === AgentType.SHARED}
-                              onChange={() => onRadioSelect(AgentType.SHARED)}
-                              name="agent-type"
-                              className="mt-1 h-4 w-4"
-                            />
-                          </div>
-                          <label
-                            htmlFor="shared-agent-radio"
-                            className="text-lg font-bold"
+                          <Card
+                            className="p-4 shadow transition-all hover:scale-102"
+                            onClick={() => onRadioSelect(AgentType.DEDICATED)}
                           >
-                            Shared Agent
-                          </label>
-                          <p className="my-2 ml-7 text-sm">
-                            Use our cloud-hosted shared agent infrastructure
-                          </p>
-                          <ul className="ml-7 space-y-1">
-                            <li className="text-sm">
-                              • Cost-effective solution
-                            </li>
-                            <li className="text-sm">
-                              • Managed infrastructure
-                            </li>
-                            <li className="text-sm">
-                              • Quick setup with no maintenance
-                            </li>
-                          </ul>
-                        </Card>
-                      </div>
+                            <div className="mb-4 flex items-start">
+                              <RadioGroupItem
+                                className="border"
+                                value={AgentType.DEDICATED}
+                                id="dedicated-agent-radio"
+                              />
+                            </div>
+                            <label
+                              htmlFor="dedicated-agent-radio"
+                              className="text-lg font-bold"
+                            >
+                              Dedicated Agent
+                            </label>
+                            <p className="my-2 ml-7 text-sm dark:text-white">
+                              Private agent instance exclusively for your{' '}
+                              <br></br> organization
+                            </p>
+                            <ul className="ml-7 space-y-1">
+                              <li className="text-sm">
+                                • Higher performance and reliability
+                              </li>
+                              <li className="text-sm">
+                                • Enhanced privacy and security
+                              </li>
+                              <li className="text-sm">
+                                • Full control over the agent infrastructure
+                              </li>
+                            </ul>
+                          </Card>
+
+                          {/* Shared Agent Card */}
+                          <Card
+                            className="p-4 shadow transition-all hover:scale-102"
+                            onClick={() => onRadioSelect(AgentType.SHARED)}
+                          >
+                            <div className="mb-4 flex items-start">
+                              <RadioGroupItem
+                                className="border"
+                                value={AgentType.SHARED}
+                                id="shared-agent-radio"
+                              />
+                            </div>
+                            <label
+                              htmlFor="shared-agent-radio"
+                              className="text-lg font-bold"
+                            >
+                              Shared Agent
+                            </label>
+                            <p className="my-2 ml-7 text-sm">
+                              Use our cloud-hosted shared agent infrastructure
+                            </p>
+                            <ul className="ml-7 space-y-1">
+                              <li className="text-sm">
+                                • Cost-effective solution
+                              </li>
+                              <li className="text-sm">
+                                • Managed infrastructure
+                              </li>
+                              <li className="text-sm">
+                                • Quick setup with no maintenance
+                              </li>
+                            </ul>
+                          </Card>
+                        </div>
+                      </RadioGroup>
                     </div>
                   )}
 
