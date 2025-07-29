@@ -334,7 +334,7 @@ const BulkIssuance = (): JSX.Element => {
                             <span>[{credentialSelected?.schemaVersion}]</span>
                           </p>
                           {schemaType === SchemaTypes.schema_INDY && (
-                            <p className="pb-2">
+                            <p className="max-w-md truncate pb-2">
                               {' '}
                               <span className="font-semibold">
                                 Credential Definition:
