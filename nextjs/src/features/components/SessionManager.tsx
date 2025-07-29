@@ -39,16 +39,31 @@ export const SessionManager = ({
   const redirectTo = searchParams.get('redirectTo')
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const setSessionDetails = (sessionDetails: any): void => {
+  const setSessionDetails = (
+    sessionDetails: any,
+    redirectTo: string | null,
+  ): void => {
+    const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
+      pathname.startsWith(page),
+    )
     if (sessionDetails?.data?.sessionToken) {
       dispatch(setToken(sessionDetails.data.sessionToken))
     }
     if (sessionDetails?.data?.refresh_token) {
       dispatch(setRefreshToken(sessionDetails.data.refresh_token))
     }
+    if (redirectTo && !isOnRestrictedPage) {
+      window.location.href = redirectTo
+
+    } else if (!redirectTo && !isOnRestrictedPage) {
+      router.push('/dashboard')
+    }
   }
 
-  const fetchSessionDetails = async (sessionId: string): Promise<void> => {
+  const fetchSessionDetails = async (
+    sessionId: string,
+    redirectTo: string | null,
+  ): Promise<void> => {
     try {
       const encrypted = await passwordEncryption(sessionId)
       const encoded = encodeURIComponent(encrypted)
@@ -62,7 +77,7 @@ export const SessionManager = ({
       const data = await resp.json()
       // eslint-disable-next-line
       console.log(`------session details::::${JSON.stringify(data)}`)
-      setSessionDetails(data)
+      setSessionDetails(data, redirectTo)
     } catch (error) {
       console.error('Failed to fetch session details:', error)
       throw error
@@ -106,22 +121,22 @@ export const SessionManager = ({
       hasCheckedSession.current = true
       setTimeout(() => {
         if (status === 'authenticated' && session?.sessionId) {
-          fetchSessionDetails(session.sessionId)
+          fetchSessionDetails(session.sessionId, redirectTo)
         } else if (status === 'unauthenticated') {
           localStorage.removeItem('persist:root')
         }
 
-        const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
-          pathname.startsWith(page),
-        )
+        // const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
+        //   pathname.startsWith(page),
+        // )
 
-        if (status === 'authenticated') {
-          if (redirectTo && !isOnRestrictedPage) {
-            window.location.href = redirectTo
-          } else if (!redirectTo && !isOnRestrictedPage) {
-            router.push('/dashboard')
-          }
-        }
+        // if (status === 'authenticated') {
+        //   if (redirectTo && !isOnRestrictedPage) {
+        //     window.location.href = redirectTo
+        //   } else if (!redirectTo && !isOnRestrictedPage) {
+        //     router.push('/dashboard')
+        //   }
+        // }
 
         if (session === null) {
           localStorage.removeItem('persist:root')
