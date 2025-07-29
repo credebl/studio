@@ -68,7 +68,7 @@ export default function ReceivedInvitations(): React.JSX.Element {
         setError(response as string)
       }
     } catch (err) {
-      console.error('Failed to fetch invitations:', err)
+      console.error('Failed to fetch invitations: ', err)
       setError('Failed to fetch invitations')
     } finally {
       setLoading(false)
