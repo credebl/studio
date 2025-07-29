@@ -57,7 +57,7 @@ export const resetPassword = async (
   email: string | null,
 ): Promise<AxiosResponse | string> => {
   const details = {
-    url: `${apiRoutes.auth.resetPasswordEndpoint}/${email}`,
+    url: `${apiRoutes.auth.resetPasswordPath}/${email}`,
     payload,
   }
   try {

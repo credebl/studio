@@ -12,7 +12,6 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
-import Footer from '@/components/Footer'
 import { IOrganisation } from '@/features/organization/components/interfaces/organization'
 import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
@@ -256,7 +255,6 @@ export default function Dashboard(): React.JSX.Element {
           </TabsContent>
         </Tabs>
       </div>
-      <Footer />
     </PageContainer>
   )
 }
