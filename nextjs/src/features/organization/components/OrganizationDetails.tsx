@@ -31,12 +31,13 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
 import { useAppSelector } from '@/lib/hooks'
-import { useRouter } from 'next/navigation'
 
 const OrganizationDetails = ({
   orgData,
+  setActiveTab,
 }: {
   orgData: IOrganisation | null
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>
 }): React.JSX.Element => {
   const orgId = orgData ? orgData?.id : ''
   // eslint-disable-next-line camelcase
@@ -54,7 +55,6 @@ const OrganizationDetails = ({
   const selectedDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
   )
-  const router = useRouter()
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -81,7 +81,7 @@ const OrganizationDetails = ({
       previousOrgId.current !== null &&
       previousOrgId.current !== selectedDropdownOrgId
     ) {
-      router.push('/dashboard')
+      setActiveTab('Overview')
     }
     previousOrgId.current = selectedDropdownOrgId
   }, [selectedDropdownOrgId])
