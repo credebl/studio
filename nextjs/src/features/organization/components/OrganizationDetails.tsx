@@ -31,12 +31,13 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
 import { useAppSelector } from '@/lib/hooks'
-import { useRouter } from 'next/navigation'
 
 const OrganizationDetails = ({
   orgData,
+  setActiveTab,
 }: {
   orgData: IOrganisation | null
+  setActiveTab: React.Dispatch<React.SetStateAction<string>>
 }): React.JSX.Element => {
   const orgId = orgData ? orgData?.id : ''
   // eslint-disable-next-line camelcase
@@ -50,10 +51,10 @@ const OrganizationDetails = ({
   const [copied, setCopied] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [copyDoc, setCopyDoc] = useState(false)
   const selectedDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
   )
-  const router = useRouter()
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -80,7 +81,7 @@ const OrganizationDetails = ({
       previousOrgId.current !== null &&
       previousOrgId.current !== selectedDropdownOrgId
     ) {
-      router.push('/dashboard')
+      setActiveTab('Overview')
     }
     previousOrgId.current = selectedDropdownOrgId
   }, [selectedDropdownOrgId])
@@ -260,7 +261,7 @@ const OrganizationDetails = ({
       </DidPanel>
 
       {agentData?.orgDid?.startsWith('did:web') && (
-        <Card className="p-6">
+        <Card className="mt-5 p-6">
           <h3 className="mb-4 text-xl font-bold">DID Document</h3>
 
           <div className="space-y-8">
@@ -278,17 +279,37 @@ const OrganizationDetails = ({
               </ul>
             </div>
 
-            <div className="rounded-md p-4">
+            <div className="rounded-md">
               <div className="flex items-start justify-between">
-                <pre className="overflow-x-auto">
+                <pre className="bg-muted relative w-full overflow-x-auto rounded-md p-4">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-3 right-3 h-6 w-6"
+                    onClick={() => {
+                      navigator.clipboard
+                        .writeText(
+                          JSON.stringify(agentData?.didDocument, undefined, 4),
+                        )
+                        .catch((error) =>
+                          console.error('could not copy to clipboard', error),
+                        )
+                      setCopyDoc(true)
+                      setTimeout(() => {
+                        setCopyDoc(false)
+                      }, 2000)
+                    }}
+                  >
+                    {copyDoc ? (
+                      <Check className="text-green-400" />
+                    ) : (
+                      <Copy className="h-4 w-4" />
+                    )}
+                  </Button>
                   <code className="text-sm">
                     {JSON.stringify(agentData?.didDocument, undefined, 4)}
                   </code>
                 </pre>
-                <CopyDid
-                  value={JSON.stringify(agentData?.didDocument)}
-                  hideValue={true}
-                />
               </div>
             </div>
           </div>
