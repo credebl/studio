@@ -40,6 +40,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Loader from '@/components/Loader'
 import { dateConversion } from '@/utils/DateConversion'
 import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
@@ -137,6 +138,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
   const [userRoles, setUserRoles] = useState<string[]>([])
+  const [didLoading, setDidListLoading] = useState<boolean>(true)
 
   const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
@@ -150,6 +152,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   const router = useRouter()
   const getData = async (): Promise<void> => {
+    setDidListLoading(true)
     try {
       const response = await getDids(orgId)
       const { data } = response as AxiosResponse
@@ -169,6 +172,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       }
     } catch (error) {
       console.error('Error fetching DIDs:', error)
+    } finally {
+      setDidListLoading(false)
     }
   }
   const setPrimaryDid = async (id: string, did: string): Promise<void> => {
@@ -493,6 +498,10 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       )
     }
 
+    if (didLoading) {
+      return <Loader />
+    }
+
     return (
       <Tooltip>
         <TooltipTrigger asChild>
@@ -548,7 +557,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       )}
 
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold">DID Details</h3>
         <Button
           onClick={async () => {
             setIsMethodLoading(true)

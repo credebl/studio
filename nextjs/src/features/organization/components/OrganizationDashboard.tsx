@@ -11,60 +11,50 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { getOrgDashboard, getOrganizationById } from '@/app/api/organization'
-import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import { Edit } from 'lucide-react'
-import Loader from '@/components/Loader'
-import OrganizationDetails from './OrganizationDetails'
-import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { useAppSelector } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
 
 type OrganizationDashboardProps = {
   orgId: string
+  setOrgDataForDetails: React.Dispatch<
+    React.SetStateAction<IOrganisation | null>
+  >
   // orgData?: IOrganisation;
 }
 
 export const OrganizationDashboard = ({
   orgId,
+  setOrgDataForDetails,
 }: OrganizationDashboardProps): React.JSX.Element => {
   const router = useRouter()
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [orgDashboard, setOrgDashboard] = useState<IOrgDashboard | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
-  const [showSetupButton, setSetupButton] = useState<boolean>(false)
+  const [, setSetupButton] = useState<boolean>(false)
   const [, setError] = useState<string | null>(null)
-  const [isWalletSetupLoading, setIsWalletSetupLoading] = useState(false)
 
-  const selecteDropdownOrgId = useAppSelector(
+  const selectedDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
   )
-  const activeOrgId = selecteDropdownOrgId ?? orgId
+  const activeOrgId = selectedDropdownOrgId ?? orgId
   const orgIdOfDashboard = orgId
-
-  const searchParams = useSearchParams()
-  const redirectTo = searchParams?.get('redirectTo')
-  const clientAlias = searchParams?.get('clientAlias')
-  const redirectUrl =
-    redirectTo && clientAlias
-      ? `/organizations/agent-config?orgId=${orgIdOfDashboard}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-      : `/organizations/agent-config?orgId=${orgIdOfDashboard}`
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
       return
     }
 
-    setLoading(true)
     const useOrgId = activeOrgId === orgIdOfDashboard ? orgId : activeOrgId
     const response = await getOrganizationById(useOrgId as string)
     const { data } = response as AxiosResponse
 
-    setLoading(false)
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       if (
         data?.data?.org_agents?.length > 0 &&
@@ -75,18 +65,16 @@ export const OrganizationDashboard = ({
         setSetupButton(true)
       }
       setOrgData(data?.data)
+      setOrgDataForDetails(data?.data)
     } else {
       setError(response as string)
     }
-    setLoading(false)
   }
 
   const fetchOrganizationDashboardDetails = async (): Promise<void> => {
-    setLoading(true)
     if (orgId) {
       const response = await getOrgDashboard(orgIdOfDashboard as string)
       const { data } = response as AxiosResponse
-      setLoading(false)
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setOrgDashboard(data?.data)
@@ -94,7 +82,6 @@ export const OrganizationDashboard = ({
         setError(response as string)
       }
     }
-    setLoading(false)
   }
 
   const handleEditOrg = (): void => {
@@ -106,15 +93,22 @@ export const OrganizationDashboard = ({
   }
 
   useEffect(() => {
-    fetchOrganizationDetails()
-    fetchOrganizationDashboardDetails()
+    async function loadData(): Promise<void> {
+      setLoading(true)
+      await fetchOrganizationDetails()
+      await fetchOrganizationDashboardDetails()
+      setLoading(false)
+    }
+    loadData()
   }, [activeOrgId])
 
   return (
-    <PageContainer>
-      <div className="container mx-auto space-y-6 px-4 py-6">
-        <Card className="shadow-md">
-          <CardContent className="p-6">
+    <div className="container mx-auto space-y-6 px-4 py-6">
+      <Card className="shadow-md">
+        <CardContent className="p-6">
+          {selectedDropdownOrgId === '' || !selectedDropdownOrgId ? (
+            <span className="text-muted-foreground">No organization Data</span>
+          ) : (
             <div className="flex items-center justify-between">
               <div className="flex cursor-default items-center space-x-4">
                 <Avatar className="h-16 w-16 rounded-md">
@@ -179,128 +173,109 @@ export const OrganizationDashboard = ({
                 </Button>
               </div>
             </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Dashboard Cards */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <Card
+          className="shadow transition-all hover:scale-102"
+          onClick={() => router.push('/users')}
+        >
+          <CardContent className="flex cursor-pointer items-center justify-between p-6">
+            <div>
+              <p className="font-medium">Users</p>
+              <h3 className="mt-2 text-4xl font-bold">
+                {orgDashboard?.usersCount ?? 0}
+              </h3>
+            </div>
+            <div className="opacity-30">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="60"
+                height="60"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <Card
-            className="shadow transition-all hover:scale-102"
-            onClick={() => router.push('/users')}
-          >
-            <CardContent className="flex cursor-pointer items-center justify-between p-6">
-              <div>
-                <p className="font-medium">Users</p>
-                <h3 className="mt-2 text-4xl font-bold">
-                  {orgDashboard?.usersCount ?? 0}
-                </h3>
-              </div>
-              <div className="opacity-30">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="60"
-                  height="60"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card
-            className={`shadow transition-all hover:scale-102 ${
-              !walletStatus ? 'pointer-events-none opacity-50' : ''
-            }`}
-            onClick={() => {
-              if (walletStatus) {
-                router.push('/organizations/schemas')
-              }
-            }}
-          >
-            <CardContent className="flex cursor-pointer items-center justify-between p-6">
-              <div>
-                <p className="font-medium">Schemas</p>
-                <h3 className="mt-2 text-4xl font-bold">
-                  {orgDashboard?.schemasCount ?? 0}
-                </h3>
-              </div>
-              <div className="opacity-30">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="60"
-                  height="60"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="3" y1="9" x2="21" y2="9"></line>
-                  <line x1="9" y1="21" x2="9" y2="9"></line>
-                </svg>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow transition-all hover:scale-102">
-            <CardContent className="flex cursor-pointer items-center justify-between p-6">
-              <div>
-                <p className="font-medium">Credentials</p>
-                <h3 className="mt-2 text-4xl font-bold">
-                  {orgDashboard?.credentialsCount ?? 0}
-                </h3>
-              </div>
-              <div className="opacity-20">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="60"
-                  height="60"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="4" width="18" height="16" rx="2"></rect>
-                  <circle cx="9" cy="12" r="2"></circle>
-                  <path d="M13 12h6"></path>
-                  <path d="M13 8h6"></path>
-                  <path d="M13 16h6"></path>
-                </svg>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-        {loading ? (
-          <Loader />
-        ) : walletStatus === true ? (
-          <OrganizationDetails orgData={orgData} />
-        ) : (
-          <>
-            {showSetupButton && (
-              <Button
-                onClick={() => {
-                  setIsWalletSetupLoading(true)
-                  router.push(redirectUrl)
-                }}
-                disabled={isWalletSetupLoading}
+        <Card
+          className={`shadow transition-all hover:scale-102 ${
+            !walletStatus ? 'pointer-events-none opacity-50' : ''
+          }`}
+          onClick={() => {
+            if (walletStatus) {
+              router.push('/organizations/schemas')
+            }
+          }}
+        >
+          <CardContent className="flex cursor-pointer items-center justify-between p-6">
+            <div>
+              <p className="font-medium">Schemas</p>
+              <h3 className="mt-2 text-4xl font-bold">
+                {orgDashboard?.schemasCount ?? 0}
+              </h3>
+            </div>
+            <div className="opacity-30">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="60"
+                height="60"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {isWalletSetupLoading ? <Loader /> : 'Setup Your Wallet'}
-              </Button>
-            )}
-          </>
-        )}
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="3" y1="9" x2="21" y2="9"></line>
+                <line x1="9" y1="21" x2="9" y2="9"></line>
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow transition-all hover:scale-102">
+          <CardContent className="flex cursor-pointer items-center justify-between p-6">
+            <div>
+              <p className="font-medium">Credentials</p>
+              <h3 className="mt-2 text-4xl font-bold">
+                {orgDashboard?.credentialsCount ?? 0}
+              </h3>
+            </div>
+            <div className="opacity-20">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="60"
+                height="60"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                <circle cx="9" cy="12" r="2"></circle>
+                <path d="M13 12h6"></path>
+                <path d="M13 8h6"></path>
+                <path d="M13 16h6"></path>
+              </svg>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </PageContainer>
+    </div>
   )
 }

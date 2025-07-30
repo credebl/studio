@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  ConnectionIdCell,
   DateCell,
   SchemaNameCell,
   StatusCellForCredential,
@@ -21,11 +20,13 @@ import { ConnectionApiSortFields } from '@/features/connections/types/connection
 import { DataTable } from '../../../../components/ui/generic-table-component/data-table'
 import { DidMethod } from '@/features/common/enum'
 import { Features } from '@/common/enums'
+import { ISidebarSliderData } from '@/features/schemas/type/schemas-interface'
 import { IssuedCredential } from '../type/Issuance'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { RefreshCw } from 'lucide-react'
 import RoleViewButton from '@/components/RoleViewButton'
+import SidePanelComponent from '@/config/SidePanelCommon'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getIssuedCredentials } from '@/app/api/Issuance'
 import { getOrganizationById } from '@/app/api/organization'
@@ -53,6 +54,8 @@ const Credentials = (): JSX.Element => {
   const [isW3C, setIsW3C] = useState(false)
   const [reloading, setReloading] = useState<boolean>(false)
   const [isIssuing, setIsIssuing] = useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [fields, setSelectedFields] = useState<ISidebarSliderData[]>([])
 
   // Consolidated pagination state
   const [pagination, setPagination] = useState<PaginationState>({
@@ -173,23 +176,6 @@ const Credentials = (): JSX.Element => {
 
   const columnData: IColumnData[] = [
     {
-      id: 'credentialExchangeId',
-      title: 'credential Exchange Id',
-      accessorKey: 'credentialExchangeId',
-      columnFunction: [
-        'hide',
-        {
-          sortCallBack: async (order): Promise<void> => {
-            setPagination((prev) => ({
-              ...prev,
-              sortBy: 'credentialExchangeId',
-              sortOrder: order,
-            }))
-          },
-        },
-      ],
-    },
-    {
       id: 'connectionId',
       title: 'Issued to',
       accessorKey: 'connectionId',
@@ -205,7 +191,36 @@ const Credentials = (): JSX.Element => {
         },
       ],
       cell: ({ row }) => (
-        <ConnectionIdCell connectionId={row.original.connectionId} />
+        <button
+          className="url-link"
+          onClick={() => {
+            setSelectedFields(() => {
+              const data = [
+                {
+                  label: 'Credential Exchange Id',
+                  value: row.original.credentialExchangeId,
+                  copyable: true,
+                },
+                {
+                  label: 'Schema Id',
+                  value: row.original.schemaId,
+                  copyable: true,
+                },
+                {
+                  label: 'Connection Id',
+                  value: row.original.connectionId ?? 'Not Available',
+                  copyable: true,
+                },
+              ]
+              return data
+            })
+            setIsDrawerOpen(true)
+          }}
+        >
+          {row.original.connections
+            ? row.original.connections.theirLabel
+            : 'Not Available'}
+        </button>
       ),
     },
     {
@@ -345,6 +360,11 @@ const Credentials = (): JSX.Element => {
           }
         />
       </div>
+      <SidePanelComponent
+        open={isDrawerOpen}
+        onOpenChange={setIsDrawerOpen}
+        fields={fields}
+      />
     </PageContainer>
   )
 }
