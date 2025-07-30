@@ -251,7 +251,10 @@ export default function Dashboard(): React.JSX.Element {
             value="Wallet"
             className="mt-2 space-y-4 rounded-md border p-4"
           >
-            <OrganizationDetails orgData={orgData} />
+            <OrganizationDetails
+              orgData={orgData}
+              setActiveTab={setActiveTab}
+            />
           </TabsContent>
         </Tabs>
       </div>
