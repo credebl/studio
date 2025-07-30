@@ -281,7 +281,7 @@ const WalletSpinup = (): React.JSX.Element => {
       method: values.method.split(':')[1] || '',
       network:
         values.method === DidMethod.INDY
-          ? values.network?.split(':').slice(2).join(':')
+          ? values.network
           : values.method === DidMethod.POLYGON
             ? values.network?.split(':').slice(1).join(':')
             : '',
