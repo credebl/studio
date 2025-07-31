@@ -12,7 +12,6 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
-import Footer from '@/components/Footer'
 import { IOrganisation } from '@/features/organization/components/interfaces/organization'
 import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
@@ -252,11 +251,13 @@ export default function Dashboard(): React.JSX.Element {
             value="Wallet"
             className="mt-2 space-y-4 rounded-md border p-4"
           >
-            <OrganizationDetails orgData={orgData} />
+            <OrganizationDetails
+              orgData={orgData}
+              setActiveTab={setActiveTab}
+            />
           </TabsContent>
         </Tabs>
       </div>
-      <Footer />
     </PageContainer>
   )
 }
