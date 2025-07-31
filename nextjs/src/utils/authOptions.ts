@@ -134,8 +134,6 @@ export const authOptions: MyAuthOptions = {
           }
 
           const user = responseData
-          // eslint-disable-next-line no-console
-          console.log('res in Auth options', user)
           if (user.statusCode === 200 && user.data) {
             const decodedToken = jwtDecode<jwtDataPayload>(
               user.data.access_token,
@@ -153,7 +151,7 @@ export const authOptions: MyAuthOptions = {
 
           return null
         } catch (error) {
-          if (typeof error.message === 'string') {
+          if (error instanceof Error) {
             throw new Error(error.message)
           }
           throw new Error(JSON.stringify({ message: 'Authorize error' }))
