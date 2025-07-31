@@ -81,16 +81,20 @@ export default function Header(): React.JSX.Element {
     <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
-        <OrgSwitcher
-          tenants={orgList.map((org) => ({
-            id: org.id,
-            name: org.name,
-            logoUrl: org.logoUrl,
-          }))}
-          defaultTenant={orgList.length > 0 ? orgList[0] : undefined}
-          onTenantSwitch={handleSwitchTenant}
-        />
-        <Breadcrumbs />
+        <div className="items-center gap-2 md:flex">
+          <OrgSwitcher
+            tenants={orgList.map((org) => ({
+              id: org.id,
+              name: org.name,
+              logoUrl: org.logoUrl,
+            }))}
+            defaultTenant={orgList.length > 0 ? orgList[0] : undefined}
+            onTenantSwitch={handleSwitchTenant}
+          />
+          <div className="pl-4 md:pl-0">
+            <Breadcrumbs />
+          </div>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 px-4">

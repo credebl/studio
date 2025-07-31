@@ -348,7 +348,7 @@ const LedgerConfig = ({
       <div className="mb-4 flex items-center">
         <div>
           <h2 className="text-xl font-medium">Ledger Configuration</h2>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-xs md:text-sm">
             Choose your ledger and DID method
           </p>
         </div>
@@ -433,7 +433,7 @@ const LedgerConfig = ({
 
       <div className="mb-6">
         <h3 className="mb-4 text-lg font-medium">Select Ledger</h3>
-        <div className="grid grid-cols-1 gap-18 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3 md:gap-18">
           <LedgerCard
             ledger={Ledgers.INDY}
             title=""

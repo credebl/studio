@@ -109,19 +109,19 @@ export const OrganizationDashboard = ({
           {selectedDropdownOrgId === '' || !selectedDropdownOrgId ? (
             <span className="text-muted-foreground">No organization Data</span>
           ) : (
-            <div className="flex items-center justify-between">
+            <div className="items-center justify-between md:flex">
               <div className="flex cursor-default items-center space-x-4">
-                <Avatar className="h-16 w-16 rounded-md">
+                <Avatar className="h-12 w-12 rounded-md md:h-16 md:w-16">
                   {orgData?.logoUrl ? (
                     <AvatarImage src={orgData?.logoUrl} alt={orgData?.name} />
                   ) : (
-                    <AvatarFallback className="text-2xl font-bold">
+                    <AvatarFallback className="text-xl font-bold md:text-2xl">
                       {orgData?.name.substring(0, 2).toUpperCase()}
                     </AvatarFallback>
                   )}
                 </Avatar>
                 <div className="min-w-0 space-y-1">
-                  <h2 className="text-2xl font-bold break-all">
+                  <h2 className="text-xl font-bold break-all md:text-2xl">
                     {orgData?.name}
                   </h2>
                   <div className="text-muted-foreground break-all">
@@ -154,17 +154,17 @@ export const OrganizationDashboard = ({
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex justify-end gap-3">
                 <Button
                   className="bg-transparent hover:bg-transparent"
                   type="button"
-                  size="icon"
+                  size="sm"
                   onClick={handleEditOrg}
                 >
                   <Edit className="text-foreground" />
                 </Button>
                 <Button
-                  size="icon"
+                  size="sm"
                   onClick={handleDeleteOrg}
                   aria-label="Delete organization"
                   className="bg-transparent hover:bg-transparent"

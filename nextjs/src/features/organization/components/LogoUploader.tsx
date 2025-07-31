@@ -41,9 +41,9 @@ export default function LogoUploader({
 
   return (
     <div>
-      <Label className="mb-2 block pb-4">Organization Logo</Label>
-      <div className="border-input flex items-center gap-4 rounded-md border p-4">
-        <Avatar className="h-24 w-24 rounded-none">
+      <Label className="mt-4 mb-2 block pb-4">Organization Logo</Label>
+      <div className="border-input flex items-center gap-4 rounded-md border p-2 md:p-4">
+        <Avatar className="h-16 w-16 rounded-none">
           <AvatarImage
             src={
               logoPreview || existingLogoUrl || '/images/upload_logo_file.svg'

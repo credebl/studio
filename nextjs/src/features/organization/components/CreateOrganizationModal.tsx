@@ -273,14 +273,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
           <Loader />
         </div>
       ) : (
-        <div className="flex min-h-screen items-start justify-center p-6">
-          <Card className="border-border relative w-full max-w-[800px] min-w-[700px] overflow-hidden rounded-xl border p-8 py-12 shadow-xl transition-transform duration-300">
+        <div className="flex min-h-screen items-start justify-center p-1 md:p-6">
+          <Card className="border-border relative w-full max-w-[800px] overflow-hidden rounded-xl border p-4 py-6 shadow-xl transition-transform duration-300 md:min-w-[700px] md:p-8 md:py-12">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-2xl font-semibold">
+                <h1 className="text-xl font-semibold md:text-2xl">
                   {isEditMode ? 'Edit Organization' : 'Organization Setup'}
                 </h1>
-                <p className="">
+                <p className="text-sm md:text-base">
                   {isEditMode
                     ? 'Edit your organization details'
                     : 'Tell us about your organization'}
@@ -587,7 +587,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       type="button"
                       onClick={() => {
                         setIsBackLoading(true)
-                        router.push('/organizations')
+                        router.push('/dashboard')
                       }}
                       disabled={isBackLoading}
                     >

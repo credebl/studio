@@ -44,7 +44,7 @@ export function Breadcrumbs(): React.JSX.Element | null {
   }
 
   return (
-    <Breadcrumb>
+    <Breadcrumb className="hidden md:block">
       <BreadcrumbList>
         {isOrganizationUUIDPath ? (
           <>

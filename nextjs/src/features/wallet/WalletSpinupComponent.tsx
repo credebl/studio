@@ -527,10 +527,10 @@ const WalletSpinup = (): React.JSX.Element => {
           </div>
         </div>
       )}
-      <div className="flex min-h-screen items-start justify-center p-6">
+      <div className="flex min-h-screen items-start justify-center p-1 md:p-6">
         <div className="mx-auto mt-4">
           <Card>
-            <CardContent className="mr-18 ml-18 p-6">
+            <CardContent className="m-auto p-6 md:mr-18 md:ml-18">
               <div className="space-y-4">
                 {success && (
                   <div className="w-full" role="alert">
@@ -559,12 +559,14 @@ const WalletSpinup = (): React.JSX.Element => {
                   <>
                     <div className="mb-6 flex items-center justify-between">
                       <div>
-                        <h1 className="text-2xl font-semibold">Agent Setup</h1>
-                        <p className="text-muted-foreground">
+                        <h1 className="text-xl font-semibold md:text-2xl">
+                          Agent Setup
+                        </h1>
+                        <p className="text-muted-foreground text-sm md:text-base">
                           Configure your digital agent
                         </p>
                       </div>
-                      <div className="text-muted-foreground ml-auto text-sm">
+                      <div className="text-muted-foreground ml-auto text-xs md:text-sm">
                         Step 2 of 4
                       </div>
                     </div>
@@ -590,7 +592,7 @@ const WalletSpinup = (): React.JSX.Element => {
                             className="p-4 shadow transition-all hover:scale-102"
                             onClick={() => onRadioSelect(AgentType.DEDICATED)}
                           >
-                            <div className="mb-4 flex items-start">
+                            <div className="mb-2 flex items-start md:mb-4">
                               <RadioGroupItem
                                 className="border"
                                 value={AgentType.DEDICATED}
@@ -599,7 +601,7 @@ const WalletSpinup = (): React.JSX.Element => {
                             </div>
                             <label
                               htmlFor="dedicated-agent-radio"
-                              className="text-lg font-bold"
+                              className="text-md font-bold md:text-lg"
                             >
                               Dedicated Agent
                             </label>
@@ -625,7 +627,7 @@ const WalletSpinup = (): React.JSX.Element => {
                             className="p-4 shadow transition-all hover:scale-102"
                             onClick={() => onRadioSelect(AgentType.SHARED)}
                           >
-                            <div className="mb-4 flex items-start">
+                            <div className="mb-2 flex items-start md:mb-4">
                               <RadioGroupItem
                                 className="border"
                                 value={AgentType.SHARED}
@@ -634,7 +636,7 @@ const WalletSpinup = (): React.JSX.Element => {
                             </div>
                             <label
                               htmlFor="shared-agent-radio"
-                              className="text-lg font-bold"
+                              className="text-md font-bold md:text-lg"
                             >
                               Shared Agent
                             </label>
