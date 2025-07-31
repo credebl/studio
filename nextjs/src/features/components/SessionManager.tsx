@@ -1,6 +1,6 @@
 'use client'
 
-import { setRefreshToken, setToken } from '@/lib/authSlice'
+import { setRefreshToken, setSessionId, setToken } from '@/lib/authSlice'
 import { useEffect, useRef } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
@@ -83,34 +83,6 @@ export const SessionManager = ({
     }
   }
 
-  // useEffect(() => {
-  //   if (status === 'loading') {
-  //     return
-  //   }
-
-  //   const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
-  //     pathname.startsWith(page),
-  //   )
-
-  //   if (status === 'authenticated' && session?.sessionId) {
-  //     fetchSessionDetails(session.sessionId as string)
-  //   } else if (status === 'unauthenticated') {
-  //     localStorage.removeItem('persist:root')
-  //   }
-
-  //   if (status === 'authenticated') {
-  //     if (redirectTo && !isOnRestrictedPage) {
-  //       window.location.href = redirectTo
-  //     } else if (!redirectTo && !isOnRestrictedPage) {
-  //       router.push('/dashboard')
-  //     }
-  //   }
-
-  //   if (session === null) {
-  //     localStorage.removeItem('persist:root')
-  //   }
-  // }, [session, status, redirectTo, router, pathname])
-
   useEffect(() => {
     if (status === 'loading') {
       return
@@ -121,21 +93,10 @@ export const SessionManager = ({
       setTimeout(() => {
         if (status === 'authenticated' && session?.sessionId) {
           fetchSessionDetails(session.sessionId, redirectTo)
+          dispatch(setSessionId(session?.sessionId))
         } else if (status === 'unauthenticated') {
           localStorage.removeItem('persist:root')
         }
-
-        // const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
-        //   pathname.startsWith(page),
-        // )
-
-        // if (status === 'authenticated') {
-        //   if (redirectTo && !isOnRestrictedPage) {
-        //     window.location.href = redirectTo
-        //   } else if (!redirectTo && !isOnRestrictedPage) {
-        //     router.push('/dashboard')
-        //   }
-        // }
 
         if (session === null) {
           localStorage.removeItem('persist:root')

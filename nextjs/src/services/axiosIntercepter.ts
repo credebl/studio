@@ -23,11 +23,11 @@ interface RefreshTokenResponse {
   }
 }
 
+const state = store.getState()
+const refreshToken = state?.auth?.refreshToken
+
 //Refresh Token
 const refreshAccessToken = async (): Promise<string | null> => {
-  const state = store.getState()
-  const refreshToken = state?.auth?.refreshToken
-
   if (!refreshToken) {
     console.error('No refresh token available')
     return null

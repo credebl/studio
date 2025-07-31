@@ -2,6 +2,7 @@ export const apiRoutes = {
   auth: {
     sendMail: '/auth/verification-mail',
     sinIn: '/auth/signin',
+    signOut: '/auth/signout',
     verifyEmail: '/auth/verify',
     addDetails: '/auth/signup',
     passkeyUserDetails: '/users/password/',

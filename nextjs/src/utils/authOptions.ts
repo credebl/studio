@@ -127,12 +127,13 @@ export const authOptions: MyAuthOptions = {
             }
           }
 
+          const responseData = await res?.json()
+
           if (!res?.ok) {
-            console.error('Error fetching user:', res?.statusText)
-            return null
+            throw new Error(responseData.message || 'Invalid credentials')
           }
 
-          const user = await res.json()
+          const user = responseData
           // eslint-disable-next-line no-console
           console.log('res in Auth options', user)
           if (user.statusCode === 200 && user.data) {
@@ -152,8 +153,10 @@ export const authOptions: MyAuthOptions = {
 
           return null
         } catch (error) {
-          console.error('Authorize error:', error)
-          return null
+          if (typeof error.message === 'string') {
+            throw new Error(error.message)
+          }
+          throw new Error(JSON.stringify({ message: 'Authorize error' }))
         }
       },
     }),
