@@ -187,6 +187,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         getData()
+        router.refresh()
       } else {
         setErrorMsg(response as string)
       }

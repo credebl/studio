@@ -25,6 +25,8 @@ const SessionCheck = ({
     '/connections',
     '/profile',
     '/developers-setting',
+    '/credentials',
+    '/verification',
   ]
 
   useEffect(() => {

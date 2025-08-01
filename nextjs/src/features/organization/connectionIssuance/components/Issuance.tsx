@@ -359,14 +359,16 @@ const IssueCred = (): React.JSX.Element => {
         <Card className="">
           <CardContent className="p-4">
             <p className="pb-6 text-xl font-semibold">
-              Select Schema and credential definition
+              {w3cSchema ? 'Select Schema ' : 'Select Credential Definition'}
             </p>
             <SearchableSelect
               className="border-muted max-w-lg border-1"
               options={credentialOptions}
               value={''}
               onValueChange={handleSelect}
-              placeholder="Select Schema Credential Definition"
+              placeholder={
+                w3cSchema ? 'Select Schema ' : 'Select Credential Definition'
+              }
               enableInternalSearch={true}
             />
             {schemaDetails.schemaId && (
