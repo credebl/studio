@@ -212,7 +212,7 @@ const VerificationCredentialList = (): JSX.Element => {
   }
 
   const schemeSelection = (): void => {
-    router.push('/organizations/verification/verify-credentials')
+    router.push('/verification/verify-credentials')
   }
 
   useEffect(() => {
