@@ -70,7 +70,9 @@ const ResetPassword = (): JSX.Element => {
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         toast.success(data.message)
         setLoading(false)
-        router.push(pathRoutes.auth.sinIn)
+        setTimeout(() => {
+          router.push(pathRoutes.auth.sinIn)
+        }, 2000)
       } else {
         toast.error(response as string)
         setLoading(false)
