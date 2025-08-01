@@ -202,7 +202,9 @@ const EmailIssuance = (): JSX.Element => {
                   <div className="flex flex-col justify-between">
                     <div className="text-primary-900">
                       <div className="pb-2 text-xl font-semibold dark:text-white">
-                        Select Schema and credential definition
+                        {schemaType === SchemaTypes.schema_W3C
+                          ? 'Select Schema '
+                          : 'Select Credential Definition'}
                       </div>
                       {mounted && (
                         <SearchableSelect
@@ -222,7 +224,11 @@ const EmailIssuance = (): JSX.Element => {
                               isAllSchemaFlagSelected
                             )
                           }
-                          placeholder="Select Schema Credential Definition"
+                          placeholder={
+                            schemaType === SchemaTypes.schema_W3C
+                              ? 'Select Schema '
+                              : 'Select Credential Definition'
+                          }
                         />
                       )}
                     </div>

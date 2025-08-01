@@ -320,7 +320,11 @@ const BulkIssuance = (): JSX.Element => {
                         }
                         value={''}
                         onValueChange={handleSelect}
-                        placeholder="Select Schema Credential Definition"
+                        placeholder={
+                          schemaType === SchemaTypes.schema_W3C
+                            ? 'Select Schema '
+                            : 'Select Credential Definition'
+                        }
                       />
                     )}
                   </div>

@@ -38,14 +38,14 @@ export const navItems: NavItem[] = [
     items: [
       {
         title: 'Issue',
-        url: '/organizations/credentials',
+        url: '/credentials',
         icon: 'userPen',
         shortcut: ['m', 'm'],
       },
       {
         title: 'Verify',
         shortcut: ['l', 'l'],
-        url: '/organizations/verification',
+        url: '/verification',
         icon: 'login',
       },
     ],

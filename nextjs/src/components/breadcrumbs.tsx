@@ -50,14 +50,7 @@ export function Breadcrumbs(): React.JSX.Element | null {
           <>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink onClick={() => copyToClipboard(orgId)}>
-                <div className="relative">
-                  Overview
-                  {copied && (
-                    <div className="absolute top-7 z-50 ml-2 rounded-md bg-black px-2 py-1 text-xs font-semibold text-white">
-                      Copied!
-                    </div>
-                  )}
-                </div>
+                <div className="relative"></div>
               </BreadcrumbLink>
             </BreadcrumbItem>
           </>
@@ -73,7 +66,11 @@ export function Breadcrumbs(): React.JSX.Element | null {
                   {index !== items.length - 1 && (
                     <BreadcrumbItem className="hidden md:block">
                       <BreadcrumbLink
-                        href={item.link || `/schemas/${item.title}`}
+                        href={
+                          item.link === '/organizations'
+                            ? '/dashboard'
+                            : item.link || `/schemas/${item.title}`
+                        }
                       >
                         {decodedTitle}
                       </BreadcrumbLink>

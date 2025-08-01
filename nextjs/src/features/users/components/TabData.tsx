@@ -106,11 +106,39 @@ function TabData({
                   </Avatar>
                   <div>
                     <h3 className="text-base font-semibold">
-                      {user.firstName} {user.lastName}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="font-medium break-all">
+                              {`${user?.firstName ?? ''} ${user?.lastName ?? ''}`.slice(
+                                0,
+                                20,
+                              )}
+                              {`${user?.firstName ?? ''} ${user?.lastName ?? ''}`
+                                .length > 20 && ' . . .'}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            {`${user.firstName} ${user.lastName}`}
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     </h3>
                     <div className="flex-grow text-start">
                       <span className="text-muted-foreground max-w-xs truncate text-sm font-medium">
-                        {user.email}
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <p className="font-medium break-all">
+                                {user.email.slice(0, 20)}
+                                {user.email.length > 20 && ' . . .'}
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              {user.email}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       </span>
                     </div>
                   </div>

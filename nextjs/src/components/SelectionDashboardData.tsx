@@ -34,7 +34,7 @@ const SelectionDashboardData = (): JSX.Element => {
       heading: 'Connection',
       description:
         'Issue credential(s) by selecting connection from existing users',
-      path: '/organizations/credentials/connections',
+      path: '/credentials/connections',
     },
     {
       heading: 'Email',

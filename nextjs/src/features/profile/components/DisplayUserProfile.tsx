@@ -155,7 +155,14 @@ const DisplayUserProfile = ({
                         </AvatarFallback>
                       </Avatar>
                     )}
-                    <span className="pl-2">{role.organisation.name}</span>
+                    <div>
+                      <span className="pl-2 text-base">
+                        {role.organisation.name}
+                      </span>
+                      <div className="pl-2">
+                        <b>Role</b> : {role.orgRole.name}
+                      </div>
+                    </div>
                   </Card>
                 )
               })}
