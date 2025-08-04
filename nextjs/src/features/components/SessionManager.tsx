@@ -49,8 +49,8 @@ export const SessionManager = ({
     if (sessionDetails?.data?.sessionToken) {
       dispatch(setToken(sessionDetails.data.sessionToken))
     }
-    if (sessionDetails?.data?.refresh_token) {
-      dispatch(setRefreshToken(sessionDetails.data.refresh_token))
+    if (sessionDetails?.data?.refreshToken) {
+      dispatch(setRefreshToken(sessionDetails.data.refreshToken))
     }
     if (redirectTo && !isOnRestrictedPage) {
       window.location.href = redirectTo
