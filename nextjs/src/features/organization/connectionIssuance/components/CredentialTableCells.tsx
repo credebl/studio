@@ -37,7 +37,7 @@ export const SchemaNameCell = ({
     <button
       onClick={() => {
         if (schemaId && !isW3C) {
-          router.push(`/organizations/schemas/${schemaId}`)
+          router.push(`/organizations/schemas/${schemaId}?alias=${schemaName}`)
         } else {
           router.push('/organizations/schemas')
         }
