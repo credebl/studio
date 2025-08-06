@@ -130,7 +130,7 @@ export default function UserInfoForm({
           router.push(
             redirectTo && clientAlias
               ? `/sign-in?signup=true&email=${email}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}&fidoFlag=false&method=password`
-              : `/sign-up?email=${email}&fidoFlag=false&method=password`,
+              : `/sign-in?email=${email}&fidoFlag=false&method=password`,
           )
         }, 2000)
       } else {

@@ -1,7 +1,7 @@
 'use client'
 
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
-import { setAuthToken, setRefreshToken, setToken } from '@/lib/authSlice'
+import { setRefreshToken, setToken } from '@/lib/authSlice'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
@@ -23,11 +23,11 @@ interface RefreshTokenResponse {
   }
 }
 
+const state = store.getState()
+const refreshToken = state?.auth?.refreshToken
+
 //Refresh Token
 const refreshAccessToken = async (): Promise<string | null> => {
-  const state = store.getState()
-  const refreshToken = state?.auth?.refreshToken
-
   if (!refreshToken) {
     console.error('No refresh token available')
     return null
@@ -48,7 +48,6 @@ const refreshAccessToken = async (): Promise<string | null> => {
 
       if (AccessToken && RefreshToken) {
         store.dispatch(setToken(AccessToken))
-        store.dispatch(setAuthToken(AccessToken))
         store.dispatch(setRefreshToken(RefreshToken))
         return AccessToken
       }
@@ -85,7 +84,7 @@ export function logoutAndRedirect(): void {
 instance.interceptors.request.use(
   (config) => {
     const state = store.getState()
-    const token = state?.auth?.authToken
+    const token = state?.auth?.token
 
     if (token) {
       const updatedConfig = {

@@ -17,7 +17,6 @@ import {
   getUserProfile,
   passwordEncryption,
 } from '@/app/api/Auth'
-import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -30,7 +29,9 @@ import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
+import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
+import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -56,7 +57,7 @@ export default function SignInViewPage(): React.JSX.Element {
   const [alert, setAlert] = useState<null | string>(null)
   const [success, setSuccess] = useState<null | string>(null)
 
-  const { data: session } = useSession()
+  const token = useAppSelector((state) => state.auth.token)
   const dispatch = useDispatch()
   const route = useRouter()
   const signInForm = useForm<SignInFormValues>({
@@ -95,7 +96,7 @@ export default function SignInViewPage(): React.JSX.Element {
       })
 
       if (response?.ok && response?.url) {
-        route.push(response.url)
+        window.location.href = response.url
       } else {
         const errorMsg = response?.error
           ? response.error === 'CredentialsSignin'
@@ -212,10 +213,10 @@ export default function SignInViewPage(): React.JSX.Element {
       })
 
       if (verificationResp?.ok && verificationResp?.status === 200) {
-        if (!session?.accessToken) {
+        if (!token) {
           return
         }
-        const userRole = await getUserDetails(session?.accessToken)
+        const userRole = await getUserDetails(token)
 
         if (!userRole?.role?.name) {
           setAlert('Invalid user role')
