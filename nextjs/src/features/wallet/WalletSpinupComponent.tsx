@@ -3,6 +3,7 @@
 
 import { AgentType, DidMethod, WalletSpinupStatus } from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   createDid,
@@ -11,6 +12,7 @@ import {
 } from '@/app/api/Agent'
 import { setOrgId, setTenantData } from '@/lib/orgSlice'
 import { useRouter, useSearchParams } from 'next/navigation'
+
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import DedicatedAgentForm from './DedicatedAgentForm'
@@ -39,6 +41,7 @@ const WalletSpinup = (): React.JSX.Element => {
   const [maskedSeeds, setMaskedSeeds] = useState<string>('')
   const [orgData, setOrgData] = useState<Organisation | null>(null)
   const [, setShowProgressUI] = useState(false)
+  // const [, setCurrentOrgId] = useState<string>('')
   const [, setIsShared] = useState<boolean>(false)
   const [, setIsConfiguredDedicated] = useState<boolean>(false)
   const [showLedgerConfig, setShowLedgerConfig] = useState<boolean>(false)
@@ -115,6 +118,7 @@ const WalletSpinup = (): React.JSX.Element => {
 
       const orgData = data?.data
       const agentData = orgData?.org_agents ?? []
+
       const [firstAgent] = agentData
 
       if (firstAgent?.orgDid) {
@@ -127,8 +131,8 @@ const WalletSpinup = (): React.JSX.Element => {
           }),
         )
         setWalletStatus(true)
-        clearSpinupStatus()
-        router.replace(redirectTo && clientAlias ? redirectTo : '/dashboard')
+        clearSpinupStatus() // FIX: Replaced router.push with router.replace for correct history management
+        router.push('/dashboard')
         return
       }
 
@@ -178,7 +182,7 @@ const WalletSpinup = (): React.JSX.Element => {
       setFailure('Failed to fetch organization details')
       setIsPageReady(true)
     }
-  }, [orgId, dispatch, clearSpinupStatus, router, redirectTo, clientAlias])
+  }, [orgId, dispatch, clearSpinupStatus, router])
 
   // Initial data fetch on mount
   useEffect(() => {
@@ -263,7 +267,7 @@ const WalletSpinup = (): React.JSX.Element => {
       method: values.method.split(':')[1] || '',
       network:
         values.method === DidMethod.INDY
-          ? values.network?.split(':').slice(2).join(':')
+          ? values.network
           : values.method === DidMethod.POLYGON
             ? values.network?.split(':').slice(1).join(':')
             : '',
@@ -336,6 +340,7 @@ const WalletSpinup = (): React.JSX.Element => {
       network: values.method === DidMethod.POLYGON ? polygonNetwork : network,
       domain: values.method === DidMethod.WEB ? domain : '',
       role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
+
       did: values?.did ?? '',
       endorserDid: values?.endorserDid ?? '',
       clientSocketId: SOCKET.id,
@@ -413,7 +418,7 @@ const WalletSpinup = (): React.JSX.Element => {
 
       SOCKET.on('invitation-url-creation-started', (data) => {
         // eslint-disable-next-line no-console
-        console.log('invitation-url-creation-started', JSON.stringify(data))
+        console.log(' invitation-url-creation-started', JSON.stringify(data))
         setTimeout(() => {
           setWalletSpinStep(5)
           setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED)
@@ -431,6 +436,7 @@ const WalletSpinup = (): React.JSX.Element => {
 
         const redirectUrl =
           redirectTo && clientAlias ? redirectTo : '/dashboard'
+
         router.replace(redirectUrl)
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
@@ -461,15 +467,7 @@ const WalletSpinup = (): React.JSX.Element => {
       SOCKET.off('invitation-url-creation-success')
       SOCKET.off('error-in-wallet-creation-process')
     }
-  }, [
-    saveSpinupStatus,
-    setWalletSpinupStatus,
-    redirectTo,
-    clientAlias,
-    orgId,
-    router,
-    clearSpinupStatus,
-  ])
+  }, [])
 
   let formComponent: React.JSX.Element = <></>
 
@@ -579,86 +577,87 @@ const WalletSpinup = (): React.JSX.Element => {
                             Agent Type
                           </h3>
 
-                          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                            <Card
-                              className="p-4 shadow transition-all hover:scale-102"
-                              onClick={() => onRadioSelect(AgentType.DEDICATED)}
-                            >
-                              <div className="mb-4 flex items-start">
-                                <input
-                                  id="dedicated-agent-radio"
-                                  type="radio"
-                                  value={AgentType.DEDICATED}
-                                  checked={agentType === AgentType.DEDICATED}
-                                  onChange={() =>
-                                    onRadioSelect(AgentType.DEDICATED)
-                                  }
-                                  name="agent-type"
-                                  className="mt-1 h-4 w-4"
-                                />
-                              </div>
-                              <label
-                                htmlFor="dedicated-agent-radio"
-                                className="text-lg font-bold"
-                              >
-                                Dedicated Agent
-                              </label>
-                              <p className="my-2 ml-7 text-sm dark:text-white">
-                                Private agent instance exclusively for your{' '}
-                                <br /> organization
-                              </p>
-                              <ul className="ml-7 space-y-1">
-                                <li className="text-sm">
-                                  • Higher performance and reliability
-                                </li>
-                                <li className="text-sm">
-                                  • Enhanced privacy and security
-                                </li>
-                                <li className="text-sm">
-                                  • Full control over the agent infrastructure
-                                </li>
-                              </ul>
-                            </Card>
+                          <RadioGroup
+                            value={agentType}
+                            defaultValue={agentType}
+                            onValueChange={(value) => onRadioSelect(value)}
+                            className=""
+                          >
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              {/* Dedicated Agent Card */}
 
-                            <Card
-                              className="p-4 shadow transition-all hover:scale-102"
-                              onClick={() => onRadioSelect(AgentType.SHARED)}
-                            >
-                              <div className="mb-4 flex items-start">
-                                <input
-                                  id="shared-agent-radio"
-                                  type="radio"
-                                  value={AgentType.SHARED}
-                                  checked={agentType === AgentType.SHARED}
-                                  onChange={() =>
-                                    onRadioSelect(AgentType.SHARED)
-                                  }
-                                  name="agent-type"
-                                  className="mt-1 h-4 w-4"
-                                />
-                              </div>
-                              <label
-                                htmlFor="shared-agent-radio"
-                                className="text-lg font-bold"
+                              <Card
+                                className="p-4 shadow transition-all hover:scale-102"
+                                onClick={() =>
+                                  onRadioSelect(AgentType.DEDICATED)
+                                }
                               >
-                                Shared Agent
-                              </label>
-                              <p className="my-2 ml-7 text-sm">
-                                Use our cloud-hosted shared agent infrastructure
-                              </p>
-                              <ul className="ml-7 space-y-1">
-                                <li className="text-sm">
-                                  • Cost-effective solution
-                                </li>
-                                <li className="text-sm">
-                                  • Managed infrastructure
-                                </li>
-                                <li className="text-sm">
-                                  • Quick setup with no maintenance
-                                </li>
-                              </ul>
-                            </Card>
-                          </div>
+                                <div className="mb-4 flex items-start">
+                                  <RadioGroupItem
+                                    className="border"
+                                    value={AgentType.DEDICATED}
+                                    id="dedicated-agent-radio"
+                                  />
+                                </div>
+                                <label
+                                  htmlFor="dedicated-agent-radio"
+                                  className="text-lg font-bold"
+                                >
+                                  Dedicated Agent
+                                </label>
+                                <p className="my-2 ml-7 text-sm dark:text-white">
+                                  Private agent instance exclusively for your{' '}
+                                  <br></br> organization
+                                </p>
+                                <ul className="ml-7 space-y-1">
+                                  <li className="text-sm">
+                                    • Higher performance and reliability
+                                  </li>
+                                  <li className="text-sm">
+                                    • Enhanced privacy and security
+                                  </li>
+                                  <li className="text-sm">
+                                    • Full control over the agent infrastructure
+                                  </li>
+                                </ul>
+                              </Card>
+
+                              {/* Shared Agent Card */}
+                              <Card
+                                className="p-4 shadow transition-all hover:scale-102"
+                                onClick={() => onRadioSelect(AgentType.SHARED)}
+                              >
+                                <div className="mb-4 flex items-start">
+                                  <RadioGroupItem
+                                    className="border"
+                                    value={AgentType.SHARED}
+                                    id="shared-agent-radio"
+                                  />
+                                </div>
+                                <label
+                                  htmlFor="shared-agent-radio"
+                                  className="text-lg font-bold"
+                                >
+                                  Shared Agent
+                                </label>
+                                <p className="my-2 ml-7 text-sm">
+                                  Use our cloud-hosted shared agent
+                                  infrastructure
+                                </p>
+                                <ul className="ml-7 space-y-1">
+                                  <li className="text-sm">
+                                    • Cost-effective solution
+                                  </li>
+                                  <li className="text-sm">
+                                    • Managed infrastructure
+                                  </li>
+                                  <li className="text-sm">
+                                    • Quick setup with no maintenance
+                                  </li>
+                                </ul>
+                              </Card>
+                            </div>
+                          </RadioGroup>
                         </div>
                       )}
 
