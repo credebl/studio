@@ -128,9 +128,7 @@ const WalletSpinup = (): React.JSX.Element => {
         )
         setWalletStatus(true)
         clearSpinupStatus()
-        router.replace(
-          redirectTo && clientAlias ? redirectTo : `/organizations/${orgId}`,
-        )
+        router.replace(redirectTo && clientAlias ? redirectTo : '/dashboard')
         return
       }
 
@@ -432,7 +430,7 @@ const WalletSpinup = (): React.JSX.Element => {
         }, 1000)
 
         const redirectUrl =
-          redirectTo && clientAlias ? redirectTo : `/organizations/${orgId}`
+          redirectTo && clientAlias ? redirectTo : '/dashboard'
         router.replace(redirectUrl)
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
