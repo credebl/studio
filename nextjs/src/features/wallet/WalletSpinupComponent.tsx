@@ -132,7 +132,7 @@ const WalletSpinup = (): React.JSX.Element => {
         )
         setWalletStatus(true)
         clearSpinupStatus()
-        router.push('/dashboard')
+        router.replace('/dashboard')
         return
       }
 
