@@ -2,6 +2,7 @@ export const apiRoutes = {
   auth: {
     sendMail: '/auth/verification-mail',
     sinIn: '/auth/signin',
+    signOut: '/auth/signout',
     verifyEmail: '/auth/verify',
     addDetails: '/auth/signup',
     passkeyUserDetails: '/users/password/',
@@ -18,6 +19,7 @@ export const apiRoutes = {
     forgotPasswordEndpoint: 'auth/forgot-password', // NOSONAR
     resetPasswordPath: 'auth/password-reset', // NOSONAR
     refreshToken: '/auth/refresh-token',
+    fetchSessionDetails: '/auth/sessionDetails',
   },
 
   users: {
