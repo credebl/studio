@@ -269,7 +269,7 @@ const WalletSpinup = (): React.JSX.Element => {
         values.method === DidMethod.INDY
           ? values.network
           : values.method === DidMethod.POLYGON
-            ? values.network?.split(':').slice(1).join(':')
+            ? values.network
             : '',
       domain: values.method === DidMethod.WEB ? domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
