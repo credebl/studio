@@ -1,13 +1,13 @@
 'use client'
 
 import { setRefreshToken, setSessionId, setToken } from '@/lib/authSlice'
-import { useEffect, useRef } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
 import { passwordEncryption } from '@/app/api/Auth'
 import { useAppDispatch } from '@/lib/hooks'
+import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
 
 const preventRedirectOnPaths = [
@@ -34,9 +34,10 @@ export const SessionManager = ({
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const dispatch = useAppDispatch()
-  const hasCheckedSession = useRef(false)
+  // const hasCheckedSession = useRef(false)
 
   const redirectTo = searchParams.get('redirectTo')
+  const clientAlias = searchParams.get('clientAlias')
 
   const setSessionDetails = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -74,6 +75,7 @@ export const SessionManager = ({
         },
       )
       const data = await resp.json()
+      // eslint-disable-next-line
       setSessionDetails(data, redirectTo)
     } catch (error) {
       console.error('Failed to fetch session details:', error)
@@ -85,22 +87,22 @@ export const SessionManager = ({
     if (status === 'loading') {
       return
     }
-
-    if (!hasCheckedSession.current) {
-      hasCheckedSession.current = true
-      setTimeout(() => {
-        if (status === 'authenticated' && session?.sessionId) {
-          fetchSessionDetails(session.sessionId, redirectTo)
-          dispatch(setSessionId(session?.sessionId))
-        } else if (status === 'unauthenticated') {
-          localStorage.removeItem('persist:root')
-        }
-
-        if (session === null) {
-          localStorage.removeItem('persist:root')
-        }
-      }, 500)
-    }
+    // if (!hasCheckedSession.current) {
+    //   hasCheckedSession.current = true
+    setTimeout(() => {
+      if (status === 'authenticated' && session?.sessionId) {
+        fetchSessionDetails(session.sessionId, redirectTo)
+        dispatch(setSessionId(session?.sessionId))
+      } else if (status === 'unauthenticated' || session === null) {
+        localStorage.removeItem('persist:root')
+        const signInUrl =
+          redirectTo && clientAlias
+            ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+            : '/sign-in'
+        router.push(signInUrl)
+      }
+    }, 500)
+    // }
   }, [status, session])
 
   if (status === 'loading') {
