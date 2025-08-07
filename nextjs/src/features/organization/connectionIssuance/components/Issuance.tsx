@@ -14,13 +14,6 @@ import { DidMethod, SchemaTypeValue, SchemaTypes } from '@/common/enums'
 import { Form, Formik } from 'formik'
 import React, { useEffect, useState } from 'react'
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import {
   apiStatusCodes,
   issuanceApiParameter,
   schemaDetailsInitialState,
@@ -46,6 +39,7 @@ import IssuanceHeader from './IssuanceHeader'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
+import SchemaSelect from '../../emailIssuance/components/SchemaSelect'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import SummaryCard from '@/components/SummaryCard'
 import SummaryCardW3c from '@/components/SummaryCardW3c'
@@ -382,27 +376,9 @@ const IssueCred = (): React.JSX.Element => {
                 />
               </div>
               {w3cSchema && (
-                <div>
-                  <p className="pb-6 text-xl font-semibold opacity-0">
-                    Schema Filter
-                  </p>
-                  <Select
-                    defaultValue={"Organization's schema"}
-                    value={allSchema ? 'All schemas' : "Organization's schema"}
-                    onValueChange={handleFilterChange}
-                  >
-                    <SelectTrigger className="w-[230px] rounded-lg border p-2.5 text-sm">
-                      <SelectValue placeholder="Select schema type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {optionsWithDefault.map((opt) => (
-                        <SelectItem key={opt} value={opt}>
-                          {opt}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SchemaSelect
+                  {...{ allSchema, handleFilterChange, optionsWithDefault }}
+                />
               )}
             </div>
             {schemaDetails.schemaId && (
