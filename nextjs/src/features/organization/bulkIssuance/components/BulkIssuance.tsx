@@ -14,15 +14,11 @@ import {
 } from '../../connectionIssuance/type/Issuance'
 import { Option, SearchableSelect } from '@/components/SearchableSelect'
 import React, { JSX, useEffect, useRef, useState } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ToastContainer, toast } from 'react-toastify'
-import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
+import {
+  apiStatusCodes,
+  bulkIssuanceApiParameter,
+} from '@/config/CommonConstant'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -35,10 +31,12 @@ import DragAndDrop from './DragAndDrop'
 import { ICredentialOptions } from '../type/BulkIssuance'
 import IssuancePopup from './IssuancePopup'
 import Loader from '@/components/Loader'
+import PageContainer from '@/components/layout/page-container'
 import ResetIssue from './ResetIssue'
 import RoleViewButton from '@/components/RoleViewButton'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
+import SchemaSelectBulk from './SchemaSelectBulk'
 import Steps from './Steps'
 import Table from './Table'
 import { getCsvFileData } from '@/app/api/BulkIssuance'
@@ -75,14 +73,9 @@ const BulkIssuance = (): JSX.Element => {
   const [isAllSchema, setIsAllSchema] = useState<boolean>(allSchema ?? false)
   const [attributes, setAttributes] = useState<IAttributes[]>([])
   const optionsWithDefault = ["Organization's schema", 'All schemas']
-  const schemaListAPIParameters = {
-    itemPerPage,
-    page: 1,
-    search: '',
-    sortBy: 'id',
-    sortingOrder: 'desc',
-    allSearch: '',
-  }
+  const [schemaListAPIParameters, setSchemaListAPIParameter] = useState(
+    bulkIssuanceApiParameter,
+  )
   const isCredSelected = Boolean(credentialSelected)
 
   const initialPageState = {
@@ -144,6 +137,9 @@ const BulkIssuance = (): JSX.Element => {
       setCredentialSelected(data ?? null)
       setSelectedTemplate(credentials?.schemaIdentifier)
       setAttributes(attributes ?? [])
+      if (data?.label) {
+        setSelectValue(data?.label)
+      }
     } else {
       setSelectValue(
         schemaType === SchemaTypes.schema_W3C
@@ -201,6 +197,7 @@ const BulkIssuance = (): JSX.Element => {
           progress: undefined,
           theme: 'colored',
         })
+        setTimeout(() => router.push('/credentials'), 2000)
       }
       allow.current = false
     })
@@ -298,7 +295,7 @@ const BulkIssuance = (): JSX.Element => {
 
   useEffect(() => {
     getSchemaCredentials(schemaListAPIParameters, context)
-  }, [isAllSchema, orgId])
+  }, [isAllSchema, orgId, schemaListAPIParameters.allSearch])
 
   const handleClick = (): void => {
     setLoading(true)
@@ -311,213 +308,207 @@ const BulkIssuance = (): JSX.Element => {
     dispatch(setAllSchema(isAllSchemas))
   }
 
+  const handleSearchChange = (value: string): void => {
+    setSchemaListAPIParameter((prev) => ({ ...prev, allSearch: value }))
+  }
+
   return (
-    <div className="px-4 pt-2">
-      <div className="col-span-full mb-4 xl:mb-2">
-        <div className="flex items-center justify-end">
-          <Button onClick={handleClick} disabled={loading}>
-            {loading ? <Loader size={20} /> : <ArrowLeft />}
-            {!loading && 'Back'}
-          </Button>
-        </div>
-      </div>
-      <div>
-        <ToastContainer />
-        <div className="mb-4 ml-1 flex items-center justify-between">
-          <div>
-            <p className="text-2xl font-semibold">Bulk Issuance</p>
-            <span className="text-muted-foreground text-sm">
-              Upload a .CSV file for bulk issuance
-            </span>
-          </div>
-          <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
-            <Button
-              // className="group border-ring hover:bg-primary hover:text-primary-foreground ml-auto flex shrink-0 items-center rounded-lg border px-4 py-1 transition-colors"
-              className="h-[2.2rem] min-w-[2rem]"
-              variant={'outline'}
-              onClick={() => {
-                router.push(pathRoutes.organizations.Issuance.history)
-              }}
-            >
-              <History />
-              <span className="">View History</span>
+    <PageContainer>
+      <div className="px-4 pt-2">
+        <div className="col-span-full mb-4 xl:mb-2">
+          <div className="flex items-center justify-end">
+            <Button onClick={handleClick} disabled={loading}>
+              {loading ? <Loader size={20} /> : <ArrowLeft />}
+              {!loading && 'Back'}
             </Button>
-
-            <RoleViewButton
-              buttonTitle={createSchemaTitle.title}
-              feature={Features.CRETAE_SCHEMA}
-              svgComponent={<div></div>}
-              onClickEvent={() => {
-                setCreateLoading(true)
-                router.push(`${pathRoutes.organizations.schemas}`)
-              }}
-              isPadding={createSchemaTitle.title !== 'Create Schema'}
-              loading={createLoading}
-            />
           </div>
         </div>
-        {(success || failure) && (
-          <AlertComponent
-            message={success ?? failure}
-            type={success ? 'success' : 'failure'}
-            onAlertClose={() => {
-              setSuccess(null)
-              setFailure(null)
-            }}
-            viewButton={Boolean(
-              (success && success === 'Issuance process completed') ||
-                (failure &&
-                  failure === 'Issuance process failed, please retry'),
-            )}
-            path={pathRoutes.organizations.Issuance.history}
-          />
-        )}
-        <div className="min-h-100/21rem flex flex-col justify-between">
-          <Card className="p-5 p-8">
+        <div>
+          <ToastContainer />
+          <div className="mb-4 ml-1 flex items-center justify-between">
             <div>
-              <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
-                <div className="flex flex-col justify-between">
-                  <div className="flex flex-col gap-4">
-                    <div>
-                      <p className="pb-2 text-xl font-semibold">
-                        {schemaType === SchemaTypes.schema_W3C
-                          ? 'Select Schema '
-                          : 'Select Credential Definition'}
-                      </p>
-                      {mounted && (
-                        <SearchableSelect
-                          className="border-muted max-w-lg border-1"
-                          options={
-                            Array.isArray(credentialOptionsData)
-                              ? credentialOptionsData
-                              : []
-                          }
-                          value={selectValue}
-                          onValueChange={handleSelect}
-                          placeholder={
-                            schemaType === SchemaTypes.schema_W3C
-                              ? 'Select Schema '
-                              : 'Select Credential Definition'
-                          }
-                        />
-                      )}
-                    </div>
-                    <div>
-                      {schemaType === SchemaTypes.schema_W3C && (
-                        <>
-                          <p className="pb-2 text-xl font-semibold opacity-0">
-                            Schema Filter
-                          </p>
-                          <Select
-                            defaultValue={"Organization's schema"}
-                            value={
-                              allSchema
-                                ? 'All schemas'
-                                : "Organization's schema"
-                            }
-                            onValueChange={handleFilterChange}
-                          >
-                            <SelectTrigger className="min-w-lg rounded-lg border p-2.5 text-sm">
-                              <SelectValue placeholder="Select schema type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {optionsWithDefault.map((opt) => (
-                                <SelectItem key={opt} value={opt}>
-                                  {opt}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div className="mt-4">
-                    {credentialSelected && (
-                      <Card className="max-w-[30rem] border p-5">
-                        <div>
-                          <p className="pb-2">
-                            <span className="font-semibold">Schema: </span>
-                            {credentialSelected?.schemaName || ''}{' '}
-                            <span>[{credentialSelected?.schemaVersion}]</span>
-                          </p>
-                          {schemaType === SchemaTypes.schema_INDY && (
-                            <p className="max-w-md truncate pb-2">
-                              {' '}
-                              <span className="font-semibold">
-                                Credential Definition:
-                              </span>{' '}
-                              {credentialSelected?.credentialDefinition}
-                            </p>
-                          )}
-
-                          <span className="font-semibold">Attributes:</span>
-                          <div className="mt-2 flex flex-wrap overflow-hidden">
-                            {attributes
-                              ?.slice(0, 3)
-                              .map((element: IAttributes) => (
-                                <div key={element.attributeName}>
-                                  <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded-lg px-2.5 py-2 text-sm font-medium shadow-sm transition-colors">
-                                    {element.attributeName}
-                                  </span>
-                                </div>
-                              ))}
-                            {attributes?.length > 3 && (
-                              <span className="text-muted-foreground ml-2 text-sm/6">
-                                +{attributes.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </Card>
-                    )}
-                  </div>
-                  <div className="mt-4">
-                    <Button
-                      id="signinsubmit"
-                      type="submit"
-                      variant="outline"
-                      className="min-w-[2rem] rounded-xl"
-                      disabled={!isCredSelected}
-                      onClick={() =>
-                        schemaType &&
-                        DownloadSchemaTemplate(
-                          credentialSelected,
-                          schemaType,
-                          selectedTemplate,
-                          orgId,
-                          setSuccess,
-                          setUploadMessage,
-                          setFailure,
-                          setLoading,
-                        )
-                      }
-                    >
-                      <Download />
-                      <span>Download Template</span>
-                    </Button>
-                  </div>
-                </div>
-                <DragAndDrop context={context} />
-              </div>
+              <p className="text-2xl font-semibold">Bulk Issuance</p>
+              <span className="text-muted-foreground text-sm">
+                Upload a .CSV file for bulk issuance
+              </span>
             </div>
-          </Card>
-          <Table csvData={csvData} />
-          <div>
-            {!isCredSelected && <Steps />}
+            <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
+              <Button
+                className="h-[2.2rem] min-w-[2rem]"
+                variant={'outline'}
+                onClick={() => {
+                  router.push(pathRoutes.organizations.Issuance.history)
+                }}
+              >
+                <History />
+                <span className="">View History</span>
+              </Button>
 
-            <IssuancePopup
-              openModal={openModal}
-              closeModal={handleCloseConfirmation}
-              isProcessing={loading}
-              onSuccess={() => confirmCredentialIssuance(context)}
+              <RoleViewButton
+                buttonTitle={createSchemaTitle.title}
+                feature={Features.CRETAE_SCHEMA}
+                svgComponent={<div></div>}
+                onClickEvent={() => {
+                  setCreateLoading(true)
+                  router.push(`${pathRoutes.organizations.schemas}`)
+                }}
+                isPadding={createSchemaTitle.title !== 'Create Schema'}
+                loading={createLoading}
+              />
+            </div>
+          </div>
+          {(success || failure) && (
+            <AlertComponent
+              message={success ?? failure}
+              type={success ? 'success' : 'failure'}
+              onAlertClose={() => {
+                setSuccess(null)
+                setFailure(null)
+              }}
+              viewButton={Boolean(
+                (success && success === 'Issuance process completed') ||
+                  (failure &&
+                    failure === 'Issuance process failed, please retry'),
+              )}
+              path={pathRoutes.organizations.Issuance.history}
             />
+          )}
+          <div className="min-h-100/21rem flex flex-col justify-between">
+            <Card className="p-8">
+              <div>
+                <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div className="flex flex-col justify-between">
+                    <div className="flex flex-col gap-4">
+                      <div>
+                        <p className="pb-2 text-xl font-semibold">
+                          {schemaType === SchemaTypes.schema_W3C
+                            ? 'Select Schema '
+                            : 'Select Credential Definition'}
+                        </p>
+                        {mounted && (
+                          <SearchableSelect
+                            className="border-muted max-w-lg border-1"
+                            options={
+                              Array.isArray(credentialOptionsData)
+                                ? credentialOptionsData
+                                : []
+                            }
+                            value={selectValue}
+                            onValueChange={handleSelect}
+                            enableInternalSearch={
+                              !(
+                                schemaType === SchemaTypes.schema_W3C &&
+                                allSchema
+                              )
+                            }
+                            onSearchChange={handleSearchChange}
+                            placeholder={
+                              schemaType === SchemaTypes.schema_W3C
+                                ? 'Select Schema '
+                                : 'Select Credential Definition'
+                            }
+                          />
+                        )}
+                      </div>
+                      <div>
+                        {schemaType === SchemaTypes.schema_W3C && (
+                          <SchemaSelectBulk
+                            {...{
+                              allSchema,
+                              handleFilterChange,
+                              optionsWithDefault,
+                            }}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      {credentialSelected && (
+                        <Card className="max-w-[30rem] border p-5">
+                          <div>
+                            <p className="pb-2">
+                              <span className="font-semibold">Schema: </span>
+                              {credentialSelected?.schemaName || ''}{' '}
+                              <span>[{credentialSelected?.schemaVersion}]</span>
+                            </p>
+                            {schemaType === SchemaTypes.schema_INDY && (
+                              <p className="max-w-md truncate pb-2">
+                                {' '}
+                                <span className="font-semibold">
+                                  Credential Definition:
+                                </span>{' '}
+                                {credentialSelected?.credentialDefinition}
+                              </p>
+                            )}
 
-            <ResetIssue context={context} />
+                            <span className="font-semibold">Attributes:</span>
+                            <div className="mt-2 flex flex-wrap overflow-hidden">
+                              {attributes
+                                ?.slice(0, 3)
+                                .map((element: IAttributes) => (
+                                  <div key={element.attributeName}>
+                                    <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded-lg px-2.5 py-2 text-sm font-medium shadow-sm transition-colors">
+                                      {element.attributeName}
+                                    </span>
+                                  </div>
+                                ))}
+                              {attributes?.length > 3 && (
+                                <span className="text-muted-foreground ml-2 text-sm/6">
+                                  +{attributes.length - 3} more
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      )}
+                    </div>
+                    <div className="mt-4">
+                      <Button
+                        id="signinsubmit"
+                        type="submit"
+                        variant="outline"
+                        className="min-w-[2rem] rounded-xl"
+                        disabled={!isCredSelected}
+                        onClick={() =>
+                          schemaType &&
+                          DownloadSchemaTemplate(
+                            credentialSelected,
+                            schemaType,
+                            selectedTemplate,
+                            orgId,
+                            setSuccess,
+                            setUploadMessage,
+                            setFailure,
+                            setLoading,
+                          )
+                        }
+                      >
+                        <Download />
+                        <span>Download Template</span>
+                      </Button>
+                    </div>
+                  </div>
+                  <DragAndDrop context={context} />
+                </div>
+              </div>
+            </Card>
+            <Table csvData={csvData} />
+            <div>
+              {!isCredSelected && <Steps />}
+
+              <IssuancePopup
+                openModal={openModal}
+                closeModal={handleCloseConfirmation}
+                isProcessing={loading}
+                onSuccess={() => confirmCredentialIssuance(context)}
+              />
+
+              <ResetIssue context={context} />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 
