@@ -24,7 +24,7 @@ import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
-import { setSchemaDetials } from '@/lib/schemaStorageSlice'
+import { setSchemaDetails } from '@/lib/schemaStorageSlice'
 import { useAppDispatch } from '@/lib/hooks'
 
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
@@ -75,7 +75,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
       props.created,
     )
     dispatch(
-      setSchemaDetials({
+      setSchemaDetails({
         type: 'W3C_SCHEMA',
         w3cSchema: {
           schemaVersion: props.version,
