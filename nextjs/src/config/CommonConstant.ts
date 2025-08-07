@@ -220,3 +220,12 @@ export const issuanceApiParameter = {
   sortingOrder: 'desc',
   allSearch: '',
 }
+
+export const bulkIssuanceApiParameter = {
+  itemPerPage,
+  page: 1,
+  search: '',
+  sortBy: 'id',
+  sortingOrder: 'desc',
+  allSearch: '',
+}
