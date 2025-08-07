@@ -1,8 +1,8 @@
+import React, { JSX } from 'react'
 import { SchemaType, SchemaTypeValue } from '@/common/enums'
 
 import { FormikProps } from 'formik'
 import { IPopup } from '../components/Create'
-import React from 'react'
 
 export interface ISchemaData {
   schemaId: string
@@ -218,7 +218,7 @@ export interface IRequiredAndDeleteProps {
 
 export interface ISidebarSliderData {
   label: string
-  value: string
+  value: string | JSX.Element
   copyable?: boolean
 }
 export interface UserOrgRole {
