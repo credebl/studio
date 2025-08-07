@@ -125,7 +125,9 @@ const EmailIssuance = (): JSX.Element => {
           schemaDetails.nonW3cSchema === option.credentialDefinitionId,
       )
       setCredentialSelected(credential ?? null)
-      setSchemasIdentifier(credential?.schemaIdentifier)
+      setCredDefId(
+        credential?.schemaIdentifier ?? credential?.credentialDefinitionId,
+      )
       setAttributes(
         credential?.schemaAttributes ?? credential?.attributes ?? [],
       )
@@ -152,6 +154,9 @@ const EmailIssuance = (): JSX.Element => {
       setCredentialSelected(data ?? null)
       setSchemasIdentifier(credentials?.schemaIdentifier)
       setAttributes(attributes ?? [])
+      if (data?.label) {
+        setSelectValue(data?.label)
+      }
     } else {
       setSelectValue(
         schemaType === SchemaTypes.schema_W3C
