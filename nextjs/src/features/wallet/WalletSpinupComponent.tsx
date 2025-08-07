@@ -290,7 +290,7 @@ const WalletSpinup = (): React.JSX.Element => {
         setWalletSpinStep(1)
 
         setTimeout(() => {
-          window.location.href = redirectUrl ? redirectUrl : '/organizations'
+          window.location.href = redirectUrl ? redirectUrl : '/dashboard'
         }, 1000)
       } else {
         setShowProgressUI(false)

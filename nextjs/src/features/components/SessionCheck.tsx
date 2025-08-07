@@ -18,15 +18,18 @@ const SessionCheck = ({
   const redirectTo = searchParams.get('redirectTo')
 
   const preventRedirectOnPaths = [
-    '/organizations/create-organization',
-    '/organizations/agent-config',
-    '/organizations',
+    '/create-organization',
+    '/agent-config',
     '/users',
     '/connections',
     '/profile',
     '/developers-setting',
     '/credentials',
     '/verification',
+    '/schemas',
+    '/invitations',
+    '/delete-organization',
+    '/agent-config',
   ]
 
   useEffect(() => {
