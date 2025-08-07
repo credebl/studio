@@ -1,15 +1,9 @@
 import React, { JSX } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 
 import { Card } from '@/components/ui/card'
 import { IAttributes } from '../type/EmailIssuance'
 import { IEmailIssuanceCardProps } from '../../connectionIssuance/type/Issuance'
+import SchemaSelect from './SchemaSelect'
 import { SchemaTypes } from '@/common/enums'
 import { SearchableSelect } from '@/components/SearchableSelect'
 
@@ -65,27 +59,9 @@ function EmailIssuanceCard({
                 )}
               </div>
               {schemaType === SchemaTypes.schema_W3C && (
-                <div>
-                  <p className="pb-6 text-xl font-semibold opacity-0">
-                    Schema Filter
-                  </p>
-                  <Select
-                    defaultValue={"Organization's schema"}
-                    value={allSchema ? 'All schemas' : "Organization's schema"}
-                    onValueChange={handleFilterChange}
-                  >
-                    <SelectTrigger className="w-[230px] rounded-lg border p-2.5 text-sm">
-                      <SelectValue placeholder="Select schema type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {optionsWithDefault.map((opt) => (
-                        <SelectItem key={opt} value={opt}>
-                          {opt}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                <SchemaSelect
+                  {...{ allSchema, handleFilterChange, optionsWithDefault }}
+                />
               )}
             </div>
 
