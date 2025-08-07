@@ -2,29 +2,47 @@
 
 import * as Yup from 'yup'
 
-import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import type {
   DataTypeAttributes,
   ICredentials,
   IssuanceFormPayload,
-  Option,
   SchemaDetails,
   SelectedUsers,
 } from '../type/Issuance'
 import { DidMethod, SchemaTypeValue, SchemaTypes } from '@/common/enums'
 import { Form, Formik } from 'formik'
 import React, { useEffect, useState } from 'react'
-import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  apiStatusCodes,
+  issuanceApiParameter,
+  schemaDetailsInitialState,
+} from '@/config/CommonConstant'
+import {
+  createAttributeValidationSchema,
+  createIssuanceFormFunction,
+  handleSelect,
+  handleSubmit,
+} from './IssuanceFunctions'
 import getAllSchemaHelperUtil, {
   GetAllSchemaHelperReturn,
 } from '../../emailIssuance/components/GetAllSchemaForIssuance'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
+import { ArrowRight } from 'lucide-react'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { EmptyListMessage } from '@/components/EmptyListComponent'
 import FieldArrayData from './FieldArray'
+import IssuanceHeader from './IssuanceHeader'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
@@ -33,28 +51,17 @@ import SummaryCard from '@/components/SummaryCard'
 import SummaryCardW3c from '@/components/SummaryCardW3c'
 import { getOrganizationById } from '@/app/api/organization'
 import { getSchemaCredDef } from '@/app/api/schema'
-import { handleSubmit } from './IssuanceFunctions'
 import { pathRoutes } from '@/config/pathRoutes'
-import { useAppSelector } from '@/lib/hooks'
+import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 
 const IssueCred = (): React.JSX.Element => {
   const [userLoader, setUserLoader] = useState<boolean>(true)
-  const [schemaDetails, setSchemaDetails] = useState<SchemaDetails>({
-    schemaName: '',
-    version: '',
-    schemaId: '',
-    credDefId: '',
-  })
-  const schemaListAPIParameter = {
-    itemPerPage,
-    page: 1,
-    search: '',
-    sortBy: 'id',
-    sortingOrder: 'desc',
-    allSearch: '',
-  }
+  const [schemaDetails, setSchemaDetails] = useState<SchemaDetails>(
+    schemaDetailsInitialState,
+  )
+  const schemaListAPIParameter = issuanceApiParameter
   const [issuanceFormPayload, setIssuanceFormPayload] =
     useState<IssuanceFormPayload>({
       credentialData: [],
@@ -69,9 +76,15 @@ const IssueCred = (): React.JSX.Element => {
   const [orgDid, setOrgDid] = useState<string>('')
   const orgId = useSelector((state: RootState) => state.organization.orgId)
   const [isLoading, setIsLoading] = useState(false)
+  const [createLoading, setCreateLoading] = useState(false)
   const [credentialOptions, setCredentialOptions] = useState<
     GetAllSchemaHelperReturn[]
   >([])
+  const [selectValue, setSelectValue] = useState<string>('')
+
+  const dispatch = useAppDispatch()
+  const optionsWithDefault = ["Organization's schema", 'All schemas']
+
   const selectedUser = useSelector(
     (state: RootState) => state.storageKeys.SELECTED_USER,
   )
@@ -80,6 +93,9 @@ const IssueCred = (): React.JSX.Element => {
   )
   const ledgerId = useAppSelector(
     (state: RootState) => state.organization.ledgerId,
+  )
+  const schemaDetailsSlice = useAppSelector(
+    (state: RootState) => state.schemaStorage,
   )
 
   const router = useRouter()
@@ -113,35 +129,7 @@ const IssueCred = (): React.JSX.Element => {
     setIssuanceFormPayload(issuancePayload)
     setUserLoader(false)
   }
-  const createIssuanceForm = (
-    selectedUsers: SelectedUsers[],
-    attributes: DataTypeAttributes[],
-    credDefId: string,
-    orgId: string,
-  ): void => {
-    const credentialData = selectedUsers.map((user) => {
-      const attributesArray = attributes.map((attr) => ({
-        name: attr.attributeName,
-        value: '',
-        dataType: attr?.schemaDataType,
-        isRequired: attr.isRequired,
-      }))
 
-      return {
-        connectionId: user.connectionId,
-        attributes: attributesArray,
-      }
-    })
-
-    const issuancePayload = {
-      credentialData,
-      credentialDefinitionId: credDefId,
-      orgId,
-    }
-
-    setIssuanceFormPayload(issuancePayload)
-    setUserLoader(false)
-  }
   const getSchemaAndUsers = async (w3cSchema: boolean): Promise<void> => {
     try {
       if (!w3cSchema) {
@@ -151,7 +139,14 @@ const IssueCred = (): React.JSX.Element => {
         const selectedUsers = selectedUser || []
         const attributes = schemaDetails.schemaAttributes || []
         if (attributes && attributes?.length) {
-          createIssuanceForm(selectedUsers, attributes, credDefId, orgId)
+          createIssuanceFormFunction({
+            selectedUsers,
+            attributes,
+            credDefId,
+            orgId,
+            setIssuanceFormPayload,
+            setUserLoader,
+          })
         } else {
           setFailure('Attributes are not available')
         }
@@ -185,6 +180,57 @@ const IssueCred = (): React.JSX.Element => {
       getSchemaAndUsers(w3cSchema)
     }
   }, [schemaDetails])
+
+  useEffect(() => {
+    if (
+      Array.isArray(credentialOptions) &&
+      credentialOptions.length > 0 &&
+      schemaDetailsSlice.type === 'CREDENTIAL_DEFINITION'
+    ) {
+      if (!schemaDetailsSlice.nonW3cSchema) {
+        return
+      }
+      const credential = credentialOptions.find(
+        (option) =>
+          option.credentialId &&
+          typeof schemaDetailsSlice.nonW3cSchema === 'string' &&
+          schemaDetailsSlice.nonW3cSchema === option.credentialId,
+      )
+      if (!credential) {
+        return
+      }
+      const data = JSON.parse(credential.value)
+      setSchemaDetails({
+        schemaName: credential.schemaName,
+        version: credential.schemaVersion,
+        schemaId: credential.schemaId,
+        credDefId: credential.credentialId,
+        schemaAttributes: data,
+      })
+      setSelectValue(credential?.label)
+    } else if (
+      Array.isArray(credentialOptions) &&
+      credentialOptions.length > 0 &&
+      schemaDetailsSlice.type === 'W3C_SCHEMA'
+    ) {
+      const credentials = schemaDetailsSlice.w3cSchema
+      if (!credentials) {
+        return
+      }
+      const data = JSON.parse(credentials.value)
+      setSchemaDetails({
+        schemaName: credentials.schemaName,
+        version: credentials.schemaVersion,
+        schemaId: credentials.schemaId,
+        credDefId: credentials.credentialId,
+        schemaAttributes: data,
+      })
+    } else {
+      setSelectValue(
+        w3cSchema ? 'Select Schema ' : 'Select Credential Definition',
+      )
+    }
+  }, [credentialOptions, schemaDetailsSlice])
 
   const fetchOrganizationDetails = async (): Promise<boolean | null> => {
     try {
@@ -222,6 +268,7 @@ const IssueCred = (): React.JSX.Element => {
 
     return null
   }
+
   useEffect(() => {
     const execute = async (): Promise<void> => {
       const response = await fetchOrganizationDetails()
@@ -262,37 +309,7 @@ const IssueCred = (): React.JSX.Element => {
     }
     execute()
     return () => setUserLoader(false)
-  }, [])
-
-  const createAttributeValidationSchema = (
-    name: string,
-    value: string,
-    isRequired: boolean,
-  ): Yup.ObjectSchema<
-    { value: string | undefined },
-    Yup.AnyObject,
-    { value: undefined },
-    ''
-  > => {
-    let attributeSchema = Yup.string()
-    let requiredData = ''
-    if (name) {
-      requiredData = name
-        .split('_')
-        .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
-        .join(' ')
-    }
-
-    if (isRequired) {
-      if (!value) {
-        attributeSchema = Yup.string().required(`${requiredData} is required`)
-      }
-    }
-
-    return Yup.object().shape({
-      value: attributeSchema,
-    })
-  }
+  }, [allSchema, orgId])
 
   const validationSchema = Yup.object().shape({
     credentialData: Yup.array().of(
@@ -310,67 +327,84 @@ const IssueCred = (): React.JSX.Element => {
     ),
   })
 
-  const handleSelect = (value: Option): void => {
-    if (allSchema && w3cSchema) {
-      setSchemaDetails({
-        schemaName: value.schemaName,
-        version: value.schemaVersion,
-        schemaId: value.schemaIdentifier ?? '',
-        credDefId: value.credentialId,
-        schemaAttributes: value.attributes ?? [],
-      })
-    } else {
-      const data = JSON.parse(value.value)
-      setSchemaDetails({
-        schemaName: value.schemaName,
-        version: value.schemaVersion,
-        schemaId: value.schemaId,
-        credDefId: value.credentialId,
-        schemaAttributes: data,
-      })
-    }
-  }
-
   const handleBackClick = (): void => {
     setIsLoading(true)
     router.push(pathRoutes.back.issuance.connections)
   }
 
+  const handleFilterChange = async (value: string): Promise<void> => {
+    const isAllSchemas = value === 'All schemas'
+    dispatch(setAllSchema(isAllSchemas))
+  }
+
   return (
     <PageContainer>
       <div className="px-4 pt-2">
-        <div className="col-span-full mb-4 xl:mb-2">
-          <div className="flex items-center justify-end px-4">
-            <Button onClick={handleBackClick} disabled={isLoading}>
-              {isLoading ? <Loader size={20} /> : <ArrowLeft />}
-              Back
-            </Button>
-          </div>
-          <AlertComponent
-            message={success ?? error}
-            type={success ? 'success' : 'failure'}
-            onAlertClose={() => {
-              setError(null)
-              setSuccess(null)
-            }}
-          />
-          <h1 className="ml-1 text-xl font-semibold sm:text-2xl">Issuance</h1>
-        </div>
+        <IssuanceHeader
+          {...{
+            handleBackClick,
+            isLoading,
+            success,
+            error,
+            setError,
+            setSuccess,
+            setCreateLoading,
+            createLoading,
+          }}
+        />
         <Card className="">
           <CardContent className="p-4">
-            <p className="pb-6 text-xl font-semibold">
-              {w3cSchema ? 'Select Schema ' : 'Select Credential Definition'}
-            </p>
-            <SearchableSelect
-              className="border-muted max-w-lg border-1"
-              options={credentialOptions}
-              value={''}
-              onValueChange={handleSelect}
-              placeholder={
-                w3cSchema ? 'Select Schema ' : 'Select Credential Definition'
-              }
-              enableInternalSearch={true}
-            />
+            <div className="flex md:gap-6">
+              <div>
+                <p className="pb-6 text-xl font-semibold">
+                  {w3cSchema
+                    ? 'Select Schema '
+                    : 'Select Credential Definition'}
+                </p>
+                <SearchableSelect
+                  className="border-muted max-w-lg border-1"
+                  options={credentialOptions}
+                  value={selectValue}
+                  onValueChange={(value) =>
+                    handleSelect({
+                      value,
+                      setSchemaDetails,
+                      allSchema,
+                      w3cSchema,
+                    })
+                  }
+                  placeholder={
+                    w3cSchema
+                      ? 'Select Schema '
+                      : 'Select Credential Definition'
+                  }
+                  enableInternalSearch={true}
+                />
+              </div>
+              {w3cSchema && (
+                <div>
+                  <p className="pb-6 text-xl font-semibold opacity-0">
+                    Schema Filter
+                  </p>
+                  <Select
+                    defaultValue={"Organization's schema"}
+                    value={allSchema ? 'All schemas' : "Organization's schema"}
+                    onValueChange={handleFilterChange}
+                  >
+                    <SelectTrigger className="w-[230px] rounded-lg border p-2.5 text-sm">
+                      <SelectValue placeholder="Select schema type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {optionsWithDefault.map((opt) => (
+                        <SelectItem key={opt} value={opt}>
+                          {opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
             {schemaDetails.schemaId && (
               <>
                 {w3cSchema ? (

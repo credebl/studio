@@ -95,7 +95,7 @@ const OrganizationCardList = (): React.JSX.Element => {
         <Button
           onClick={() => {
             setIsCreatingOrg(true)
-            route.push('/organizations/create-organization')
+            route.push('/create-organization')
           }}
           disabled={isCreatingOrg}
         >
@@ -158,7 +158,7 @@ const OrganizationCardList = (): React.JSX.Element => {
                 >
                   <button
                     className="url-link flex min-w-0 items-center gap-3 hover:cursor-pointer"
-                    onClick={() => route.push(`/organizations/${org.id}`)}
+                    onClick={() => route.push(`/${org.id}`)}
                   >
                     <div className="flex-shrink-0">
                       {org.logoUrl ? (
@@ -266,8 +266,8 @@ const OrganizationCardList = (): React.JSX.Element => {
                                 return
                               }
                               hasWallet
-                                ? route.push('/organizations/schemas/create')
-                                : route.push(`/organizations/${org.id}`)
+                                ? route.push('/schemas/create')
+                                : route.push(`/${org.id}`)
                             }}
                             disabled={!isAdmin}
                             className="rounded-md p-1"
@@ -291,9 +291,9 @@ const OrganizationCardList = (): React.JSX.Element => {
                             size="icon"
                             onClick={() => {
                               if (hasWallet) {
-                                route.push('/organizations/schemas')
+                                route.push('/schemas')
                               } else {
-                                route.push(`/organizations/${org.id}`)
+                                route.push(`/${org.id}`)
                               }
                             }}
                             className="rounded-md p-1"
@@ -314,9 +314,9 @@ const OrganizationCardList = (): React.JSX.Element => {
                           size="icon"
                           onClick={() => {
                             if (hasWallet) {
-                              route.push('/organizations/credentials')
+                              route.push('/credentials')
                             } else {
-                              route.push(`/organizations/${org.id}`)
+                              route.push(`/${org.id}`)
                             }
                           }}
                         >
@@ -335,9 +335,9 @@ const OrganizationCardList = (): React.JSX.Element => {
                           size="icon"
                           onClick={() => {
                             if (hasWallet) {
-                              route.push('/organizations/verification')
+                              route.push('/verification')
                             } else {
-                              route.push(`/organizations/${org.id}`)
+                              route.push(`/${org.id}`)
                             }
                           }}
                         >
@@ -358,7 +358,7 @@ const OrganizationCardList = (): React.JSX.Element => {
 
       <CardFooter className="mt-auto justify-end pt-2">
         <Link
-          href="/organizations"
+          href=""
           className="url-link transition hover:underline hover:opacity-80"
         >
           View all

@@ -13,6 +13,7 @@ import {
   getColumns,
 } from '../../../../components/ui/generic-table-component/columns'
 import React, { JSX, useEffect, useState } from 'react'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -32,7 +33,7 @@ import { getIssuedCredentials } from '@/app/api/Issuance'
 import { getOrganizationById } from '@/app/api/organization'
 import { issuanceSvgComponent } from '@/config/svgs/issuanceSvgComponent'
 import { pathRoutes } from '@/config/pathRoutes'
-import { useAppSelector } from '@/lib/hooks'
+import { resetSchemaDetails } from '@/lib/schemaStorageSlice'
 import { useRouter } from 'next/navigation'
 
 interface PaginationState {
@@ -56,6 +57,7 @@ const Credentials = (): JSX.Element => {
   const [isIssuing, setIsIssuing] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [fields, setSelectedFields] = useState<ISidebarSliderData[]>([])
+  const dispatch = useAppDispatch()
 
   // Consolidated pagination state
   const [pagination, setPagination] = useState<PaginationState>({
@@ -70,6 +72,7 @@ const Credentials = (): JSX.Element => {
   const schemeSelection = async (): Promise<void> => {
     setIsIssuing(true)
     try {
+      dispatch(resetSchemaDetails())
       router.push(pathRoutes.organizations.Issuance.issue)
     } finally {
       setIsIssuing(false)
@@ -202,8 +205,30 @@ const Credentials = (): JSX.Element => {
                   copyable: true,
                 },
                 {
+                  label: 'Issued To',
+                  value: row.original.connections.theirLabel ?? 'Not Available',
+                },
+                {
+                  label: 'Schema Name',
+                  value: row.original.schemaName ?? 'Not Available',
+                },
+                {
                   label: 'Schema Id',
-                  value: row.original.schemaId,
+                  value: row.original.schemaId ?? 'Not Available',
+                  copyable: true,
+                },
+                {
+                  label: 'Issued On',
+                  value: row.original.createDateTime ? (
+                    <DateCell date={row.original.createDateTime} />
+                  ) : (
+                    'Not Available'
+                  ),
+                  copyable: true,
+                },
+                {
+                  label: 'Status',
+                  value: <StatusCellForCredential state={row.original.state} />,
                   copyable: true,
                 },
                 {
@@ -361,6 +386,8 @@ const Credentials = (): JSX.Element => {
         />
       </div>
       <SidePanelComponent
+        title={'Credential Details'}
+        description={'Detailed view of the selected credential'}
         open={isDrawerOpen}
         onOpenChange={setIsDrawerOpen}
         fields={fields}
