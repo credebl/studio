@@ -132,8 +132,8 @@ export const authOptions: MyAuthOptions = {
           if (!res?.ok) {
             throw new Error(responseData.message || 'Invalid credentials')
           }
-          const user = responseData
 
+          const user = responseData
           if (user.statusCode === 200 && user.data) {
             const decodedToken = jwtDecode<jwtDataPayload>(
               user.data.access_token,
