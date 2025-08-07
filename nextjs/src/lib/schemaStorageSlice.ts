@@ -26,7 +26,7 @@ const schemaStorageSlice = createSlice({
   name: 'schemaStorage',
   initialState,
   reducers: {
-    setSchemaDetials: (state, action: PayloadAction<SchemaInfo>) => {
+    setSchemaDetails: (state, action: PayloadAction<SchemaInfo>) => {
       state.type = action.payload.type
       if (action.payload.w3cSchema) {
         state.w3cSchema = action.payload.w3cSchema
@@ -39,6 +39,6 @@ const schemaStorageSlice = createSlice({
   },
 })
 
-export const { setSchemaDetials, resetSchemaDetails } =
+export const { setSchemaDetails, resetSchemaDetails } =
   schemaStorageSlice.actions
 export default schemaStorageSlice.reducer
