@@ -160,7 +160,7 @@ const SchemasList = ({
 
   const handleClickSchema = (schemaId: string): void => {
     const encodedSchemaId = encodeURIComponent(schemaId)
-    router.push(`/organizations/schemas/${encodedSchemaId}`)
+    router.push(`/schemas/${encodedSchemaId}`)
   }
 
   const renderSchema = (schema: Schema, index: number): React.JSX.Element => {
@@ -225,7 +225,7 @@ const SchemasList = ({
       setShowTooltip(true)
     } else {
       setIsSchemaLoading(true)
-      router.push('/organizations/schemas/create')
+      router.push('/schemas/create')
       return
     }
 
@@ -303,7 +303,7 @@ const SchemasList = ({
 
       <CardFooter className="mt-auto justify-end pt-2">
         <Link
-          href="/organizations/schemas"
+          href="/schemas"
           className="url-link transition hover:underline hover:opacity-80"
         >
           View all

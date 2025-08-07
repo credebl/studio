@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowLeft, Download, History, Plus } from 'lucide-react'
+import { ArrowLeft, Download, History } from 'lucide-react'
 import {
   DownloadSchemaTemplate,
   confirmCredentialIssuance,
@@ -14,8 +14,16 @@ import {
 } from '../../connectionIssuance/type/Issuance'
 import { Option, SearchableSelect } from '@/components/SearchableSelect'
 import React, { JSX, useEffect, useRef, useState } from 'react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ToastContainer, toast } from 'react-toastify'
 import { apiStatusCodes, itemPerPage } from '@/config/CommonConstant'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -35,7 +43,7 @@ import Steps from './Steps'
 import Table from './Table'
 import { getCsvFileData } from '@/app/api/BulkIssuance'
 import { pathRoutes } from '@/config/pathRoutes'
-import { useAppSelector } from '@/lib/hooks'
+import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
 export interface SelectRef {
@@ -66,6 +74,7 @@ const BulkIssuance = (): JSX.Element => {
   )
   const [isAllSchema, setIsAllSchema] = useState<boolean>(allSchema ?? false)
   const [attributes, setAttributes] = useState<IAttributes[]>([])
+  const optionsWithDefault = ["Organization's schema", 'All schemas']
   const schemaListAPIParameters = {
     itemPerPage,
     page: 1,
@@ -82,14 +91,67 @@ const BulkIssuance = (): JSX.Element => {
     total: 0,
   }
   const [currentPage, setCurrentPage] = useState(initialPageState)
+  const [selectValue, setSelectValue] = useState<string>('')
 
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
   const ledgerId = useAppSelector(
     (state: RootState) => state.organization.ledgerId,
   )
+  const schemaDetails = useAppSelector(
+    (state: RootState) => state.schemaStorage,
+  )
   const router = useRouter()
 
   const socketId = SOCKET.id || ''
+
+  const dispatch = useAppDispatch()
+
+  useEffect(() => {
+    if (
+      Array.isArray(credentialOptionsData) &&
+      credentialOptionsData.length > 0 &&
+      schemaDetails.type === 'CREDENTIAL_DEFINITION'
+    ) {
+      const credential = credentialOptionsData.find(
+        (option) =>
+          schemaDetails.nonW3cSchema === option.credentialDefinitionId,
+      )
+      setCredentialSelected(credential ?? null)
+      setSelectedTemplate(credential?.credentialDefinitionId)
+      setAttributes(
+        credential?.schemaAttributes ?? credential?.attributes ?? [],
+      )
+      setSelectValue(credential?.label)
+    } else if (
+      Array.isArray(credentialOptionsData) &&
+      credentialOptionsData.length > 0 &&
+      schemaDetails.type === 'W3C_SCHEMA'
+    ) {
+      const credentials = schemaDetails.w3cSchema
+      if (!credentials) {
+        return
+      }
+      const attributes = JSON.parse(credentials.value)
+      const data = {
+        value: credentials.schemaVersion,
+        label: `${credentials.schemaName} [${credentials.schemaVersion}]`,
+        schemaName: credentials.schemaName,
+        schemaVersion: credentials.schemaVersion,
+        schemaIdentifier: credentials.schemaIdentifier,
+        id: 0,
+        schemaAttributes: attributes,
+      }
+      setCredentialSelected(data ?? null)
+      setSelectedTemplate(credentials?.schemaIdentifier)
+      setAttributes(attributes ?? [])
+    } else {
+      setSelectValue(
+        schemaType === SchemaTypes.schema_W3C
+          ? 'Select Schema '
+          : 'Select Credential Definition',
+      )
+    }
+  }, [credentialOptionsData, schemaDetails])
 
   const onSelectChange = (newValue: ICredentials | undefined): void => {
     const value = newValue
@@ -202,7 +264,7 @@ const BulkIssuance = (): JSX.Element => {
   }
   const selectInputRef = React.useRef<SelectRef | null>(null)
 
-  const createSchemaTitle = { title: 'Create Schema', svg: <Create /> }
+  const createSchemaTitle = { title: 'View Schemas', svg: <Create /> }
 
   const context = {
     setLoading,
@@ -236,11 +298,17 @@ const BulkIssuance = (): JSX.Element => {
 
   useEffect(() => {
     getSchemaCredentials(schemaListAPIParameters, context)
-  }, [isAllSchema])
+  }, [isAllSchema, orgId])
 
   const handleClick = (): void => {
     setLoading(true)
     router.push(pathRoutes.organizations.Issuance.issue)
+  }
+
+  const handleFilterChange = async (value: string): Promise<void> => {
+    const isAllSchemas = value === 'All schemas'
+    setIsAllSchema(isAllSchemas)
+    dispatch(setAllSchema(isAllSchemas))
   }
 
   return (
@@ -278,10 +346,10 @@ const BulkIssuance = (): JSX.Element => {
             <RoleViewButton
               buttonTitle={createSchemaTitle.title}
               feature={Features.CRETAE_SCHEMA}
-              svgComponent={<Plus />}
+              svgComponent={<div></div>}
               onClickEvent={() => {
                 setCreateLoading(true)
-                router.push(`${pathRoutes.organizations.createSchema}`)
+                router.push(`${pathRoutes.organizations.schemas}`)
               }}
               isPadding={createSchemaTitle.title !== 'Create Schema'}
               loading={createLoading}
@@ -309,24 +377,60 @@ const BulkIssuance = (): JSX.Element => {
             <div>
               <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
                 <div className="flex flex-col justify-between">
-                  <div>
-                    {mounted && (
-                      <SearchableSelect
-                        className="border-muted max-w-lg border-1"
-                        options={
-                          Array.isArray(credentialOptionsData)
-                            ? credentialOptionsData
-                            : []
-                        }
-                        value={''}
-                        onValueChange={handleSelect}
-                        placeholder={
-                          schemaType === SchemaTypes.schema_W3C
-                            ? 'Select Schema '
-                            : 'Select Credential Definition'
-                        }
-                      />
-                    )}
+                  <div className="flex flex-col gap-4">
+                    <div>
+                      <p className="pb-2 text-xl font-semibold">
+                        {schemaType === SchemaTypes.schema_W3C
+                          ? 'Select Schema '
+                          : 'Select Credential Definition'}
+                      </p>
+                      {mounted && (
+                        <SearchableSelect
+                          className="border-muted max-w-lg border-1"
+                          options={
+                            Array.isArray(credentialOptionsData)
+                              ? credentialOptionsData
+                              : []
+                          }
+                          value={selectValue}
+                          onValueChange={handleSelect}
+                          placeholder={
+                            schemaType === SchemaTypes.schema_W3C
+                              ? 'Select Schema '
+                              : 'Select Credential Definition'
+                          }
+                        />
+                      )}
+                    </div>
+                    <div>
+                      {schemaType === SchemaTypes.schema_W3C && (
+                        <>
+                          <p className="pb-2 text-xl font-semibold opacity-0">
+                            Schema Filter
+                          </p>
+                          <Select
+                            defaultValue={"Organization's schema"}
+                            value={
+                              allSchema
+                                ? 'All schemas'
+                                : "Organization's schema"
+                            }
+                            onValueChange={handleFilterChange}
+                          >
+                            <SelectTrigger className="min-w-lg rounded-lg border p-2.5 text-sm">
+                              <SelectValue placeholder="Select schema type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {optionsWithDefault.map((opt) => (
+                                <SelectItem key={opt} value={opt}>
+                                  {opt}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </>
+                      )}
+                    </div>
                   </div>
                   <div className="mt-4">
                     {credentialSelected && (

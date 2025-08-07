@@ -367,7 +367,7 @@ const SchemaList = (props: {
   const handleClick = (): void => {
     if (orgRole === 'admin' || orgRole === 'owner') {
       setLoading(true)
-      route.push('/organizations/schemas/create')
+      route.push('/schemas/create')
     }
   }
 
@@ -503,7 +503,7 @@ const SchemaList = (props: {
               onClick={() => {
                 if (orgRole === 'admin' || orgRole === 'owner') {
                   setLoading(true)
-                  route.push('/organizations/schemas/create')
+                  route.push('/schemas/create')
                 }
               }}
               disabled={(orgRole !== 'admin' && orgRole !== 'owner') || loading}

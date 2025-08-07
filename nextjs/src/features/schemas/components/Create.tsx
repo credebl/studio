@@ -140,7 +140,7 @@ const CreateSchema = (): React.JSX.Element => {
       setLoading(true)
       setTimeout(() => {
         setSuccess(null)
-        route.push('/organizations/schemas')
+        route.push('/schemas')
       }, 1500)
     } else {
       setFailure(createSchema as string)
