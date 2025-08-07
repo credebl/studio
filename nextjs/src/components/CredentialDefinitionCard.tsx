@@ -4,7 +4,7 @@ import CopyDid from '@/config/CopyDid'
 import React from 'react'
 import { Roles } from '@/common/enums'
 import { pathRoutes } from '@/config/pathRoutes'
-import { setSchemaDetials } from '@/lib/schemaStorageSlice'
+import { setSchemaDetails } from '@/lib/schemaStorageSlice'
 import { useAppDispatch } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
@@ -31,7 +31,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
       props?.userRoles?.includes(Roles.ISSUER)
     ) {
       dispatch(
-        setSchemaDetials({
+        setSchemaDetails({
           type: 'CREDENTIAL_DEFINITION',
           nonW3cSchema: props.credentialDefinitionId,
         }),
