@@ -164,7 +164,7 @@ export default function Dashboard(): React.JSX.Element {
   const handleCreateWallet = (): void => {
     // redirect or open wallet creation
     setWalletSetupLoading(true)
-    router.push(`/organizations/agent-config?orgId=${orgId}`)
+    router.push(`/agent-config?orgId=${orgId}`)
   }
 
   return (

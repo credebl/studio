@@ -85,11 +85,11 @@ export const OrganizationDashboard = ({
   }
 
   const handleEditOrg = (): void => {
-    router.push(`/organizations/create-organization?orgId=${orgId}`)
+    router.push(`/create-organization?orgId=${orgId}`)
   }
 
   const handleDeleteOrg = (): void => {
-    router.push(`/organizations/delete-organization?orgId=${orgId}`)
+    router.push(`/delete-organization?orgId=${orgId}`)
   }
 
   useEffect(() => {
@@ -215,7 +215,7 @@ export const OrganizationDashboard = ({
           }`}
           onClick={() => {
             if (walletStatus) {
-              router.push('/organizations/schemas')
+              router.push('/schemas')
             }
           }}
         >
@@ -246,8 +246,8 @@ export const OrganizationDashboard = ({
           </CardContent>
         </Card>
 
-        <Card className="shadow transition-all hover:scale-102">
-          <CardContent className="flex cursor-pointer items-center justify-between p-6">
+        <Card className="shadow transition-all">
+          <CardContent className="flex cursor-default items-center justify-between p-6">
             <div>
               <p className="font-medium">Credentials</p>
               <h3 className="mt-2 text-4xl font-bold">
