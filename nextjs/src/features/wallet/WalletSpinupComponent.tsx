@@ -4,7 +4,7 @@
 import { AgentType, DidMethod, WalletSpinupStatus } from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   createDid,
   setAgentConfigDetails,
@@ -17,6 +17,7 @@ import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import DedicatedAgentForm from './DedicatedAgentForm'
 import { IValuesShared } from '../organization/components/interfaces/organization'
+import Loader from '@/components/Loader'
 import { Organisation } from '../dashboard/type/organization'
 import PageContainer from '@/components/layout/page-container'
 import SOCKET from '@/config/SocketConfig'
@@ -31,21 +32,19 @@ import { useAppDispatch } from '@/lib/hooks'
 const WalletSpinup = (): React.JSX.Element => {
   const [agentType, setAgentType] = useState<string>(AgentType.DEDICATED)
   const [loading, setLoading] = useState<boolean>(false)
-  const [blockScreen, setBlockScreen] = useState<boolean>(true)
-  const [isInitialCheckComplete, setIsInitialCheckComplete] =
-    useState<boolean>(false) // New state
+  const [isPageReady, setIsPageReady] = useState<boolean>(false)
   const [walletSpinStep, setWalletSpinStep] = useState<number>(0)
   const [success, setSuccess] = useState<string | null>(null)
   const [agentSpinupCall, setAgentSpinupCall] = useState<boolean>(false)
   const [failure, setFailure] = useState<string | null>(null)
   const [seeds, setSeeds] = useState<string>('')
-  const [maskedSeeds, setMaskedSeeds] = useState('')
+  const [maskedSeeds, setMaskedSeeds] = useState<string>('')
   const [orgData, setOrgData] = useState<Organisation | null>(null)
   const [, setShowProgressUI] = useState(false)
-  const [, setCurrentOrgId] = useState<string>('')
+  // const [, setCurrentOrgId] = useState<string>('')
   const [, setIsShared] = useState<boolean>(false)
   const [, setIsConfiguredDedicated] = useState<boolean>(false)
-  const [showLedgerConfig, setShowLedgerConfig] = useState(false)
+  const [showLedgerConfig, setShowLedgerConfig] = useState<boolean>(false)
   const [, setWalletStatus] = useState<boolean>(false)
   const [, setSpinupStatus] = useState<WalletSpinupStatus>(
     WalletSpinupStatus.NOT_STARTED,
@@ -58,12 +57,6 @@ const WalletSpinup = (): React.JSX.Element => {
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
 
-  useEffect(() => {
-    if (orgId) {
-      setCurrentOrgId(orgId)
-    }
-  }, [orgId])
-
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
     agentEndpoint: '',
@@ -71,50 +64,34 @@ const WalletSpinup = (): React.JSX.Element => {
   })
 
   // Save spinup status to sessionStorage
-  const saveSpinupStatus = (status: WalletSpinupStatus, step: number): void => {
-    if (typeof window !== 'undefined' && orgId) {
-      const spinupData = {
-        status,
-        step,
-        timestamp: Date.now(),
-        orgId,
-        agentType,
-      }
-      sessionStorage.setItem(
-        `wallet_spinup_${orgId}`,
-        JSON.stringify(spinupData),
-      )
-    }
-  }
-
-  // Load spinup status from sessionStorage
-  const loadSpinupStatus = (): {
-    status: WalletSpinupStatus
-    step: number
-  } | null => {
-    if (typeof window !== 'undefined' && orgId) {
-      const stored = sessionStorage.getItem(`wallet_spinup_${orgId}`)
-      if (stored) {
-        try {
-          const spinupData = JSON.parse(stored)
-          // Check if data is not too old (e.g., within 1 hour)
-          if (Date.now() - spinupData.timestamp < 3600000) {
-            return { status: spinupData.status, step: spinupData.step }
-          }
-        } catch (error) {
-          console.error('Error parsing spinup status:', error)
+  const saveSpinupStatus = useCallback(
+    (status: WalletSpinupStatus, step: number): void => {
+      if (typeof window !== 'undefined' && orgId) {
+        const spinupData = {
+          status,
+          step,
+          timestamp: Date.now(),
+          orgId,
+          agentType,
         }
+        sessionStorage.setItem(
+          `wallet_spinup_${orgId}`,
+          JSON.stringify(spinupData),
+        )
       }
-    }
-    return null
-  }
+    },
+    [agentType, orgId],
+  )
 
   // Clear spinup status from sessionStorage
-  const clearSpinupStatus = (): void => {
+  const clearSpinupStatus = useCallback((): void => {
     if (typeof window !== 'undefined' && orgId) {
       sessionStorage.removeItem(`wallet_spinup_${orgId}`)
+      setAgentSpinupCall(false)
+      setWalletSpinStep(0)
+      setSpinupStatus(WalletSpinupStatus.NOT_STARTED)
     }
-  }
+  }, [orgId])
 
   const maskSeeds = (seed: string): string => {
     const visiblePart = seed.slice(0, -10)
@@ -122,22 +99,20 @@ const WalletSpinup = (): React.JSX.Element => {
     return visiblePart + maskedPart
   }
 
-  const fetchOrganizationDetails = async (): Promise<void> => {
+  const fetchOrganizationDetails = useCallback(async (): Promise<void> => {
     if (!orgId) {
-      setBlockScreen(false)
-      setIsInitialCheckComplete(true)
+      setFailure('Organization ID is missing')
+      setIsPageReady(true)
       return
     }
-
-    setLoading(true)
 
     try {
       const response = await getOrganizationById(orgId)
       const { data } = response as AxiosResponse
 
       if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
-        setBlockScreen(false)
-        setIsInitialCheckComplete(true)
+        setFailure('Failed to fetch organization details')
+        setIsPageReady(true)
         return
       }
 
@@ -146,23 +121,49 @@ const WalletSpinup = (): React.JSX.Element => {
 
       const [firstAgent] = agentData
 
-      dispatch(setOrgId(data?.data?.id))
-      dispatch(
-        setTenantData({
-          id: data?.data?.id,
-          name: data?.data?.name,
-          logoUrl: data?.data?.logoUrl,
-        }),
-      )
       if (firstAgent?.orgDid) {
+        dispatch(setOrgId(data?.data?.id))
+        dispatch(
+          setTenantData({
+            id: data?.data?.id,
+            name: data?.data?.name,
+            logoUrl: data?.data?.logoUrl,
+          }),
+        )
         setWalletStatus(true)
         clearSpinupStatus()
-        router.push('/dashboard')
+        router.replace('/dashboard')
         return
       }
 
-      setBlockScreen(false)
-      setIsInitialCheckComplete(true)
+      const stored = sessionStorage.getItem(`wallet_spinup_${orgId}`)
+      if (stored) {
+        try {
+          const spinupData = JSON.parse(stored)
+          if (Date.now() - spinupData.timestamp < 3600000) {
+            setWalletSpinStep(spinupData.step || 0)
+            setAgentSpinupCall(
+              spinupData.status !== WalletSpinupStatus.NOT_STARTED &&
+                spinupData.status !== WalletSpinupStatus.FAILED,
+            )
+            setAgentType(spinupData.agentType || AgentType.DEDICATED)
+            if (spinupData.status === WalletSpinupStatus.FAILED) {
+              setWalletSpinStep(0)
+              setAgentSpinupCall(false)
+            }
+            setSpinupStatus(spinupData.status)
+          } else {
+            clearSpinupStatus()
+          }
+        } catch (error) {
+          console.error('Error parsing spinup status:', error)
+          clearSpinupStatus()
+        }
+      }
+
+      if (!firstAgent?.orgDid && agentData.length === 0) {
+        clearSpinupStatus()
+      }
 
       const isDedicatedAgent =
         firstAgent?.org_agent_type?.agent?.toLowerCase() === AgentType.DEDICATED
@@ -175,39 +176,22 @@ const WalletSpinup = (): React.JSX.Element => {
       if (agentData.length > 0 && orgData?.orgDid) {
         setOrgData(orgData)
       }
-
-      const savedStatus = loadSpinupStatus()
-      const shouldResumeSpinup =
-        savedStatus && savedStatus.status !== WalletSpinupStatus.NOT_STARTED
-
-      if (shouldResumeSpinup) {
-        setSpinupStatus(savedStatus.status)
-        setWalletSpinStep(savedStatus.step)
-        setAgentSpinupCall(true)
-        setLoading(true)
-      }
+      setIsPageReady(true)
     } catch (error) {
       console.error('Error fetching organization details:', error)
       setFailure('Failed to fetch organization details')
-      setBlockScreen(false)
-      setIsInitialCheckComplete(true)
-    } finally {
-      if (!loadSpinupStatus()) {
-        setLoading(false)
-      }
+      setIsPageReady(true)
     }
-  }
+  }, [orgId, dispatch, clearSpinupStatus, router])
 
+  // Initial data fetch on mount
   useEffect(() => {
-    // eslint-disable-next-line no-console
-    setBlockScreen(true)
-    setIsInitialCheckComplete(false)
     fetchOrganizationDetails()
     const generatedSeeds = nanoid(32)
     const masked = maskSeeds(generatedSeeds)
     setSeeds(generatedSeeds)
     setMaskedSeeds(masked)
-  }, [])
+  }, [fetchOrganizationDetails])
 
   // Get redirect URL param
   const getRedirectUrl = (): string | null => {
@@ -224,11 +208,11 @@ const WalletSpinup = (): React.JSX.Element => {
     setIsConfiguredDedicated(true)
     setShowLedgerConfig(true)
   }
-  const setWalletSpinupStatus = (): void => {
+  const setWalletSpinupStatus = useCallback((): void => {
     setSuccess('Wallet created successfully')
-    clearSpinupStatus() // Clear status on successful completion
+    clearSpinupStatus()
     fetchOrganizationDetails()
-  }
+  }, [clearSpinupStatus, fetchOrganizationDetails])
 
   const onRadioSelect = (type: string): void => {
     setAgentType(type)
@@ -262,6 +246,7 @@ const WalletSpinup = (): React.JSX.Element => {
       if (agentData?.statusCode !== apiStatusCodes.API_STATUS_CREATED) {
         setFailure('Failed to configure dedicated agent')
         setLoading(false)
+        setAgentSpinupCall(false)
         setSpinupStatus(WalletSpinupStatus.FAILED)
         saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
         return
@@ -269,6 +254,7 @@ const WalletSpinup = (): React.JSX.Element => {
     } catch (err) {
       setFailure('Error configuring dedicated agent')
       setLoading(false)
+      setAgentSpinupCall(false)
       setSpinupStatus(WalletSpinupStatus.FAILED)
       saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       console.error(err)
@@ -283,7 +269,7 @@ const WalletSpinup = (): React.JSX.Element => {
         values.method === DidMethod.INDY
           ? values.network
           : values.method === DidMethod.POLYGON
-            ? values.network?.split(':').slice(1).join(':')
+            ? values.network
             : '',
       domain: values.method === DidMethod.WEB ? domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
@@ -304,12 +290,13 @@ const WalletSpinup = (): React.JSX.Element => {
         setWalletSpinStep(1)
 
         setTimeout(() => {
-          window.location.href = redirectUrl ? redirectUrl : '/organizations'
+          window.location.href = redirectUrl ? redirectUrl : '/dashboard'
         }, 1000)
       } else {
         setShowProgressUI(false)
         setLoading(false)
         setFailure(spinupRes as string)
+        setAgentSpinupCall(false)
         setSpinupStatus(WalletSpinupStatus.FAILED)
         saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       }
@@ -317,6 +304,7 @@ const WalletSpinup = (): React.JSX.Element => {
       setShowProgressUI(false)
       setLoading(false)
       setFailure('Error creating DID')
+      setAgentSpinupCall(false)
       setSpinupStatus(WalletSpinupStatus.FAILED)
       saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       console.error(error)
@@ -369,18 +357,21 @@ const WalletSpinup = (): React.JSX.Element => {
         } else {
           setLoading(false)
           setFailure(spinupRes as string)
+          setAgentSpinupCall(false)
           setSpinupStatus(WalletSpinupStatus.FAILED)
           saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
         }
       } else {
         setLoading(false)
         setFailure(spinupRes as string)
+        setAgentSpinupCall(false)
         setSpinupStatus(WalletSpinupStatus.FAILED)
         saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       }
     } catch (error) {
       console.error('Error creating shared agent:', error)
       setLoading(false)
+      setAgentSpinupCall(false)
       setSpinupStatus(WalletSpinupStatus.FAILED)
       saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
       if (error instanceof Error) {
@@ -446,13 +437,14 @@ const WalletSpinup = (): React.JSX.Element => {
         const redirectUrl =
           redirectTo && clientAlias ? redirectTo : '/dashboard'
 
-        router.push(redirectUrl)
+        router.replace(redirectUrl)
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-success', JSON.stringify(data))
       })
 
       SOCKET.on('error-in-wallet-creation-process', (data) => {
         setLoading(false)
+        setAgentSpinupCall(false)
         setSpinupStatus(WalletSpinupStatus.FAILED)
         saveSpinupStatus(WalletSpinupStatus.FAILED, 0)
         setTimeout(() => {
@@ -479,7 +471,14 @@ const WalletSpinup = (): React.JSX.Element => {
 
   let formComponent: React.JSX.Element = <></>
 
-  if (!agentSpinupCall) {
+  if (agentSpinupCall || walletSpinStep > 0) {
+    formComponent = (
+      <>
+        <Stepper currentStep={4} totalSteps={4} />
+        <WalletStepsComponent steps={walletSpinStep} />
+      </>
+    )
+  } else if (!agentSpinupCall && walletSpinStep === 0) {
     if (agentType === AgentType.SHARED) {
       formComponent = (
         <SharedAgentForm
@@ -508,163 +507,168 @@ const WalletSpinup = (): React.JSX.Element => {
         />
       )
     }
-  } else {
-    formComponent = (
-      <>
-        <Stepper currentStep={4} totalSteps={4} />
-        <WalletStepsComponent steps={walletSpinStep} />
-      </>
-    )
   }
 
   return (
     <PageContainer>
-      {(blockScreen || !isInitialCheckComplete) && (
+      {!isPageReady ? (
         <div className="bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm">
           <div className="flex flex-col items-center space-y-4">
-            <div className="border-primary h-8 w-8 animate-spin rounded-full border-4 border-t-transparent"></div>
+            <Loader />
             <p className="text-muted-foreground">Loading...</p>
           </div>
         </div>
-      )}
-      <div className="flex min-h-screen items-start justify-center p-6">
-        <div className="mx-auto mt-4">
-          <Card>
-            <CardContent className="mr-18 ml-18 p-6">
-              <div className="space-y-4">
-                {success && (
-                  <div className="w-full" role="alert">
-                    <AlertComponent
-                      message={success}
-                      type={'success'}
-                      onAlertClose={() => {
-                        setSuccess(null)
-                      }}
-                    />
-                  </div>
-                )}
-                {failure && (
-                  <div className="w-full" role="alert">
-                    <AlertComponent
-                      message={failure}
-                      type={'failure'}
-                      onAlertClose={() => {
-                        setFailure(null)
-                      }}
-                    />
-                  </div>
-                )}
-
-                {!showLedgerConfig && (
-                  <>
-                    <div className="mb-6 flex items-center justify-between">
-                      <div>
-                        <h1 className="text-2xl font-semibold">Agent Setup</h1>
-                        <p className="text-muted-foreground">
-                          Configure your digital agent
-                        </p>
-                      </div>
-                      <div className="text-muted-foreground ml-auto text-sm">
-                        Step 2 of 4
-                      </div>
+      ) : (
+        <div className="flex min-h-screen items-start justify-center p-6">
+          <div className="mx-auto mt-4">
+            <Card>
+              <CardContent className="mr-18 ml-18 p-6">
+                <div className="space-y-4">
+                  {success && (
+                    <div className="w-full" role="alert">
+                      <AlertComponent
+                        message={success}
+                        type={'success'}
+                        onAlertClose={() => {
+                          setSuccess(null)
+                        }}
+                      />
                     </div>
-                    <Stepper currentStep={2} totalSteps={4} />
-                  </>
-                )}
-
-                <div className="max-w-6xl">
-                  {!showLedgerConfig && !agentSpinupCall && (
-                    <div className="mb-6">
-                      <h3 className="mb-2 text-lg font-medium">Agent Type</h3>
-
-                      <RadioGroup
-                        value={agentType}
-                        defaultValue={agentType}
-                        onValueChange={(value) => onRadioSelect(value)}
-                        className=""
-                      >
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                          {/* Dedicated Agent Card */}
-
-                          <Card
-                            className="p-4 shadow transition-all hover:scale-102"
-                            onClick={() => onRadioSelect(AgentType.DEDICATED)}
-                          >
-                            <div className="mb-4 flex items-start">
-                              <RadioGroupItem
-                                className="border"
-                                value={AgentType.DEDICATED}
-                                id="dedicated-agent-radio"
-                              />
-                            </div>
-                            <label
-                              htmlFor="dedicated-agent-radio"
-                              className="text-lg font-bold"
-                            >
-                              Dedicated Agent
-                            </label>
-                            <p className="my-2 ml-7 text-sm dark:text-white">
-                              Private agent instance exclusively for your{' '}
-                              <br></br> organization
-                            </p>
-                            <ul className="ml-7 space-y-1">
-                              <li className="text-sm">
-                                • Higher performance and reliability
-                              </li>
-                              <li className="text-sm">
-                                • Enhanced privacy and security
-                              </li>
-                              <li className="text-sm">
-                                • Full control over the agent infrastructure
-                              </li>
-                            </ul>
-                          </Card>
-
-                          {/* Shared Agent Card */}
-                          <Card
-                            className="p-4 shadow transition-all hover:scale-102"
-                            onClick={() => onRadioSelect(AgentType.SHARED)}
-                          >
-                            <div className="mb-4 flex items-start">
-                              <RadioGroupItem
-                                className="border"
-                                value={AgentType.SHARED}
-                                id="shared-agent-radio"
-                              />
-                            </div>
-                            <label
-                              htmlFor="shared-agent-radio"
-                              className="text-lg font-bold"
-                            >
-                              Shared Agent
-                            </label>
-                            <p className="my-2 ml-7 text-sm">
-                              Use our cloud-hosted shared agent infrastructure
-                            </p>
-                            <ul className="ml-7 space-y-1">
-                              <li className="text-sm">
-                                • Cost-effective solution
-                              </li>
-                              <li className="text-sm">
-                                • Managed infrastructure
-                              </li>
-                              <li className="text-sm">
-                                • Quick setup with no maintenance
-                              </li>
-                            </ul>
-                          </Card>
-                        </div>
-                      </RadioGroup>
+                  )}
+                  {failure && (
+                    <div className="w-full" role="alert">
+                      <AlertComponent
+                        message={failure}
+                        type={'failure'}
+                        onAlertClose={() => {
+                          setFailure(null)
+                        }}
+                      />
                     </div>
                   )}
 
-                  {formComponent}
+                  {!showLedgerConfig &&
+                    !agentSpinupCall &&
+                    walletSpinStep === 0 && (
+                      <>
+                        <div className="mb-6 flex items-center justify-between">
+                          <div>
+                            <h1 className="text-2xl font-semibold">
+                              Agent Setup
+                            </h1>
+                            <p className="text-muted-foreground">
+                              Configure your digital agent
+                            </p>
+                          </div>
+                          <div className="text-muted-foreground ml-auto text-sm">
+                            Step 2 of 4
+                          </div>
+                        </div>
+                        <Stepper currentStep={2} totalSteps={4} />
+                      </>
+                    )}
+
+                  <div className="max-w-6xl">
+                    {!showLedgerConfig &&
+                      !agentSpinupCall &&
+                      walletSpinStep === 0 && (
+                        <div className="mb-6">
+                          <h3 className="mb-2 text-lg font-medium">
+                            Agent Type
+                          </h3>
+
+                          <RadioGroup
+                            value={agentType}
+                            defaultValue={agentType}
+                            onValueChange={(value) => onRadioSelect(value)}
+                            className=""
+                          >
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                              {/* Dedicated Agent Card */}
+
+                              <Card
+                                className="p-4 shadow transition-all hover:scale-102"
+                                onClick={() =>
+                                  onRadioSelect(AgentType.DEDICATED)
+                                }
+                              >
+                                <div className="mb-4 flex items-start">
+                                  <RadioGroupItem
+                                    className="border"
+                                    value={AgentType.DEDICATED}
+                                    id="dedicated-agent-radio"
+                                  />
+                                </div>
+                                <label
+                                  htmlFor="dedicated-agent-radio"
+                                  className="text-lg font-bold"
+                                >
+                                  Dedicated Agent
+                                </label>
+                                <p className="my-2 ml-7 text-sm dark:text-white">
+                                  Private agent instance exclusively for your{' '}
+                                  <br></br> organization
+                                </p>
+                                <ul className="ml-7 space-y-1">
+                                  <li className="text-sm">
+                                    • Higher performance and reliability
+                                  </li>
+                                  <li className="text-sm">
+                                    • Enhanced privacy and security
+                                  </li>
+                                  <li className="text-sm">
+                                    • Full control over the agent infrastructure
+                                  </li>
+                                </ul>
+                              </Card>
+
+                              {/* Shared Agent Card */}
+                              <Card
+                                className="p-4 shadow transition-all hover:scale-102"
+                                onClick={() => onRadioSelect(AgentType.SHARED)}
+                              >
+                                <div className="mb-4 flex items-start">
+                                  <RadioGroupItem
+                                    className="border"
+                                    value={AgentType.SHARED}
+                                    id="shared-agent-radio"
+                                  />
+                                </div>
+                                <label
+                                  htmlFor="shared-agent-radio"
+                                  className="text-lg font-bold"
+                                >
+                                  Shared Agent
+                                </label>
+                                <p className="my-2 ml-7 text-sm">
+                                  Use our cloud-hosted shared agent
+                                  infrastructure
+                                </p>
+                                <ul className="ml-7 space-y-1">
+                                  <li className="text-sm">
+                                    • Cost-effective solution
+                                  </li>
+                                  <li className="text-sm">
+                                    • Managed infrastructure
+                                  </li>
+                                  <li className="text-sm">
+                                    • Quick setup with no maintenance
+                                  </li>
+                                </ul>
+                              </Card>
+                            </div>
+                          </RadioGroup>
+                        </div>
+                      )}
+
+                    {formComponent}
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
+      )}
     </PageContainer>
   )
 }

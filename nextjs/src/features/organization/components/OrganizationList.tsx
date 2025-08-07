@@ -118,13 +118,13 @@ export const OrganizationList = (): React.JSX.Element => {
       )
     }
 
-    router.push(`/organizations/${orgId}`)
+    router.push(`/${orgId}`)
   }
   const handleCreateOrg = (): void => {
     setIsCreatingOrg(true)
 
     setTimeout(() => {
-      router.push('/organizations/create-organization')
+      router.push('/create-organization')
     }, 300)
   }
 

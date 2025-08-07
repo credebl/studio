@@ -1,6 +1,10 @@
 'use client'
 
 import {
+  DateCell,
+  ProofState,
+} from '@/features/organization/connectionIssuance/components/CredentialTableCells'
+import {
   IColumnData,
   ITableMetadata,
   SortActions,
@@ -9,10 +13,6 @@ import {
 } from '@/components/ui/generic-table-component/columns'
 import { ISidebarSliderData, RequestProof } from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
-import {
-  ProofRequestState,
-  ProofRequestStateUserText,
-} from '@/features/common/enum'
 import {
   getVerificationList,
   getVerifiedProofDetails,
@@ -24,10 +24,10 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
-import { DateCell } from '@/features/organization/connectionIssuance/components/CredentialTableCells'
 import { Features } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import ProofRequest from './ProofRequestPopup'
+import { ProofRequestState } from '@/features/common/enum'
 import { RefreshCw } from 'lucide-react' // Import refresh icon
 import RoleViewButton from '@/components/RoleViewButton'
 import SidePanelComponent from '@/config/SidePanelCommon'
@@ -277,9 +277,25 @@ const VerificationCredentialList = (): JSX.Element => {
                     copyable: true,
                   },
                   {
-                    label: 'Schema Name',
-                    value: row.original.schemaName || 'Not Available',
-                    copyable: true,
+                    label: 'Holder',
+                    value:
+                      row.original.connections?.theirLabel || 'Not Available',
+                  },
+                  {
+                    label: 'Requested On',
+                    value: row.original.createDateTime ? (
+                      <DateCell date={row.original.createDateTime} />
+                    ) : (
+                      'Not Available'
+                    ),
+                  },
+                  {
+                    label: 'Status',
+                    value: row.original.state ? (
+                      <ProofState state={row.original.state} />
+                    ) : (
+                      'Not Available'
+                    ),
                   },
                 ]
                 if (row.original.connections?.theirLabel) {
@@ -340,46 +356,7 @@ const VerificationCredentialList = (): JSX.Element => {
         row,
       }: {
         row: { original: { state: string } }
-      }): JSX.Element => {
-        const state = row.original.state as ProofRequestState
-
-        let badgeClass = ''
-        let userText: string = state
-
-        switch (state) {
-          case ProofRequestState.requestSent:
-            badgeClass = 'badges-warning'
-            userText = ProofRequestStateUserText.requestSent
-            break
-          case ProofRequestState.requestReceived:
-            badgeClass = 'badges-primary'
-            userText = ProofRequestStateUserText.requestReceived
-            break
-          case ProofRequestState.done:
-            badgeClass = 'badges-success'
-            userText = ProofRequestStateUserText.done
-            break
-          case ProofRequestState.abandoned:
-            badgeClass = 'badges-error'
-            userText = ProofRequestStateUserText.abandoned
-            break
-          case ProofRequestState.presentationReceived:
-            badgeClass = 'badges-secondary'
-            userText = ProofRequestStateUserText.presentationReceived
-            break
-          default:
-            badgeClass = ''
-            userText = state
-        }
-
-        return (
-          <span
-            className={`${badgeClass} text-foreground mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 text-xs font-medium`}
-          >
-            {userText}
-          </span>
-        )
-      },
+      }): JSX.Element => <ProofState state={row.original.state} />,
     },
     {
       id: 'action',
@@ -497,6 +474,8 @@ const VerificationCredentialList = (): JSX.Element => {
         />
       </div>
       <SidePanelComponent
+        title={'Verification Details'}
+        description={'Detailed view of the selected Verification'}
         open={isDrawerOpen}
         onOpenChange={setIsDrawerOpen}
         fields={fields}
