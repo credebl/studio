@@ -1,5 +1,6 @@
 'use client'
 
+import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError, AxiosRequestConfig } from 'axios'
 import { setRefreshToken, setToken } from '@/lib/authSlice'
 
@@ -23,11 +24,19 @@ interface RefreshTokenResponse {
   }
 }
 
-const state = store.getState()
-const refreshToken = state?.auth?.refreshToken
+interface jwtDataPayload extends JwtPayload {
+  email?: string
+  name?: string
+}
+
+// const state = store.getState()
+// const refreshToken = state?.auth?.refreshToken
 
 //Refresh Token
-const refreshAccessToken = async (): Promise<string | null> => {
+const refreshAccessToken = async (
+  refreshToken: string,
+): Promise<string | null> => {
+  console.log('refreshToken', refreshToken)
   if (!refreshToken) {
     console.error('No refresh token available')
     return null
@@ -38,15 +47,18 @@ const refreshAccessToken = async (): Promise<string | null> => {
       `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
       { refreshToken },
     )
+    console.log('🚀 ~ refreshAccessToken ~ response:', response)
 
     if (
-      response?.status === apiStatusCodes.API_STATUS_CREATED &&
+      response?.status === apiStatusCodes.API_STATUS_SUCCESS &&
       response.data?.data
     ) {
       const AccessToken = response.data.data.access_token
       const RefreshToken = response.data.data.refresh_token
 
+      console.log("🚀 ~ refreshAccessToken ~ AccessToken:", AccessToken)
       if (AccessToken && RefreshToken) {
+
         store.dispatch(setToken(AccessToken))
         store.dispatch(setRefreshToken(RefreshToken))
         return AccessToken
@@ -80,24 +92,53 @@ export function logoutAndRedirect(): void {
   }
 }
 
-// REQUEST INTERCEPTOR
-instance.interceptors.request.use(
-  (config) => {
-    const state = store.getState()
-    const token = state?.auth?.token
+function isTokenExpired(accessToken: string, refreshToken: string): boolean {
+  try {
+    const currentTime = Math.floor(Date.now() / 1000)
 
-    if (token) {
-      const updatedConfig = {
-        ...config,
-        headers: new axios.AxiosHeaders({
-          ...config.headers,
-          Authorization: `Bearer ${token}`,
-        }),
-      }
-      return updatedConfig
+    // Decode and check refresh token
+    const { exp: refreshExp } = jwtDecode<JwtPayload>(refreshToken)
+    console.log('🚀 ~ isTokenExpired ~ refreshExp:', refreshExp)
+    if (refreshExp && refreshExp < currentTime) {
+      console.warn('Refresh token expired. Logout the user.')
+      logoutAndRedirect()
     }
 
-    return config
+    // Decode and check access token
+    const { exp: accessExp } = jwtDecode<JwtPayload>(accessToken)
+    console.log('checking the access token expiration')
+    console.log('access token:::', accessExp ? accessExp < currentTime : false)
+    return accessExp ? accessExp < currentTime : false
+  } catch (error) {
+    console.error('Error decoding token:', error)
+    return true // Consider token expired if decoding fails
+  }
+}
+
+// REQUEST INTERCEPTOR
+instance.interceptors.request.use(
+  async (config) => {
+    const { auth } = store.getState()
+    const token = auth?.token
+    const refreshToken = auth?.refreshToken
+    let isRequested = false
+    if (!token || !refreshToken) return config
+
+    let accessToken: string | null = token
+
+    if (isTokenExpired(token, refreshToken)&& !isRequested) {
+      console.log('\n\n-----in side if-----------------\n\n')
+      isRequested= true
+      accessToken = await refreshAccessToken(refreshToken)
+    }
+
+    return {
+      ...config,
+      headers: new axios.AxiosHeaders({
+        ...config.headers,
+        Authorization: `Bearer ${accessToken}`,
+      }),
+    }
   },
   (error) => Promise.reject(error),
 )
@@ -114,23 +155,23 @@ instance.interceptors.response.use(
     )
 
     // Automatically logout on 401
-    if (
-      error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
-      !originalRequest?._retry &&
-      !isPasswordCheckRoute
-    ) {
-      originalRequest._retry = true
+    // if (
+    //   error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
+    //   !originalRequest?._retry &&
+    //   !isPasswordCheckRoute
+    // ) {
+    //   originalRequest._retry = true
 
-      const newAccessToken = await refreshAccessToken()
-      if (newAccessToken && originalRequest.headers) {
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-        return instance(originalRequest)
-      }
+    //   const newAccessToken = await refreshAccessToken()
+    //   if (newAccessToken && originalRequest.headers) {
+    //     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+    //     return instance(originalRequest)
+    //   }
 
-      if (typeof window !== 'undefined') {
-        logoutAndRedirect()
-      }
-    }
+    //   if (typeof window !== 'undefined') {
+    //     logoutAndRedirect()
+    //   }
+    // }
 
     return Promise.reject(error)
   },
