@@ -334,7 +334,6 @@ const BulkIssuance = (): JSX.Element => {
             </div>
             <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
               <Button
-                // className="group border-ring hover:bg-primary hover:text-primary-foreground ml-auto flex shrink-0 items-center rounded-lg border px-4 py-1 transition-colors"
                 className="h-[2.2rem] min-w-[2rem]"
                 variant={'outline'}
                 onClick={() => {
