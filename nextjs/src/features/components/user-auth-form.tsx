@@ -92,7 +92,6 @@ export default function SignInViewPage(): React.JSX.Element {
       const response = await signIn('credentials', {
         ...entityData,
         redirect: false,
-        callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
 
       if (response?.ok && response?.url) {
@@ -209,7 +208,7 @@ export default function SignInViewPage(): React.JSX.Element {
       const verificationResp = await signIn('credentials', {
         ...entityData,
         redirect: false,
-        callbackUrl: '/dashboard',
+        // callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
 
       if (verificationResp?.ok && verificationResp?.status === 200) {
