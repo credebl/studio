@@ -55,7 +55,8 @@ const IssueCred = (): React.JSX.Element => {
   const [schemaDetails, setSchemaDetails] = useState<SchemaDetails>(
     schemaDetailsInitialState,
   )
-  const schemaListAPIParameter = issuanceApiParameter
+  const [schemaListAPIParameter, setSchemaListAPIParameter] =
+    useState(issuanceApiParameter)
   const [issuanceFormPayload, setIssuanceFormPayload] =
     useState<IssuanceFormPayload>({
       credentialData: [],
@@ -219,6 +220,9 @@ const IssueCred = (): React.JSX.Element => {
         credDefId: credentials.credentialId,
         schemaAttributes: data,
       })
+      if (credentials?.label) {
+        setSelectValue(credentials?.label)
+      }
     } else {
       setSelectValue(
         w3cSchema ? 'Select Schema ' : 'Select Credential Definition',
@@ -303,7 +307,7 @@ const IssueCred = (): React.JSX.Element => {
     }
     execute()
     return () => setUserLoader(false)
-  }, [allSchema, orgId])
+  }, [allSchema, orgId, schemaListAPIParameter.allSearch])
 
   const validationSchema = Yup.object().shape({
     credentialData: Yup.array().of(
@@ -329,6 +333,10 @@ const IssueCred = (): React.JSX.Element => {
   const handleFilterChange = async (value: string): Promise<void> => {
     const isAllSchemas = value === 'All schemas'
     dispatch(setAllSchema(isAllSchemas))
+  }
+
+  const handleSearchChange = (value: string): void => {
+    setSchemaListAPIParameter((prev) => ({ ...prev, allSearch: value }))
   }
 
   return (
@@ -367,12 +375,13 @@ const IssueCred = (): React.JSX.Element => {
                       w3cSchema,
                     })
                   }
+                  onSearchChange={handleSearchChange}
+                  enableInternalSearch={!(w3cSchema && allSchema)}
                   placeholder={
                     w3cSchema
                       ? 'Select Schema '
                       : 'Select Credential Definition'
                   }
-                  enableInternalSearch={true}
                 />
               </div>
               {w3cSchema && (
