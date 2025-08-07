@@ -1,5 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
+export interface IAttributesData {
+  isRequired: boolean
+  name: string
+  value: string
+  dataType: string
+}
 export interface W3cData {
   value: string
   label: string

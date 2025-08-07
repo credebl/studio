@@ -5,14 +5,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ISelectSchmea } from '../../emailIssuance/type/EmailIssuance'
+import { ISelectSchema } from '../../emailIssuance/type/EmailIssuance'
 import React from 'react'
 
 function SchemaSelectBulk({
   allSchema,
   handleFilterChange,
   optionsWithDefault,
-}: ISelectSchmea): React.JSX.Element {
+}: ISelectSchema): React.JSX.Element {
   return (
     <div>
       <p className="pb-6 text-xl font-semibold opacity-0">Schema Filter</p>

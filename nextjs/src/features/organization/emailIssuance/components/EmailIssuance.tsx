@@ -141,7 +141,7 @@ const EmailIssuance = (): JSX.Element => {
       if (!credentials) {
         return
       }
-      const attributes = JSON.parse(credentials.value)
+      const attributes = credentials.value
       const data = {
         value: credentials.schemaVersion,
         label: `${credentials.schemaName} [${credentials.schemaVersion}]`,

@@ -29,7 +29,6 @@ const SessionCheck = ({
     '/schemas',
     '/invitations',
     '/delete-organization',
-    '/agent-config',
   ]
 
   useEffect(() => {
