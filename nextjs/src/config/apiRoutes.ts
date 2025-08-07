@@ -76,7 +76,7 @@ export const apiRoutes = {
     createDid: '/agents/did',
     primaryDid: '/primary-did',
     getOrgReferences: '/activity-count',
-    deleteOrganization: '/organizations/deleteorganizations',
+    deleteOrganization: '/deleteorganizations',
     deleteVerifications: '/verification-records',
     deleteIssaunce: '/issuance-records',
     deleteConnections: '/connections',

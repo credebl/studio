@@ -1,3 +1,5 @@
+import * as Yup from 'yup'
+
 import {
   CREDENTIAL_CONTEXT_VALUE,
   apiStatusCodes,
@@ -8,6 +10,9 @@ import {
   IAttributesData,
   ICredentialdata,
   IHandleSubmit,
+  Option,
+  SchemaDetails,
+  createIssuanceForm,
 } from '../type/Issuance'
 import { setSelectedConnection, setSelectedUser } from '@/lib/storageKeys'
 
@@ -76,7 +81,6 @@ export const handleSubmit = async ({
             {} as Record<string, string | number | boolean | null>,
           ),
         },
-
         options: {
           proofType:
             schemaType === SchemaTypeValue.POLYGON
@@ -102,7 +106,6 @@ export const handleSubmit = async ({
     schemaTypeValue,
     orgId,
   )
-
   const { data } = issueCredRes as AxiosResponse
 
   if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -114,4 +117,97 @@ export const handleSubmit = async ({
     setFailure(typeof issueCredRes === 'string' ? issueCredRes : '')
     setIssuanceLoader(false)
   }
+}
+
+export const createAttributeValidationSchema = (
+  name: string,
+  value: string,
+  isRequired: boolean,
+): Yup.ObjectSchema<
+  { value: string | undefined },
+  Yup.AnyObject,
+  { value: undefined },
+  ''
+> => {
+  let attributeSchema = Yup.string()
+  let requiredData = ''
+  if (name) {
+    requiredData = name
+      .split('_')
+      .map((item) => item.charAt(0).toUpperCase() + item.slice(1))
+      .join(' ')
+  }
+
+  if (isRequired) {
+    if (!value) {
+      attributeSchema = Yup.string().required(`${requiredData} is required`)
+    }
+  }
+
+  return Yup.object().shape({
+    value: attributeSchema,
+  })
+}
+
+export const handleSelect = ({
+  value,
+  setSchemaDetails,
+  allSchema,
+  w3cSchema,
+}: {
+  value: Option
+  setSchemaDetails: React.Dispatch<React.SetStateAction<SchemaDetails>>
+  allSchema: boolean | undefined
+  w3cSchema: boolean
+}): void => {
+  if (allSchema && w3cSchema) {
+    setSchemaDetails({
+      schemaName: value.schemaName,
+      version: value.schemaVersion,
+      schemaId: value.schemaIdentifier ?? '',
+      credDefId: value.credentialId,
+      schemaAttributes: value.attributes ?? [],
+    })
+  } else {
+    const data = JSON.parse(value.value)
+    setSchemaDetails({
+      schemaName: value.schemaName,
+      version: value.schemaVersion,
+      schemaId: value.schemaId,
+      credDefId: value.credentialId,
+      schemaAttributes: data,
+    })
+  }
+}
+
+export const createIssuanceFormFunction = ({
+  selectedUsers,
+  attributes,
+  credDefId,
+  orgId,
+  setIssuanceFormPayload,
+  setUserLoader,
+}: createIssuanceForm): void => {
+  const credentialData = selectedUsers.map((user) => {
+    const attributesArray = attributes.map((attr) => ({
+      name: attr.attributeName,
+      value: '',
+      dataType: attr?.schemaDataType,
+      isRequired: attr.isRequired,
+    }))
+
+    return {
+      connectionId: user.connectionId,
+      attributes: attributesArray,
+    }
+  })
+
+  const issuancePayload = {
+    credentialData,
+    credentialDefinitionId: credDefId,
+    orgId,
+  }
+
+  setIssuanceFormPayload(issuancePayload)
+  setUserLoader(false)
 }

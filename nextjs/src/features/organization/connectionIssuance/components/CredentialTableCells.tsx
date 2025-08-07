@@ -1,6 +1,10 @@
 'use client'
 
 import { IssueCredential, IssueCredentialUserText } from '@/common/enums'
+import {
+  ProofRequestState,
+  ProofRequestStateUserText,
+} from '@/features/common/enum'
 
 import DateTooltip from '@/components/DateTooltip'
 import { dateConversion } from '@/utils/DateConversion'
@@ -37,9 +41,9 @@ export const SchemaNameCell = ({
     <button
       onClick={() => {
         if (schemaId && !isW3C) {
-          router.push(`/organizations/schemas/${schemaId}?alias=${schemaName}`)
+          router.push(`/schemas/${schemaId}?alias=${schemaName}`)
         } else {
-          router.push('/organizations/schemas')
+          router.push('/schemas')
         }
       }}
       className="url-link cursor-pointer border-none bg-transparent p-0 text-sm"
@@ -53,9 +57,7 @@ export const DateCell = ({ date }: { date: string }): React.JSX.Element => {
   const safeDate = date || new Date().toISOString()
   return (
     <DateTooltip date={safeDate}>
-      <span className="text-muted-foreground text-sm">
-        {dateConversion(safeDate)}
-      </span>
+      <span className="text-sm">{dateConversion(safeDate)}</span>
     </DateTooltip>
   )
 }
@@ -109,3 +111,42 @@ export const ConnectionDetail = ({
 }): React.JSX.Element => (
   <span className="text-sm">{connectionId ?? 'Not Available'}</span>
 )
+
+export const ProofState = ({ state }: { state: string }): React.JSX.Element => {
+  let badgeClass = ''
+  let userText: string = state
+
+  switch (state) {
+    case ProofRequestState.requestSent:
+      badgeClass = 'badges-warning'
+      userText = ProofRequestStateUserText.requestSent
+      break
+    case ProofRequestState.requestReceived:
+      badgeClass = 'badges-primary'
+      userText = ProofRequestStateUserText.requestReceived
+      break
+    case ProofRequestState.done:
+      badgeClass = 'badges-success'
+      userText = ProofRequestStateUserText.done
+      break
+    case ProofRequestState.abandoned:
+      badgeClass = 'badges-error'
+      userText = ProofRequestStateUserText.abandoned
+      break
+    case ProofRequestState.presentationReceived:
+      badgeClass = 'badges-secondary'
+      userText = ProofRequestStateUserText.presentationReceived
+      break
+    default:
+      badgeClass = ''
+      userText = state
+  }
+
+  return (
+    <span
+      className={`${badgeClass} text-foreground mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 text-xs font-medium`}
+    >
+      {userText}
+    </span>
+  )
+}
