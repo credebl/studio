@@ -21,7 +21,7 @@ const DataTable: React.FC<DataTableProps> = ({
   showBtn = false,
   isEmailVerification = false,
 }) => (
-  <div className="flex flex-col">
+  <div className="flex w-[calc(100vw-3rem)] flex-col md:w-auto">
     {loading ? (
       <div className="mb-4 flex items-center justify-center">
         <Loader />
@@ -29,7 +29,7 @@ const DataTable: React.FC<DataTableProps> = ({
     ) : (
       <div className="overflow-x-auto rounded-lg">
         <div className="inline-block min-w-full align-middle">
-          <div className="overflow-hidden shadow sm:rounded-lg">
+          <div className="w-full overflow-hidden shadow sm:rounded-lg">
             <table className="divide-muted dark:divide-muted min-w-full divide-y border">
               <thead className="bg-muted dark:bg-muted">
                 <tr>
