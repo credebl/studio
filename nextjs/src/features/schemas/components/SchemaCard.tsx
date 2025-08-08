@@ -24,6 +24,8 @@ import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
+import { setSchemaDetails } from '@/lib/schemaStorageSlice'
+import { useAppDispatch } from '@/lib/hooks'
 
 const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
   const [isSelected, setIsSelected] = useState(false)
@@ -32,6 +34,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
 
   const pathname = usePathname()
   const isVerificationPage = pathname.includes('verification')
+  const dispatch = useAppDispatch()
 
   const AttributesList: React.FC<{
     attributes: IAttributes[]
@@ -71,6 +74,22 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
       props.attributes,
       props.created,
     )
+    dispatch(
+      setSchemaDetails({
+        type: 'W3C_SCHEMA',
+        w3cSchema: {
+          schemaVersion: props.version,
+          value: JSON.stringify(props.attributes),
+          label: `${props.schemaName}-${props.version}`,
+          schemaId: props.schemaId,
+          schemaName: props.schemaName,
+          schemaIdentifier: props.schemaId,
+          attributes: props.attributes,
+          type: 'W3C_SCHEMA',
+          credentialId: '',
+        },
+      }),
+    )
     router.push(pathRoutes.organizations.Issuance.issue)
   }
 
@@ -108,9 +127,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
     }
 
     if (!props.w3cSchema && !hasNestedAttributes && props.schemaId) {
-      router.push(
-        `/organizations/schemas/${props.schemaId}?alias=${props.schemaName}`,
-      )
+      router.push(`/schemas/${props.schemaId}?alias=${props.schemaName}`)
     }
 
     if (props.onClickCallback) {

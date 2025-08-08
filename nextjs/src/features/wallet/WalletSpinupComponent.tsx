@@ -260,17 +260,19 @@ const WalletSpinup = (): React.JSX.Element => {
       console.error(err)
       return
     }
-
+    const method = values.method.split(':')[1] || ''
+    let network = ''
+    if (values.method === DidMethod.INDY) {
+      // eslint-disable-next-line prefer-destructuring
+      network = values.network
+    } else if (values.method === DidMethod.POLYGON) {
+      network = `${method}:${values.network}`
+    }
     const didData = {
       seed: values.method === DidMethod.POLYGON ? '' : seeds,
       keyType: values.keyType || 'ed25519',
-      method: values.method.split(':')[1] || '',
-      network:
-        values.method === DidMethod.INDY
-          ? values.network
-          : values.method === DidMethod.POLYGON
-            ? values.network
-            : '',
+      method,
+      network,
       domain: values.method === DidMethod.WEB ? domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
       privatekey: values.method === DidMethod.POLYGON ? privatekey : '',
@@ -290,7 +292,7 @@ const WalletSpinup = (): React.JSX.Element => {
         setWalletSpinStep(1)
 
         setTimeout(() => {
-          window.location.href = redirectUrl ? redirectUrl : '/organizations'
+          window.location.href = redirectUrl ? redirectUrl : '/dashboard'
         }, 1000)
       } else {
         setShowProgressUI(false)

@@ -4,25 +4,38 @@ import CopyDid from '@/config/CopyDid'
 import React from 'react'
 import { Roles } from '@/common/enums'
 import { pathRoutes } from '@/config/pathRoutes'
+import { setSchemaDetails } from '@/lib/schemaStorageSlice'
+import { useAppDispatch } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
+
 interface IProps {
   credDeffName: string
   userRoles?: string[]
   credentialDefinitionId: string
   schemaId: string
   revocable: boolean
+  schemaName?: string
+  schemaVersion?: string
+  attributes?: string[]
   onClickCallback: (schemaId: string, credentialDefinitionId: string) => void
 }
 
 const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
   const router = useRouter()
+  const dispatch = useAppDispatch()
 
-  const redirectToIssuance = (): void => {
+  const redirectToIssuance = async (): Promise<void> => {
     if (
       props?.userRoles?.includes(Roles.OWNER) ||
       props?.userRoles?.includes(Roles.ADMIN) ||
       props?.userRoles?.includes(Roles.ISSUER)
     ) {
+      dispatch(
+        setSchemaDetails({
+          type: 'CREDENTIAL_DEFINITION',
+          nonW3cSchema: props.credentialDefinitionId,
+        }),
+      )
       router.push(pathRoutes.organizations.Issuance.issue)
     }
   }

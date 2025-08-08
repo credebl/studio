@@ -204,3 +204,28 @@ export const createSchemaStyles = {
     minWidth: '2rem',
   },
 }
+
+export const schemaDetailsInitialState = {
+  schemaName: '',
+  version: '',
+  schemaId: '',
+  credDefId: '',
+}
+
+export const issuanceApiParameter = {
+  itemPerPage,
+  page: 1,
+  search: '',
+  sortBy: 'id',
+  sortingOrder: 'desc',
+  allSearch: '',
+}
+
+export const bulkIssuanceApiParameter = {
+  itemPerPage,
+  page: 1,
+  search: '',
+  sortBy: 'id',
+  sortingOrder: 'desc',
+  allSearch: '',
+}

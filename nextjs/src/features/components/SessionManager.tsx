@@ -18,6 +18,10 @@ const preventRedirectOnPaths = [
   '/connections',
   '/profile',
   '/developers-setting',
+  '/schemas',
+  '/invitations',
+  '/delete-organization',
+  '/agent-config',
 ]
 
 export const SessionManager = ({

@@ -201,7 +201,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         setTimeout(() => {
           setSuccess(null)
           setLoading(true)
-          router.push('/organizations')
+          router.push('/dashboard')
         }, 3000)
       } else {
         setFailure(resCreateOrg as string)
@@ -251,8 +251,8 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         setTimeout(() => {
           const redirectUrl =
             redirectTo && clientAlias
-              ? `/organizations/agent-config?orgId=${orgId}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-              : `/organizations/agent-config?orgId=${orgId}`
+              ? `/agent-config?orgId=${orgId}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+              : `/agent-config?orgId=${orgId}`
           router.push(redirectUrl)
         }, 3000)
       } else {
@@ -587,7 +587,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                       type="button"
                       onClick={() => {
                         setIsBackLoading(true)
-                        router.push('/organizations')
+                        router.push('/dashboard')
                       }}
                       disabled={isBackLoading}
                     >

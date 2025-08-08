@@ -264,3 +264,9 @@ export interface IGetSchemaCredentials {
   allSchema?: boolean
   ledgerId?: string
 }
+
+export interface ISelectSchmea {
+  allSchema: boolean | undefined
+  handleFilterChange: (value: string) => Promise<void>
+  optionsWithDefault: string[]
+}

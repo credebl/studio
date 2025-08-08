@@ -176,3 +176,21 @@ export const getSchemaCredDef = async (
     return err?.message
   }
 }
+
+export const getCredDefDetailsByRecordId = async (
+  credDefId: string,
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const details = {
+    url: `${apiRoutes.organizations.root}/${orgId}${apiRoutes.schema.credentialRecordId}/${credDefId}`,
+    config,
+  }
+
+  try {
+    const response = await axiosGet(details)
+    return response
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}

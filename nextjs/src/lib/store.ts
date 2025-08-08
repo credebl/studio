@@ -5,6 +5,7 @@ import authSlice from './authSlice'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
 import schemaSlice from './schemaSlice'
+import schemaStorageSlice from './schemaStorageSlice'
 import sidebarSlice from './sidebarSlice'
 import socketReducer from './socketSlice'
 import storage from 'redux-persist/lib/storage'
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   verification: verificationSlice,
   sidebar: sidebarSlice,
   schema: schemaSlice,
+  schemaStorage: schemaStorageSlice,
 })
 
 const persistConfig = {
@@ -39,6 +41,7 @@ const persistConfig = {
     'socket',
     'verification',
     'schema',
+    'schemaStorage',
   ],
 }
 

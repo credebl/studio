@@ -85,7 +85,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
       setLoading(true)
       const SchemaDetails = await getSchemaById(SchemaId, organizationId)
       const { data } = SchemaDetails as AxiosResponse
-
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSchemaDetails(data?.data)
         setCredDefAuto(`${data?.data?.response?.schema?.name} ${nanoid(8)}`)
@@ -171,7 +170,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   }
 
   const credDefSelectionCallback = async (): Promise<void> => {
-    router.push('/organizations/credentials/issue')
+    router.push('/credentials/issue')
   }
 
   const fetchLedgerPlatformUrl = async (
@@ -413,6 +412,9 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                         revocable={element['revocable']}
                         onClickCallback={credDefSelectionCallback}
                         userRoles={userRoles}
+                        schemaName={schemaDetails?.schema?.name || ''}
+                        schemaVersion={schemaDetails?.schema?.version || ''}
+                        attributes={schemaDetails?.schema?.attrNames}
                       />
                     </div>
                   ))}

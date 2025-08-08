@@ -50,7 +50,7 @@ const apiRoutes = {
     createDid: '/agents/did',
     primaryDid: '/primary-did',
     getOrgReferences: '/activity-count',
-    deleteOrganization: '/organizations/deleteorganizations',
+    deleteOrganization: '/deleteorganizations',
     deleteVerifications: '/verification-records',
     deleteIssaunce: '/issuance-records',
     deleteConnections: '/connections',
@@ -64,6 +64,7 @@ const apiRoutes = {
     getSchemaById: '/schemas',
     createCredentialDefinition: '/cred-defs',
     getCredDefBySchemaId: '/schemas',
+    credentialRecordId: '/credentials',
   },
   Issuance: {
     getIssuedCredentials: '/credentials',

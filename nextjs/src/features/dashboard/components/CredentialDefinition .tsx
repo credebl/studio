@@ -62,7 +62,7 @@ const CredentialDefinition = (): React.JSX.Element => {
   }, [orgId])
 
   const handleClickCredDef = (schemaId: string): void => {
-    router.push(`/organizations/schemas/${schemaId}`)
+    router.push(`/schemas/${schemaId}`)
   }
 
   return (

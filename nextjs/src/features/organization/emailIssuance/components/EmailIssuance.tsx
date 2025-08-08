@@ -26,26 +26,26 @@ import {
   getSchemaCredentials,
   handleReset,
 } from './EmailIssuanceFunctions'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { BackButton } from './BackButton'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import Create from '@/features/schemas/components/Create'
+import EmailIssuanceCard from './EmaiIssuanceCard'
 import { EmptyListMessage } from '@/components/EmptyListComponent'
 import FieldArrayData from './FieldArray'
 import FormikAddButton from './FormikAddButton'
 import IssuancePopup from '../../bulkIssuance/components/IssuancePopup'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
-import { Plus } from 'lucide-react'
 import RoleViewButton from '@/components/RoleViewButton'
 import { RootState } from '@/lib/store'
-import { SearchableSelect } from '@/components/SearchableSelect'
 import { SelectRef } from '../../bulkIssuance/components/BulkIssuance'
 import { itemPerPage } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
-import { useAppSelector } from '@/lib/hooks'
+import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
 const EmailIssuance = (): JSX.Element => {
@@ -91,7 +91,13 @@ const EmailIssuance = (): JSX.Element => {
   const selectInputRef = React.useRef<SelectRef | null>(null)
   const [clear, setClear] = useState<boolean>(false)
   const router = useRouter()
+  const dispatch = useAppDispatch()
+  const optionsWithDefault = ["Organization's schema", 'All schemas']
+  const [selectValue, setSelectValue] = useState<string>('')
 
+  const schemaDetails = useAppSelector(
+    (state: RootState) => state.schemaStorage,
+  )
   const handleSelectChange = (newValue: ICredentials | null): void => {
     const value = newValue as ICredentials | null
     if (schemaType === SchemaTypes.schema_INDY) {
@@ -109,6 +115,57 @@ const EmailIssuance = (): JSX.Element => {
   }, [])
 
   useEffect(() => {
+    if (
+      Array.isArray(credentialOptions) &&
+      credentialOptions.length > 0 &&
+      schemaDetails.type === 'CREDENTIAL_DEFINITION'
+    ) {
+      const credential = credentialOptions.find(
+        (option) =>
+          schemaDetails.nonW3cSchema === option.credentialDefinitionId,
+      )
+      setCredentialSelected(credential ?? null)
+      setCredDefId(
+        credential?.schemaIdentifier ?? credential?.credentialDefinitionId,
+      )
+      setAttributes(
+        credential?.schemaAttributes ?? credential?.attributes ?? [],
+      )
+      setSelectValue(credential?.label)
+    } else if (
+      Array.isArray(credentialOptions) &&
+      credentialOptions.length > 0 &&
+      schemaDetails.type === 'W3C_SCHEMA'
+    ) {
+      const credentials = schemaDetails.w3cSchema
+      if (!credentials) {
+        return
+      }
+      const attributes = JSON.parse(credentials.value)
+      const data = {
+        value: credentials.schemaVersion,
+        label: `${credentials.schemaName} [${credentials.schemaVersion}]`,
+        schemaName: credentials.schemaName,
+        schemaVersion: credentials.schemaVersion,
+        schemaIdentifier: credentials.schemaIdentifier,
+        id: 0,
+        schemaAttributes: attributes,
+      }
+      setCredentialSelected(data ?? null)
+      setSchemasIdentifier(credentials?.schemaIdentifier)
+      setAttributes(attributes ?? [])
+      if (data?.label) {
+        setSelectValue(data?.label)
+      }
+    } else {
+      setSelectValue(
+        schemaType === SchemaTypes.schema_W3C
+          ? 'Select Schema '
+          : 'Select Credential Definition',
+      )
+    }
+  }, [credentialOptions, schemaDetails])
+  useEffect(() => {
     getSchemaCredentials({
       schemaListAPIParameter,
       setIsAllSchemaFlagSelected,
@@ -125,7 +182,12 @@ const EmailIssuance = (): JSX.Element => {
       allSchema,
       ledgerId,
     })
-  }, [isAllSchemaFlagSelected, schemaListAPIParameter.allSearch])
+  }, [
+    isAllSchemaFlagSelected,
+    schemaListAPIParameter.allSearch,
+    allSchema,
+    orgId,
+  ])
 
   useEffect(() => {
     const initFormData = {
@@ -163,7 +225,12 @@ const EmailIssuance = (): JSX.Element => {
     setSchemaListAPIParameter((prev) => ({ ...prev, allSearch: value }))
   }
 
-  const createSchemaTitle = { title: 'Create Schema', svg: <Create /> }
+  const handleFilterChange = async (value: string): Promise<void> => {
+    const isAllSchemas = value === 'All schemas'
+    dispatch(setAllSchema(isAllSchemas))
+  }
+
+  const createSchemaTitle = { title: 'View Schemas', svg: <Create /> }
 
   return (
     <PageContainer>
@@ -187,101 +254,32 @@ const EmailIssuance = (): JSX.Element => {
             <RoleViewButton
               buttonTitle={createSchemaTitle.title}
               feature={Features.CRETAE_SCHEMA}
-              svgComponent={<Plus />}
+              svgComponent={<div></div>}
               onClickEvent={() => {
                 setEmailLoading(true)
-                router.push(`${pathRoutes.organizations.createSchema}`)
+                router.push(`${pathRoutes.organizations.schemas}`)
               }}
               loading={emailLoading}
             />
           </div>
           <div className="email-bulk-issuance flex flex-col justify-between gap-4">
-            <Card className="p-5 py-8">
-              <div className="md:min-h-[10rem]">
-                <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div className="flex flex-col justify-between">
-                    <div className="text-primary-900">
-                      <div className="pb-2 text-xl font-semibold dark:text-white">
-                        {schemaType === SchemaTypes.schema_W3C
-                          ? 'Select Schema '
-                          : 'Select Credential Definition'}
-                      </div>
-                      {mounted && (
-                        <SearchableSelect
-                          className="border-muted max-w-lg border-1"
-                          options={
-                            Array.isArray(credentialOptions)
-                              ? credentialOptions
-                              : []
-                          }
-                          value={''}
-                          clear={clear}
-                          onValueChange={handleSelect}
-                          onSearchChange={handleSearchChange}
-                          enableInternalSearch={
-                            !(
-                              schemaType === SchemaTypes.schema_W3C &&
-                              isAllSchemaFlagSelected
-                            )
-                          }
-                          placeholder={
-                            schemaType === SchemaTypes.schema_W3C
-                              ? 'Select Schema '
-                              : 'Select Credential Definition'
-                          }
-                        />
-                      )}
-                    </div>
-
-                    <div className="mt-4">
-                      {credentialSelected && (
-                        <Card className="max-w-[30rem] p-5">
-                          <div>
-                            <p className="pb-2 text-black dark:text-white">
-                              <span className="font-semibold">Schema: </span>
-                              {credentialSelected?.schemaName || ''}{' '}
-                              <span>[{credentialSelected?.schemaVersion}]</span>
-                            </p>
-                            {schemaType === SchemaTypes.schema_INDY && (
-                              <p className="pb-2 text-black dark:text-white">
-                                {' '}
-                                <span className="font-semibold">
-                                  Credential Definition:
-                                </span>{' '}
-                                {credentialSelected?.credentialDefinition}
-                              </p>
-                            )}
-                            <span className="font-semibold text-black dark:text-white">
-                              Attributes:
-                            </span>
-
-                            <div className="flex flex-wrap overflow-hidden">
-                              {attributes
-                                ?.slice(0, 3)
-                                .map((element: IAttributes) => (
-                                  <div
-                                    key={element.attributeName}
-                                    className="truncate"
-                                  >
-                                    <span className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors">
-                                      {element.attributeName}
-                                    </span>
-                                  </div>
-                                ))}
-                              {attributes?.length > 3 && (
-                                <span className="text-muted-foreground ml-2 text-sm/6">
-                                  +{attributes.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </Card>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card>
+            <EmailIssuanceCard
+              {...{
+                schemaType,
+                allSchema,
+                handleFilterChange,
+                optionsWithDefault,
+                credentialOptions,
+                selectValue,
+                clear,
+                handleSelect,
+                handleSearchChange,
+                mounted,
+                credentialSelected,
+                attributes,
+                isAllSchemaFlagSelected,
+              }}
+            />
             <div>
               <Card className="p-5 py-10">
                 <div>

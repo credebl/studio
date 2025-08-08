@@ -2,8 +2,13 @@ import * as Yup from 'yup'
 
 import { Dispatch, SetStateAction } from 'react'
 import { FormikErrors, FormikTouched } from 'formik'
+import {
+  ICredentialOption,
+  ICredentialOptions,
+} from '../../emailIssuance/type/EmailIssuance'
 
 import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
+import { SchemaTypes } from '@/common/enums'
 
 export interface SchemaState {
   schemaId: string
@@ -271,4 +276,42 @@ export interface IFieldArrayProps {
     },
     ''
   >
+}
+
+export interface createIssuanceForm {
+  selectedUsers: SelectedUsers[]
+  attributes: DataTypeAttributes[]
+  credDefId: string
+  orgId: string
+  setIssuanceFormPayload: React.Dispatch<
+    React.SetStateAction<IssuanceFormPayload>
+  >
+  setUserLoader: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export interface IEmailIssuanceCardProps {
+  schemaType: SchemaTypes | undefined
+  allSchema: boolean | undefined
+  handleFilterChange: (value: string) => Promise<void>
+  optionsWithDefault: string[]
+  credentialOptions: ICredentialOptions | undefined
+  selectValue: string
+  clear: boolean
+  handleSelect: (value: ICredentialOption) => void
+  handleSearchChange: (value: string) => void
+  mounted: boolean
+  credentialSelected: ICredentials | null | undefined
+  attributes: IAttributes[]
+  isAllSchemaFlagSelected: boolean | undefined
+}
+
+export interface IIssuanceHeaderProps {
+  handleBackClick: () => void
+  isLoading: boolean
+  success: string | null
+  error: string | null
+  setError: Dispatch<SetStateAction<string | null>>
+  setSuccess: Dispatch<SetStateAction<string | null>>
+  setCreateLoading: Dispatch<SetStateAction<boolean>>
+  createLoading: boolean
 }

@@ -24,11 +24,6 @@ interface RefreshTokenResponse {
   }
 }
 
-interface jwtDataPayload extends JwtPayload {
-  email?: string
-  name?: string
-}
-
 // const state = store.getState()
 // const refreshToken = state?.auth?.refreshToken
 
@@ -36,7 +31,6 @@ interface jwtDataPayload extends JwtPayload {
 const refreshAccessToken = async (
   refreshToken: string,
 ): Promise<string | null> => {
-  console.log('refreshToken', refreshToken)
   if (!refreshToken) {
     console.error('No refresh token available')
     return null
@@ -47,7 +41,6 @@ const refreshAccessToken = async (
       `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
       { refreshToken },
     )
-    console.log('🚀 ~ refreshAccessToken ~ response:', response)
 
     if (
       response?.status === apiStatusCodes.API_STATUS_SUCCESS &&
@@ -56,9 +49,7 @@ const refreshAccessToken = async (
       const AccessToken = response.data.data.access_token
       const RefreshToken = response.data.data.refresh_token
 
-      console.log("🚀 ~ refreshAccessToken ~ AccessToken:", AccessToken)
       if (AccessToken && RefreshToken) {
-
         store.dispatch(setToken(AccessToken))
         store.dispatch(setRefreshToken(RefreshToken))
         return AccessToken
@@ -98,7 +89,6 @@ function isTokenExpired(accessToken: string, refreshToken: string): boolean {
 
     // Decode and check refresh token
     const { exp: refreshExp } = jwtDecode<JwtPayload>(refreshToken)
-    console.log('🚀 ~ isTokenExpired ~ refreshExp:', refreshExp)
     if (refreshExp && refreshExp < currentTime) {
       console.warn('Refresh token expired. Logout the user.')
       logoutAndRedirect()
@@ -106,8 +96,6 @@ function isTokenExpired(accessToken: string, refreshToken: string): boolean {
 
     // Decode and check access token
     const { exp: accessExp } = jwtDecode<JwtPayload>(accessToken)
-    console.log('checking the access token expiration')
-    console.log('access token:::', accessExp ? accessExp < currentTime : false)
     return accessExp ? accessExp < currentTime : false
   } catch (error) {
     console.error('Error decoding token:', error)
@@ -122,13 +110,14 @@ instance.interceptors.request.use(
     const token = auth?.token
     const refreshToken = auth?.refreshToken
     let isRequested = false
-    if (!token || !refreshToken) return config
+    if (!token || !refreshToken) {
+      return config
+    }
 
     let accessToken: string | null = token
 
-    if (isTokenExpired(token, refreshToken)&& !isRequested) {
-      console.log('\n\n-----in side if-----------------\n\n')
-      isRequested= true
+    if (isTokenExpired(token, refreshToken) && !isRequested) {
+      isRequested = true
       accessToken = await refreshAccessToken(refreshToken)
     }
 
@@ -150,6 +139,7 @@ instance.interceptors.response.use(
     const originalRequest = error.config as AxiosRequestConfig & {
       _retry?: boolean
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const isPasswordCheckRoute = originalRequest?.url?.includes(
       apiRoutes.auth.passkeyUserDetails,
     )

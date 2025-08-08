@@ -312,7 +312,6 @@ export const getSchemaCredentials = async ({
               JSON.parse(schemaAttributes),
           }),
         )
-
         setCredentialOptions(options)
       } else {
         setSuccess(null)
