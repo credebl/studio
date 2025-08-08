@@ -206,15 +206,16 @@ const Credentials = (): JSX.Element => {
                 },
                 {
                   label: 'Issued To',
-                  value: row.original.connections.theirLabel ?? 'Not Available',
+                  value:
+                    row.original.connections?.theirLabel || 'Not Available',
                 },
                 {
                   label: 'Schema Name',
-                  value: row.original.schemaName ?? 'Not Available',
+                  value: row.original.schemaName || 'Not Available',
                 },
                 {
                   label: 'Schema Id',
-                  value: row.original.schemaId ?? 'Not Available',
+                  value: row.original.schemaId || 'Not Available',
                   copyable: true,
                 },
                 {
@@ -233,7 +234,7 @@ const Credentials = (): JSX.Element => {
                 },
                 {
                   label: 'Connection Id',
-                  value: row.original.connectionId ?? 'Not Available',
+                  value: row.original.connectionId || 'Not Available',
                   copyable: true,
                 },
               ]
