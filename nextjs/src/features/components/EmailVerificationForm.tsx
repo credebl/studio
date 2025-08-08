@@ -47,7 +47,7 @@ export default function EmailVerificationForm({
         email,
         clientAlias: clientAliasValue
           ? clientAliasValue
-          : process.env.NEXT_PUBLIC_PUBLIC_PLATFORM_NAME,
+          : process.env.NEXT_PUBLIC_PLATFORM_NAME,
       }
 
       const userRsp = await sendVerificationMail(payload)

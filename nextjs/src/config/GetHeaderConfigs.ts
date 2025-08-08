@@ -19,6 +19,7 @@ type SecurityHeaders = {
 }
 export interface HeaderConfig {
   headers: SecurityHeaders
+  withCredentials?: boolean
 }
 
 const commonHeaders: SecurityHeaders = {
@@ -39,6 +40,7 @@ export const getHeaderConfigs = (): HeaderConfig => ({
     ...commonHeaders,
     'Content-Type': 'application/json',
   },
+  withCredentials: true,
 })
 export const getHeaderConfigsForFormData = (): HeaderConfig => ({
   headers: {

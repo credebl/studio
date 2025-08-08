@@ -10,8 +10,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app'
 import PageLayout from '@/components/PageLayout'
 import Providers from '@/components/layout/providers'
 import React from 'react'
-import SessionCheck from '@/features/components/SessionCheck'
-import { SessionSyncer } from '@/features/components/sessionSyncher'
+import { SessionManager } from '@/features/components/SessionManager'
 import StoreProvider from './StoreProvider'
 import { Toaster } from '@/components/ui/sonner'
 import { authOptions } from '@/utils/authOptions'
@@ -92,13 +91,11 @@ export default async function RootLayout({
               session={session}
               activeThemeValue={activeThemeValue as string}
             >
-              <SessionSyncer>
-                <SessionCheck>
-                  <Toaster />
-                  <FaviconUpdater />
-                  <PageLayout>{children}</PageLayout>
-                </SessionCheck>
-              </SessionSyncer>
+              <SessionManager>
+                <Toaster />
+                <FaviconUpdater />
+                <PageLayout>{children}</PageLayout>
+              </SessionManager>
             </Providers>
           </StoreProvider>
         </NuqsAdapter>

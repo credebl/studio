@@ -111,6 +111,7 @@ export const authOptions: MyAuthOptions = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(sanitizedPayload),
+                credentials: 'include',
               },
             )
           } else {
@@ -126,13 +127,13 @@ export const authOptions: MyAuthOptions = {
             }
           }
 
+          const responseData = await res?.json()
+
           if (!res?.ok) {
-            console.error('Error fetching user:', res?.statusText)
-            return null
+            throw new Error(responseData.message || 'Invalid credentials')
           }
 
-          const user = await res.json()
-
+          const user = responseData
           if (user.statusCode === 200 && user.data) {
             const decodedToken = jwtDecode<jwtDataPayload>(
               user.data.access_token,
@@ -144,19 +145,16 @@ export const authOptions: MyAuthOptions = {
 
             return {
               id: user.data.session_state || user.data.email,
-              email: decodedToken?.email,
-              name: decodedToken?.name || decodedToken?.email,
-              accessToken: user.data.access_token,
-              refreshToken: user.data.refresh_token,
-              tokenType: user.data.token_type,
-              expiresAt: user.data.expires_in,
+              sessionId: user.data.sessionId,
             }
           }
 
           return null
         } catch (error) {
-          console.error('Authorize error:', error)
-          return null
+          if (error instanceof Error) {
+            throw new Error(error.message)
+          }
+          throw new Error(JSON.stringify({ message: 'Authorize error' }))
         }
       },
     }),
@@ -165,11 +163,7 @@ export const authOptions: MyAuthOptions = {
   callbacks: {
     async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
-        token.id = user.id
-        token.email = user.email
-        token.accessToken = user.accessToken || ''
-        token.expiresAt = user.expiresAt
-        token.refreshToken = user.refreshToken
+        token.sessionId = user.sessionId
       }
       return token
     },
@@ -181,13 +175,7 @@ export const authOptions: MyAuthOptions = {
       session: Session
       token: JWT
     }): Promise<Session> {
-      session.user = {
-        id: token.id as string,
-        email: token.email as string,
-      }
-      session.accessToken = token.accessToken as string
-      session.refreshToken = token.refreshToken as string
-      session.expiresAt = token.expiresAt
+      session.sessionId = token.sessionId as string
       return session
     },
 
@@ -195,15 +183,19 @@ export const authOptions: MyAuthOptions = {
       try {
         const redirectUrl = new URL(url)
 
-        if (
-          [process.env.NEXTAUTH_COOKIE_DOMAIN].includes(redirectUrl.hostname) &&
-          (redirectUrl.protocol === 'http:' ||
-            redirectUrl.protocol === 'https:')
-        ) {
+        const cookieDomain = process.env.NEXTAUTH_COOKIE_DOMAIN?.replace(
+          /^\./,
+          '',
+        )
+        const isAllowed =
+          cookieDomain &&
+          redirectUrl.hostname.endsWith(cookieDomain) &&
+          ['http:', 'https:'].includes(redirectUrl.protocol)
+
+        if (isAllowed) {
           return redirectUrl.toString()
         }
       } catch (err) {
-        // If not a full URL, treat it as relative path
         return new URL(url, baseUrl).toString()
       }
 
@@ -223,7 +215,10 @@ export const authOptions: MyAuthOptions = {
 
   cookies: {
     sessionToken: {
-      name: 'next-auth.session-token',
+      name:
+        process.env.NEXTAUTH_PROTOCOL === 'http'
+          ? 'next-auth.session-token'
+          : '__Secure-next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
