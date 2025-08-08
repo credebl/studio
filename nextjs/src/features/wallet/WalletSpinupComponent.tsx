@@ -260,16 +260,16 @@ const WalletSpinup = (): React.JSX.Element => {
       console.error(err)
       return
     }
-
+    const method = values.method.split(':')[1] || '';
     const didData = {
       seed: values.method === DidMethod.POLYGON ? '' : seeds,
       keyType: values.keyType || 'ed25519',
-      method: values.method.split(':')[1] || '',
+      method: method || '',
       network:
         values.method === DidMethod.INDY
           ? values.network
           : values.method === DidMethod.POLYGON
-          ?`${values.method.split(':')[1]}:${values.network}`
+          ?`${method}:${values.network}`
             : '',
       domain: values.method === DidMethod.WEB ? domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
