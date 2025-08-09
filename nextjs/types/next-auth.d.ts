@@ -7,6 +7,7 @@ declare module 'next-auth' {
     expiresAt?: number
     user: User
     sessionId?: string
+    isSessionUpdated?: boolean
   }
 
   interface User {
@@ -14,6 +15,7 @@ declare module 'next-auth' {
     refreshToken?: string
     expiresAt?: number
     sessionId?: string
+    isSessionUpdated?: boolean
   }
 }
 

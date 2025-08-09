@@ -164,6 +164,7 @@ export const authOptions: MyAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
         token.sessionId = user.sessionId
+        token.isSessionUpdated = false
       }
       return token
     },
@@ -176,6 +177,7 @@ export const authOptions: MyAuthOptions = {
       token: JWT
     }): Promise<Session> {
       session.sessionId = token.sessionId as string
+      session.isSessionUpdated = false
       return session
     },
 
