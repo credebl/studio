@@ -41,7 +41,7 @@ export const SessionManager = ({
   // const hasCheckedSession = useRef(false)
 
   const redirectTo = searchParams.get('redirectTo')
-  const clientAlias = searchParams.get('clientAlias')
+  // const clientAlias = searchParams.get('clientAlias')
 
   const setSessionDetails = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -98,12 +98,13 @@ export const SessionManager = ({
         fetchSessionDetails(session.sessionId, redirectTo)
         dispatch(setSessionId(session?.sessionId))
       } else if (status === 'unauthenticated' || session === null) {
+        // console.log('---inside else------')
         localStorage.removeItem('persist:root')
-        const signInUrl =
-          redirectTo && clientAlias
-            ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-            : '/sign-in'
-        router.push(signInUrl)
+        // const signInUrl =
+        //   redirectTo && clientAlias
+        //     ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+        //     : '/sign-in'
+        // router.push(signInUrl)
       }
     }, 500)
     // }
