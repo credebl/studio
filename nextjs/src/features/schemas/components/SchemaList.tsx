@@ -76,6 +76,7 @@ const SchemaList = (props: {
   const [w3cSchema, setW3CSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
   const [orgRole, setOrgRole] = useState<string | null>(null)
+  const [orgRoles, setOrgRoles] = useState<(string | null)[]>([])
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [sideBarFields, setSideBarFields] = useState<ISidebarSliderData[]>([])
 
@@ -116,10 +117,20 @@ const SchemaList = (props: {
         const matchedRole = roles.find(
           (role: UserOrgRole) => role.orgId === organizationId,
         )
-
+        const matchingRoles = roles
+          .map((role: UserOrgRole) => {
+            if (role.orgId === organizationId) {
+              return role?.orgRole?.name
+            } else {
+              return null
+            }
+          })
+          .filter(Boolean)
         if (matchedRole?.orgRole?.name) {
+          setOrgRoles(matchingRoles)
           setOrgRole(matchedRole.orgRole.name)
         } else {
+          setOrgRoles([])
           setOrgRole(null)
         }
       } catch (error) {
@@ -408,7 +419,10 @@ const SchemaList = (props: {
           </Select>
           <Button
             onClick={handleClick}
-            disabled={loading || (orgRole !== 'admin' && orgRole !== 'owner')}
+            disabled={
+              loading ||
+              !(orgRoles.includes('admin') || orgRoles.includes('owner'))
+            }
             className="w-full sm:w-auto"
           >
             {loading ? <Loader size={20} /> : <Plus className="mr-2 h-4 w-4" />}
