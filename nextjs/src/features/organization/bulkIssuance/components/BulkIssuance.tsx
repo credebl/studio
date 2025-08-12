@@ -40,6 +40,7 @@ import SchemaSelectBulk from './SchemaSelectBulk'
 import Steps from './Steps'
 import Table from './Table'
 import { getCsvFileData } from '@/app/api/BulkIssuance'
+import { handleDiscardFile } from './BulkIssuanceUtils'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
@@ -97,7 +98,39 @@ const BulkIssuance = (): JSX.Element => {
 
   const socketId = SOCKET.id || ''
 
+  const selectInputRef = React.useRef<SelectRef | null>(null)
+
   const dispatch = useAppDispatch()
+
+  const context = {
+    setLoading,
+    setUploadMessage,
+    setSuccess,
+    setFailure,
+    socketId,
+    setUploadedFileName,
+    schemaType,
+    selectedTemplate,
+    orgId,
+    setRequestId,
+    setIsFileUploaded,
+    currentPage,
+    setCsvData,
+    setCurrentPage,
+    isCredSelected,
+    setIsAllSchema,
+    setSchemaType,
+    isAllSchema,
+    setCredentialOptionsData,
+    requestId,
+    setCredentialSelected,
+    setOpenModal,
+    selectInputRef,
+    isFileUploaded,
+    uploadedFileName,
+    uploadMessage,
+    ledgerId,
+  }
 
   useEffect(() => {
     if (
@@ -161,6 +194,8 @@ const BulkIssuance = (): JSX.Element => {
     setAttributes(value?.schemaAttributes ?? value?.attributes ?? [])
   }
 
+  const allow = useRef<boolean>(true)
+
   const handleSelect = (value: Option): void => {
     const safeValue = {
       ...value,
@@ -169,37 +204,34 @@ const BulkIssuance = (): JSX.Element => {
       schemaVersion: value.schemaVersion ?? '',
     }
     onSelectChange(safeValue)
+    handleDiscardFile(context)
+    allow.current = true
   }
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  const allow = useRef<boolean>(true)
-
   useEffect(() => {
     SOCKET.emit('bulk-connection')
     SOCKET.on('bulk-issuance-process-completed', () => {
       setSuccess(null)
       // eslint-disable-next-line no-console
-      console.log('bulk-issuance-process-completed')
-      setTimeout(() => {
-        allow.current = true
-      }, 2000)
-      if (allow.current) {
-        toast.success('Issuance process completed', {
-          position: 'top-right',
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'colored',
-        })
-        setTimeout(() => router.push('/credentials'), 2000)
+      if (!allow.current) {
+        return
       }
       allow.current = false
+      toast.success('Issuance process completed', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+      })
+      setTimeout(() => router.push('/credentials'), 2000)
     })
 
     SOCKET.on('error-in-bulk-issuance-process', () => {
@@ -259,39 +291,8 @@ const BulkIssuance = (): JSX.Element => {
   const handleCloseConfirmation = (): void => {
     setOpenModal(false)
   }
-  const selectInputRef = React.useRef<SelectRef | null>(null)
 
   const createSchemaTitle = { title: 'View Schemas', svg: <Create /> }
-
-  const context = {
-    setLoading,
-    setUploadMessage,
-    setSuccess,
-    setFailure,
-    socketId,
-    setUploadedFileName,
-    schemaType,
-    selectedTemplate,
-    orgId,
-    setRequestId,
-    setIsFileUploaded,
-    currentPage,
-    setCsvData,
-    setCurrentPage,
-    isCredSelected,
-    setIsAllSchema,
-    setSchemaType,
-    isAllSchema,
-    setCredentialOptionsData,
-    requestId,
-    setCredentialSelected,
-    setOpenModal,
-    selectInputRef,
-    isFileUploaded,
-    uploadedFileName,
-    uploadMessage,
-    ledgerId,
-  }
 
   useEffect(() => {
     getSchemaCredentials(schemaListAPIParameters, context)
