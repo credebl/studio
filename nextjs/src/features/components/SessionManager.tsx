@@ -102,7 +102,7 @@ export const SessionManager = ({
         const isIgnoreSessionCheck = excludeRouteForSessionCheck.some((page) =>
           pathname.startsWith(page),
         )
-        if(!isIgnoreSessionCheck){
+        if (!isIgnoreSessionCheck) {
           localStorage.removeItem('persist:root')
           const signInUrl =
             redirectTo && clientAlias
