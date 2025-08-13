@@ -1,7 +1,12 @@
 /* eslint-disable max-lines */
 'use client'
 
-import { AgentType, DidMethod, WalletSpinupStatus } from '../common/enum'
+import {
+  AgentType,
+  DidMethod,
+  WalletSpinupStatus,
+  WalletSpinupSteps,
+} from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -65,6 +70,8 @@ const WalletSpinup = (): React.JSX.Element => {
   const orgId = searchParams.get('orgId')
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
+
+  const TOTAL_STEPS = 6
 
   const [agentConfig, setAgentConfig] = useState({
     walletName: '',
@@ -186,7 +193,7 @@ const WalletSpinup = (): React.JSX.Element => {
       setWalletSpinStep(currentStep + 1)
       currentStep++
 
-      if (currentStep >= 6) {
+      if (currentStep >= TOTAL_STEPS) {
         if (animationInterval.current) {
           clearInterval(animationInterval.current)
           animationInterval.current = null
@@ -420,7 +427,10 @@ const WalletSpinup = (): React.JSX.Element => {
       const { data } = spinupRes as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        if (data?.data['agentSpinupStatus'] !== 1) {
+        if (
+          data?.data['agentSpinupStatus'] !==
+          WalletSpinupSteps.AGENT_SPINUP_INITIATED
+        ) {
           // API failed - stop loading and show error
           setIsApiInProgress(false)
           handleWalletCompletion(false, 'Failed to initiate wallet creation')
