@@ -1,7 +1,7 @@
 'use client'
 
 import { JwtPayload, jwtDecode } from 'jwt-decode'
-import axios, { AxiosError, AxiosRequestConfig } from 'axios'
+import axios, { AxiosError } from 'axios'
 
 import { apiRoutes } from '@/config/apiRoutes'
 // import { apiStatusCodes } from '@/config/CommonConstant'
@@ -27,10 +27,10 @@ const EcosystemInstance = axios.create({
 //   }
 // }
 
-interface jwtDataPayload extends JwtPayload {
-  email?: string
-  name?: string
-}
+// interface jwtDataPayload extends JwtPayload {
+//   email?: string
+//   name?: string
+// }
 
 // const state = store.getState()
 // const refreshToken = state?.auth?.refreshToken
@@ -170,12 +170,12 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean
-    }
-    const isPasswordCheckRoute = originalRequest?.url?.includes(
-      apiRoutes.auth.passkeyUserDetails,
-    )
+    // const originalRequest = error.config as AxiosRequestConfig & {
+    //   _retry?: boolean
+    // }
+    // const isPasswordCheckRoute = originalRequest?.url?.includes(
+    //   apiRoutes.auth.passkeyUserDetails,
+    // )
 
     // Automatically logout on 401
     // if (
