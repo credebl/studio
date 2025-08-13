@@ -445,8 +445,16 @@ const LedgerConfig = ({
                     type="text"
                     className="block w-full rounded-lg p-2.5 sm:text-sm"
                     placeholder="Enter your seed"
+                    value={formikHandlers.values.seed}
+                    onChange={formikHandlers.handleChange}
+                    onBlur={formikHandlers.handleBlur}
                   />
                 </div>
+                {formikHandlers.errors.seed && formikHandlers.touched.seed && (
+                  <div className="text-destructive mt-1 text-xs">
+                    {formikHandlers.errors.seed}
+                  </div>
+                )}
                 <div className="relative">
                   <label
                     htmlFor="did"
