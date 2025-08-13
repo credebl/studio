@@ -194,7 +194,7 @@ const BulkIssuance = (): JSX.Element => {
     setAttributes(value?.schemaAttributes ?? value?.attributes ?? [])
   }
 
-  const allow = useRef<boolean>(true)
+  const allow = useRef<boolean>(true) // Reset to allow notification; prevents duplicate notifications on select
 
   const handleSelect = (value: Option): void => {
     const safeValue = {
@@ -205,7 +205,7 @@ const BulkIssuance = (): JSX.Element => {
     }
     onSelectChange(safeValue)
     handleDiscardFile(context)
-    allow.current = true
+    allow.current = true // Reset to allow notification; prevents duplicate notifications on select
   }
 
   useEffect(() => {
