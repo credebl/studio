@@ -188,3 +188,11 @@ export enum WalletSpinupStatus {
   COMPLETED = 'completed',
   FAILED = 'failed',
 }
+
+export enum WalletSpinupSteps {
+  AGENT_SPINUP_INITIATED = 1,
+  AGENT_SPINUP_COMPLETED = 2,
+  DID_PUBLISH_INITIATED = 3,
+  DID_PUBLISH_COMPLETED = 4,
+  INVITATION_CREATION_STARTED = 5,
+}
