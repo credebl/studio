@@ -376,7 +376,7 @@ const SchemaList = (props: {
   }
 
   const handleClick = (): void => {
-    if (orgRole === 'admin' || orgRole === 'owner') {
+    if (orgRoles.includes('admin') || orgRoles.includes('owner')) {
       setLoading(true)
       route.push('/schemas/create')
     }
