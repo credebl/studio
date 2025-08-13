@@ -190,14 +190,9 @@ export enum WalletSpinupStatus {
 }
 
 export enum WalletSpinupSteps {
-  NOT_STARTED = 'not_started',
-  AGENT_CONFIG_SET = 'agent_config_set',
   AGENT_SPINUP_INITIATED = 1,
   AGENT_SPINUP_COMPLETED = 2,
   DID_PUBLISH_INITIATED = 3,
   DID_PUBLISH_COMPLETED = 4,
   INVITATION_CREATION_STARTED = 5,
-  INVITATION_CREATION_SUCCESS = 'invitation_creation_success',
-  COMPLETED = 'completed',
-  FAILED = 'failed',
 }
