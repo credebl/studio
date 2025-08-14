@@ -83,6 +83,7 @@ export default function SignInViewPage(): React.JSX.Element {
     password?: string
   }): Promise<void> => {
     try {
+      setLoading(true)
       const entityData = {
         email: values.email,
         password: await passwordEncryption(values.password || ''),
@@ -93,10 +94,7 @@ export default function SignInViewPage(): React.JSX.Element {
         ...entityData,
         redirect: false,
       })
-
-      if (response?.ok && response?.url) {
-        window.location.href = response.url
-      } else {
+      if (response?.error) {
         const errorMsg = response?.error
           ? response.error === 'CredentialsSignin'
             ? 'Invalid Credentials'
@@ -106,8 +104,10 @@ export default function SignInViewPage(): React.JSX.Element {
 
         console.error('Sign in failed:', response?.error)
       }
+      setLoading(false)
     } catch (error) {
       setAlert('Something went wrong during sign in. Please try again.')
+      setLoading(false)
       console.error('Sign in error:', error)
     }
   }
@@ -421,7 +421,7 @@ export default function SignInViewPage(): React.JSX.Element {
               disabled={loading}
               className="w-full text-xs md:text-sm"
             >
-              {loading && <Loader />}
+              {loading && <Loader size={20} isExpand={false}/>}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 
