@@ -1,12 +1,16 @@
 'use client'
 
-import axios, { AxiosError, AxiosRequestConfig } from 'axios'
-import { setAuthToken, setRefreshToken, setToken } from '@/lib/authSlice'
+import { JwtPayload, jwtDecode } from 'jwt-decode'
+import axios, { AxiosError } from 'axios'
 
 import { apiRoutes } from '@/config/apiRoutes'
-import { apiStatusCodes } from '@/config/CommonConstant'
+// import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
 import { signOut } from 'next-auth/react'
 import { store } from '@/lib/store'
+
+// import { setRefreshToken, setToken } from '@/lib/authSlice'
+
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -16,55 +20,85 @@ const EcosystemInstance = axios.create({
   baseURL: process.env.PUBLIC_ECOSYSTEM_BASE_URL,
 })
 
-interface RefreshTokenResponse {
-  data: {
-    access_token: string
-    refresh_token: string
-  }
-}
+// interface RefreshTokenResponse {
+//   data: {
+//     access_token: string
+//     refresh_token: string
+//   }
+// }
+
+// interface jwtDataPayload extends JwtPayload {
+//   email?: string
+//   name?: string
+// }
+
+// const state = store.getState()
+// const refreshToken = state?.auth?.refreshToken
 
 //Refresh Token
-const refreshAccessToken = async (): Promise<string | null> => {
-  const state = store.getState()
-  const refreshToken = state?.auth?.refreshToken
+// const refreshAccessToken = async (
+//   refreshToken: string,
+// ): Promise<string | null> => {
+//   if (!refreshToken) {
+//     console.error('No refresh token available')
+//     return null
+//   }
 
-  if (!refreshToken) {
-    console.error('No refresh token available')
-    return null
+//   try {
+//     const response = await axios.post<RefreshTokenResponse>(
+//       `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
+//       { refreshToken },
+//     )
+
+//     if (
+//       response?.status === apiStatusCodes.API_STATUS_SUCCESS &&
+//       response.data?.data
+//     ) {
+//       const AccessToken = response.data.data.access_token
+//       const RefreshToken = response.data.data.refresh_token
+
+//       if (AccessToken && RefreshToken) {
+//         store.dispatch(setToken(AccessToken))
+//         store.dispatch(setRefreshToken(RefreshToken))
+//         return AccessToken
+//       }
+//     }
+//     return null
+//   } catch (error) {
+//     if (axios.isAxiosError(error)) {
+//       console.error('Token refresh failed:', error.response || error.message)
+//     } else {
+//       console.error('Token refresh failed:', error)
+//     }
+//     return null
+//   }
+// }
+
+export async function logoutAndRedirect(): Promise<void> {
+  // Integrate the API for delete the session from backend as well
+  const { auth } = store.getState()
+  const token = auth?.token
+  const sessionId = auth?.sessionId
+  const payload = {
+    sessions: [sessionId],
   }
 
-  try {
-    const response = await axios.post<RefreshTokenResponse>(
-      `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
-      { refreshToken },
-    )
+  const response = await fetch(
+    `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
+    {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  )
 
-    if (
-      response?.status === apiStatusCodes.API_STATUS_CREATED &&
-      response.data?.data
-    ) {
-      const AccessToken = response.data.data.access_token
-      const RefreshToken = response.data.data.refresh_token
-
-      if (AccessToken && RefreshToken) {
-        store.dispatch(setToken(AccessToken))
-        store.dispatch(setAuthToken(AccessToken))
-        store.dispatch(setRefreshToken(RefreshToken))
-        return AccessToken
-      }
-    }
-    return null
-  } catch (error) {
-    if (axios.isAxiosError(error)) {
-      console.error('Token refresh failed:', error.response || error.message)
-    } else {
-      console.error('Token refresh failed:', error)
-    }
-    return null
+  if (!response.ok) {
+    console.error('Logout API failed')
   }
-}
 
-export function logoutAndRedirect(): void {
   const rootKey = 'persist:root'
 
   if (localStorage.getItem(rootKey)) {
@@ -81,24 +115,53 @@ export function logoutAndRedirect(): void {
   }
 }
 
-// REQUEST INTERCEPTOR
-instance.interceptors.request.use(
-  (config) => {
-    const state = store.getState()
-    const token = state?.auth?.authToken
+function isTokenExpired(accessToken: string, refreshToken: string): boolean {
+  try {
+    const currentTime = Math.floor(Date.now() / 1000)
 
-    if (token) {
-      const updatedConfig = {
-        ...config,
-        headers: new axios.AxiosHeaders({
-          ...config.headers,
-          Authorization: `Bearer ${token}`,
-        }),
-      }
-      return updatedConfig
+    // Decode and check refresh token
+    const { exp: refreshExp } = jwtDecode<JwtPayload>(refreshToken)
+    if (refreshExp && refreshExp < currentTime + 10) {
+      console.warn('Refresh token expired. Logout the user.')
+      logoutAndRedirect()
     }
 
-    return config
+    // Decode and check access token
+    const { exp: accessExp } = jwtDecode<JwtPayload>(accessToken)
+    return accessExp ? accessExp < currentTime + 10 : false
+  } catch (error) {
+    console.error('Error decoding token:', error)
+    return true // Consider token expired if decoding fails
+  }
+}
+
+// REQUEST INTERCEPTOR
+instance.interceptors.request.use(
+  async (config) => {
+    const { auth } = store.getState()
+    const token = auth?.token
+    const refreshToken = auth?.refreshToken
+    // let isRequested = false
+    if (!token || !refreshToken) {
+      return config
+    }
+
+    // let accessToken: string | null = token
+
+    if (isTokenExpired(token, refreshToken)) {
+      logoutAndRedirect()
+      // Note: Need to handle the refresh token related calls
+      // isRequested = true
+      // accessToken = await refreshAccessToken(refreshToken)
+    }
+
+    return {
+      ...config,
+      headers: new axios.AxiosHeaders({
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      }),
+    }
   },
   (error) => Promise.reject(error),
 )
@@ -107,31 +170,31 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & {
-      _retry?: boolean
-    }
-    const isPasswordCheckRoute = originalRequest?.url?.includes(
-      apiRoutes.auth.passkeyUserDetails,
-    )
+    // const originalRequest = error.config as AxiosRequestConfig & {
+    //   _retry?: boolean
+    // }
+    // const isPasswordCheckRoute = originalRequest?.url?.includes(
+    //   apiRoutes.auth.passkeyUserDetails,
+    // )
 
     // Automatically logout on 401
-    if (
-      error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
-      !originalRequest?._retry &&
-      !isPasswordCheckRoute
-    ) {
-      originalRequest._retry = true
+    // if (
+    //   error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
+    //   !originalRequest?._retry &&
+    //   !isPasswordCheckRoute
+    // ) {
+    //   originalRequest._retry = true
 
-      const newAccessToken = await refreshAccessToken()
-      if (newAccessToken && originalRequest.headers) {
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-        return instance(originalRequest)
-      }
+    //   const newAccessToken = await refreshAccessToken()
+    //   if (newAccessToken && originalRequest.headers) {
+    //     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
+    //     return instance(originalRequest)
+    //   }
 
-      if (typeof window !== 'undefined') {
-        logoutAndRedirect()
-      }
-    }
+    //   if (typeof window !== 'undefined') {
+    //     logoutAndRedirect()
+    //   }
+    // }
 
     return Promise.reject(error)
   },

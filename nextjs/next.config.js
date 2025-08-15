@@ -15,6 +15,7 @@ const nextConfig = {
     ],
     domains: ['dev-org-logo.s3.ap-south-1.amazonaws.com'],
   },
+  reactStrictMode: false,
   transpilePackages: ['geist'],
 }
 

@@ -17,7 +17,6 @@ import {
   getUserProfile,
   passwordEncryption,
 } from '@/app/api/Auth'
-import { signIn, useSession } from 'next-auth/react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -30,7 +29,9 @@ import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
+import { signIn } from 'next-auth/react'
 import { startAuthentication } from '@simplewebauthn/browser'
+import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -56,7 +57,7 @@ export default function SignInViewPage(): React.JSX.Element {
   const [alert, setAlert] = useState<null | string>(null)
   const [success, setSuccess] = useState<null | string>(null)
 
-  const { data: session } = useSession()
+  const token = useAppSelector((state) => state.auth.token)
   const dispatch = useDispatch()
   const route = useRouter()
   const signInForm = useForm<SignInFormValues>({
@@ -82,6 +83,7 @@ export default function SignInViewPage(): React.JSX.Element {
     password?: string
   }): Promise<void> => {
     try {
+      setLoading(true)
       const entityData = {
         email: values.email,
         password: await passwordEncryption(values.password || ''),
@@ -91,12 +93,8 @@ export default function SignInViewPage(): React.JSX.Element {
       const response = await signIn('credentials', {
         ...entityData,
         redirect: false,
-        callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
-
-      if (response?.ok && response?.url) {
-        route.push(response.url)
-      } else {
+      if (response?.error) {
         const errorMsg = response?.error
           ? response.error === 'CredentialsSignin'
             ? 'Invalid Credentials'
@@ -106,8 +104,10 @@ export default function SignInViewPage(): React.JSX.Element {
 
         console.error('Sign in failed:', response?.error)
       }
+      setLoading(false)
     } catch (error) {
       setAlert('Something went wrong during sign in. Please try again.')
+      setLoading(false)
       console.error('Sign in error:', error)
     }
   }
@@ -208,14 +208,14 @@ export default function SignInViewPage(): React.JSX.Element {
       const verificationResp = await signIn('credentials', {
         ...entityData,
         redirect: false,
-        callbackUrl: '/dashboard',
+        // callbackUrl: redirectTo ? redirectTo : '/dashboard',
       })
 
       if (verificationResp?.ok && verificationResp?.status === 200) {
-        if (!session?.accessToken) {
+        if (!token) {
           return
         }
-        const userRole = await getUserDetails(session?.accessToken)
+        const userRole = await getUserDetails(token)
 
         if (!userRole?.role?.name) {
           setAlert('Invalid user role')
@@ -421,7 +421,7 @@ export default function SignInViewPage(): React.JSX.Element {
               disabled={loading}
               className="w-full text-xs md:text-sm"
             >
-              {loading && <Loader />}
+              {loading && <Loader size={20} isExpand={false}/>}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 

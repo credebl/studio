@@ -19,31 +19,35 @@ import React, { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { IUserProfile } from '../profile/interfaces'
 import { ThemeSelector } from '../theme-selector'
+import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
 import { getUserProfile } from '@/app/api/Auth'
 import { logout } from '@/lib/authSlice'
-import { logoutAndRedirect } from '@/services/axiosIntercepter'
 import { persistor } from '@/lib/store'
 import { resetOrgState } from '@/lib/orgSlice'
 import { resetVerificationState } from '@/lib/verificationSlice'
 import { setUserProfileDetails } from '@/lib/userSlice'
+import { signOut } from 'next-auth/react'
+import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
-import { useSession } from 'next-auth/react'
 
 export function UserNav(): React.JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
-  const { data: session } = useSession()
+  const token = useAppSelector((state) => state.auth.token)
+  const sessionId = useAppSelector((state) => state.auth.sessionId)
+
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
-      if (!session?.accessToken) {
+      if (!token) {
         return
       }
       try {
-        const response = await getUserProfile(session?.accessToken)
+        const response = await getUserProfile(token)
         if (
           typeof response !== 'string' &&
           response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
@@ -58,10 +62,47 @@ export function UserNav(): React.JSX.Element | null {
     }
 
     fetchProfile()
-  }, [session?.accessToken])
+  }, [token])
 
-  if (!session?.accessToken) {
+  if (!token) {
     return null
+  }
+
+  const logoutUser = async (): Promise<void> => {
+    const rootKey = 'persist:root'
+    const payload = {
+      sessions: [sessionId],
+    }
+
+    const response = await fetch(
+      `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    )
+
+    if (!response.ok) {
+      console.error('Logout API failed')
+    }
+
+    // 2. Then sign out locally with NextAuth
+    if (localStorage.getItem(rootKey)) {
+      localStorage.removeItem(rootKey)
+
+      const interval = setInterval(() => {
+        if (!localStorage.getItem(rootKey)) {
+          clearInterval(interval)
+          void signOut({ callbackUrl: '/sign-in' })
+        }
+      }, 100)
+    } else {
+      void signOut({ callbackUrl: '/sign-in' })
+    }
   }
 
   const handleLogout = async (): Promise<void> => {
@@ -69,7 +110,7 @@ export function UserNav(): React.JSX.Element | null {
     dispatch(resetVerificationState())
     dispatch(logout())
     await persistor.purge()
-    logoutAndRedirect()
+    logoutUser()
   }
 
   return (
