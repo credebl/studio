@@ -8,7 +8,7 @@ const Loader = ({
   isExpand?: boolean
 }): JSX.Element => (
   <div
-    className={`flex ${isExpand && 'h-full w-full'} items-center justify-center`}
+    className={`flex ${isExpand ? 'h-full w-full' : ''} items-center justify-center`}
   >
     <div
       className="border-t-primary animate-spin rounded-full border-2"
