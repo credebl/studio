@@ -455,28 +455,33 @@ const LedgerConfig = ({
                     {formikHandlers.errors.seed}
                   </div>
                 )}
-                <div className="relative">
-                  <label
-                    htmlFor="did"
-                    className="mb-2 block text-sm font-medium"
-                  >
-                    DID <span className="text-destructive text-xs">*</span>
-                  </label>
-                  <Input
-                    id="did"
-                    name="did"
-                    type="text"
-                    className="block w-full rounded-lg p-2.5 sm:text-sm"
-                    placeholder="Enter your DID"
-                    value={formikHandlers.values.did}
-                    onChange={formikHandlers.handleChange}
-                    onBlur={formikHandlers.handleBlur}
-                  />
-                </div>
-                {formikHandlers.errors.did && formikHandlers.touched.did && (
-                  <div className="text-destructive mt-1 text-xs">
-                    {formikHandlers.errors.did}
-                  </div>
+                {selectedMethod && (
+                  <>
+                    <div className="relative">
+                      <label
+                        htmlFor="did"
+                        className="mb-2 block text-sm font-medium"
+                      >
+                        DID <span className="text-destructive text-xs">*</span>
+                      </label>
+                      <Input
+                        id="did"
+                        name="did"
+                        type="text"
+                        className="block w-full rounded-lg p-2.5 sm:text-sm"
+                        placeholder="Enter your DID"
+                        value={formikHandlers.values.did}
+                        onChange={formikHandlers.handleChange}
+                        onBlur={formikHandlers.handleBlur}
+                      />
+                    </div>
+                    {formikHandlers.errors.did &&
+                      formikHandlers.touched.did && (
+                        <div className="text-destructive mt-1 text-xs">
+                          {formikHandlers.errors.did}
+                        </div>
+                      )}
+                  </>
                 )}
               </div>
             )}
