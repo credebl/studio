@@ -1,30 +1,57 @@
-FROM node:lts as build
+# ---------------------
+# Build stage
+# ---------------------
+FROM node:22-alpine AS build
 
-# Install Deno
-RUN apt-get update && \
-    apt-get install -y curl unzip && \
-    curl -fsSL https://deno.land/x/install/install.sh | sh && \
-    ln -s /root/.deno/bin/deno /usr/local/bin/deno
+# Enable corepack and install a specific pnpm version securely
+RUN corepack enable && corepack prepare pnpm@10.3.0 --activate
 
+
+# Set working directory
 WORKDIR /app
-RUN deno --version
-COPY package.json package-lock.json ./
-RUN npm install
+
+# Copy only necessary files
+COPY package.json pnpm-lock.yaml ./
+
+# Install dependencies
+# sonarcloud: disable=ShellScriptExecutionRisk
+RUN pnpm install
+
+# Copy the rest of the source code
 COPY . .
-RUN npm run build
+# COPY .next ./.next
+# COPY public ./public
+# COPY node_modules ./node_modules
 
-# Stage 2
-FROM node:lts as prod
 
-# Install Deno
-RUN apt-get update && \
-    apt-get install -y curl unzip && \
-    curl -fsSL https://deno.land/x/install/install.sh | sh && \
-    ln -s /root/.deno/bin/deno /usr/local/bin/deno
+# Build the Next.js application
+RUN pnpm run build
 
+# ---------------------
+# Production stage
+# ---------------------
+FROM node:22-alpine AS production
+
+# Create a non-root user
+# RUN groupadd -r appgroup && useradd -r -g appgroup appuser
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+# Set working directory
 WORKDIR /app
-COPY --from=build /app/node_modules ./node_modules
+
+# Copy necessary build artifacts from build stage
 COPY --from=build /app/package.json ./
-COPY --from=build /app/dist ./dist
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/public ./public
+COPY --from=build /app/node_modules ./node_modules
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port
 EXPOSE 3000
-CMD ["deno", "run", "--allow-net", "--allow-read", "--allow-env", "./dist/server/entry.mjs"]
+
+# Start the Next.js application
+CMD ["npm", "start"]
