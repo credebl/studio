@@ -33,6 +33,7 @@ import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
+import { AlertDialogDemo } from './ConfirmationDialogue'
 import { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -621,13 +622,11 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                     Primary DID
                   </Badge>
                 ) : (
-                  <Button
-                    onClick={() => setPrimaryDid(item.id, item.did)}
-                    variant="outline"
-                    className="ml-auto"
-                  >
-                    Set Primary DID
-                  </Button>
+                  <div className="ml-auto">
+                    <AlertDialogDemo
+                      handler={() => setPrimaryDid(item.id, item.did)}
+                    />
+                  </div>
                 )}
               </div>
             </div>
