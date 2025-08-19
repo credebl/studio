@@ -22,6 +22,7 @@ interface Organisation {
 interface UserOrgRole {
   id: string
   orgRole: OrgRole
+  orgId: string
   organisation: Organisation
 }
 
@@ -43,6 +44,21 @@ const DisplayUserProfile = ({
   toggleEditProfile,
   userProfileInfo,
 }: IDisplayUserProfileProps): React.JSX.Element => {
+  const roles = useMemo(() => {
+    const map: Record<string, string[]> = {}
+
+    userProfileInfo?.userOrgRoles?.forEach((val) => {
+      if (val?.orgId) {
+        map[val.orgId] ??= []
+        if (!map[val.orgId].includes(val.orgRole.name)) {
+          map[val.orgId].push(val.orgRole.name)
+        }
+      }
+    })
+
+    return map
+  }, [userProfileInfo])
+
   const orgPresent = useMemo(() => {
     const roles = userProfileInfo?.userOrgRoles || []
     const uniqueOrgsMap = new Map<string, UserOrgRole>()
@@ -160,7 +176,7 @@ const DisplayUserProfile = ({
                         {role.organisation.name}
                       </span>
                       <div className="pl-2">
-                        <b>Role</b> : {role.orgRole.name}
+                        <b>Role</b> : {roles[role.orgId]?.join(', ') ?? ''}
                       </div>
                     </div>
                   </Card>
