@@ -19,6 +19,7 @@ import {
   apiStatusCodes,
   bulkIssuanceApiParameter,
 } from '@/config/CommonConstant'
+import { handleDiscardFile, handleReset } from './BulkIssuanceUtils'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -30,7 +31,6 @@ import Create from '@/features/schemas/components/Create'
 import DragAndDrop from './DragAndDrop'
 import { ICredentialOptions } from '../type/BulkIssuance'
 import IssuancePopup from './IssuancePopup'
-import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import ResetIssue from './ResetIssue'
 import RoleViewButton from '@/components/RoleViewButton'
@@ -40,7 +40,6 @@ import SchemaSelectBulk from './SchemaSelectBulk'
 import Steps from './Steps'
 import Table from './Table'
 import { getCsvFileData } from '@/app/api/BulkIssuance'
-import { handleDiscardFile } from './BulkIssuanceUtils'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
@@ -64,6 +63,7 @@ const BulkIssuance = (): JSX.Element => {
     null,
   )
   const [success, setSuccess] = useState<string | null>(null)
+  const [clear, setClear] = useState<boolean>(false)
   const [failure, setFailure] = useState<string | null>(null)
   const [mounted, setMounted] = useState<boolean>(false)
   const [schemaType, setSchemaType] = useState<SchemaTypes>()
@@ -305,6 +305,8 @@ const BulkIssuance = (): JSX.Element => {
 
   const handleFilterChange = async (value: string): Promise<void> => {
     const isAllSchemas = value === 'All schemas'
+    handleReset(context)
+    setClear((prev) => !prev)
     setIsAllSchema(isAllSchemas)
     dispatch(setAllSchema(isAllSchemas))
   }
@@ -318,9 +320,9 @@ const BulkIssuance = (): JSX.Element => {
       <div className="px-4 pt-2">
         <div className="col-span-full mb-4 xl:mb-2">
           <div className="flex items-center justify-end">
-            <Button onClick={handleClick} disabled={loading}>
-              {loading ? <Loader size={20} /> : <ArrowLeft />}
-              {!loading && 'Back'}
+            <Button onClick={handleClick}>
+              <ArrowLeft />
+              Back
             </Button>
           </div>
         </div>
@@ -395,6 +397,7 @@ const BulkIssuance = (): JSX.Element => {
                                 : []
                             }
                             value={selectValue}
+                            clear={clear}
                             onValueChange={handleSelect}
                             enableInternalSearch={
                               !(
