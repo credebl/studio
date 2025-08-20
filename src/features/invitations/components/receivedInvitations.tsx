@@ -143,7 +143,7 @@ export default function ReceivedInvitations(): React.JSX.Element {
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setMessage(data?.message)
         setLoading(false)
-        window.location.href = pathRoutes.organizations.root
+        window.location.href = pathRoutes.users.dashboard
       } else {
         setError(response as string)
       }
