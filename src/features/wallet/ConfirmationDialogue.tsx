@@ -22,12 +22,13 @@ export function AlertDialogDemo({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline"> Set Primary DID</Button>
+        <Button variant="outline">Set Primary DID</Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="flex flex-col justify-between text-center">
         <AlertDialogCancel asChild className="relative">
           <Button
             variant="ghost"
+            aria-label="Close"
             className="absolute top-2 right-2 border-none p-1 shadow-none outline-none hover:bg-inherit hover:text-inherit"
           >
             <XIcon className="h-4 w-4" />
