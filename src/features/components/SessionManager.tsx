@@ -22,6 +22,8 @@ const preventRedirectOnPaths = [
   '/invitations',
   '/delete-organization',
   '/agent-config',
+  '/credentials',
+  '/verification',
 ]
 const excludeRouteForSessionCheck = ['/verify-email-success']
 
