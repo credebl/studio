@@ -1,0 +1,18 @@
+[
+  {
+    "name": "Sovio Educreds",
+    "logo": "/images/EduCreds New Logo Favicon SVG.svg",
+    "link-local": "http://192.168.0.111:3001/en/dashboard",
+    "link-dev": "https://educreds-dev.sovio.id/en/dashboard",
+    "link-qa": "https://educreds-demo.sovio.id/en/dashboard",
+    "link": "http://educreds.sovio.id/en/dashboard"
+  },
+  {
+    "name": "Sovio Verifier",
+    "logo": "/images/favicon-sovio.ico",
+    "link-local": "http://192.168.0.111:3002/en/verificationList",
+    "link-dev": "https://dev-verify.sovio.id/en/verificationList",
+    "link-qa": "https://demo-verify.sovio.id/en/verificationList",
+    "link": "http://verify.sovio.id/en/verificationList"
+  }
+]
