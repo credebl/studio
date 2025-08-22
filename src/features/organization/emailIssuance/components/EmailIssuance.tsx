@@ -45,6 +45,7 @@ import { RootState } from '@/lib/store'
 import { SelectRef } from '../../bulkIssuance/components/BulkIssuance'
 import { itemPerPage } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
+import { resetSchemaDetails } from '@/lib/schemaStorageSlice'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
@@ -218,6 +219,7 @@ const EmailIssuance = (): JSX.Element => {
       schemaVersion: value.schemaVersion ?? '',
       schemaIdentifier: value.schemaIdentifier ?? '',
     }
+    dispatch(resetSchemaDetails())
     handleSelectChange(fullValue)
   }
 
@@ -226,6 +228,7 @@ const EmailIssuance = (): JSX.Element => {
   }
 
   const handleFilterChange = async (value: string): Promise<void> => {
+    dispatch(resetSchemaDetails())
     const isAllSchemas = value === 'All schemas'
     dispatch(setAllSchema(isAllSchemas))
   }

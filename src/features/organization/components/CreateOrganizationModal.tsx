@@ -198,6 +198,16 @@ export default function OrganizationOnboarding(): React.JSX.Element {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSuccess(data?.message as string)
+
+        if (orgId) {
+          dispatch(
+            setTenantData({
+              id: orgId,
+              name: values.name,
+              logoUrl: values?.logoUrl || '',
+            }),
+          )
+        }
         setTimeout(() => {
           setSuccess(null)
           setLoading(true)
