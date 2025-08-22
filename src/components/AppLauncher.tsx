@@ -20,7 +20,7 @@ type AppLauncherInterface = {
 }
 
 export default function AppLauncher(): JSX.Element {
-  const env: string = (process.env.NEXT_PUBLIC_ENV || 'LOCAL').toUpperCase()
+  const env: string = (process.env.NEXT_PUBLIC_MODE || 'LOCAL').toUpperCase()
 
   const getAppLink = (app: AppLauncherInterface): string => {
     switch (env) {
