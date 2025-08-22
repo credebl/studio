@@ -230,48 +230,49 @@ export default function SendInvitationModal({
             </Form>
           )}
         </Formik>
-
         {invitations.length > 0 && (
-          <div className="mt-4 space-y-2">
-            <div className="divide-y rounded-lg border">
-              {invitations.map((invitation) => (
-                <div
-                  key={invitation.email}
-                  className="flex items-center justify-between p-3"
-                >
-                  <div className="flex gap-3">
-                    <div className="flex items-center justify-center">
-                      <MailIcon className="text-muted-foreground h-9 w-9" />
-                    </div>
-                    <div>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <p className="font-medium">
-                              {invitation.email.slice(0, 30)}
-                              {invitation.email.length > 30 && ' . . .'}
-                            </p>
-                          </TooltipTrigger>
-                          <TooltipContent side="top">
-                            {invitation.email}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                      <p className="text-muted-foreground text-sm">
-                        Role: Member
-                      </p>
-                    </div>
-                  </div>
-                  <Button
-                    className="bg-transparent hover:bg-transparent"
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeInvitation(invitation.email)}
+          <div className="mt-4 max-h-[200px] overflow-y-auto rounded-lg border p-2">
+            <div className="space-y-2">
+              <div className="divide-y rounded-lg border">
+                {invitations.map((invitation) => (
+                  <div
+                    key={invitation.email}
+                    className="flex items-center justify-between p-3"
                   >
-                    <DeleteIcon />
-                  </Button>
-                </div>
-              ))}
+                    <div className="flex gap-3">
+                      <div className="flex items-center justify-center">
+                        <MailIcon className="text-muted-foreground h-9 w-9" />
+                      </div>
+                      <div>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <p className="font-medium">
+                                {invitation.email.slice(0, 30)}
+                                {invitation.email.length > 30 && ' . . .'}
+                              </p>
+                            </TooltipTrigger>
+                            <TooltipContent side="top">
+                              {invitation.email}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <p className="text-muted-foreground text-sm">
+                          Role: Member
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      className="bg-transparent hover:bg-transparent"
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => removeInvitation(invitation.email)}
+                    >
+                      <DeleteIcon />
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
