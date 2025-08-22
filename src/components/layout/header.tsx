@@ -5,12 +5,15 @@ import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
+import AppLauncher from '../AppLauncher'
 import { Breadcrumbs } from '../breadcrumbs'
 import { OrgSwitcher } from '../org-switcher'
 import { Organisation } from '@/features/dashboard/type/organization'
 import { SidebarTrigger } from '../ui/sidebar'
 import { UserNav } from './user-nav'
 import { getOrganizations } from '@/app/api/organization'
+
+const enableAppLauncher = process.env.NEXT_PUBLIC_ENABLE_APP_LAUNCHER === 'true'
 
 export default function Header(): React.JSX.Element {
   const dispatch = useAppDispatch()
@@ -94,6 +97,8 @@ export default function Header(): React.JSX.Element {
       </div>
 
       <div className="flex items-center gap-2 px-4">
+        {enableAppLauncher && <AppLauncher />}
+
         {/* NOTE: Currently disabling search and mode toggle */}
         <div className="hidden md:flex">{/* <SearchInput /> */}</div>
         {/* <ModeToggle /> */}
