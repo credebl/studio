@@ -48,9 +48,9 @@ jobs:
 
          echo "PUBLIC_ALLOW_DOMAIN=${{ secrets.PUBLIC_ALLOW_DOMAIN }}" >> .env
 
-         echo "PUBLIC_POLYGON_MAINNET_URL=https://polygon-rpc.com/" >> .env
+         echo "NEXT_PUBLIC_POLYGON_MAINNET_URL=https://polygon-rpc.com/" >> .env
 
-         echo "PUBLIC_POLYGON_TESTNET_URL=https://rpc-amoy.polygon.technology" >> .env
+         echo "NEXT_PUBLIC_POLYGON_TESTNET_URL=https://rpc-amoy.polygon.technology" >> .env
 
          echo "PUBLIC_ECOSYSTEM_FRONT_END_URL=https://ecosystem.credebl.id" >> .env
 
