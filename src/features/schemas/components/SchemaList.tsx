@@ -164,7 +164,7 @@ const SchemaList = (props: {
 
       const { data } = schemaResponse as AxiosResponse
 
-      if (data === 'Schema records not found') {
+      if (!data || data === 'Schema records not found') {
         setSchemaList([])
         setLoading(false)
         return
