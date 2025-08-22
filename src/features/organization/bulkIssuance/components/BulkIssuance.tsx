@@ -41,6 +41,7 @@ import Steps from './Steps'
 import Table from './Table'
 import { getCsvFileData } from '@/app/api/BulkIssuance'
 import { pathRoutes } from '@/config/pathRoutes'
+import { resetSchemaDetails } from '@/lib/schemaStorageSlice'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
@@ -197,6 +198,7 @@ const BulkIssuance = (): JSX.Element => {
   const allow = useRef<boolean>(true) // Reset to allow notification; prevents duplicate notifications on select
 
   const handleSelect = (value: Option): void => {
+    dispatch(resetSchemaDetails())
     const safeValue = {
       ...value,
       schemaIdentifier: value?.schemaIdentifier ?? '',
@@ -306,6 +308,7 @@ const BulkIssuance = (): JSX.Element => {
   const handleFilterChange = async (value: string): Promise<void> => {
     const isAllSchemas = value === 'All schemas'
     handleReset(context)
+    dispatch(resetSchemaDetails())
     setClear((prev) => !prev)
     setIsAllSchema(isAllSchemas)
     dispatch(setAllSchema(isAllSchemas))

@@ -46,6 +46,7 @@ import SummaryCardW3c from '@/components/SummaryCardW3c'
 import { getOrganizationById } from '@/app/api/organization'
 import { getSchemaCredDef } from '@/app/api/schema'
 import { pathRoutes } from '@/config/pathRoutes'
+import { resetSchemaDetails } from '@/lib/schemaStorageSlice'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
@@ -331,6 +332,7 @@ const IssueCred = (): React.JSX.Element => {
   }
 
   const handleFilterChange = async (value: string): Promise<void> => {
+    dispatch(resetSchemaDetails())
     const isAllSchemas = value === 'All schemas'
     dispatch(setAllSchema(isAllSchemas))
   }
@@ -367,14 +369,15 @@ const IssueCred = (): React.JSX.Element => {
                   className="border-muted max-w-lg border-1"
                   options={credentialOptions}
                   value={selectValue}
-                  onValueChange={(value) =>
+                  onValueChange={(value) => {
+                    dispatch(resetSchemaDetails())
                     handleSelect({
                       value,
                       setSchemaDetails,
                       allSchema,
                       w3cSchema,
                     })
-                  }
+                  }}
                   onSearchChange={handleSearchChange}
                   enableInternalSearch={!(w3cSchema && allSchema)}
                   placeholder={
