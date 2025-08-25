@@ -28,8 +28,6 @@ jobs:
 
          echo "NEXT_PUBLIC_MODE=PROD" > .env
 
-         echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
-
       - name: Build step
         run: npm install && npm run build # 📝 Update the build command(s)
 
