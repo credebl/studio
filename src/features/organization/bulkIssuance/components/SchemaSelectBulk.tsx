@@ -15,7 +15,7 @@ function SchemaSelectBulk({
 }: ISelectSchmea): React.JSX.Element {
   return (
     <div>
-      <p className="pb-6 text-xl font-semibold opacity-0">Schema Filter</p>
+      {/*<p className="pb-6 text-xl font-semibold opacity-0">Schema Filter</p>*/}
       <Select
         defaultValue={"Organization's schema"}
         value={allSchema ? 'All schemas' : "Organization's schema"}

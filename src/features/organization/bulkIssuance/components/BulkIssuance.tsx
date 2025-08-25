@@ -384,13 +384,24 @@ const BulkIssuance = (): JSX.Element => {
               <div>
                 <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
                   <div className="flex flex-col justify-between">
-                    <div className="flex flex-col gap-4">
+                    <p className="pb-2 text-xl font-semibold">
+                      {schemaType === SchemaTypes.schema_W3C
+                        ? 'Select Schema '
+                        : 'Select Credential Definition'}
+                    </p>
+                    <div className="flex flex-col justify-between gap-8">
                       <div>
-                        <p className="pb-2 text-xl font-semibold">
-                          {schemaType === SchemaTypes.schema_W3C
-                            ? 'Select Schema '
-                            : 'Select Credential Definition'}
-                        </p>
+                        {schemaType === SchemaTypes.schema_W3C && (
+                          <SchemaSelectBulk
+                            {...{
+                              allSchema,
+                              handleFilterChange,
+                              optionsWithDefault,
+                            }}
+                          />
+                        )}
+                      </div>
+                      <div>
                         {mounted && (
                           <SearchableSelect
                             className="border-muted max-w-lg border-1"
@@ -414,17 +425,6 @@ const BulkIssuance = (): JSX.Element => {
                                 ? 'Select Schema '
                                 : 'Select Credential Definition'
                             }
-                          />
-                        )}
-                      </div>
-                      <div>
-                        {schemaType === SchemaTypes.schema_W3C && (
-                          <SchemaSelectBulk
-                            {...{
-                              allSchema,
-                              handleFilterChange,
-                              optionsWithDefault,
-                            }}
                           />
                         )}
                       </div>

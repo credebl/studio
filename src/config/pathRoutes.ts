@@ -96,6 +96,7 @@ export const pathRoutes = {
       credDef: '/credentials/issue/schemas/cred-defs',
       schemas: '/credentials/issue/schemas',
       connections: '/credentials/connections',
+      issue: '/credentials/issue',
     },
     credentials: {
       credentials: '/credentials',
