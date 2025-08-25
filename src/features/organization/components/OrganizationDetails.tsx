@@ -172,9 +172,17 @@ const OrganizationDetails = ({
               )}{' '}
               <Badge className="rounded-full border" variant={'outline'}>
                 Created :
-                {agentData?.createDateTime ? (
-                  <DateTooltip date={agentData.createDateTime}>
-                    {dateConversion(agentData.createDateTime)}
+                {orgData?.didDetails ? (
+                  <DateTooltip
+                    date={
+                      orgData?.didDetails.lastChangedDateTime ??
+                      orgData?.didDetails.createDateTime
+                    }
+                  >
+                    {dateConversion(
+                      orgData?.didDetails.lastChangedDateTime ??
+                        orgData?.didDetails.createDateTime,
+                    )}
                   </DateTooltip>
                 ) : (
                   <DateTooltip date={new Date().toISOString()}>
