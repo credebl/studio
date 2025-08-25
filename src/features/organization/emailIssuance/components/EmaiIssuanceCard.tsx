@@ -27,13 +27,18 @@ function EmailIssuanceCard({
       <div className="md:min-h-[10rem]">
         <div className="grid w-[980px] grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="flex flex-col justify-between">
+            <div className="pb-6 text-xl font-semibold dark:text-white">
+              {schemaType === SchemaTypes.schema_W3C
+                ? 'Select Schema '
+                : 'Select Credential Definition'}
+            </div>
             <div className="text-primary-900 flex gap-4">
+              {schemaType === SchemaTypes.schema_W3C && (
+                <SchemaSelect
+                  {...{ allSchema, handleFilterChange, optionsWithDefault }}
+                />
+              )}
               <div>
-                <div className="pb-6 text-xl font-semibold dark:text-white">
-                  {schemaType === SchemaTypes.schema_W3C
-                    ? 'Select Schema '
-                    : 'Select Credential Definition'}
-                </div>
                 {mounted && (
                   <SearchableSelect
                     className="border-muted max-w-lg border-1"
@@ -58,11 +63,6 @@ function EmailIssuanceCard({
                   />
                 )}
               </div>
-              {schemaType === SchemaTypes.schema_W3C && (
-                <SchemaSelect
-                  {...{ allSchema, handleFilterChange, optionsWithDefault }}
-                />
-              )}
             </div>
 
             <div className="mt-4">

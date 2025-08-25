@@ -358,13 +358,16 @@ const IssueCred = (): React.JSX.Element => {
         />
         <Card className="">
           <CardContent className="p-4">
+            <p className="pb-6 text-xl font-semibold">
+              {w3cSchema ? 'Select Schema ' : 'Select Credential Definition'}
+            </p>
             <div className="flex md:gap-6">
+              {w3cSchema && (
+                <SchemaSelect
+                  {...{ allSchema, handleFilterChange, optionsWithDefault }}
+                />
+              )}
               <div>
-                <p className="pb-6 text-xl font-semibold">
-                  {w3cSchema
-                    ? 'Select Schema '
-                    : 'Select Credential Definition'}
-                </p>
                 <SearchableSelect
                   className="border-muted max-w-lg border-1"
                   options={credentialOptions}
@@ -387,11 +390,6 @@ const IssueCred = (): React.JSX.Element => {
                   }
                 />
               </div>
-              {w3cSchema && (
-                <SchemaSelect
-                  {...{ allSchema, handleFilterChange, optionsWithDefault }}
-                />
-              )}
             </div>
             {schemaDetails.schemaId && (
               <>
