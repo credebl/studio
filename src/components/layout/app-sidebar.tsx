@@ -1,4 +1,5 @@
 'use client'
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -135,7 +136,7 @@ export default function AppSidebar(): React.JSX.Element {
                 height={40}
                 width={150}
                 alt="Full Logo"
-                className="h-full w-full object-contain"
+                className="h-auto max-h-100 w-auto object-contain"
                 src={logoImageSrc}
               />
             </div>
