@@ -36,7 +36,7 @@ jobs:
 
          echo "PUBLIC_PLATFORM_LOGO=/images/CREDEBL_ICON.png" >> .env
 
-         echo "PUBLIC_POWERED_BY=Blockster Labs Pvt. Ltd" >> .env
+         echo "PUBLIC_POWERED_BY=AYANWORKS TECHNOLOGY SOLUTIONS PVT. LTD." >> .env
 
          echo "PUBLIC_PLATFORM_DOCS_URL=https://docs.credebl.id/docs" >> .env
 
