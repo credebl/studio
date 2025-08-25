@@ -136,7 +136,7 @@ export default function AppSidebar(): React.JSX.Element {
                 height={40}
                 width={150}
                 alt="Full Logo"
-                className="h-auto max-h-100 w-auto object-contain"
+                className="h-auto max-h-[100px] w-auto object-contain"
                 src={logoImageSrc}
               />
             </div>
