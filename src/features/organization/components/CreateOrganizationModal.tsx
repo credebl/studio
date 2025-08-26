@@ -204,7 +204,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
             setTenantData({
               id: orgId,
               name: values.name,
-              logoUrl: values?.logoUrl || '',
+              logoUrl: values.logoPreview ?? orgData?.logo,
             }),
           )
         }
