@@ -197,9 +197,7 @@ const OrganizationDetails = ({
                   {dateConversion(agentData.createDateTime)}
                 </DateTooltip>
               ) : (
-                <DateTooltip date={new Date().toISOString()} showLabel={true}>
-                  {dateConversion(new Date().toISOString())}
-                </DateTooltip>
+                <div className="ml-1">Not Available</div>
               )}
             </Badge>
           ),
