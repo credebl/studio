@@ -50,7 +50,7 @@ enum PlatformRoles {
 export default function SignInViewPage(): React.JSX.Element {
   const [isPasswordTab, setIsPasswordTab] = useState(true)
   const [loading, setLoading] = useState(false)
-  const [forgetPasswordLoading, setForgetPasswordLoader] = useState(false)
+  const [forgetPasswordLoading, setForgetPasswordLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   const [, setFidoLoader] = useState<boolean>(false)
@@ -259,7 +259,7 @@ export default function SignInViewPage(): React.JSX.Element {
   }
 
   const forgotUserPassword = async (): Promise<void> => {
-    setForgetPasswordLoader(true)
+    setForgetPasswordLoading(true)
     try {
       const response = await forgotPassword({
         email: signInForm.getValues('email'),
@@ -268,16 +268,16 @@ export default function SignInViewPage(): React.JSX.Element {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSuccess(data.message)
-        setForgetPasswordLoader(false)
+        setForgetPasswordLoading(false)
       } else {
         setAlert(
           typeof response === 'string' ? response : 'Something went wrong',
         )
-        setForgetPasswordLoader(false)
+        setForgetPasswordLoading(false)
       }
     } catch (error) {
       console.error('An error occurred:', error)
-      setForgetPasswordLoader(false)
+      setForgetPasswordLoading(false)
     }
   }
 
