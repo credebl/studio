@@ -402,87 +402,6 @@ const LedgerConfig = ({
         </Card>
       )}
 
-      {haveDidShared && (
-        <div className="mb-6 space-y-4">
-          <div className="relative">
-            <label htmlFor="seed" className="mb-2 block text-sm font-medium">
-              Seed <span className="text-destructive text-xs">*</span>
-            </label>
-            <Input
-              id="seed"
-              name="seed"
-              type="text"
-              className="block w-full rounded-lg p-2.5 sm:text-sm"
-              placeholder="Enter your seed"
-            />
-          </div>
-          <div className="relative">
-            <label htmlFor="did" className="mb-2 block text-sm font-medium">
-              DID <span className="text-destructive text-xs">*</span>
-            </label>
-            <Input
-              id="did"
-              name="did"
-              type="text"
-              className="block w-full rounded-lg p-2.5 sm:text-sm"
-              placeholder="Enter your DID"
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="mb-6">
-        <h3 className="mb-4 text-lg font-medium">Select Ledger</h3>
-        <div className="grid grid-cols-1 gap-18 md:grid-cols-3">
-          <LedgerCard
-            ledger={Ledgers.INDY}
-            title=""
-            description="Hyperledger Indy"
-            icon={
-              <Image
-                src="/images/Indicio.png"
-                alt="Indy Icon"
-                width={112}
-                height={112}
-              />
-            }
-          />
-          <LedgerCard
-            ledger={Ledgers.POLYGON}
-            title=""
-            description="Polygon Blockchain"
-            icon={
-              <Image
-                src="/images/polygon.png"
-                alt="Indy Icon"
-                width={112}
-                height={112}
-              />
-            }
-          />
-          <LedgerCard
-            ledger={Ledgers.NO_LEDGER}
-            title=""
-            description="No Ledger"
-            icon={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="mb-4 h-8 w-8 text-gray-600"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
-                />
-              </svg>
-            }
-          />
-        </div>
-      </div>
       <Formik
         initialValues={initialValues}
         enableReinitialize={true}
@@ -511,6 +430,114 @@ const LedgerConfig = ({
       >
         {(formikHandlers) => (
           <Form className="space-y-6">
+            {haveDidShared && (
+              <div className="mb-6 space-y-4">
+                <div className="relative">
+                  <label
+                    htmlFor="seed"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    Seed <span className="text-destructive text-xs">*</span>
+                  </label>
+                  <Input
+                    id="seed"
+                    name="seed"
+                    type="text"
+                    className="block w-full rounded-lg p-2.5 sm:text-sm"
+                    placeholder="Enter your seed"
+                    value={formikHandlers.values.seed}
+                    onChange={formikHandlers.handleChange}
+                    onBlur={formikHandlers.handleBlur}
+                  />
+                </div>
+                {formikHandlers.errors.seed && formikHandlers.touched.seed && (
+                  <div className="text-destructive mt-1 text-xs">
+                    {formikHandlers.errors.seed}
+                  </div>
+                )}
+                {selectedMethod && (
+                  <>
+                    <div className="relative">
+                      <label
+                        htmlFor="did"
+                        className="mb-2 block text-sm font-medium"
+                      >
+                        DID <span className="text-destructive text-xs">*</span>
+                      </label>
+                      <Input
+                        id="did"
+                        name="did"
+                        type="text"
+                        className="block w-full rounded-lg p-2.5 sm:text-sm"
+                        placeholder="Enter your DID"
+                        value={formikHandlers.values.did}
+                        onChange={formikHandlers.handleChange}
+                        onBlur={formikHandlers.handleBlur}
+                      />
+                    </div>
+                    {formikHandlers.errors.did &&
+                      formikHandlers.touched.did && (
+                        <div className="text-destructive mt-1 text-xs">
+                          {formikHandlers.errors.did}
+                        </div>
+                      )}
+                  </>
+                )}
+              </div>
+            )}
+
+            <div className="mb-6">
+              <h3 className="mb-4 text-lg font-medium">Select Ledger</h3>
+              <div className="grid grid-cols-1 gap-18 md:grid-cols-3">
+                <LedgerCard
+                  ledger={Ledgers.INDY}
+                  title=""
+                  description="Hyperledger Indy"
+                  icon={
+                    <Image
+                      src="/images/Indicio.png"
+                      alt="Indy Icon"
+                      width={112}
+                      height={112}
+                    />
+                  }
+                />
+                <LedgerCard
+                  ledger={Ledgers.POLYGON}
+                  title=""
+                  description="Polygon Blockchain"
+                  icon={
+                    <Image
+                      src="/images/polygon.png"
+                      alt="Polygon Icon"
+                      width={112}
+                      height={112}
+                    />
+                  }
+                />
+                <LedgerCard
+                  ledger={Ledgers.NO_LEDGER}
+                  title=""
+                  description="No Ledger"
+                  icon={
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="mb-4 h-8 w-8 text-gray-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+                      />
+                    </svg>
+                  }
+                />
+              </div>
+            </div>
             {selectedLedger && (
               <div className="rounded-lg border p-6 shadow">
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
