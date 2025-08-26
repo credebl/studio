@@ -134,16 +134,22 @@ const OrganizationDetails = ({
   const DateTooltip = ({
     date,
     children,
+    showLabel = false,
   }: {
     date: string
     children: React.ReactNode
+    showLabel?: boolean
   }): React.JSX.Element => (
     <Tooltip>
       <TooltipTrigger asChild>
         <span>{children}</span>
       </TooltipTrigger>
       <TooltipContent>
-        <p>{new Date(date).toLocaleString()}</p>
+        {showLabel ? (
+          <p>Wallet Created on : {new Date(date).toLocaleString()}</p>
+        ) : (
+          <p>{new Date(date).toLocaleString()}</p>
+        )}
       </TooltipContent>
     </Tooltip>
   )
@@ -170,26 +176,6 @@ const OrganizationDetails = ({
               ) : (
                 <span className="font-semibold">Not available</span>
               )}{' '}
-              <Badge className="rounded-full border" variant={'outline'}>
-                Created :
-                {orgData?.didDetails ? (
-                  <DateTooltip
-                    date={
-                      orgData?.didDetails.lastChangedDateTime ??
-                      orgData?.didDetails.createDateTime
-                    }
-                  >
-                    {dateConversion(
-                      orgData?.didDetails.lastChangedDateTime ??
-                        orgData?.didDetails.createDateTime,
-                    )}
-                  </DateTooltip>
-                ) : (
-                  <DateTooltip date={new Date().toISOString()}>
-                    {dateConversion(new Date().toISOString())}
-                  </DateTooltip>
-                )}
-              </Badge>
             </div>
           ),
         },
@@ -201,6 +187,22 @@ const OrganizationDetails = ({
             ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
               agentData.org_agent_type.agent.slice(1).toLowerCase()
             : '',
+        },
+        {
+          data: (
+            <Badge className="rounded-full border" variant={'outline'}>
+              Created :
+              {agentData?.createDateTime ? (
+                <DateTooltip date={agentData.createDateTime} showLabel={true}>
+                  {dateConversion(agentData.createDateTime)}
+                </DateTooltip>
+              ) : (
+                <DateTooltip date={new Date().toISOString()} showLabel={true}>
+                  {dateConversion(new Date().toISOString())}
+                </DateTooltip>
+              )}
+            </Badge>
+          ),
         },
         {
           data: (
@@ -226,6 +228,7 @@ const OrganizationDetails = ({
           { columnName: 'Org DID' },
           { columnName: 'Network' },
           { columnName: 'Agent Type' },
+          { columnName: '' },
           { columnName: '' },
         ]}
         data={tableData}
