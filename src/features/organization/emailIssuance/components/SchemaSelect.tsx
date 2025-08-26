@@ -15,6 +15,7 @@ function SchemaSelect({
 }: ISelectSchmea): React.JSX.Element {
   return (
     <div>
+      {/* Kept commented if needed in future */}
       {/*<p className="pb-6 text-xl font-semibold opacity-0">Schema Filter</p>*/}
       <Select
         defaultValue={"Organization's schema"}
