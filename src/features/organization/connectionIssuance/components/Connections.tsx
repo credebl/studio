@@ -101,7 +101,7 @@ const Connections = (): JSX.Element => {
 
   const handleBackClick = (): void => {
     setIsBackLoading(true)
-    router.push(pathRoutes.back.credentials.credentials)
+    router.push(pathRoutes.back.issuance.issue)
   }
 
   return (
