@@ -50,6 +50,7 @@ enum PlatformRoles {
 export default function SignInViewPage(): React.JSX.Element {
   const [isPasswordTab, setIsPasswordTab] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [forgetPasswordLoading, setForgetPasswordLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   const [, setFidoLoader] = useState<boolean>(false)
@@ -258,7 +259,7 @@ export default function SignInViewPage(): React.JSX.Element {
   }
 
   const forgotUserPassword = async (): Promise<void> => {
-    setLoading(true)
+    setForgetPasswordLoading(true)
     try {
       const response = await forgotPassword({
         email: signInForm.getValues('email'),
@@ -267,16 +268,16 @@ export default function SignInViewPage(): React.JSX.Element {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSuccess(data.message)
-        setLoading(false)
+        setForgetPasswordLoading(false)
       } else {
         setAlert(
           typeof response === 'string' ? response : 'Something went wrong',
         )
-        setLoading(false)
+        setForgetPasswordLoading(false)
       }
     } catch (error) {
       console.error('An error occurred:', error)
-      setLoading(false)
+      setForgetPasswordLoading(false)
     }
   }
 
@@ -409,9 +410,12 @@ export default function SignInViewPage(): React.JSX.Element {
                   type="button"
                   onClick={forgotUserPassword}
                   variant={'default'}
+                  disabled={forgetPasswordLoading || loading}
                   className="focus-visible:ring-ring text-foreground url-link w-fit bg-transparent px-2 text-left text-xs underline-offset-4 shadow-none hover:bg-transparent hover:underline focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none md:text-sm [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0"
                 >
-                  Forgot password?
+                  {forgetPasswordLoading
+                    ? 'Send reset link . . .'
+                    : 'Forgot password?'}
                 </Button>
               </div>
             )}
