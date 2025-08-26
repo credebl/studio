@@ -509,7 +509,7 @@ const LedgerConfig = ({
                   icon={
                     <Image
                       src="/images/polygon.png"
-                      alt="Indy Icon"
+                      alt="Polygon Icon"
                       width={112}
                       height={112}
                     />
