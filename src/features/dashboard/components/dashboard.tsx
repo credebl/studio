@@ -186,7 +186,7 @@ export default function Dashboard(): React.JSX.Element {
                 message={ecoMessage}
                 type="warning"
                 viewButton={viewButton}
-                path={`${envConfig.PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+                path={`${envConfig.NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
                 onAlertClose={() => setEcoMessage('')}
               />
             )}
