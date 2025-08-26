@@ -26,6 +26,7 @@ export interface IOrganisation {
   publicProfile: boolean
   checked?: boolean | undefined
   error?: string
+  didDetails: IDidCreationDetails
 }
 
 export interface IOrgDashboard {
@@ -66,6 +67,10 @@ export interface IOrgAgent {
   ledgers: ILedgers
   org_agent_type: IOrgAgentType
   agents_type: IAgentsType
+}
+interface IDidCreationDetails {
+  lastChangedDateTime: string
+  createDateTime: string
 }
 export interface IAgentsType {
   id: string
