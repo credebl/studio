@@ -332,6 +332,7 @@ const IssueCred = (): React.JSX.Element => {
   }
 
   const handleFilterChange = async (value: string): Promise<void> => {
+    setSchemaDetails(schemaDetailsInitialState)
     dispatch(resetSchemaDetails())
     const isAllSchemas = value === 'All schemas'
     dispatch(setAllSchema(isAllSchemas))
