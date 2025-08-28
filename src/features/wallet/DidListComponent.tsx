@@ -603,47 +603,58 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       </div>
 
       <div className="divide-y rounded-lg border">
-        {didList.map((item: IDidListData, index: number) => (
-          <div key={item.id} className={'grid h-20 items-center p-4'}>
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex gap-4">
-                <span className="w-16 shrink-0">DID {index + 1}</span>
-                <span>:</span>
-
-                {item?.did ? (
-                  <CopyDid value={item.did} className="flex-1 font-mono" />
-                ) : (
-                  <span className="flex-1 font-mono">Not available</span>
-                )}
-              </div>
-              <div className={item.isPrimaryDid ? 'grow' : ''}>
-                {item.isPrimaryDid ? (
-                  <Badge variant="default" className="cursor-default text-sm">
-                    Primary DID
-                  </Badge>
-                ) : (
-                  <div className="ml-auto">
-                    <AlertDialogDemo
-                      handler={() => setPrimaryDid(item.id, item.did)}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <p className="text-muted-foreground text-sm">Created</p>
-              <DateTooltip
-                date={item.lastChangedDateTime ?? item.createDateTime}
-              >
-                <div className="text-muted-foreground text-sm">
-                  {dateConversion(
-                    item.lastChangedDateTime ?? item.createDateTime,
-                  )}
-                </div>
-              </DateTooltip>
-            </div>
+        {didLoading ? (
+          <div className="my-5">
+            <Loader />
           </div>
-        ))}
+        ) : (
+          <>
+            {didList.map((item: IDidListData, index: number) => (
+              <div key={item.id} className={'grid h-20 items-center p-4'}>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex gap-4">
+                    <span className="w-16 shrink-0">DID {index + 1}</span>
+                    <span>:</span>
+
+                    {item?.did ? (
+                      <CopyDid value={item.did} className="flex-1 font-mono" />
+                    ) : (
+                      <span className="flex-1 font-mono">Not available</span>
+                    )}
+                  </div>
+                  <div className={item.isPrimaryDid ? 'grow' : ''}>
+                    {item.isPrimaryDid ? (
+                      <Badge
+                        variant="default"
+                        className="cursor-default text-sm"
+                      >
+                        Primary DID
+                      </Badge>
+                    ) : (
+                      <div className="ml-auto">
+                        <AlertDialogDemo
+                          handler={() => setPrimaryDid(item.id, item.did)}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <p className="text-muted-foreground text-sm">Created</p>
+                  <DateTooltip
+                    date={item.lastChangedDateTime ?? item.createDateTime}
+                  >
+                    <div className="text-muted-foreground text-sm">
+                      {dateConversion(
+                        item.lastChangedDateTime ?? item.createDateTime,
+                      )}
+                    </div>
+                  </DateTooltip>
+                </div>
+              </div>
+            ))}
+          </>
+        )}
       </div>
 
       {/* Conditionally render the Dialog for both Polygon and Web DIDs */}
