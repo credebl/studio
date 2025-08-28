@@ -30,6 +30,7 @@ const {
   PUBLIC_ECOSYSTEM_BASE_URL,
   NEXT_PUBLIC_MODE,
   NEXT_PUBLIC_CURRENT_RELEASE,
+  NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any = envVariables
 
@@ -47,6 +48,9 @@ export const envConfig = {
   PLATFORM_DATA: {
     version:
       NEXT_PUBLIC_CURRENT_RELEASE || process.env.NEXT_PUBLIC_CURRENT_RELEASE,
+    enableSocialLogin:
+      (NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN ||
+        process.env.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN) === 'true',
     polygonTestnet:
       NEXT_PUBLIC_POLYGON_TESTNET_URL ||
       process.env.NEXT_PUBLIC_POLYGON_TESTNET_URL,
