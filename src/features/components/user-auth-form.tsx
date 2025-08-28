@@ -22,10 +22,12 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
+import { Icons } from '@/config/svgs/Auth'
 import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
 import { signIn } from 'next-auth/react'
@@ -427,6 +429,41 @@ export default function SignInViewPage(): React.JSX.Element {
               {loading && <Loader size={20} isExpand={false} />}
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
+
+            {envConfig.PLATFORM_DATA.enableSocialLogin && (
+              <>
+                <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
+                  <hr className="border-border flex-grow border-t" />
+                  <span className="text-muted-foreground text-xs md:text-sm">
+                    OR
+                  </span>
+                  <hr className="border-border flex-grow border-t" />
+                </div>
+                <div className="mt-6 flex flex-col gap-3">
+                  <Button
+                    type="button"
+                    className="text-xs md:text-sm"
+                    onClick={() => route.push('#')}
+                    variant={'outline'}
+                  >
+                    <Icons.google className="mr-2 h-2 w-2 md:h-4 md:w-4" />
+                    Sign in with Google
+                  </Button>
+
+                  <Button
+                    type="button"
+                    className="text-xs md:text-sm"
+                    onClick={() => route.push('#')}
+                    variant={'outline'}
+                  >
+                    <Icons.gitHub className="mr-2 h-2 w-2 md:h-4 md:w-4" />
+                    <span className="text-xs font-medium md:text-sm">
+                      Sign in with GitHub
+                    </span>
+                  </Button>
+                </div>
+              </>
+            )}
 
             <div className="mt-4 text-center text-xs md:text-sm">
               <span className="text-muted-foreground">

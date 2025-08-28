@@ -57,6 +57,7 @@ export default function PasskeyAddDevice({
       const { data } = res as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setFidoUserError(null)
         setNextStep(true)
       } else if (res.toString().includes('401')) {
         setFidoUserError(res as string)
@@ -79,11 +80,12 @@ export default function PasskeyAddDevice({
     <Dialog
       open={openModal}
       onOpenChange={(isOpen) => {
-        setOpenModel(isOpen)
         if (!isOpen) {
           setFidoUserError(null)
           setNextStep(false)
+          setPasswordVisible(false)
         }
+        setOpenModel(isOpen)
       }}
     >
       <DialogContent>
@@ -110,8 +112,10 @@ export default function PasskeyAddDevice({
               Password: yup.string().required('Password is required'),
             })}
             onSubmit={savePassword}
+            validateOnChange={false}
+            validateOnBlur={false}
           >
-            {({ handleSubmit, errors, touched }) => (
+            {({ handleSubmit, errors, touched, setFieldTouched }) => (
               <Form onSubmit={handleSubmit} className="mt-4 space-y-4">
                 <div>
                   <label
@@ -147,7 +151,10 @@ export default function PasskeyAddDevice({
                 </div>
 
                 <div className="flex justify-end">
-                  <Button onClick={() => setFidoUserError(null)} type="submit">
+                  <Button
+                    type="submit"
+                    onClick={() => setFieldTouched('Password', true)}
+                  >
                     Next
                   </Button>
                 </div>
