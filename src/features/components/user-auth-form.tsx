@@ -39,7 +39,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
-  password: z.string().optional(),
+  password: z.string().min(1, { message: 'Password is required' }),
 })
 
 type SignInFormValues = z.infer<typeof signInSchema>
@@ -373,7 +373,7 @@ export default function SignInViewPage(): React.JSX.Element {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs md:text-sm">
+                    <FormLabel className="data-[error=true]:text-foreground text-xs md:text-sm">
                       Password
                     </FormLabel>
                     <FormControl>
