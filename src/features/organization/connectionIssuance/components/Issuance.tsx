@@ -77,6 +77,7 @@ const IssueCred = (): React.JSX.Element => {
     GetAllSchemaHelperReturn[]
   >([])
   const [selectValue, setSelectValue] = useState<string>('')
+  const [clear, setClear] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
   const optionsWithDefault = ["Organization's schema", 'All schemas']
@@ -334,6 +335,7 @@ const IssueCred = (): React.JSX.Element => {
   const handleFilterChange = async (value: string): Promise<void> => {
     setSchemaDetails(schemaDetailsInitialState)
     dispatch(resetSchemaDetails())
+    setClear((prev) => !prev)
     const isAllSchemas = value === 'All schemas'
     dispatch(setAllSchema(isAllSchemas))
   }
@@ -383,6 +385,7 @@ const IssueCred = (): React.JSX.Element => {
                     })
                   }}
                   onSearchChange={handleSearchChange}
+                  clear={clear}
                   enableInternalSearch={!(w3cSchema && allSchema)}
                   placeholder={
                     w3cSchema
