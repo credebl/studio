@@ -27,6 +27,7 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { envConfig } from '@/config/envConfig'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
 import { signIn } from 'next-auth/react'
@@ -38,7 +39,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 const signInSchema = z.object({
   email: z.string().email('Enter a valid email'),
-  password: z.string().optional(),
+  password: z.string().min(1, { message: 'Password is required' }),
 })
 
 type SignInFormValues = z.infer<typeof signInSchema>
@@ -372,7 +373,7 @@ export default function SignInViewPage(): React.JSX.Element {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs md:text-sm">
+                    <FormLabel className="data-[error=true]:text-foreground text-xs md:text-sm">
                       Password
                     </FormLabel>
                     <FormControl>
@@ -429,37 +430,40 @@ export default function SignInViewPage(): React.JSX.Element {
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 
-            <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
-              <hr className="border-border flex-grow border-t" />
-              <span className="text-muted-foreground text-xs md:text-sm">
-                OR
-              </span>
-              <hr className="border-border flex-grow border-t" />
-            </div>
+            {envConfig.PLATFORM_DATA.enableSocialLogin && (
+              <>
+                <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
+                  <hr className="border-border flex-grow border-t" />
+                  <span className="text-muted-foreground text-xs md:text-sm">
+                    OR
+                  </span>
+                  <hr className="border-border flex-grow border-t" />
+                </div>
+                <div className="mt-6 flex flex-col gap-3">
+                  <Button
+                    type="button"
+                    className="text-xs md:text-sm"
+                    onClick={() => route.push('#')}
+                    variant={'outline'}
+                  >
+                    <Icons.google className="mr-2 h-2 w-2 md:h-4 md:w-4" />
+                    Sign in with Google
+                  </Button>
 
-            <div className="mt-6 flex flex-col gap-3">
-              <Button
-                type="button"
-                className="text-xs md:text-sm"
-                onClick={() => route.push('#')}
-                variant={'outline'}
-              >
-                <Icons.google className="mr-2 h-2 w-2 md:h-4 md:w-4" />
-                Sign in with Google
-              </Button>
-
-              <Button
-                type="button"
-                className="text-xs md:text-sm"
-                onClick={() => route.push('#')}
-                variant={'outline'}
-              >
-                <Icons.gitHub className="mr-2 h-2 w-2 md:h-4 md:w-4" />
-                <span className="text-xs font-medium md:text-sm">
-                  Sign in with GitHub
-                </span>
-              </Button>
-            </div>
+                  <Button
+                    type="button"
+                    className="text-xs md:text-sm"
+                    onClick={() => route.push('#')}
+                    variant={'outline'}
+                  >
+                    <Icons.gitHub className="mr-2 h-2 w-2 md:h-4 md:w-4" />
+                    <span className="text-xs font-medium md:text-sm">
+                      Sign in with GitHub
+                    </span>
+                  </Button>
+                </div>
+              </>
+            )}
 
             <div className="mt-4 text-center text-xs md:text-sm">
               <span className="text-muted-foreground">
