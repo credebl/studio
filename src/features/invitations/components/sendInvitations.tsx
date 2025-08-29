@@ -78,7 +78,7 @@ export default function SendInvitationModal({
         setErrorMsg(resRoles as string)
       }
     } catch (error) {
-      console.error('Failed to fetch roles', error)
+      console.error('Failed to fetch roles ', error)
       setErrorMsg('Failed to fetch roles')
     }
   }
