@@ -230,6 +230,7 @@ const EmailIssuance = (): JSX.Element => {
   const handleFilterChange = async (value: string): Promise<void> => {
     dispatch(resetSchemaDetails())
     setCredentialSelected(null)
+    setClear((prev) => !prev)
     const isAllSchemas = value === 'All schemas'
     dispatch(setAllSchema(isAllSchemas))
   }
