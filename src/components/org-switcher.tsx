@@ -104,7 +104,7 @@ const OrgSwitcherInner = ({
               className="border-ring w-[200px] justify-start gap-2 border"
             >
               {tenants.length > 0 && (
-                <div className="bg-popover border-muted flex size-6 items-center justify-center overflow-hidden rounded-full">
+                <div className="bg-popover border-muted flex size-6 min-w-6 items-center justify-center overflow-hidden rounded-full">
                   {selectedTenant?.logoUrl ? (
                     <Avatar className="shrink rounded-md object-contain">
                       {selectedTenant.logoUrl ? (
