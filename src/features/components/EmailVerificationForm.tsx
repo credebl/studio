@@ -36,7 +36,7 @@ export default function EmailVerificationForm({
     email: Yup.string()
       .email('Invalid email address')
       .required('Email is required')
-      .matches(emailRegex, 'Invalid email address'),
+      .matches(emailRegex, 'Invalid email address '),
   })
 
   const handleSendVerificationEmail = async (email: string): Promise<void> => {
