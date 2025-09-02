@@ -47,7 +47,7 @@ interface MyAuthOptions {
   }
 }
 
-interface jwtDataPayload extends JwtPayload {
+interface JwtDataPayload extends JwtPayload {
   email?: string
   name?: string
 }
@@ -114,17 +114,15 @@ export const authOptions: MyAuthOptions = {
                 credentials: 'include',
               },
             )
-          } else {
-            if (obj) {
-              res = await fetch(
-                `${envConfig.NEXT_PUBLIC_BASE_URL}/${apiRoutes.auth.fidoVerifyAuthentication}${parsedObj.userName}`,
-                {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(sanitizedPayload),
-                },
-              )
-            }
+          } else if (obj) {
+            res = await fetch(
+              `${envConfig.NEXT_PUBLIC_BASE_URL}/${apiRoutes.auth.fidoVerifyAuthentication}${parsedObj.userName}`,
+              {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sanitizedPayload),
+              },
+            )
           }
 
           const responseData = await res?.json()
@@ -135,7 +133,7 @@ export const authOptions: MyAuthOptions = {
 
           const user = responseData
           if (user.statusCode === 200 && user.data) {
-            const decodedToken = jwtDecode<jwtDataPayload>(
+            const decodedToken = jwtDecode<JwtDataPayload>(
               user.data.access_token,
             )
 
