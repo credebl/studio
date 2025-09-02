@@ -15,6 +15,7 @@ import {
 import { handleDiscardFile, onClear } from './BulkIssuanceUtils'
 
 import { AxiosResponse } from 'axios'
+import { IAttributes } from '../../emailIssuance/type/EmailIssuance'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getAllSchemas } from '@/app/api/schema'
 import { getOrganizationById } from '@/app/api/organization'
@@ -143,8 +144,8 @@ const readFileAsBinary = (file: File): Promise<Uint8Array> =>
       }
     }
 
-    reader.onerror = (error): void => {
-      reject(error)
+    reader.onerror = (event): void => {
+      reject(new Error(`File reading failed: ${event}`))
     }
 
     reader.readAsArrayBuffer(file)
@@ -306,7 +307,14 @@ export const getSchemaCredentials = async (
               context.schemaType === SchemaTypes.schema_INDY
                 ? credentialDefinitionId
                 : schemaVersion,
-            label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+            label: [
+              `${schemaName} [${schemaVersion}]`,
+              currentSchemaType === SchemaTypes.schema_INDY
+                ? `- (${credentialDefinition})`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(' '),
             id: index,
             schemaName,
             schemaVersion,
@@ -351,19 +359,24 @@ export const getSchemaCredentials = async (
             schemaLedgerId,
             attributes,
             type,
-          }: ICredentials) => ({
-            value: version,
-            label: `${name} [${version}]`,
-            schemaName: name,
-            type,
-            schemaVersion: version,
-            schemaIdentifier: schemaLedgerId,
-            attributes: Array.isArray(attributes)
-              ? attributes
-              : attributes
-                ? JSON.parse(attributes)
-                : [],
-          }),
+          }: ICredentials) => {
+            let parsedAttributes: IAttributes[] = []
+
+            if (Array.isArray(attributes)) {
+              parsedAttributes = attributes
+            } else if (attributes) {
+              parsedAttributes = JSON.parse(attributes)
+            }
+            return {
+              value: version,
+              label: `${name} [${version}]`,
+              schemaName: name,
+              type,
+              schemaVersion: version,
+              schemaIdentifier: schemaLedgerId,
+              attributes: parsedAttributes,
+            }
+          },
         )
         context.setCredentialOptionsData(dropDownOptions)
       } else {
