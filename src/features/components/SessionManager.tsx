@@ -32,7 +32,6 @@ export const SessionManager = ({
 }: {
   children: React.ReactNode
 }): React.ReactElement => {
-  // const { data: session, status } = useSession()
   const { data: session, status } = useSession({
     required: false,
   })
@@ -41,7 +40,6 @@ export const SessionManager = ({
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const dispatch = useAppDispatch()
-  // const hasCheckedSession = useRef(false)
 
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
@@ -72,7 +70,7 @@ export const SessionManager = ({
     redirectTo: string | null,
   ): Promise<void> => {
     try {
-      const encrypted = await passwordEncryption(sessionId)
+      const encrypted = passwordEncryption(sessionId)
       const encoded = encodeURIComponent(encrypted)
       const resp = await fetch(
         `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encoded}`,
@@ -94,8 +92,6 @@ export const SessionManager = ({
     if (status === 'loading') {
       return
     }
-    // if (!hasCheckedSession.current) {
-    //   hasCheckedSession.current = true
     setTimeout(() => {
       if (status === 'authenticated' && session?.sessionId) {
         fetchSessionDetails(session.sessionId, redirectTo)
@@ -114,7 +110,6 @@ export const SessionManager = ({
         }
       }
     }, 500)
-    // }
   }, [status, session])
 
   if (status === 'loading') {

@@ -13,7 +13,7 @@ export const getVerifiedProofDetails = async (
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.proofRequestAttributesVerification}/${proofId}`
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
@@ -34,7 +34,7 @@ export const getVerificationList = async (
 
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
@@ -52,7 +52,7 @@ export const verifyPresentation = async (
   const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Verification.presentationVerification}/${proofId}/verify`
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
@@ -72,7 +72,7 @@ export const createOobProofRequest = async (
   const axiosPayload = {
     url,
     payload,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
@@ -92,7 +92,7 @@ export const verifyCredential = async (
   const axiosPayload = {
     url,
     payload,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
@@ -112,7 +112,7 @@ export const verifyCredentialV2 = async (
   const axiosPayload = {
     url,
     payload,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
@@ -130,7 +130,7 @@ export const getCredentialDefinitionsForVerification = async (
 
   const axiosPayload = {
     url,
-    config: await getHeaderConfigs(),
+    config: getHeaderConfigs(),
   }
 
   try {
