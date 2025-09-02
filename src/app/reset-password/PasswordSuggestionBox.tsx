@@ -2,6 +2,7 @@
 
 import { GreenIndicator, RedIndicator } from '@/config/svgs/PasswordSuggestion'
 import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react'
+
 import { allowedPasswordChars } from '../../config/CommonConstant'
 
 interface PasswordSuggestion {

@@ -93,6 +93,57 @@ interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   disabled?: boolean
 }
 
+function isFileWithPreview(file: File): file is File & { preview: string } {
+  return 'preview' in file && typeof file.preview === 'string'
+}
+
+function FileCard({
+  file,
+  progress,
+  onRemove,
+}: FileCardProps): React.JSX.Element {
+  return (
+    <div className="relative flex items-center space-x-4">
+      <div className="flex flex-1 space-x-4">
+        {isFileWithPreview(file) ? (
+          <Image
+            src={file.preview}
+            alt={file.name}
+            width={48}
+            height={48}
+            loading="lazy"
+            className="aspect-square shrink-0 rounded-md object-cover"
+          />
+        ) : null}
+        <div className="flex w-full flex-col gap-2">
+          <div className="space-y-px">
+            <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
+              {file.name}
+            </p>
+            <p className="text-muted-foreground text-xs">
+              {formatBytes(file.size)}
+            </p>
+          </div>
+          {progress ? <Progress value={progress} /> : null}
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={onRemove}
+          disabled={progress !== undefined && progress < 100}
+          className="size-8 rounded-full"
+        >
+          <IconX className="text-muted-foreground" />
+          <span className="sr-only">Remove file</span>
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 export function FileUploader(props: FileUploaderProps): React.JSX.Element {
   const {
     value: valueProp,
@@ -112,57 +163,6 @@ export function FileUploader(props: FileUploaderProps): React.JSX.Element {
     prop: valueProp,
     onChange: onValueChange,
   })
-
-  function isFileWithPreview(file: File): file is File & { preview: string } {
-    return 'preview' in file && typeof file.preview === 'string'
-  }
-
-  function FileCard({
-    file,
-    progress,
-    onRemove,
-  }: FileCardProps): React.JSX.Element {
-    return (
-      <div className="relative flex items-center space-x-4">
-        <div className="flex flex-1 space-x-4">
-          {isFileWithPreview(file) ? (
-            <Image
-              src={file.preview}
-              alt={file.name}
-              width={48}
-              height={48}
-              loading="lazy"
-              className="aspect-square shrink-0 rounded-md object-cover"
-            />
-          ) : null}
-          <div className="flex w-full flex-col gap-2">
-            <div className="space-y-px">
-              <p className="text-foreground/80 line-clamp-1 text-sm font-medium">
-                {file.name}
-              </p>
-              <p className="text-muted-foreground text-xs">
-                {formatBytes(file.size)}
-              </p>
-            </div>
-            {progress ? <Progress value={progress} /> : null}
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onRemove}
-            disabled={progress !== undefined && progress < 100}
-            className="size-8 rounded-full"
-          >
-            <IconX className="text-muted-foreground" />
-            <span className="sr-only">Remove file</span>
-          </Button>
-        </div>
-      </div>
-    )
-  }
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -241,6 +241,15 @@ export function FileUploader(props: FileUploaderProps): React.JSX.Element {
 
   const isDisabled = disabled || (files?.length ?? 0) >= maxFiles
 
+  let fileInfo: string = ''
+
+  if (maxFiles > 1) {
+    const fileCount = maxFiles === Infinity ? 'multiple' : maxFiles
+    fileInfo = `${fileCount} files (up to ${formatBytes(maxSize)} each)`
+  } else {
+    fileInfo = `a file with ${formatBytes(maxSize)}`
+  }
+
   return (
     <div className="relative flex flex-col gap-6 overflow-hidden">
       <Dropzone
@@ -290,10 +299,7 @@ export function FileUploader(props: FileUploaderProps): React.JSX.Element {
                   </p>
                   <p className="text-muted-foreground/70 text-sm">
                     You can upload
-                    {maxFiles > 1
-                      ? ` ${maxFiles === Infinity ? 'multiple' : maxFiles}
-                      files (up to ${formatBytes(maxSize)} each)`
-                      : ` a file with ${formatBytes(maxSize)}`}
+                    {fileInfo}
                   </p>
                 </div>
               </div>
@@ -306,7 +312,7 @@ export function FileUploader(props: FileUploaderProps): React.JSX.Element {
           <div className="max-h-48 space-y-4">
             {files?.map((file, index) => (
               <FileCard
-                key={index}
+                key={`${file.name}-${index}`}
                 file={file}
                 onRemove={() => onRemove(index)}
                 progress={progresses?.[file.name]}
