@@ -260,15 +260,11 @@ export interface IFieldArrayProps {
   }>
   validationSchema: Yup.ObjectSchema<
     {
-      credentialData:
-        | {
-            attributes?:
-              | {
-                  value?: string | undefined
-                }[]
-              | undefined
-          }[]
-        | undefined
+      credentialData?: {
+        attributes?: {
+          value?: string
+        }[]
+      }[]
     },
     Yup.AnyObject,
     {
@@ -278,7 +274,7 @@ export interface IFieldArrayProps {
   >
 }
 
-export interface createIssuanceForm {
+export interface CreateIssuanceForm {
   selectedUsers: SelectedUsers[]
   attributes: DataTypeAttributes[]
   credDefId: string

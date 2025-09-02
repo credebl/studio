@@ -24,7 +24,7 @@ export interface IOrganisation {
   userOrgRoles: UserOrgRole[]
   org_agents: IOrgAgent[]
   publicProfile: boolean
-  checked?: boolean | undefined
+  checked?: boolean
   error?: string
   didDetails: IDidCreationDetails
 }
