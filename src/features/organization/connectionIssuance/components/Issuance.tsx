@@ -67,7 +67,7 @@ const IssueCred = (): React.JSX.Element => {
   const [failure, setFailure] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [w3cSchema, setW3CSchema] = useState<boolean>(false)
+  const [w3cSchema, setw3cSchema] = useState<boolean>(false)
   const [schemaType, setSchemaType] = useState<SchemaTypeValue>()
   const [orgDid, setOrgDid] = useState<string>('')
   const orgId = useSelector((state: RootState) => state.organization.orgId)
@@ -135,7 +135,7 @@ const IssueCred = (): React.JSX.Element => {
         setUserLoader(true)
         const selectedUsers = selectedUser || []
         const attributes = schemaDetails.schemaAttributes || []
-        if (attributes && attributes?.length) {
+        if (attributes?.length) {
           createIssuanceFormFunction({
             selectedUsers,
             attributes,
@@ -154,7 +154,7 @@ const IssueCred = (): React.JSX.Element => {
 
         const attributes = schemaDetails.schemaAttributes || []
 
-        if (attributes && attributes?.length) {
+        if (attributes?.length) {
           createW3cIssuanceForm(selectedUsers, attributes, orgId)
         } else {
           setFailure('Attributes are not available')
@@ -165,18 +165,14 @@ const IssueCred = (): React.JSX.Element => {
       setFailure('Error fetching schema and users')
     }
   }
-
   useEffect(() => {
-    if (!w3cSchema && schemaDetails.schemaId && schemaDetails.credDefId) {
-      getSchemaAndUsers(w3cSchema)
-    } else if (
-      w3cSchema &&
-      schemaDetails.schemaName &&
-      schemaDetails.schemaAttributes
+    if (
+      (!w3cSchema && schemaDetails.schemaId && schemaDetails.credDefId) ||
+      (w3cSchema && schemaDetails.schemaName && schemaDetails.schemaAttributes)
     ) {
       getSchemaAndUsers(w3cSchema)
     }
-  }, [schemaDetails])
+  }, [schemaDetails, w3cSchema])
 
   useEffect(() => {
     if (
@@ -243,7 +239,7 @@ const IssueCred = (): React.JSX.Element => {
         const did = data?.data?.org_agents?.[0]?.orgDid
 
         if (did?.includes(DidMethod.POLYGON)) {
-          setW3CSchema(true)
+          setw3cSchema(true)
           setSchemaType(SchemaTypeValue.POLYGON)
           setOrgDid(did)
           return true
@@ -251,12 +247,12 @@ const IssueCred = (): React.JSX.Element => {
           did?.includes(DidMethod.KEY) ||
           did?.includes(DidMethod.WEB)
         ) {
-          setW3CSchema(true)
+          setw3cSchema(true)
           setSchemaType(SchemaTypeValue.NO_LEDGER)
           setOrgDid(did)
           return true
         } else if (did?.includes(DidMethod.INDY)) {
-          setW3CSchema(false)
+          setw3cSchema(false)
           setSchemaType(SchemaTypeValue.INDY)
           return false
         }

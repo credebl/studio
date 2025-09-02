@@ -18,11 +18,8 @@ import { useState } from 'react'
 const SortDataTable: React.FC<IDataTable> = ({
   header,
   searchValue,
-  displaySelect,
   data,
   loading,
-  callback,
-  showBtn,
   onInputChange,
   currentPage,
   onPageChange,
@@ -70,6 +67,53 @@ const SortDataTable: React.FC<IDataTable> = ({
     },
     { label: 'Ascending', value: 'asc' },
   ]
+
+  let tableRows: React.ReactNode = <></>
+
+  if (loading) {
+    tableRows = (
+      <tr className="text-center">
+        <td colSpan={header.length}>
+          <div className="mb-4 flex w-full items-center justify-center text-center">
+            <Loader />
+          </div>
+        </td>
+      </tr>
+    )
+  } else if (data?.length) {
+    tableRows = data.map(() =>
+      data.map((ele, rowIndex) => (
+        <tr
+          key={ele.clickId}
+          className={`${rowIndex % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''}`}
+        >
+          {ele.data.map((subEle, colIndex) => (
+            <td
+              key={`${ele.clickId}-${colIndex}`}
+              className="p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white"
+            >
+              <div>{subEle.data}</div>
+              {subEle.subData}
+            </td>
+          ))}
+        </tr>
+      )),
+    )
+  } else {
+    tableRows = (
+      <tr className="text-center">
+        <td colSpan={header.length}>
+          <div className="mx-auto flex h-full w-full items-center justify-center">
+            <EmptyListMessage
+              message={message}
+              description={discription}
+              noExtraHeight={noExtraHeight}
+            />
+          </div>
+        </td>
+      </tr>
+    )
+  }
 
   return (
     <Pagination>
@@ -156,67 +200,7 @@ const SortDataTable: React.FC<IDataTable> = ({
                       ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white dark:bg-gray-800">
-                  {loading ? (
-                    <tr className="text-center">
-                      <td
-                        className="p-2 text-center text-gray-500"
-                        colSpan={header.length}
-                      >
-                        {' '}
-                        <div className="mb-4 flex w-full items-center justify-center text-center">
-                          <Loader />
-                        </div>
-                      </td>
-                    </tr>
-                  ) : data?.length ? (
-                    data?.map((ele, index) => (
-                      <tr
-                        key={index}
-                        className={`${
-                          index % 2 !== 0 ? 'bg-gray-50 dark:bg-gray-700' : ''
-                        }`}
-                      >
-                        {ele.data.map((subEle, index) => (
-                          <td
-                            key={index}
-                            className={
-                              'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
-                            }
-                          >
-                            <div>{subEle.data}</div>
-                            {subEle.subData}
-                          </td>
-                        ))}
-                        {displaySelect ||
-                          (showBtn && (
-                            <button
-                              onClick={() => callback && callback(ele?.clickId)}
-                              type="button"
-                              className="bg-primary-700 hover:bg-primary-800 focus:ring-primary-250 dark:focus:ring-primary-850 mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium text-white focus:ring-4 focus:outline-none"
-                            >
-                              Select
-                            </button>
-                          ))}
-                      </tr>
-                    ))
-                  ) : (
-                    <tr className="text-center">
-                      <td
-                        className="p-2 text-center text-gray-500"
-                        colSpan={header.length}
-                      >
-                        <div className="mx-auto flex h-full w-full items-center justify-center">
-                          <EmptyListMessage
-                            message={message}
-                            description={discription}
-                            noExtraHeight={noExtraHeight}
-                          />
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
+                <tbody className="bg-white dark:bg-gray-800">{tableRows}</tbody>
               </table>
             </div>
             {loading && isPagination && data.length > 0 ? (
@@ -228,14 +212,12 @@ const SortDataTable: React.FC<IDataTable> = ({
               >
                 {!loading && data?.length > 0 && (
                   <span className="mt-2 text-sm font-normal text-gray-500 dark:text-gray-400">
-                    Showing
+                    Showing{' '}
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {' '}
-                      {startItem}-{endItem}{' '}
-                    </span>
-                    of
+                      {startItem}-{endItem}
+                    </span>{' '}
+                    of{' '}
                     <span className="font-semibold text-gray-900 dark:text-white">
-                      {' '}
                       {totalItem}
                     </span>
                   </span>
