@@ -86,7 +86,7 @@ export default function SignInViewPage(): React.JSX.Element {
       setLoading(true)
       const entityData = {
         email: values.email,
-        password: await passwordEncryption(values.password || ''),
+        password: passwordEncryption(values.password || ''),
         isPassword: isPasswordTab,
       }
 
