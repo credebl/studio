@@ -396,7 +396,7 @@ const EmailIssuance = (): JSX.Element => {
                                           onClick={async () => {
                                             setIsResetting(true)
                                             try {
-                                              await handleReset({
+                                              handleReset({
                                                 setCredentialSelected,
                                                 selectInputRef,
                                                 setClear,
@@ -426,7 +426,7 @@ const EmailIssuance = (): JSX.Element => {
                                             e.preventDefault()
                                             setIsIssuing(true)
                                             try {
-                                              await formikHandlers.handleSubmit()
+                                              formikHandlers.handleSubmit()
                                             } finally {
                                               setIsIssuing(false)
                                             }
