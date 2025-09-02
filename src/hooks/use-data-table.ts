@@ -205,8 +205,8 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>): {
 
   const debouncedSetFilterValues = useDebouncedCallback(
     (values: typeof filterValues) => {
-      void setPage(1)
-      void setFilterValues(values)
+       setPage(1)
+       setFilterValues(values)
     },
     debounceMs,
   )

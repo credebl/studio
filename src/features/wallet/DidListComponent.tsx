@@ -139,7 +139,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
   const [userRoles, setUserRoles] = useState<string[]>([])
-  const [didLoading, setDidListLoading] = useState<boolean>(true)
+  const [didListLoading, setDidListLoading] = useState<boolean>(true)
 
   const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
@@ -473,10 +473,12 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     const [copied, setCopied] = useState(false)
 
     const copyToClipboard = (): void => {
-      navigator.clipboard.writeText(value).then(() => {
+      const resetCopied = (): void => setCopied(false)
+      const handleCopySuccess = (): void => {
         setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-      })
+        setTimeout(resetCopied, 2000)
+      }
+      navigator.clipboard.writeText(value).then(handleCopySuccess)
     }
 
     if (showCheck) {
@@ -500,7 +502,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       )
     }
 
-    if (didLoading) {
+    if (didListLoading) {
       return <Loader />
     }
 
@@ -603,7 +605,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       </div>
 
       <div className="divide-y rounded-lg border">
-        {didLoading ? (
+        {didListLoading ? (
           <div className="my-5">
             <Loader />
           </div>

@@ -46,7 +46,6 @@ const WalletSpinup = (): React.JSX.Element => {
   const [maskedSeeds, setMaskedSeeds] = useState<string>('')
   const [orgData, setOrgData] = useState<Organisation | null>(null)
   const [showLedgerConfig, setShowLedgerConfig] = useState<boolean>(false)
-  const [, setWalletStatus] = useState<boolean>(false)
   const [spinupStatus, setSpinupStatus] = useState<WalletSpinupStatus>(
     WalletSpinupStatus.NOT_STARTED,
   )
@@ -233,7 +232,6 @@ const WalletSpinup = (): React.JSX.Element => {
             logoUrl: data?.data?.logoUrl,
           }),
         )
-        setWalletStatus(true)
         clearSpinupStatus()
         animateWalletSteps()
         setIsPageReady(true)
@@ -567,7 +565,6 @@ const WalletSpinup = (): React.JSX.Element => {
                   logoUrl: orgData?.logoUrl,
                 }),
               )
-              setWalletStatus(true)
               handleWalletCompletion(true)
             }
           }
