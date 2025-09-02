@@ -478,7 +478,13 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         setCopied(true)
         setTimeout(resetCopied, 2000)
       }
-      navigator.clipboard.writeText(value).then(handleCopySuccess)
+      const handleCopyError = (): void => {
+        console.error('Failed to copy text to clipboard')
+      }
+      navigator.clipboard
+        .writeText(value)
+        .then(handleCopySuccess)
+        .catch(handleCopyError)
     }
 
     if (showCheck) {
