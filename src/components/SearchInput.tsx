@@ -8,7 +8,9 @@ const SearchInput = ({
   value?: string
 }): JSX.Element => (
   <div>
-    <label className="sr-only">Search</label>
+    <label htmlFor="topbar-search" className="sr-only">
+      Search
+    </label>
     <div className="relative lg:w-96">
       <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
         <svg
