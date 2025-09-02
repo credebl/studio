@@ -106,11 +106,11 @@ export async function logoutAndRedirect(): Promise<void> {
     const interval = setInterval(() => {
       if (!localStorage.getItem(rootKey)) {
         clearInterval(interval)
-        void signOut({ callbackUrl: '/sign-in' })
+        signOut({ callbackUrl: '/sign-in' })
       }
     }, 100)
   } else {
-    void signOut({ callbackUrl: '/sign-in' })
+    signOut({ callbackUrl: '/sign-in' })
   }
 }
 

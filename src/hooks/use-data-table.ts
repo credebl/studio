@@ -138,11 +138,11 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>): {
     (updaterOrValue: Updater<PaginationState>) => {
       if (typeof updaterOrValue === 'function') {
         const newPagination = updaterOrValue(pagination)
-        void setPage(newPagination.pageIndex + 1)
-        void setPerPage(newPagination.pageSize)
+        setPage(newPagination.pageIndex + 1)
+        setPerPage(newPagination.pageSize)
       } else {
-        void setPage(updaterOrValue.pageIndex + 1)
-        void setPerPage(updaterOrValue.pageSize)
+        setPage(updaterOrValue.pageIndex + 1)
+        setPerPage(updaterOrValue.pageSize)
       }
     },
     [pagination, setPage, setPerPage],

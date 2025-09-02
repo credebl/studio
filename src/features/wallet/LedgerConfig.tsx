@@ -419,7 +419,8 @@ const LedgerConfig = ({
               values.privatekey = privateKeyValue
             }
 
-            await submitSharedWallet(values, domainValue) // assuming async
+            submitSharedWallet(values, domainValue) // assuming async
+            // assuming async
             actions.resetForm()
           } catch (error) {
             console.error('Submission failed:', error)
@@ -677,7 +678,6 @@ const LedgerConfig = ({
                                 >
                                   {polygonScan}
                                 </a>
-                                .
                               </div>
                             </div>
                           </li>
