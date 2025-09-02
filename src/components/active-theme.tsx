@@ -51,8 +51,13 @@ export function ActiveThemeProvider({
     }
   }, [activeTheme])
 
+  const themeContextValue = React.useMemo(
+    () => ({ activeTheme, setActiveTheme }),
+    [activeTheme, setActiveTheme],
+  )
+
   return (
-    <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>
+    <ThemeContext.Provider value={themeContextValue}>
       {children}
     </ThemeContext.Provider>
   )

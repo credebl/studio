@@ -168,7 +168,7 @@ const SchemasList = ({
 
     return (
       <button
-        key={index}
+        key={`${schema.schemaLedgerId}-${index}`}
         type="button"
         onClick={() => {
           if (isIndySchema) {
@@ -280,7 +280,7 @@ const SchemasList = ({
       </CardHeader>
 
       <CardContent className="flex-1 space-y-4 overflow-y-auto">
-        {loading ? (
+        {loading &&
           Array.from({ length: 2 }).map((_, i) => (
             <div
               key={i}
@@ -291,8 +291,8 @@ const SchemasList = ({
                 <Skeleton className="h-4 w-[300px]" />
               </div>
             </div>
-          ))
-        ) : previewSchemas.length > 0 ? (
+          ))}
+        {previewSchemas.length > 0 ? (
           previewSchemas.map(renderSchema)
         ) : (
           <div className="flex h-40 items-center justify-center">

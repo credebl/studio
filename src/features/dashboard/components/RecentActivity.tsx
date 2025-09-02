@@ -84,7 +84,7 @@ const RecentActivity = (): React.JSX.Element => {
     return (
       <div className="space-y-4">
         {activityList.slice(0, 3).map((activity, index) => (
-          <div key={index} className="flex gap-3">
+          <div key={`${activity.action}-${index}`} className="flex gap-3">
             <div className="relative mt-1">
               <div className="flex h-2 w-2 items-center justify-center">
                 <div className="bg-primary absolute h-2 w-2 rounded-full" />
@@ -95,9 +95,6 @@ const RecentActivity = (): React.JSX.Element => {
               <div className="max-w-[400px] truncate font-medium">
                 {activity.action || 'Performed an action'}
               </div>
-              {/* <div className="max-w-full font-medium break-words">
-                {activity.action || 'Performed an action'}
-              </div> */}
               <div className="text-muted-foreground text-sm italic">
                 {getTimeAgo(activity.createDateTime)}
               </div>

@@ -34,6 +34,18 @@ export default function RecentActivityStepper(): React.JSX.Element {
         const isActive = index === 0
         const isCompleted = index < 0
 
+        let Icon: React.JSX.Element = (
+          <Dot className="text-muted-foreground h-5 w-5" />
+        )
+
+        if (isCompleted) {
+          Icon = <Check className="text-primary h-5 w-5" />
+        } else if (isActive) {
+          Icon = <Circle className="text-primary h-5 w-5" />
+        } else {
+          Icon = <Dot className="text-muted-foreground h-5 w-5" />
+        }
+
         return (
           <div key={step.step} className="relative flex items-start gap-6">
             {/* Vertical line */}
@@ -44,13 +56,7 @@ export default function RecentActivityStepper(): React.JSX.Element {
             {/* Icon */}
             {/* Icon */}
             <div className="bg-background z-10 shrink-0 rounded-full p-1">
-              {isCompleted ? (
-                <Check className="text-primary h-5 w-5" />
-              ) : isActive ? (
-                <Circle className="text-primary h-5 w-5" />
-              ) : (
-                <Dot className="text-muted-foreground h-5 w-5" />
-              )}
+              {Icon}
             </div>
 
             {/* Content */}

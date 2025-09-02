@@ -130,6 +130,48 @@ export default function Connections(): JSX.Element {
     })
   }, [orgId])
 
+  const connectionsCell = ({
+    row,
+  }: {
+    row: { original: Connection }
+  }): JSX.Element => {
+    const connection = row.original
+    return (
+      <Button
+        variant="link"
+        className="text-foreground url-link p-0 text-left"
+        onClick={() => openDrawer(connection)}
+      >
+        {connection.theirLabel || 'N/A'}
+      </Button>
+    )
+  }
+
+  const createdDateCell = ({
+    row,
+  }: {
+    row: { original: { createDateTime: string } }
+  }): JSX.Element => <DateCell date={row.original.createDateTime} />
+
+  const stateInfoCell = ({
+    row,
+  }: {
+    row: { original: { state: string } }
+  }): JSX.Element => {
+    const { state } = row.original
+    return (
+      <span
+        className={` ${
+          state === ConnectionState.completed &&
+          'badges-success text-foreground'
+        } mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 py-0.5 text-xs font-medium`}
+      >
+        {state === ConnectionState.completed &&
+          ConnectionStateUserText.completed}
+      </span>
+    )
+  }
+
   const columnData: IColumnData[] = [
     {
       id: 'theirLabel',
@@ -146,18 +188,7 @@ export default function Connections(): JSX.Element {
           },
         },
       ],
-      cell: ({ row }): JSX.Element => {
-        const connection = row.original
-        return (
-          <Button
-            variant="link"
-            className="text-foreground url-link p-0 text-left"
-            onClick={() => openDrawer(connection)}
-          >
-            {connection.theirLabel || 'N/A'}
-          </Button>
-        )
-      },
+      cell: connectionsCell,
     },
     {
       id: 'createDateTime',
@@ -174,7 +205,7 @@ export default function Connections(): JSX.Element {
           },
         },
       ],
-      cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
+      cell: createdDateCell,
     },
 
     {
@@ -182,20 +213,7 @@ export default function Connections(): JSX.Element {
       title: 'Status',
       accessorKey: 'state',
       columnFunction: [],
-      cell: ({ row }): JSX.Element => {
-        const { state } = row.original
-        return (
-          <span
-            className={` ${
-              state === ConnectionState.completed &&
-              'badges-success text-foreground'
-            } mr-0.5 flex w-fit items-center justify-center rounded-md px-0.5 px-2 py-0.5 text-xs font-medium`}
-          >
-            {state === ConnectionState.completed &&
-              ConnectionStateUserText.completed}
-          </span>
-        )
-      },
+      cell: stateInfoCell,
     },
   ]
 
