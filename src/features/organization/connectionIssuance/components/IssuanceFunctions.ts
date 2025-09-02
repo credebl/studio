@@ -5,15 +5,15 @@ import {
   apiStatusCodes,
   proofPurpose,
 } from '@/config/CommonConstant'
-import { CredentialType, ProofType, SchemaTypeValue } from '@/common/enums'
 import {
+  CreateIssuanceForm,
   IAttributesData,
   ICredentialdata,
   IHandleSubmit,
   Option,
   SchemaDetails,
-  createIssuanceForm,
 } from '../type/Issuance'
+import { CredentialType, ProofType, SchemaTypeValue } from '@/common/enums'
 import { setSelectedConnection, setSelectedUser } from '@/lib/storageKeys'
 
 import { AxiosResponse } from 'axios'
@@ -187,7 +187,7 @@ export const createIssuanceFormFunction = ({
   orgId,
   setIssuanceFormPayload,
   setUserLoader,
-}: createIssuanceForm): void => {
+}: CreateIssuanceForm): void => {
   const credentialData = selectedUsers.map((user) => {
     const attributesArray = attributes.map((attr) => ({
       name: attr.attributeName,

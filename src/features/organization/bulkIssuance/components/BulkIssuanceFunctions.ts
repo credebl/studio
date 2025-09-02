@@ -244,6 +244,23 @@ export const handleInputChange = (
   }
 }
 
+const resolveSchemaType = (
+  orgDid: string | undefined,
+  fallback: SchemaTypes,
+): SchemaTypes => {
+  if (
+    orgDid?.includes(DidMethod.POLYGON) ||
+    orgDid?.includes(DidMethod.KEY) ||
+    orgDid?.includes(DidMethod.WEB)
+  ) {
+    return SchemaTypes.schema_W3C
+  }
+  if (orgDid?.includes(DidMethod.INDY)) {
+    return SchemaTypes.schema_INDY
+  }
+  return fallback
+}
+
 export const getSchemaCredentials = async (
   schemaListAPIParameters: GetAllSchemaListParameter,
   context: IContext,
@@ -251,36 +268,27 @@ export const getSchemaCredentials = async (
   try {
     context.setLoading(true)
 
-    let orgDid = ''
+    let orgDid: string | undefined = undefined
     let ledgerId = ''
 
     const response = await getOrganizationById(context.orgId)
 
     if (typeof response === 'string') {
-      // handle the error message
-      // eslint-disable-next-line no-console
       console.error('Error fetching organization:', response)
     } else {
       const { data } = response
       orgDid = data?.data?.org_agents[0]?.orgDid
       ledgerId = data.data.org_agents[0].ledgers.id
-      // proceed with data
     }
 
-    let currentSchemaType = context.schemaType
-
-    if (
-      orgDid?.includes(DidMethod.POLYGON) ||
-      orgDid?.includes(DidMethod.KEY) ||
-      orgDid?.includes(DidMethod.WEB)
-    ) {
-      currentSchemaType = SchemaTypes.schema_W3C
-    } else if (orgDid?.includes(DidMethod.INDY)) {
-      currentSchemaType = SchemaTypes.schema_INDY
-    }
+    const currentSchemaType = resolveSchemaType(
+      orgDid,
+      context.schemaType ?? SchemaTypes.schema_INDY,
+    )
+    context.setSchemaType(currentSchemaType)
 
     let dropDownOptions = []
-    context.setSchemaType(currentSchemaType)
+
     if (
       (currentSchemaType === SchemaTypes.schema_INDY && context.isAllSchema) ||
       (currentSchemaType && context.orgId && !context.isAllSchema)
@@ -304,7 +312,7 @@ export const getSchemaCredentials = async (
             index: number,
           ) => ({
             value:
-              context.schemaType === SchemaTypes.schema_INDY
+              currentSchemaType === SchemaTypes.schema_INDY
                 ? credentialDefinitionId
                 : schemaVersion,
             label: [
@@ -322,9 +330,9 @@ export const getSchemaCredentials = async (
             credentialDefinitionId,
             schemaIdentifier,
             schemaAttributes:
-              schemaAttributes &&
-              typeof schemaAttributes === 'string' &&
-              JSON.parse(schemaAttributes),
+              schemaAttributes && typeof schemaAttributes === 'string'
+                ? JSON.parse(schemaAttributes)
+                : schemaAttributes,
           }),
         )
 
