@@ -4,6 +4,10 @@ import * as React from 'react'
 
 import { cn } from '@/lib/utils'
 
+/**
+ * Accessible table container.
+ * Consumers **must** include <thead>/<th> in children for accessibility.
+ */
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div

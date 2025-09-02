@@ -53,7 +53,7 @@ export default function SidePanelComponent({
         <Card>
           <CardContent className="space-y-4 p-8">
             {fields.map((field, index) => (
-              <div key={index} className="space-y-1">
+              <div key={`${field.label}-${index}`} className="space-y-1">
                 <div className="text-muted-foreground text-sm">
                   {field.label}
                 </div>

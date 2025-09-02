@@ -10,7 +10,7 @@ interface IProps {
   credDefId?: string
   schemaId: string
   hideCredDefId?: boolean
-  schemaAttributes?: DataTypeAttributes[] | undefined
+  schemaAttributes?: DataTypeAttributes[]
 }
 
 const SummaryCard = ({

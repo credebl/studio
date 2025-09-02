@@ -95,11 +95,17 @@ export default function SignInViewPage(): React.JSX.Element {
         redirect: false,
       })
       if (response?.error) {
-        const errorMsg = response?.error
-          ? response.error === 'CredentialsSignin'
-            ? 'Invalid Credentials'
-            : response.error
-          : 'Sign in failed. Please try again.'
+        let errorMsg: string = ''
+
+        if (response?.error) {
+          if (response.error === 'CredentialsSignin') {
+            errorMsg = 'Invalid Credentials'
+          } else {
+            errorMsg = response.error
+          }
+        } else {
+          errorMsg = 'Sign in failed. Please try again.'
+        }
         setAlert(errorMsg)
 
         console.error('Sign in failed:', response?.error)
@@ -290,7 +296,7 @@ export default function SignInViewPage(): React.JSX.Element {
         </div>
       )}
       {success && (
-        <div className="w-full max-w-md" role="success">
+        <div className="w-full max-w-md">
           <AlertComponent
             message={success}
             type={'success'}
