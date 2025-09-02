@@ -21,34 +21,37 @@ export const fetchOrganizationDetails = async ({
   setLoading(true)
   try {
     const response = await getOrganizationById(organizationId)
-
     const { data } = response as AxiosResponse
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const did = data?.data?.org_agents?.[0]?.orgDid
+    if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+      return
+    }
 
-      if (data?.data?.org_agents && data?.data?.org_agents?.length > 0) {
-        setWalletStatus(true)
-      }
-      if (typeof did === 'string') {
-        const isPolygon = did.includes(DidMethod.POLYGON)
-        const isKey = did.includes(DidMethod.KEY)
-        const isWeb = did.includes(DidMethod.WEB)
-        const isIndy = did.includes(DidMethod.INDY)
+    const orgAgents = data?.data?.org_agents ?? []
+    if (orgAgents.length > 0) {
+      setWalletStatus(true)
+    }
+    const did = orgAgents[0]?.orgDid
+    if (typeof did !== 'string') {
+      return
+    }
 
-        if (isPolygon || isKey || isWeb) {
-          setW3cSchema(true)
-          setSchemaType(SchemaTypes.schema_W3C)
-        }
+    const isPolygon = did.includes(DidMethod.POLYGON)
+    const isKey = did.includes(DidMethod.KEY)
+    const isWeb = did.includes(DidMethod.WEB)
+    const isIndy = did.includes(DidMethod.INDY)
 
-        if (isIndy) {
-          setW3cSchema(false)
-          setSchemaType(SchemaTypes.schema_INDY)
-        }
+    if (isPolygon || isKey || isWeb) {
+      setW3cSchema(true)
+      setSchemaType(SchemaTypes.schema_W3C)
+    }
 
-        if (isKey || isWeb) {
-          setIsNoLedger(true)
-        }
-      }
+    if (isIndy) {
+      setW3cSchema(false)
+      setSchemaType(SchemaTypes.schema_INDY)
+    }
+
+    if (isKey || isWeb) {
+      setIsNoLedger(true)
     }
   } catch (error) {
     console.error('Error fetching organization details:', error)
