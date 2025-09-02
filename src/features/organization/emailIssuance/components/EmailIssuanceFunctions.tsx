@@ -65,6 +65,103 @@ const fetchOrganizationDetails = async (orgId: string): Promise<string> => {
   }
 }
 
+const transformIndyData = (
+  existingData: IConfirmOOBCredentialIssuance['userData'],
+  credDefId: string | undefined,
+): ITransformedData => {
+  const transformedData: ITransformedData = { credentialOffer: [] }
+
+  existingData?.formData?.forEach((entry: FormDatum) => {
+    const transformedEntry: ICredentialOffer = {
+      emailId: entry.email,
+      attributes: [],
+    }
+
+    entry.attributes.forEach((attribute) => {
+      transformedEntry.attributes!.push({
+        value: String(attribute.value || ''),
+        name: (attribute.name || '') as string,
+        isRequired: attribute.isRequired as boolean,
+        dataType: '',
+      })
+    })
+    transformedData.credentialOffer.push(transformedEntry)
+  })
+
+  transformedData.credentialDefinitionId = credDefId ?? ''
+  transformedData.isReuseConnection = true
+
+  return transformedData
+}
+
+const transformW3CData = async (
+  existingData: IConfirmOOBCredentialIssuance['userData'],
+  orgId: string,
+  credentialSelected: ICredentials | null | undefined,
+  schemasIdentifier: string | undefined, // ✅ Update parameter type
+  schemaTypeValue: SchemaTypeValue | undefined,
+): Promise<ITransformedData> => {
+  const orgDID = await fetchOrganizationDetails(orgId)
+  if (!orgDID) {
+    throw new Error('Missing orgDid for payload')
+  }
+
+  const transformedData: ITransformedData = { credentialOffer: [] }
+
+  // ✅ Provide fallback for undefined schemasIdentifier
+  const contextValues = [CREDENTIAL_CONTEXT_VALUE, schemasIdentifier].filter(
+    (v): v is string => typeof v === 'string' && v !== '',
+  )
+
+  existingData?.formData?.forEach((entry: FormDatum) => {
+    const credentialOffer = {
+      emailId: entry.email,
+      credential: {
+        '@context': contextValues, // ✅ Use the filtered array
+        type: ['VerifiableCredential', credentialSelected?.schemaName].filter(
+          (v): v is string => typeof v === 'string',
+        ),
+        issuer: { id: orgDID },
+        issuanceDate: new Date().toISOString(),
+        credentialSubject: entry?.attributes?.reduce(
+          (acc, attr) => {
+            if (typeof attr.name === 'string') {
+              if (
+                attr.schemaDataType === 'number' &&
+                (attr.value === '' || attr.value === null)
+              ) {
+                acc[attr.name] = 0
+              } else if (
+                attr.schemaDataType === 'string' &&
+                attr.value === ''
+              ) {
+                acc[attr.name] = ''
+              } else if (attr.value !== null) {
+                acc[attr.name] = attr.value
+              }
+            }
+            return acc
+          },
+          {} as Record<string, string | number | boolean | undefined>,
+        ),
+      },
+      options: {
+        proofType:
+          schemaTypeValue === SchemaTypeValue.POLYGON
+            ? ProofType.polygon
+            : ProofType.no_ledger,
+        proofPurpose,
+      },
+    }
+    transformedData.credentialOffer.push(credentialOffer as ICredentialOffer)
+  })
+
+  transformedData.protocolVersion = 'v2'
+  transformedData.isReuseConnection = true
+  transformedData.credentialType = CredentialType.JSONLD
+
+  return transformedData
+}
 export const confirmOOBCredentialIssuance = async ({
   setIssueLoader,
   schemaType,
@@ -84,99 +181,26 @@ export const confirmOOBCredentialIssuance = async ({
 }: IConfirmOOBCredentialIssuance): Promise<void> => {
   setIssueLoader(true)
 
-  const existingData = userData
+  let transformedData: ITransformedData = { credentialOffer: [] }
 
-  const transformedData: ITransformedData = { credentialOffer: [] }
-
-  if (existingData?.formData) {
+  if (userData?.formData) {
     if (schemaType === SchemaTypes.schema_INDY) {
-      existingData.formData.forEach((entry: FormDatum) => {
-        const transformedEntry: ICredentialOffer = {
-          emailId: entry.email,
-          attributes: [],
-        }
-        entry.attributes.forEach((attribute) => {
-          const transformedAttribute = {
-            value: String(attribute.value || ''),
-            name: (attribute.name || '') as string,
-            isRequired: attribute.isRequired as boolean,
-            dataType: '',
-          }
-          transformedEntry?.attributes?.push(transformedAttribute)
-        })
-        transformedData.credentialOffer.push(transformedEntry)
-      })
-      transformedData.credentialDefinitionId = credDefId
-      transformedData.isReuseConnection = true
+      transformedData = transformIndyData(userData, credDefId)
     } else if (schemaType === SchemaTypes.schema_W3C) {
-      const orgDID = await fetchOrganizationDetails(orgId)
-      if (orgDID === '' || !orgDID) {
-        throw new Error('Missing orgDid for payload')
-      }
-      existingData.formData.forEach((entry: FormDatum) => {
-        const credentialOffer = {
-          emailId: entry.email,
-          credential: {
-            '@context': [CREDENTIAL_CONTEXT_VALUE, schemasIdentifier].filter(
-              (v): v is string => typeof v === 'string',
-            ),
-
-            type: [
-              'VerifiableCredential',
-              credentialSelected?.schemaName,
-            ].filter((v): v is string => typeof v === 'string'),
-
-            issuer: {
-              id: orgDID,
-            },
-            issuanceDate: new Date().toISOString(),
-
-            //FIXME: Logic for passing default value as 0 for empty value of number dataType attributes.
-            credentialSubject: entry?.attributes?.reduce(
-              (acc, attr) => {
-                if (typeof attr.name === 'string') {
-                  if (
-                    attr.schemaDataType === 'number' &&
-                    (attr.value === '' || attr.value === null)
-                  ) {
-                    acc[attr.name] = 0
-                  } else if (
-                    attr.schemaDataType === 'string' &&
-                    attr.value === ''
-                  ) {
-                    acc[attr.name] = ''
-                  } else if (attr.value !== null) {
-                    acc[attr.name] = attr.value
-                  }
-                }
-                return acc
-              },
-              {} as Record<string, string | number | boolean | undefined>,
-            ),
-          },
-          options: {
-            proofType:
-              schemaTypeValue === SchemaTypeValue.POLYGON
-                ? ProofType.polygon
-                : ProofType.no_ledger,
-            proofPurpose,
-          },
-        }
-
-        transformedData.credentialOffer.push(
-          credentialOffer as ICredentialOffer,
-        )
-      })
-
-      transformedData.protocolVersion = 'v2'
-      transformedData.isReuseConnection = true
-      transformedData.credentialType = CredentialType.JSONLD
+      transformedData = await transformW3CData(
+        userData,
+        orgId,
+        credentialSelected,
+        schemasIdentifier, // This can now be string | undefined
+        schemaTypeValue,
+      )
     }
 
     const transformedJson = JSON.stringify(transformedData, null, 2)
     if (!credentialType) {
       return
     }
+
     const response = await issueOobEmailCredential(
       transformedJson,
       credentialType,
@@ -190,13 +214,8 @@ export const confirmOOBCredentialIssuance = async ({
         setIssueLoader(false)
         setSuccess(data?.message)
         setOpenModal(false)
-        setTimeout(() => {
-          setSuccess(null)
-        }, 3000)
-        handleReset({
-          setCredentialSelected,
-          selectInputRef,
-        })
+        setTimeout(() => setSuccess(null), 3000)
+        handleReset({ setCredentialSelected, selectInputRef })
         setTimeout(() => {
           window.location.href = pathRoutes?.organizations?.issuedCredentials
         }, 500)
@@ -211,9 +230,7 @@ export const confirmOOBCredentialIssuance = async ({
       setFailure(response as string)
       setOpenModal(false)
       setIssueLoader(false)
-      setTimeout(() => {
-        setFailure(null)
-      }, 4000)
+      setTimeout(() => setFailure(null), 4000)
     }
   }
 }
@@ -273,7 +290,6 @@ export const getSchemaCredentials = async ({
 
     let options = []
 
-    //FIXME:  Logic of API call as per schema selection
     if (
       (currentSchemaType === SchemaTypes.schema_INDY && orgId) ||
       (currentSchemaType === SchemaTypes.schema_W3C &&
@@ -319,10 +335,7 @@ export const getSchemaCredentials = async ({
       }
       setLoading(false)
       // eslint-disable-next-line brace-style
-    }
-
-    //FIXME:  Logic of API call as per schema selection
-    else if (
+    } else if (
       currentSchemaType === SchemaTypes.schema_W3C &&
       orgId &&
       allSchemaSelectedFlag
