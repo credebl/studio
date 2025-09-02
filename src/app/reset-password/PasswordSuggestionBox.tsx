@@ -76,7 +76,6 @@ const PasswordSuggestionBox = ({
           <>
             {restrictedChar ? (
               <>
-                <label></label>
                 <div className="">
                   <div className="text-primary-700 text-base">
                     Password must contains :

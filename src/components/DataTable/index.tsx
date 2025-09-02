@@ -35,7 +35,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 <tr>
                   {header.map((ele: TableHeader, index: number) => (
                     <th
-                      key={index}
+                      key={`${ele.columnName}-${index}`}
                       scope="col"
                       className={`text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase ${ele.width ?? ''} ${
                         index === 0 && isEmailVerification ? 'pl-12' : ''
