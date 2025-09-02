@@ -1,7 +1,18 @@
 import * as yup from 'yup'
 
-import { Field, FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik'
-import { IAttributes, IFormikDataProps } from '../type/schemas-interface'
+import {
+  Field,
+  FieldArray,
+  FieldArrayRenderProps,
+  Form,
+  Formik,
+  FormikProps,
+} from 'formik'
+import {
+  IAttributes,
+  IFormData,
+  IFormikDataProps,
+} from '../type/schemas-interface'
 import React, { ChangeEvent, JSX } from 'react'
 import {
   Select,
@@ -40,6 +51,44 @@ function FormikData({
   setSuccess,
   loading,
 }: IFormikDataProps): JSX.Element {
+  const handleAttributeChange =
+    (index: number, formikHandlers: FormikProps<IFormData>) =>
+    (e: ChangeEvent<HTMLInputElement>) => {
+      formikHandlers.handleChange(e)
+      formikHandlers.setFieldValue(
+        `attribute[${index}].displayName`,
+        e.target.value,
+        true,
+      )
+    }
+
+  const handleSchemaDataTypeChange =
+    (index: number, formikHandlers: FormikProps<IFormData>) =>
+    (val: string) => {
+      formikHandlers.setFieldValue(`attribute.${index}.schemaDataType`, val)
+    }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleAddAttribute = (push: (item: any) => void) => () => {
+    push({
+      attributeName: '',
+      schemaDataType: 'string',
+      displayName: '',
+      isRequired: false,
+    })
+  }
+  const SelectItems = ({
+    options,
+  }: {
+    options: typeof filteredOptions
+  }): JSX.Element => (
+    <>
+      {options.map((opt) => (
+        <SelectItem key={opt.value} value={opt.value}>
+          {opt.label}
+        </SelectItem>
+      ))}
+    </>
+  )
   return (
     <Formik
       initialValues={formData}
@@ -166,16 +215,10 @@ function FormikData({
                                 name={`attribute.${index}.attributeName`}
                                 placeholder="Attribute eg. NAME, ID"
                                 disabled={!areFirstInputsSelected}
-                                onChange={(
-                                  e: ChangeEvent<HTMLInputElement>,
-                                ) => {
-                                  formikHandlers.handleChange(e)
-                                  formikHandlers.setFieldValue(
-                                    `attribute[${index}].displayName`,
-                                    e.target.value,
-                                    true,
-                                  )
-                                }}
+                                onChange={handleAttributeChange(
+                                  index,
+                                  formikHandlers,
+                                )}
                                 className="border-input file:text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-ring flex h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                               />
                               {validSameAttribute(
@@ -217,25 +260,16 @@ function FormikData({
                                   formikHandlers.values.attribute[index]
                                     .schemaDataType
                                 }
-                                onValueChange={(val) =>
-                                  formikHandlers.setFieldValue(
-                                    `attribute.${index}.schemaDataType`,
-                                    val,
-                                  )
-                                }
+                                onValueChange={handleSchemaDataTypeChange(
+                                  index,
+                                  formikHandlers,
+                                )}
                               >
                                 <SelectTrigger>
                                   <SelectValue placeholder="Select" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {filteredOptions.map((opt) => (
-                                    <SelectItem
-                                      key={opt.value}
-                                      value={opt.value}
-                                    >
-                                      {opt.label}
-                                    </SelectItem>
-                                  ))}
+                                  <SelectItems options={filteredOptions} />
                                 </SelectContent>
                               </Select>
                               {formikHandlers?.touched?.attribute &&
@@ -341,14 +375,7 @@ function FormikData({
                                 'absolute bottom-[-62px] left-[50%] m-auto flex w-max translate-x-[-50%] flex-row items-center gap-2 rounded-full py-0 disabled:opacity-100'
                               }
                               type="button"
-                              onClick={() =>
-                                push({
-                                  attributeName: '',
-                                  schemaDataType: 'string',
-                                  displayName: '',
-                                  isRequired: false,
-                                })
-                              }
+                              onClick={handleAddAttribute(push)}
                               disabled={!filledInputs(formikHandlers.values)}
                             >
                               <AddAttributeSVG />
