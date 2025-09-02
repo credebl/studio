@@ -60,13 +60,13 @@ const DataTable: React.FC<DataTableProps> = ({
                 {data.length > 0 ? (
                   data.map((row, rowIndex: number) => (
                     <tr
-                      key={rowIndex}
+                      key={`row-${rowIndex}`}
                       className="hover:bg-muted/30 border border-b"
                     >
                       {row.data.map(
                         (cell: TableCellData, cellIndex: number) => (
                           <td
-                            key={cellIndex}
+                            key={`subrow-${cellIndex}`}
                             className="text-foreground p-4 align-middle text-sm font-normal whitespace-nowrap"
                           >
                             <div>{cell.data}</div>
