@@ -110,6 +110,6 @@ export interface Organisation {
   userOrgRoles: UserOrgRole[]
   org_agents: OrgAgent[]
   publicProfile: boolean
-  checked?: boolean | undefined
+  checked?: boolean
   error?: string
 }

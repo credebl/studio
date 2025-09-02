@@ -87,11 +87,11 @@ const CredentialDefinition = (): React.JSX.Element => {
       </CardHeader>
 
       <CardContent className="pb-2">
-        {loading ? (
+        {loading && (
           <div className="space-y-4">
-            {Array.from({ length: 2 }).map((_, i) => (
+            {Array.from({ length: 2 }).map((_, id) => (
               <div
-                key={i}
+                key={`skeleton-${id}`}
                 className="flex items-center justify-between rounded-lg p-3"
               >
                 <div className="flex items-center gap-3">
@@ -101,11 +101,13 @@ const CredentialDefinition = (): React.JSX.Element => {
               </div>
             ))}
           </div>
-        ) : credentialDefinition.length > 0 ? (
+        )}
+
+        {credentialDefinition.length > 0 ? (
           <div className="space-y-4">
             {credentialDefinition.slice(0, 3).map((cred, index) => (
               <button
-                key={index}
+                key={`${cred.credentialDefinitionId}-${index}`}
                 type="button"
                 className="hover:bg-muted/50 border-border/50 relative flex h-full w-full cursor-pointer items-center justify-between overflow-hidden rounded-xl border p-3 text-left shadow-xl transition-transform duration-300"
                 onClick={() =>

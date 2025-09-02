@@ -14,6 +14,28 @@ import RenderResults from './render-result'
 import { navItems } from '@/constants/data'
 import { useRouter } from 'next/navigation'
 
+const KBarComponent = ({
+  children,
+}: {
+  children: React.ReactNode
+}): React.JSX.Element => (
+  <>
+    <KBarPortal>
+      <KBarPositioner className="bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm">
+        <KBarAnimator className="bg-card text-card-foreground relative mt-64! w-full max-w-[600px] -translate-y-12! overflow-hidden rounded-lg shadow-lg">
+          <div className="bg-card sticky top-0 z-10">
+            <KBarSearch className="bg-card w-full px-6 py-4 outline-hidden focus:ring-0 focus:ring-offset-0 focus:outline-hidden" />
+          </div>
+          <div className="max-h-[400px]">
+            <RenderResults />
+          </div>
+        </KBarAnimator>
+      </KBarPositioner>
+    </KBarPortal>
+    {children}
+  </>
+)
+
 export default function KBar({
   children,
 }: {
@@ -60,27 +82,6 @@ export default function KBar({
     })
   }, [router])
 
-  const KBarComponent = ({
-    children,
-  }: {
-    children: React.ReactNode
-  }): React.JSX.Element => (
-    <>
-      <KBarPortal>
-        <KBarPositioner className="bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm">
-          <KBarAnimator className="bg-card text-card-foreground relative mt-64! w-full max-w-[600px] -translate-y-12! overflow-hidden rounded-lg shadow-lg">
-            <div className="bg-card sticky top-0 z-10">
-              <KBarSearch className="bg-card w-full px-6 py-4 outline-hidden focus:ring-0 focus:ring-offset-0 focus:outline-hidden" />
-            </div>
-            <div className="max-h-[400px]">
-              <RenderResults />
-            </div>
-          </KBarAnimator>
-        </KBarPositioner>
-      </KBarPortal>
-      {children}
-    </>
-  )
   return (
     <KBarProvider actions={actions}>
       <KBarComponent>{children}</KBarComponent>
