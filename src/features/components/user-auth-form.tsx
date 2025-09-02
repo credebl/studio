@@ -54,8 +54,6 @@ export default function SignInViewPage(): React.JSX.Element {
   const [forgetPasswordLoading, setForgetPasswordLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const [, setFidoLoader] = useState<boolean>(false)
-  const [, setFidoUserError] = useState('')
   const [alert, setAlert] = useState<null | string>(null)
   const [success, setSuccess] = useState<null | string>(null)
 
@@ -174,9 +172,6 @@ export default function SignInViewPage(): React.JSX.Element {
   const authenticateWithPasskey = async (email: string): Promise<void> => {
     try {
       setLoading(true)
-      setFidoLoader(true)
-      setFidoUserError('')
-
       const obj = {
         userName: email?.trim()?.toLowerCase(),
         email: email?.trim()?.toLowerCase(),
@@ -189,7 +184,7 @@ export default function SignInViewPage(): React.JSX.Element {
         generateAuthenticationResponse?.data?.data?.challenge
 
       if (generateAuthenticationResponse?.data?.error) {
-        setFidoUserError(generateAuthenticationResponse?.data?.error)
+        console.error(generateAuthenticationResponse?.data?.error)
         return
       }
 
@@ -230,20 +225,19 @@ export default function SignInViewPage(): React.JSX.Element {
             : '/dashboard',
         )
       } else if (verificationResp?.error) {
-        setFidoUserError(verificationResp?.error)
+        console.error(verificationResp?.error)
       } else {
-        setFidoUserError('Something went wrong during verification')
+        console.error('Something went wrong during verification')
       }
     } catch (error) {
       if (error instanceof DOMException) {
-        setFidoUserError('The operation either timed out or was not allowed.')
+        console.error('The operation either timed out or was not allowed.')
       } else {
-        setFidoUserError('Authentication failed. Please try again.')
+        console.error('Authentication failed. Please try again.')
         // eslint-disable-next-line no-console
         console.error('FIDO Authentication Error:', error)
       }
     } finally {
-      setFidoLoader(false)
       setLoading(false)
     }
   }
