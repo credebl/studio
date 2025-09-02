@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
  * Accessible table container.
  * Consumers **must** include <thead>/<th> in children for accessibility.
  */
+// NOSONAR: Table headers are injected by consumers of this component
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div
