@@ -1,7 +1,7 @@
 'use client'
 
 import { GreenIndicator, RedIndicator } from '@/config/svgs/PasswordSuggestion'
-import React, { JSX, useCallback, useEffect, useState } from 'react'
+import React, { JSX, useCallback, useEffect, useMemo, useState } from 'react'
 import { allowedPasswordChars } from '../../config/CommonConstant'
 
 interface PasswordSuggestion {
@@ -9,7 +9,13 @@ interface PasswordSuggestion {
   value: string
 }
 
-const rules = [
+type ValidatorKey =
+  | 'setSmallAlpha'
+  | 'setCapsAlpha'
+  | 'setNumber'
+  | 'setSplChar'
+
+const rules: { regex: RegExp; setter: ValidatorKey }[] = [
   { regex: /[a-z]/, setter: 'setSmallAlpha' },
   { regex: /[A-Z]/, setter: 'setCapsAlpha' },
   { regex: /\d/, setter: 'setNumber' },
@@ -28,18 +34,31 @@ const PasswordSuggestionBox = ({
   const [restrictedChar, setRestrictedChar] = useState(false)
 
   const validators: Record<
-    string,
+    ValidatorKey,
     React.Dispatch<React.SetStateAction<boolean>>
-  > = {
-    setNumber,
-    setSplChar,
-    setSmallAlpha,
-    setCapsAlpha,
+  > = useMemo(
+    () => ({
+      setNumber,
+      setSplChar,
+      setSmallAlpha,
+      setCapsAlpha,
+    }),
+    [setNumber, setSplChar, setSmallAlpha, setCapsAlpha],
+  )
+
+  const resetValidation = (): void => {
+    setNumber(false)
+    setSplChar(false)
+    setSmallAlpha(false)
+    setCapsAlpha(false)
+    setMinChar(false)
+    setRestrictedChar(false)
   }
 
   const validatePassword = useCallback(
     (password: string | null): void => {
       if (!password) {
+        resetValidation()
         return
       }
 
@@ -47,7 +66,7 @@ const PasswordSuggestionBox = ({
       const invalidChars = allowedPasswordChars.exec(password)
       setRestrictedChar(invalidChars === null)
 
-      // Apply regex rules
+      // Apply regex rules safely
       rules.forEach(({ regex, setter }) => {
         validators[setter](regex.test(password))
       })
