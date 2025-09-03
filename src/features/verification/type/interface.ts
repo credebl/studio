@@ -102,7 +102,7 @@ export interface IOption {
   value: string | number
   label: string
 }
-// fixme later
+
 export interface ISelectedAttributes {
   displayName: string
   attributeName: string

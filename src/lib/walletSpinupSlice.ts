@@ -1,10 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
-// export interface OrgData {
-//   name: string;
-//   [key: string]: string | Blob | MediaSource | null;
-// }
-
 export interface OrgData {
   name: string
   description: string
