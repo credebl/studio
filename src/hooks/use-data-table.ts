@@ -41,6 +41,8 @@ const ARRAY_SEPARATOR = ','
 const DEBOUNCE_MS = 300
 const THROTTLE_MS = 50
 
+type FilterValue = string | string[] | null;
+
 interface UseDataTableProps<TData>
   extends Omit<
       TableOptions<TData>,
@@ -211,67 +213,79 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>): {
     debounceMs,
   )
 
+  function normalizeFilterValue(value: FilterValue): string[] {
+  if (value === null) return [];
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)) {
+    return value.split(/[^a-zA-Z0-9]+/).filter(Boolean);
+  }
+  return [value];
+}
+
+
+
   const initialColumnFilters: ColumnFiltersState = React.useMemo(() => {
     if (enableAdvancedFilter) {
       return []
     }
 
-    return Object.entries(filterValues).reduce<ColumnFiltersState>(
-      (filters, [key, value]) => {
-        if (value !== null) {
-          const processedValue = Array.isArray(value)
-            ? value
-            : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
-              ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
-              : [value]
+   return Object.entries(filterValues).reduce<ColumnFiltersState>(
+  (filters, [key, value]) => {
+    if (value !== null) {
+      filters.push({
+        id: key,
+        value: normalizeFilterValue(value),
+      });
+    }
+    return filters;
+  },
+  []
+);
 
-          filters.push({
-            id: key,
-            value: processedValue,
-          })
-        }
-        return filters
-      },
-      [],
-    )
   }, [filterValues, enableAdvancedFilter])
 
   const [columnFilters, setColumnFilters] =
     React.useState<ColumnFiltersState>(initialColumnFilters)
 
-  const onColumnFiltersChange = React.useCallback(
-    (updaterOrValue: Updater<ColumnFiltersState>) => {
-      if (enableAdvancedFilter) {
-        return
-      }
+    function computeFilterUpdates<TData>(
+  prev: ColumnFiltersState,
+  next: ColumnFiltersState,
+  filterableColumns: Array<{ id?: string }>
+): Record<string, string | string[] | null> {
+  const updates: Record<string, string | string[] | null> = {};
 
-      setColumnFilters((prev) => {
-        const next =
-          typeof updaterOrValue === 'function'
-            ? updaterOrValue(prev)
-            : updaterOrValue
+  next.forEach((filter) => {
+    if (filterableColumns.some((col) => col.id === filter.id)) {
+      updates[filter.id] = filter.value as string | string[];
+    }
+  });
 
-        const filterUpdates = next.reduce<
-          Record<string, string | string[] | null>
-        >((acc, filter) => {
-          if (filterableColumns.find((column) => column.id === filter.id)) {
-            acc[filter.id] = filter.value as string | string[]
-          }
-          return acc
-        }, {})
+  prev.forEach((prevFilter) => {
+    if (!next.some((filter) => filter.id === prevFilter.id)) {
+      updates[prevFilter.id] = null;
+    }
+  });
 
-        for (const prevFilter of prev) {
-          if (!next.some((filter) => filter.id === prevFilter.id)) {
-            filterUpdates[prevFilter.id] = null
-          }
-        }
+  return updates;
+}
 
-        debouncedSetFilterValues(filterUpdates)
-        return next
-      })
-    },
-    [debouncedSetFilterValues, filterableColumns, enableAdvancedFilter],
-  )
+const onColumnFiltersChange = React.useCallback(
+  (updaterOrValue: Updater<ColumnFiltersState>) => {
+    if (enableAdvancedFilter) return;
+
+    setColumnFilters((prev) => {
+      const next =
+        typeof updaterOrValue === 'function' ? updaterOrValue(prev) : updaterOrValue;
+
+      const filterUpdates = computeFilterUpdates(prev, next, filterableColumns);
+
+      debouncedSetFilterValues(filterUpdates);
+      return next;
+    });
+  },
+  [debouncedSetFilterValues, filterableColumns, enableAdvancedFilter]
+);
+
 
   const table = useReactTable({
     ...tableProps,
