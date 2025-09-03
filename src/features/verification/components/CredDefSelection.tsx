@@ -40,15 +40,13 @@ const CredDefSelection = (): JSX.Element => {
   const schema = useAppSelector((state) => state.schema)
   const schemaId = useAppSelector((state) => state.verification.schemaId)
 
-  const selectConnection = async (
-    credDefId: string,
-    checked: boolean,
-  ): Promise<void> => {
-    if (credDefId && checked) {
-      dispatch(setCredDefId(credDefId))
-    } else {
-      dispatch(resetCredDefId())
-    }
+  // Separate functions for clarity (fixes SonarQube issue)
+  const selectCredDef = (credDefId: string): void => {
+    dispatch(setCredDefId(credDefId))
+  }
+
+  const deselectCredDef = (): void => {
+    dispatch(resetCredDefId())
   }
 
   const getCredDefs = async (schemaId: string): Promise<void> => {
@@ -63,15 +61,13 @@ const CredDefSelection = (): JSX.Element => {
             data: (
               <div className="flex items-center">
                 <input
-                  id="default-checkbox"
+                  id={`checkbox-${ele.credentialDefinitionId}`}
                   type="checkbox"
-                  onClick={(event) => {
-                    const input = event.target as HTMLInputElement
+                  onChange={(event) => {
                     if (ele.credentialDefinitionId) {
-                      selectConnection(
-                        ele.credentialDefinitionId,
-                        input.checked,
-                      )
+                      event.target.checked
+                        ? selectCredDef(ele.credentialDefinitionId)
+                        : deselectCredDef()
                     }
                   }}
                   className="text-primary focus:ring-primary h-4 w-4 cursor-pointer rounded"
@@ -120,10 +116,10 @@ const CredDefSelection = (): JSX.Element => {
     getSchemaAndCredDef()
   }, [])
 
-  const handleClick = async (): Promise<void> => {
+  const handleClick = (): void => {
     setLoading(true)
     try {
-      await router.push(`${pathRoutes.organizations.verification.connections}`)
+      router.push(`${pathRoutes.organizations.verification.connections}`)
     } finally {
       setLoading(false)
     }

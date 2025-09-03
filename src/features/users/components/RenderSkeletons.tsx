@@ -1,9 +1,11 @@
 import { Skeleton } from '@/components/ui/skeleton'
 
+const skeletonIds = ['skeleton-1', 'skeleton-2', 'skeleton-3']
+
 const renderSkeletons = (): React.JSX.Element[] =>
-  Array.from({ length: 3 }).map((_, index) => (
+  skeletonIds.map((id) => (
     <div
-      key={index}
+      key={id}
       className="bg-background animate-pulse rounded-lg p-4 shadow-sm"
     >
       <div className="flex items-center justify-between">

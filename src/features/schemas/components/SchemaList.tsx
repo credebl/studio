@@ -93,6 +93,7 @@ const SchemaList = (props: {
   })
   const options = ['All schemas']
   const optionsWithDefault = ["Organization's schema", ...options]
+  const skeletonIds = ['skeleton-1', 'skeleton-2', 'skeleton-3', 'skeleton-4']
 
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
@@ -432,8 +433,8 @@ const SchemaList = (props: {
 
         {loading && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-2">
-            {[...Array(4)].map((_, idx) => (
-              <div key={idx} className="space-y-3 rounded-lg p-4 shadow-sm">
+            {skeletonIds.map((id) => (
+              <div key={id} className="space-y-3 rounded-lg p-4 shadow-sm">
                 <Skeleton className="h-5 w-1/2 rounded-md" />
                 <Skeleton className="h-4 w-1/3 rounded" />
                 <Skeleton className="h-4 w-3/4 rounded" />
