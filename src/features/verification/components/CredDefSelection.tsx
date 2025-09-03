@@ -11,6 +11,7 @@ import BackButton from '@/components/BackButton'
 import { Button } from '@/components/ui/button'
 import DataTable from '@/components/DataTable'
 import { ITableData } from './SortDataTable'
+import { ITableHtml } from '@/features/organization/connectionIssuance/type/Connections'
 import Loader from '@/components/Loader'
 import SchemaCard from '@/features/schemas/components/SchemaCard'
 import { getCredentialDefinitionsForVerification } from '@/app/api/verification'
@@ -32,7 +33,9 @@ const CredDefSelection = (): JSX.Element => {
   })
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
-  const [credDefList, setCredDefList] = useState<ITableData[]>([])
+  const [credDefList, setCredDefList] = useState<ITableData[] | ITableHtml[]>(
+    [],
+  )
 
   const dispatch = useAppDispatch()
   const router = useRouter()
