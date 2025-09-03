@@ -64,6 +64,12 @@ export interface IssuedCredential {
   schemaId: string
   schemaName: string
   orgId: string
+  connections: IConnection
+}
+
+interface IConnection {
+  theirLabel: string
+  connectionId: string
 }
 
 export interface IProps {

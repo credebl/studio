@@ -32,6 +32,78 @@ import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
 import { useAppSelector } from '@/lib/hooks'
 
+const CopyDid = ({
+  value,
+  className,
+  hideValue = false,
+  ellipsis = true,
+  setCopied,
+  copied,
+}: {
+  value: string
+  className?: string
+  hideValue?: boolean
+  ellipsis?: boolean
+  setCopied: React.Dispatch<React.SetStateAction<boolean>>
+  copied: boolean
+}): React.JSX.Element => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <div className={`flex items-center gap-2 ${className}`}>
+        {!hideValue && ellipsis ? (
+          <span className="max-w-sm truncate">{value}</span>
+        ) : (
+          <span className="">{value}</span>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6"
+          onClick={() => {
+            navigator.clipboard.writeText(value)
+            setCopied(true)
+            setTimeout(() => {
+              setCopied(false)
+            }, 2000)
+          }}
+        >
+          {copied ? (
+            <Check className="text-green-400" />
+          ) : (
+            <Copy className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
+    </TooltipTrigger>
+    <TooltipContent>
+      <p>Copy to clipboard</p>
+    </TooltipContent>
+  </Tooltip>
+)
+
+const DateTooltip = ({
+  date,
+  children,
+  showLabel = false,
+}: {
+  date: string
+  children: React.ReactNode
+  showLabel?: boolean
+}): React.JSX.Element => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <span>{children}</span>
+    </TooltipTrigger>
+    <TooltipContent>
+      {showLabel ? (
+        <p>Wallet Created on : {new Date(date).toLocaleString()}</p>
+      ) : (
+        <p>{new Date(date).toLocaleString()}</p>
+      )}
+    </TooltipContent>
+  </Tooltip>
+)
+
 const OrganizationDetails = ({
   orgData,
   setActiveTab,
@@ -86,74 +158,6 @@ const OrganizationDetails = ({
     previousOrgId.current = selectedDropdownOrgId
   }, [selectedDropdownOrgId])
 
-  const CopyDid = ({
-    value,
-    className,
-    hideValue = false,
-    ellipsis = true,
-  }: {
-    value: string
-    className?: string
-    hideValue?: boolean
-    ellipsis?: boolean
-  }): React.JSX.Element => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <div className={`flex items-center gap-2 ${className}`}>
-          {!hideValue && ellipsis ? (
-            <span className="max-w-sm truncate">{value}</span>
-          ) : (
-            <span className="">{value}</span>
-          )}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={() => {
-              navigator.clipboard.writeText(value)
-              setCopied(true)
-              setTimeout(() => {
-                setCopied(false)
-              }, 2000)
-            }}
-          >
-            {copied ? (
-              <Check className="text-green-400" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>Copy to clipboard</p>
-      </TooltipContent>
-    </Tooltip>
-  )
-
-  const DateTooltip = ({
-    date,
-    children,
-    showLabel = false,
-  }: {
-    date: string
-    children: React.ReactNode
-    showLabel?: boolean
-  }): React.JSX.Element => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span>{children}</span>
-      </TooltipTrigger>
-      <TooltipContent>
-        {showLabel ? (
-          <p>Wallet Created on : {new Date(date).toLocaleString()}</p>
-        ) : (
-          <p>{new Date(date).toLocaleString()}</p>
-        )}
-      </TooltipContent>
-    </Tooltip>
-  )
-
   const tableData: ITableData[] = [
     {
       data: [
@@ -172,6 +176,8 @@ const OrganizationDetails = ({
                   value={agentData?.orgDid}
                   className="font-mono font-semibold"
                   ellipsis={false}
+                  setCopied={setCopied}
+                  copied={copied}
                 />
               ) : (
                 <span className="font-semibold">Not available</span>
