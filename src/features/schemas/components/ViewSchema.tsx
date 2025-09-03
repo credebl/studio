@@ -220,7 +220,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
 
     if (credDefList && credDefList.length > 0) {
       return (
-        <div className="Flex-wrap m-5">
+        <div className="m-5 flex-wrap">
           <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-2">
             {credDefList.map((element) => (
               <div
@@ -228,7 +228,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                 className="relative h-full w-full overflow-hidden rounded-xl transition-transform duration-300"
               >
                 <CredentialDefinitionCard
-                  credDeffName={element.tag}
+                  credDefName={element.tag}
                   credentialDefinitionId={element.credentialDefinitionId}
                   schemaId={element.schemaLedgerId}
                   revocable={element.revocable}

@@ -9,7 +9,7 @@ import { useAppDispatch } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
 interface IProps {
-  credDeffName: string
+  credDefName: string
   userRoles?: string[]
   credentialDefinitionId: string
   schemaId: string
@@ -51,7 +51,7 @@ const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
             className="line-clamp-2 max-h-[40px] truncate text-xl leading-none font-bold break-words whitespace-normal"
             style={{ display: '-webkit-box' }}
           >
-            {props.credDeffName}
+            {props.credDefName}
           </h5>
         </div>
         <div className="p-2">
