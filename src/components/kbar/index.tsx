@@ -1,7 +1,6 @@
 'use client'
 
 import {
-  Action,
   KBarAnimator,
   KBarPortal,
   KBarPositioner,
@@ -9,37 +8,45 @@ import {
   KBarSearch,
 } from 'kbar'
 import React, { useMemo } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
 import { NavItem } from '../../../types'
 import RenderResults from './render-result'
 import { navItems } from '@/constants/data'
-import { useRouter } from 'next/navigation'
 
-/**
- * Helper to generate navigation actions
- */
-function createActions(router: ReturnType<typeof useRouter>): Action[] {
-  const navigateTo = (url: string): void => {
-    router.push(url)
-  }
+export default function KBar({
+  children,
+}: {
+  children: React.ReactNode
+}): React.JSX.Element {
+  const router = useRouter()
+  const pathname = usePathname()
 
-  return navItems.flatMap((navItem) => {
-    const baseAction: Action | null =
-      navItem.url !== '#'
-        ? {
-            id: `${navItem.title.toLowerCase()}Action`,
-            name: navItem.title,
-            shortcut: navItem.shortcut,
-            keywords: navItem.title.toLowerCase(),
-            section: 'Navigation',
-            subtitle: `Go to ${navItem.title}`,
-            perform: (): void => navigateTo(navItem.url),
-          }
-        : null
+  // These action are for the navigation
+  const actions = useMemo(() => {
+    // Define navigateTo inside the useMemo callback to avoid dependency array issues
+    const navigateTo = (url: string): void => {
+      router.push(url)
+    }
 
-    const childActions: Action[] =
-      navItem.items?.map(
-        (childItem: NavItem): Action => ({
+    return navItems.flatMap((navItem) => {
+      // Only include base action if the navItem has a real URL and is not just a container
+      const baseAction =
+        navItem.url !== '#'
+          ? {
+              id: `${navItem.title.toLowerCase()}Action`,
+              name: navItem.title,
+              shortcut: navItem.shortcut,
+              keywords: navItem.title.toLowerCase(),
+              section: 'Navigation',
+              subtitle: `Go to ${navItem.title}`,
+              perform: (): void => navigateTo(navItem.url),
+            }
+          : null
+
+      // Map child items into actions
+      const childActions =
+        navItem.items?.map((childItem: NavItem) => ({
           id: `${childItem.title.toLowerCase()}Action`,
           name: childItem.title,
           shortcut: childItem.shortcut,
@@ -47,22 +54,18 @@ function createActions(router: ReturnType<typeof useRouter>): Action[] {
           section: navItem.title,
           subtitle: `Go to ${childItem.title}`,
           perform: (): void => navigateTo(childItem.url),
-        }),
-      ) ?? []
+        })) ?? []
 
-    return baseAction ? [baseAction, ...childActions] : childActions
-  })
-}
+      // Return only valid actions (ignoring null base actions for containers)
+      return baseAction ? [baseAction, ...childActions] : childActions
+    })
+  }, [router])
 
-/**
- * Separate component for KBar UI
- */
-function KBarComponent({
-  children,
-}: {
-  readonly children: React.ReactNode
-}): React.JSX.Element {
-  return (
+  const KBarComponent = ({
+    children,
+  }: {
+    children: React.ReactNode
+  }): React.JSX.Element => (
     <>
       <KBarPortal>
         <KBarPositioner className="bg-background/80 fixed inset-0 z-99999 p-0! backdrop-blur-sm">
@@ -79,19 +82,9 @@ function KBarComponent({
       {children}
     </>
   )
-}
-
-export default function KBar({
-  children,
-}: {
-  readonly children: React.ReactNode
-}): React.JSX.Element {
-  const router = useRouter()
-  const actions = useMemo(() => createActions(router), [router])
-
   return (
     <KBarProvider actions={actions}>
-      <KBarComponent>{children}</KBarComponent>
+      <KBarComponent key={pathname}>{children}</KBarComponent>
     </KBarProvider>
   )
 }
