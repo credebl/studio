@@ -77,60 +77,75 @@ const DedicatedLedgerConfig = ({
   const [domainValue, setDomainValue] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [isCreatingIdentity, setIsCreatingIdentity] = useState(false)
+
+  const processIndyLedger = (
+    details: IDetails,
+    configData: ILedgerConfigData,
+  ): void => {
+    for (const [key, subDetails] of Object.entries(details)) {
+      if (typeof subDetails === 'object' && subDetails !== null) {
+        for (const [subKey, value] of Object.entries(subDetails)) {
+          const formattedKey = `${key}:${subKey}`.replace(
+            `${DidMethod.INDY}:`,
+            '',
+          )
+          configData.indy[`${DidMethod.INDY}`][formattedKey] = value
+        }
+      }
+    }
+  }
+
+  const processPolygonLedger = (
+    details: IDetails,
+    configData: ILedgerConfigData,
+  ): void => {
+    for (const [key, value] of Object.entries(details)) {
+      if (typeof value === 'object' && value !== null) {
+        for (const [subKey, subValue] of Object.entries(value)) {
+          configData.polygon[`${DidMethod.POLYGON}`][subKey] = subValue
+        }
+      } else if (typeof value === 'string') {
+        configData.polygon[`${DidMethod.POLYGON}`][key] = value
+      }
+    }
+  }
+
+  const processNoLedger = (
+    details: IDetails,
+    configData: ILedgerConfigData,
+  ): void => {
+    for (const [key, value] of Object.entries(details)) {
+      configData.noLedger[key] = value as string
+    }
+  }
+
   const fetchLedgerConfig = async (): Promise<void> => {
     try {
       const { data } = (await getLedgerConfig()) as AxiosResponse
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const dedicatedLedgerConfigData: ILedgerConfigData = {
-          indy: {
-            [`${DidMethod.INDY}`]: {},
-          },
-          polygon: {
-            [`${DidMethod.POLYGON}`]: {},
-          },
-          noLedger: {},
-        }
-
-        data.data.forEach(({ name, details }: ILedgerItem) => {
-          const lowerName = name.toLowerCase()
-
-          if (lowerName === Ledgers.INDY && details) {
-            for (const [key, subDetails] of Object.entries(details)) {
-              if (typeof subDetails === 'object' && subDetails !== null) {
-                for (const [subKey, value] of Object.entries(subDetails)) {
-                  const formattedKey = `${key}:${subKey}`.replace(
-                    `${DidMethod.INDY}:`,
-                    '',
-                  )
-                  dedicatedLedgerConfigData.indy[`${DidMethod.INDY}`][
-                    formattedKey
-                  ] = value
-                }
-              }
-            }
-          } else if (lowerName === Ledgers.POLYGON && details) {
-            for (const [key, value] of Object.entries(details)) {
-              if (typeof value === 'object' && value !== null) {
-                for (const [subKey, subValue] of Object.entries(value)) {
-                  dedicatedLedgerConfigData.polygon[`${DidMethod.POLYGON}`][
-                    subKey
-                  ] = subValue
-                }
-              } else if (typeof value === 'string') {
-                dedicatedLedgerConfigData.polygon[`${DidMethod.POLYGON}`][key] =
-                  value
-              }
-            }
-          } else if (lowerName === Ledgers.NO_LEDGER.toLowerCase() && details) {
-            for (const [key, value] of Object.entries(details)) {
-              dedicatedLedgerConfigData.noLedger[key] = value as string
-            }
-          }
-        })
-
-        setMappedData(dedicatedLedgerConfigData)
+      if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+        return
       }
+      const dedicatedLedgerConfigData: ILedgerConfigData = {
+        indy: { [`${DidMethod.INDY}`]: {} },
+        polygon: { [`${DidMethod.POLYGON}`]: {} },
+        noLedger: {},
+      }
+
+      const processLedgerItem = ({ name, details }: ILedgerItem): void => {
+        const lowerName = name.toLowerCase()
+
+        if (lowerName === Ledgers.INDY && details) {
+          processIndyLedger(details, dedicatedLedgerConfigData)
+        } else if (lowerName === Ledgers.POLYGON && details) {
+          processPolygonLedger(details, dedicatedLedgerConfigData)
+        } else if (lowerName === Ledgers.NO_LEDGER.toLowerCase() && details) {
+          processNoLedger(details, dedicatedLedgerConfigData)
+        }
+      }
+
+      data.data.forEach(processLedgerItem)
+      setMappedData(dedicatedLedgerConfigData)
     } catch (err) {
       console.error('Fetch Network ERROR::::', err)
     }
