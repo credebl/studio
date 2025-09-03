@@ -16,13 +16,14 @@ interface IApiListParameter {
   sortingOrder: string
   allSearch: string
 }
+
 interface ISchemaListPaginationProps {
-  schemaListAPIParameter: IApiListParameter
-  paginationNumbers: (string | number)[]
-  setSchemaListAPIParameter: React.Dispatch<
+  readonly schemaListAPIParameter: IApiListParameter
+  readonly paginationNumbers: (string | number)[]
+  readonly setSchemaListAPIParameter: React.Dispatch<
     React.SetStateAction<IApiListParameter>
   >
-  lastPage: number
+  readonly lastPage: number
 }
 
 function SchemaListPagination({
@@ -49,8 +50,8 @@ function SchemaListPagination({
             </PaginationItem>
           )}
 
-          {paginationNumbers.map((page, idx) => (
-            <PaginationItem key={idx}>
+          {paginationNumbers.map((page) => (
+            <PaginationItem key={page.toString()}>
               {page === '...' ? (
                 <span className="text-muted-foreground px-3 py-2">…</span>
               ) : (

@@ -31,7 +31,7 @@ interface MyAuthOptions {
     }): Promise<string>
   }
   secret?: string
-  session?: Partial<SessionOptions> | undefined
+  session?: Partial<SessionOptions>
   pages?: { signIn: string }
   cookies?: {
     sessionToken: {
@@ -194,6 +194,7 @@ export const authOptions: MyAuthOptions = {
           return redirectUrl.toString()
         }
       } catch (err) {
+        console.error('Redirect error:', err)
         return new URL(url, baseUrl).toString()
       }
 

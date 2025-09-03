@@ -3,7 +3,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { SelectedUsers } from '@/features/organization/connectionIssuance/type/Issuance'
 
 interface AuthState {
-  W3C_SCHEMA_DATA?: W3cSchemaDetails | undefined
+  W3C_SCHEMA_DATA?: W3cSchemaDetails
   W3C_SCHEMA_DETAILS?: W3cSchemaDetails
   ALL_SCHEMAS?: boolean
   ORG_DID?: string

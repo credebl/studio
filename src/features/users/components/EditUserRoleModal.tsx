@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { RoleNames, apiStatusCodes } from '@/config/CommonConstant'
 import {
   Tooltip,
@@ -57,10 +57,10 @@ const EditUserRoleModal = ({
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const orgId = useAppSelector((state) => state.organization.orgId)
-  const getRoles = async (): Promise<void> => {
+
+  const getRoles = useCallback(async (): Promise<void> => {
     try {
       const response = await getOrganizationRoles(orgId)
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -93,13 +93,65 @@ const EditUserRoleModal = ({
       console.error('Error fetching roles:', error)
       setErrorMsg('Failed to fetch roles')
     }
-  }
+  }, [orgId, user?.roles])
 
   useEffect(() => {
     if (openModal) {
       getRoles()
     }
-  }, [openModal, user])
+  }, [openModal, user, getRoles])
+
+  const handleIssuerOrVerifier = (
+    role: RoleI,
+    checked: boolean,
+  ): RoleI[] | null =>
+    roles?.map((r) => {
+      if (r.id === role.id) {
+        return { ...r, checked }
+      }
+      if (['verifier', 'issuer', 'member'].includes(r.name)) {
+        return { ...r, checked: true }
+      }
+      return { ...r, checked: false }
+    }) ?? null
+
+  const handleAdmin = (role: RoleI, checked: boolean): RoleI[] | null =>
+    roles?.map((r) => {
+      if (r.id === role.id) {
+        return { ...r, checked }
+      }
+      if (r.name === 'member') {
+        return { ...r, checked: true }
+      }
+      return { ...r, checked: false }
+    }) ?? null
+
+  const handleDefault = (role: RoleI, checked: boolean): RoleI[] | null =>
+    roles?.map((r) => (r.id === role.id ? { ...r, checked } : r)) ?? null
+
+  const handleRoleChange = (checked: boolean, role: RoleI): void => {
+    let updatedRoles: RoleI[] | null = null
+
+    if (['issuer', 'verifier'].includes(role.name) && checked) {
+      updatedRoles = handleIssuerOrVerifier(role, checked)
+    } else if (role.name === 'admin' && checked) {
+      updatedRoles = handleAdmin(role, checked)
+    } else {
+      updatedRoles = handleDefault(role, checked)
+    }
+
+    setRoles(updatedRoles)
+  }
+
+  const getCheckboxClass = (role: RoleI): string => {
+    if (role.checked) {
+      return 'border'
+    }
+    if (role.disabled) {
+      return 'text-muted'
+    }
+    return ''
+  }
 
   const handleSave = async (): Promise<void> => {
     setLoading(true)
@@ -126,47 +178,6 @@ const EditUserRoleModal = ({
       setErrorMsg('Failed to update user role')
     } finally {
       setLoading(false)
-    }
-  }
-
-  const handleRoleChange = (checked: boolean, role: RoleI): void => {
-    if (
-      (role.name === 'issuer' && checked === true) ||
-      (role.name === 'verifier' && checked === true)
-    ) {
-      const updatedRoles = roles?.map((r) => {
-        if (r.id === role.id) {
-          return { ...r, checked }
-        } else if (
-          (r.name === 'verifier' && r.checked) ||
-          (r.name === 'issuer' && r.checked) ||
-          (r.name === 'member' && r.checked)
-        ) {
-          return { ...r, checked: true }
-        } else {
-          return { ...r, checked: false }
-        }
-      })
-      setRoles(updatedRoles ?? null)
-    } else if (role.name === 'admin' && checked === true) {
-      const updatedRoles = roles?.map((r) => {
-        if (r.id === role.id) {
-          return { ...r, checked }
-        } else if (r.name === 'member' && r.checked) {
-          return { ...r, checked: true }
-        } else {
-          return { ...r, checked: false }
-        }
-      })
-      setRoles(updatedRoles ?? null)
-    } else {
-      const updatedRoles = roles?.map((r) => {
-        if (r.id === role.id) {
-          return { ...r, checked }
-        }
-        return r
-      })
-      setRoles(updatedRoles ?? null)
     }
   }
 
@@ -211,7 +222,7 @@ const EditUserRoleModal = ({
                       </TooltipTrigger>
                       <TooltipContent side="top">{user?.email}</TooltipContent>
                     </Tooltip>
-                  </TooltipProvider>{' '}
+                  </TooltipProvider>
                 </div>
               </div>
 
@@ -224,20 +235,12 @@ const EditUserRoleModal = ({
                 {roles && (
                   <div className="grid grid-cols-2 space-y-3">
                     {roles.map((role) => (
-                      <div
+                      <button
                         key={role.id}
-                        className="flex items-center rounded-md p-3 transition-all"
-                        onClick={() =>
-                          !role.disabled &&
-                          handleRoleChange(!role.checked, role)
-                        }
-                        role="button"
-                        tabIndex={0}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            handleRoleChange(!role.checked, role)
-                          }
-                        }}
+                        type="button"
+                        disabled={role.disabled}
+                        onClick={() => handleRoleChange(!role.checked, role)}
+                        className="flex w-full items-center rounded-md p-3 text-left transition-all"
                       >
                         <Checkbox
                           id={`checkbox-${role.id}`}
@@ -246,23 +249,23 @@ const EditUserRoleModal = ({
                           onCheckedChange={(checked) =>
                             handleRoleChange(checked as boolean, role)
                           }
-                          className={`h-5 w-5 rounded border ${
-                            role.checked
-                              ? 'border'
-                              : role.disabled
-                                ? 'text-muted'
-                                : ''
-                          } mr-3`}
+                          className={`h-5 w-5 rounded border ${getCheckboxClass(
+                            role,
+                          )} mr-3`}
                         />
                         <div className="flex flex-grow items-center justify-between">
                           <Label
                             htmlFor={`checkbox-${role.id}`}
-                            className={`${role.disabled ? 'text-muted-foreground/60' : 'font-light'} cursor-pointer`}
+                            className={`${
+                              role.disabled
+                                ? 'text-muted-foreground/60'
+                                : 'font-light'
+                            } cursor-pointer`}
                           >
                             {TextTitlecase(role.name)}
                           </Label>
                         </div>
-                      </div>
+                      </button>
                     ))}
                   </div>
                 )}

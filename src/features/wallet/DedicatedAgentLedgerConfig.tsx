@@ -166,12 +166,12 @@ const DedicatedLedgerConfig = ({
   const isSubmitDisabled = (): boolean => {
     if (!selectedLedger) {
       return true
-    } else if (
+    }
+
+    if (
       (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
-      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
-    ) {
-      return true
-    } else if (
+      (selectedLedger === Ledgers.INDY &&
+        (!selectedMethod || !selectedNetwork)) ||
       (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
       (selectedLedger === Ledgers.NO_LEDGER &&
         selectedMethod === DidMethod.WEB &&
@@ -272,7 +272,7 @@ const DedicatedLedgerConfig = ({
         </RadioGroup>
         {formikHandlers.errors.network && formikHandlers.touched.network && (
           <div className="text-destructive mt-1 text-xs">
-            {formikHandlers.errors.network as string}
+            {formikHandlers.errors.network}
           </div>
         )}
       </div>
@@ -320,7 +320,7 @@ const DedicatedLedgerConfig = ({
         </RadioGroup>
         {formikHandlers.errors.method && formikHandlers.touched.method && (
           <div className="text-destructive mt-1 text-xs">
-            {formikHandlers.errors.method as string}
+            {formikHandlers.errors.method}
           </div>
         )}
       </div>

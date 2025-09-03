@@ -18,7 +18,6 @@ const CustomQRCode = ({
   value: string
   size: number
 }): React.JSX.Element => {
-  // const node = document.createTextNode('');
   const inputRef = useRef<HTMLDivElement>(null)
   const [isCopied, setIsCopied] = useState(false)
 
