@@ -348,39 +348,25 @@ function FormikData({
                           />
                           <div className="absolute bottom-[-36px] left-6">
                             <span>
-                              {
-                                formikHandlers?.touched?.attribute &&
-                                attribute[index] &&
-                                formikHandlers?.errors?.attribute &&
-                                formikHandlers?.errors?.attribute[index] &&
-                                formikHandlers?.touched?.attribute[index] &&
-                                typeof formikHandlers.errors.attribute[
-                                  index
-                                ] === 'object' &&
-                                formikHandlers.errors.attribute[index]
-                                  ?.isRequired &&
-                                formikHandlers?.errors?.attribute[index]
-                                  ?.isRequired &&
-                                hasNoRequiredAttributes(attribute) ? (
-                                  <label className="text-destructive h-5 text-xs">
-                                    {
-                                      formikHandlers?.errors?.attribute[index]
-                                        ?.isRequired
-                                    }
-                                  </label>
-                                ) : null
-                                // !attribute.some(
-                                //   (item: { isRequired: boolean }) =>
-                                //     item.isRequired === true,
-                                // ) ? (
-                                //   <label className="text-destructive h-5 text-xs">
-                                //     {
-                                //       formikHandlers?.errors?.attribute[index]
-                                //         ?.isRequired
-                                //     }
-                                //   </label>
-                                // ) : null
-                              }
+                              {formikHandlers?.touched?.attribute &&
+                              attribute[index] &&
+                              formikHandlers?.errors?.attribute &&
+                              formikHandlers?.errors?.attribute[index] &&
+                              formikHandlers?.touched?.attribute[index] &&
+                              typeof formikHandlers.errors.attribute[index] ===
+                                'object' &&
+                              formikHandlers.errors.attribute[index]
+                                ?.isRequired &&
+                              formikHandlers?.errors?.attribute[index]
+                                ?.isRequired &&
+                              hasNoRequiredAttributes(attribute) ? (
+                                <label className="text-destructive h-5 text-xs">
+                                  {
+                                    formikHandlers?.errors?.attribute[index]
+                                      ?.isRequired
+                                  }
+                                </label>
+                              ) : null}
                             </span>
                           </div>
                         </div>
