@@ -560,12 +560,10 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                             id="private"
                             name="private"
                           />
-                          <span className="ml-2">
-                            Private
-                            <span className="block pl-6 text-sm">
-                              Only the connected organization can see your
-                              organization details
-                            </span>
+                          <span className="ml-2">Private</span>
+                          <span className="block pl-6 text-sm">
+                            Only the connected organization can see your
+                            organization details
                           </span>
                         </div>
                         <div>
@@ -579,12 +577,10 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                             id="public"
                             name="public"
                           />
-                          <span className="ml-2">
-                            Public
-                            <span className="block pl-6 text-sm">
-                              Your profile and organization details can be seen
-                              by everyone
-                            </span>
+                          <span className="ml-2">Public</span>
+                          <span className="block pl-6 text-sm">
+                            Your profile and organization details can be seen by
+                            everyone
                           </span>
                         </div>
                       </>
