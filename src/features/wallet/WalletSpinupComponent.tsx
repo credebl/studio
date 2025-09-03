@@ -509,14 +509,16 @@ const WalletSpinup = (): React.JSX.Element => {
         saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED, 4)
       })
 
+      const handleInvitationStarted = (): void => {
+        setWalletSpinStep(5)
+        setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED)
+        saveSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED, 5)
+      }
+
       SOCKET.on('invitation-url-creation-started', (data) => {
         // eslint-disable-next-line no-console
         console.log('invitation-url-creation-started', JSON.stringify(data))
-        setTimeout(() => {
-          setWalletSpinStep(5)
-          setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED)
-          saveSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED, 5)
-        }, 1000)
+        setTimeout(handleInvitationStarted, 1000)
       })
 
       SOCKET.on('invitation-url-creation-success', (data) => {
