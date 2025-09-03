@@ -60,7 +60,11 @@ const CopyDid = ({
           size="icon"
           className="h-6 w-6"
           onClick={() => {
-            navigator.clipboard.writeText(value)
+            navigator.clipboard
+              .writeText(value)
+              .catch((error) =>
+                console.error('could not copy to clipboard', error),
+              )
             setCopied(true)
             setTimeout(() => {
               setCopied(false)
