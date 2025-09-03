@@ -1,5 +1,4 @@
 /* eslint-disable max-lines */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { ISelectedAttributes, NumberAttribute } from '../type/interface'
@@ -206,17 +205,22 @@ const EmailAttributesSelection = (): JSX.Element => {
     redirectToAppropriatePage()
   }
 
-  const createAttributeObjects = (
-    schema: any,
-    matchingCredDefs: any[],
-    attributes: {
-      displayName: string
-      attributeName: string
-      schemaDataType: string
-    }[],
-  ): ISelectedAttributes[] =>
-    matchingCredDefs.flatMap((credDef) =>
-      attributes.map((attribute) => ({
+  function getAttributesFromSchema(
+    schema: (typeof selectedSchemaAttributes)[number],
+    selectedCredDefs: typeof getSelectedCredDefData,
+  ): ISelectedAttributes[] {
+    if (!schema.attributes || !Array.isArray(schema.attributes)) {
+      return []
+    }
+
+    const matchingCredDefs = Array.isArray(selectedCredDefs)
+      ? selectedCredDefs.filter(
+          (credDef) => credDef.schemaLedgerId === schema.schemaId,
+        )
+      : []
+
+    return matchingCredDefs.flatMap((credDef) =>
+      schema.attributes!.map((attribute) => ({
         displayName: attribute.displayName,
         attributeName: attribute.attributeName,
         isChecked: false,
@@ -233,30 +237,6 @@ const EmailAttributesSelection = (): JSX.Element => {
         selectError: '',
       })),
     )
-
-  function getAttributesFromSchema(
-    schema: (typeof selectedSchemaAttributes)[number],
-    selectedCredDefs: typeof getSelectedCredDefData,
-  ): ISelectedAttributes[] {
-    if (!schema.attributes || !Array.isArray(schema.attributes)) {
-      return []
-    }
-
-    const getMatchingCredDefs = (
-      selectedCredDefs: any[],
-      schemaId: string,
-    ): any[] =>
-      (Array.isArray(selectedCredDefs)
-        ? selectedCredDefs.filter(
-            (credDef) => credDef.schemaLedgerId === schemaId,
-          )
-        : [])
-
-    const matchingCredDefs = getMatchingCredDefs(
-      selectedCredDefs,
-      schema.schemaId,
-    )
-    return createAttributeObjects(schema, matchingCredDefs, schema.attributes)
   }
 
   const loadAttributesData = async (): Promise<void> => {
