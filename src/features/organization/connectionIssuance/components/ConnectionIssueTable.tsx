@@ -36,7 +36,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     header.length > 0 &&
                     header.map((ele, id: number) => (
                       <TableHead
-                        key={id}
+                        key={`${ele.columnName}-${id}`}
                         scope="col"
                         className={`p-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-white ${ele.width} ${id === 0 && isEmailVerification ? 'pl-12' : ''}`}
                       >
@@ -64,7 +64,7 @@ const DataTable: React.FC<DataTableProps> = ({
                     >
                       {ele.data.map((subEle, id: number) => (
                         <TableCell
-                          key={id}
+                          key={`${subEle.data}-${id}`}
                           className={
                             'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
                           }
@@ -94,7 +94,7 @@ const DataTable: React.FC<DataTableProps> = ({
                           (showBtn && (
                             <Button
                               key={id}
-                              onClick={() => callback && callback(ele?.clickId)}
+                              onClick={() => callback?.(ele?.clickId)}
                               className="w-full sm:w-auto"
                             >
                               Select

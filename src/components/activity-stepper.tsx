@@ -42,8 +42,6 @@ export default function RecentActivityStepper(): React.JSX.Element {
           Icon = <Check className="text-primary h-5 w-5" />
         } else if (isActive) {
           Icon = <Circle className="text-primary h-5 w-5" />
-        } else {
-          Icon = <Dot className="text-muted-foreground h-5 w-5" />
         }
 
         return (

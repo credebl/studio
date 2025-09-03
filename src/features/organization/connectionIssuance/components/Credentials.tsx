@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
+import { CellContext } from '@tanstack/react-table'
 import { ConnectionApiSortFields } from '@/features/connections/types/connections-interface'
 import { DataTable } from '../../../../components/ui/generic-table-component/data-table'
 import { DidMethod } from '@/features/common/enum'
@@ -44,6 +45,95 @@ interface PaginationState {
   sortBy: string
   sortOrder: SortActions
 }
+
+const connectionIdCell = ({
+  row,
+  setSelectedFields,
+  setIsDrawerOpen,
+}: {
+  row: CellContext<IssuedCredential, unknown>['row']
+  setSelectedFields: React.Dispatch<React.SetStateAction<ISidebarSliderData[]>>
+  setIsDrawerOpen: React.Dispatch<React.SetStateAction<boolean>>
+}): JSX.Element => (
+  <button
+    className="url-link"
+    onClick={() => {
+      setSelectedFields(() => {
+        const data = [
+          {
+            label: 'Credential Exchange Id',
+            value: row.original.credentialExchangeId,
+            copyable: true,
+          },
+          {
+            label: 'Issued To',
+            value: row.original.connections?.theirLabel || 'Not Available',
+          },
+          {
+            label: 'Schema Name',
+            value: row.original.schemaName || 'Not Available',
+          },
+          {
+            label: 'Schema Id',
+            value: row.original.schemaId || 'Not Available',
+            copyable: true,
+          },
+          {
+            label: 'Issued On',
+            value: row.original.createDateTime ? (
+              <DateCell date={row.original.createDateTime} />
+            ) : (
+              'Not Available'
+            ),
+            copyable: true,
+          },
+          {
+            label: 'Status',
+            value: <StatusCellForCredential state={row.original.state} />,
+            copyable: true,
+          },
+          {
+            label: 'Connection Id',
+            value: row.original.connectionId || 'Not Available',
+            copyable: true,
+          },
+        ]
+        return data
+      })
+      setIsDrawerOpen(true)
+    }}
+  >
+    {row.original.connections
+      ? row.original.connections.theirLabel
+      : 'Not Available'}
+  </button>
+)
+
+const schemaName = ({
+  row,
+  isW3C,
+}: {
+  row: CellContext<IssuedCredential, unknown>['row']
+  isW3C: boolean
+}): JSX.Element => (
+  <SchemaNameCell
+    schemaName={row.original.schemaName}
+    schemaId={row.original.schemaId}
+    isW3C={isW3C}
+  />
+)
+
+const createdDateCell = ({
+  row,
+}: {
+  row: { original: { createDateTime: string } }
+}): JSX.Element => <DateCell date={row.original.createDateTime} />
+
+const stateCell = ({
+  row,
+}: {
+  row: { original: { state: string } }
+}): JSX.Element => <StatusCellForCredential state={row.original.state} />
 
 const Credentials = (): JSX.Element => {
   const router = useRouter()
@@ -193,61 +283,8 @@ const Credentials = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => (
-        <button
-          className="url-link"
-          onClick={() => {
-            setSelectedFields(() => {
-              const data = [
-                {
-                  label: 'Credential Exchange Id',
-                  value: row.original.credentialExchangeId,
-                  copyable: true,
-                },
-                {
-                  label: 'Issued To',
-                  value:
-                    row.original.connections?.theirLabel || 'Not Available',
-                },
-                {
-                  label: 'Schema Name',
-                  value: row.original.schemaName || 'Not Available',
-                },
-                {
-                  label: 'Schema Id',
-                  value: row.original.schemaId || 'Not Available',
-                  copyable: true,
-                },
-                {
-                  label: 'Issued On',
-                  value: row.original.createDateTime ? (
-                    <DateCell date={row.original.createDateTime} />
-                  ) : (
-                    'Not Available'
-                  ),
-                  copyable: true,
-                },
-                {
-                  label: 'Status',
-                  value: <StatusCellForCredential state={row.original.state} />,
-                  copyable: true,
-                },
-                {
-                  label: 'Connection Id',
-                  value: row.original.connectionId || 'Not Available',
-                  copyable: true,
-                },
-              ]
-              return data
-            })
-            setIsDrawerOpen(true)
-          }}
-        >
-          {row.original.connections
-            ? row.original.connections.theirLabel
-            : 'Not Available'}
-        </button>
-      ),
+      cell: (row) =>
+        connectionIdCell({ ...row, setSelectedFields, setIsDrawerOpen }),
     },
     {
       id: 'schemaName',
@@ -264,13 +301,7 @@ const Credentials = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => (
-        <SchemaNameCell
-          schemaName={row.original.schemaName}
-          schemaId={row.original.schemaId}
-          isW3C={isW3C}
-        />
-      ),
+      cell: (row) => schemaName({ ...row, isW3C }),
     },
 
     {
@@ -288,7 +319,7 @@ const Credentials = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
+      cell: createdDateCell,
     },
     {
       id: 'state',
@@ -305,7 +336,7 @@ const Credentials = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => <StatusCellForCredential state={row.original.state} />,
+      cell: stateCell,
     },
   ]
 
