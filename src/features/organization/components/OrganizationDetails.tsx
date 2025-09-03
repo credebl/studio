@@ -65,7 +65,8 @@ const CopyDid = ({
               .catch((error) =>
                 console.error('could not copy to clipboard', error),
               )
-            setCopied(true)
+              .then(() => setCopied(true))
+
             setTimeout(() => {
               setCopied(false)
             }, 2000)
