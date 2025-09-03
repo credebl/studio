@@ -39,6 +39,10 @@ import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
+function renderDateCell({ row }: { row: any }): JSX.Element {
+  return <DateCell date={row.original.createDateTime} />
+}
+
 const HistoryBulkIssuance = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
   const [failure, setFailure] = useState<string | null>(null)
@@ -218,7 +222,7 @@ const HistoryBulkIssuance = (): JSX.Element => {
           },
         },
       ],
-      cell: ({ row }) => <DateCell date={row.original.createDateTime} />,
+      cell: renderDateCell,
     },
 
     {
