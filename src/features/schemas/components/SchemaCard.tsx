@@ -27,42 +27,52 @@ import { pathRoutes } from '@/config/pathRoutes'
 import { setSchemaDetails } from '@/lib/schemaStorageSlice'
 import { useAppDispatch } from '@/lib/hooks'
 
-const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
+const AttributesList: React.FC<{
+  readonly attributes: IAttributes[]
+  readonly limitedAttributes?: boolean
+}> = ({ attributes, limitedAttributes }) => {
+  const isLimited =
+    limitedAttributes !== false &&
+    Array.isArray(attributes) &&
+    attributes.length > limitedAttributesLength
+
+  const displayedAttributes = isLimited
+    ? attributes.slice(0, limitedAttributesLength)
+    : (attributes ?? [])
+
+  return (
+    <div className="text-foreground flex flex-wrap items-center text-base font-semibold">
+      <span className="mr-2">Attributes:</span>
+      {displayedAttributes.map((element) => (
+        <span
+          key={element.attributeName}
+          className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors"
+        >
+          {element.attributeName}
+        </span>
+      ))}
+      {isLimited && <span className="text-muted-foreground ml-2">...</span>}
+    </div>
+  )
+}
+
+const SchemaCard = (props: Readonly<ISchemaCardProps>): React.JSX.Element => {
   const [isSelected, setIsSelected] = useState(false)
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
 
+  const router = useRouter()
   const pathname = usePathname()
   const isVerificationPage = pathname.includes('verification')
   const dispatch = useAppDispatch()
 
-  const AttributesList: React.FC<{
-    attributes: IAttributes[]
-    limitedAttributes?: boolean
-  }> = ({ attributes, limitedAttributes }) => {
-    const isLimited =
-      limitedAttributes !== false &&
-      Array.isArray(attributes) &&
-      attributes.length > limitedAttributesLength
-
-    const displayedAttributes = isLimited
-      ? attributes.slice(0, 3)
-      : (attributes ?? [])
-
-    return (
-      <div className="text-foreground flex flex-wrap items-center text-base font-semibold">
-        <span className="mr-2">Attributes:</span>
-        {displayedAttributes.map((element) => (
-          <span
-            key={element.attributeName}
-            className="bg-secondary text-secondary-foreground hover:bg-secondary/80 m-1 mr-2 rounded px-2.5 py-0.5 text-sm font-medium shadow-sm transition-colors"
-          >
-            {element.attributeName}
-          </span>
-        ))}
-        {isLimited && <span className="text-muted-foreground ml-2">...</span>}
-      </div>
-    )
+  let ledgerDisplay: string | undefined = undefined
+  if (props.issuerDid?.includes(Ledgers.POLYGON)) {
+    ledgerDisplay = props.issuerDid.includes(Network.TESTNET)
+      ? PolygonNetworks.TESTNET
+      : PolygonNetworks.MAINNET
+  } else if (props?.issuerDid) {
+    const [, , ledger] = props.issuerDid.split(':')
+    ledgerDisplay = ledger
   }
 
   const handleButtonClick = (): void => {
@@ -201,11 +211,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
             <div className="flex items-center">
               <strong className="mr-2 shrink-0">Ledger:</strong>
               <span className="text-foreground truncate text-sm">
-                {props.issuerDid?.includes(Ledgers.POLYGON)
-                  ? props.issuerDid?.includes(Network.TESTNET)
-                    ? PolygonNetworks.TESTNET
-                    : PolygonNetworks.MAINNET
-                  : props?.issuerDid?.split(':')[2]}
+                {ledgerDisplay}
               </span>
             </div>
           )}
@@ -230,7 +236,7 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
                 <pre className="block font-semibold break-words whitespace-normal">
                   {props.attributes
                     .map((val: { attributeName: string }) => val.attributeName)
-                    .join(' , ')}
+                    .join(', ')}
                 </pre>
               </TooltipContent>
             </Tooltip>
@@ -262,7 +268,6 @@ const SchemaCard = (props: ISchemaCardProps): React.JSX.Element => {
 
         {props.showCheckbox && !hasNestedAttributes && (
           <CustomCheckbox
-            // isSelectedSchema={Boolean(isSelectedSchema)}
             isSelectedSchema={Boolean(isSelected)}
             onChange={handleCheckboxChange}
             showCheckbox={props.showCheckbox}

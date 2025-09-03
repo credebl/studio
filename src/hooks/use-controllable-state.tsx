@@ -7,8 +7,8 @@ import { useCallbackRef } from '@/hooks/use-callback-ref'
  */
 
 type UseControllableStateParams<T> = {
-  prop?: T | undefined
-  defaultProp?: T | undefined
+  prop?: T
+  defaultProp?: T
   onChange?: (state: T) => void
 }
 

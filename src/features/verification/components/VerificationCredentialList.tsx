@@ -47,6 +47,10 @@ interface PaginationState {
   sortOrder: SortActions
 }
 
+interface ProofStateCellProps {
+  state: string
+}
+
 const VerificationCredentialList = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -182,6 +186,10 @@ const VerificationCredentialList = (): JSX.Element => {
     }
   }
 
+  const ProofStateCell = ({ state }: ProofStateCellProps): JSX.Element => (
+    <ProofState state={state} />
+  )
+
   const presentProofById = async (id: string): Promise<void> => {
     try {
       const response = await verifyPresentation(id, orgId)
@@ -194,8 +202,14 @@ const VerificationCredentialList = (): JSX.Element => {
       } else {
         setError(response as string)
       }
-    } catch (error) {
-      setError('An error occurred while processing the presentation.')
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error('Error presenting proof:', error.message)
+        setError(error.message)
+      } else {
+        console.error('Unknown error:', error)
+        setError('An unknown error occurred while processing the presentation.')
+      }
     } finally {
       setVerifyLoading(false)
       setTimeout(() => {
@@ -351,12 +365,11 @@ const VerificationCredentialList = (): JSX.Element => {
           },
         },
       ],
-
       cell: ({
         row,
       }: {
         row: { original: { state: string } }
-      }): JSX.Element => <ProofState state={row.original.state} />,
+      }): JSX.Element => <ProofStateCell state={row.original.state} />,
     },
     {
       id: 'action',

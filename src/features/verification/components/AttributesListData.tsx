@@ -1,9 +1,12 @@
+'use client'
+
 import { Card } from '@/components/ui/card'
 import CopyDid from '@/config/CopyDid'
 import { JSX } from 'react'
 
 interface AttributeItem {
   schemaId?: string
+  credDefId?: string
   [key: string]: string | number | boolean | undefined
 }
 
@@ -37,12 +40,13 @@ const AttributesListData = ({
 
   return (
     <>
-      {mergedData?.map((item, index) => (
-        <Card key={index} className="mb-4 overflow-x-auto">
+      {mergedData?.map((item) => (
+        <Card
+          key={item.credDefId ?? item.schemaId ?? crypto.randomUUID()}
+          className="mb-4 overflow-x-auto"
+        >
           <div className="flex flex-col justify-start gap-4 p-4 sm:p-6">
-            <div className="text-left text-xl font-semibold">
-              {`Credential ${index + 1}`}
-            </div>
+            <div className="text-left text-xl font-semibold">Credential</div>
 
             <div className="text-primary grid grid-cols-12 gap-2 border-b pb-2 text-lg font-semibold">
               <div className="col-span-4 text-left">Attributes</div>
@@ -52,13 +56,13 @@ const AttributesListData = ({
 
             {Object.entries(item)
               .filter(([key]) => key !== 'credDefId' && key !== 'schemaId')
-              .map(([key, value], idx) => (
+              .map(([attrKey, value]) => (
                 <div
-                  key={idx}
+                  key={attrKey}
                   className="grid grid-cols-12 items-center gap-2 text-base"
                 >
                   <div className="text-muted-foreground col-span-4 truncate text-left font-semibold">
-                    {key}
+                    {attrKey}
                   </div>
                   <div className="col-span-1 text-left">:</div>
                   <div className="col-span-7 text-left break-words">
@@ -68,7 +72,10 @@ const AttributesListData = ({
               ))}
 
             {item.schemaId && (
-              <div className="grid grid-cols-12 items-center gap-2 text-base">
+              <div
+                key={`schema-${item.schemaId}`}
+                className="grid grid-cols-12 items-center gap-2 text-base"
+              >
                 <div className="text-muted-foreground col-span-4 text-left font-semibold">
                   schemaId
                 </div>
@@ -83,7 +90,10 @@ const AttributesListData = ({
             )}
 
             {item.credDefId && (
-              <div className="grid grid-cols-12 items-center gap-2 text-base">
+              <div
+                key={`credDef-${item.credDefId}`}
+                className="grid grid-cols-12 items-center gap-2 text-base"
+              >
                 <div className="text-muted-foreground col-span-4 text-left font-semibold">
                   credDefId
                 </div>
