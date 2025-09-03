@@ -202,6 +202,39 @@ const WalletSpinup = (): React.JSX.Element => {
     }, 800)
   }, [handleWalletCompletion, isRedirecting])
 
+  function handleWalletSpinupResume(orgId: string): void {
+    const stored = sessionStorage.getItem(`wallet_spinup_${orgId}`)
+    if (!stored) {
+      return
+    }
+
+    try {
+      const spinupData = JSON.parse(stored)
+      const isRecent =
+        Date.now() - spinupData.timestamp < 3600000 &&
+        spinupData.status !== WalletSpinupStatus.FAILED
+
+      if (!isRecent) {
+        clearSpinupStatus()
+        return
+      }
+
+      const notStarted = spinupData.status === WalletSpinupStatus.NOT_STARTED
+      setWalletSpinStep(spinupData.step || 0)
+      setAgentSpinupCall(!notStarted)
+      setShowWalletSteps(!notStarted)
+      setAgentType(spinupData.agentType || AgentType.DEDICATED)
+      setSpinupStatus(spinupData.status)
+      setIsResumed(true)
+      if (!notStarted) {
+        setShowMainCard(false)
+      }
+    } catch (error) {
+      console.error('Error parsing spinup status:', error)
+      clearSpinupStatus()
+    }
+  }
+
   const fetchOrganizationDetails = useCallback(async (): Promise<void> => {
     if (!orgId) {
       setFailure('Organization ID is missing')
@@ -224,12 +257,12 @@ const WalletSpinup = (): React.JSX.Element => {
       const [firstAgent] = agentData
 
       if (firstAgent?.orgDid) {
-        dispatch(setOrgId(data?.data?.id))
+        dispatch(setOrgId(orgData.id))
         dispatch(
           setTenantData({
-            id: data?.data?.id,
-            name: data?.data?.name,
-            logoUrl: data?.data?.logoUrl,
+            id: orgData.id,
+            name: orgData.name,
+            logoUrl: orgData.logoUrl,
           }),
         )
         clearSpinupStatus()
@@ -238,47 +271,19 @@ const WalletSpinup = (): React.JSX.Element => {
         return
       }
 
-      // Handle resuming from stored state for incomplete wallet creation
-      const stored = sessionStorage.getItem(`wallet_spinup_${orgId}`)
-      if (stored) {
-        try {
-          const spinupData = JSON.parse(stored)
-          if (
-            Date.now() - spinupData.timestamp < 3600000 &&
-            spinupData.status !== WalletSpinupStatus.FAILED
-          ) {
-            setWalletSpinStep(spinupData.step || 0)
-            setAgentSpinupCall(
-              spinupData.status !== WalletSpinupStatus.NOT_STARTED,
-            )
-            setShowWalletSteps(
-              spinupData.status !== WalletSpinupStatus.NOT_STARTED,
-            )
-            setAgentType(spinupData.agentType || AgentType.DEDICATED)
-            setSpinupStatus(spinupData.status)
-            setIsResumed(true)
-            if (spinupData.status !== WalletSpinupStatus.NOT_STARTED) {
-              setShowMainCard(false)
-            }
-          } else {
-            clearSpinupStatus()
-          }
-        } catch (error) {
-          console.error('Error parsing spinup status:', error)
-          clearSpinupStatus()
-        }
-      }
+      // Extracted helper reduces nesting
+      handleWalletSpinupResume(orgId)
 
-      const isDedicatedAgent =
+      if (
         firstAgent?.org_agent_type?.agent?.toLowerCase() === AgentType.DEDICATED
-
-      if (isDedicatedAgent) {
+      ) {
         setAgentType(AgentType.DEDICATED)
       }
 
       if (agentData.length > 0 && orgData?.orgDid) {
         setOrgData(orgData)
       }
+
       setIsPageReady(true)
     } catch (error) {
       console.error('Error fetching organization details:', error)
