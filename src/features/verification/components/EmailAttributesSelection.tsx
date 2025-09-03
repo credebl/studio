@@ -55,9 +55,7 @@ const EmailAttributesSelection = (): JSX.Element => {
   const getSelectedCredDefData = useAppSelector(
     (state) => state.verification.CredDefData,
   )
-  const getSelectedW3cSchemaData = useAppSelector(
-    (state) => state.verification.w3cSchemaAttributes,
-  )
+
   const selectedSchemaAttributes = useAppSelector(
     (state) => state.verification.schemaAttributes,
   )
@@ -207,50 +205,58 @@ const EmailAttributesSelection = (): JSX.Element => {
     redirectToAppropriatePage()
   }
 
+  function getAttributesFromSchema(
+    schema: (typeof selectedSchemaAttributes)[number],
+    selectedCredDefs: typeof getSelectedCredDefData,
+  ): ISelectedAttributes[] {
+    if (!schema.attributes || !Array.isArray(schema.attributes)) {
+      return []
+    }
+
+    const matchingCredDefs = Array.isArray(selectedCredDefs)
+      ? selectedCredDefs.filter(
+          (credDef) => credDef.schemaLedgerId === schema.schemaId,
+        )
+      : []
+
+    return matchingCredDefs.flatMap((credDef) =>
+      schema.attributes!.map((attribute) => ({
+        displayName: attribute.displayName,
+        attributeName: attribute.attributeName,
+        isChecked: false,
+        value: '',
+        condition: '',
+        options: predicatesConditions,
+        dataType: attribute.schemaDataType,
+        schemaName: schema?.schemaId?.split(':')[2] || '',
+        credDefName: credDef.tag,
+        schemaId: schema.schemaId,
+        credDefId: credDef.credentialDefinitionId,
+        selectedOption: 'Select',
+        inputError: '',
+        selectError: '',
+      })),
+    )
+  }
+
   const loadAttributesData = async (): Promise<void> => {
     setLoading(true)
 
     try {
       setAttributeData([])
-      if (w3cSchema) {
-        const parsedW3CSchemaDetails = getSelectedW3cSchemaData
-        if (
-          Array.isArray(parsedW3CSchemaDetails) &&
-          parsedW3CSchemaDetails.length > 0
-        ) {
-          const allAttributes = parsedW3CSchemaDetails.flatMap((schema) => {
-            if (schema.attributes && Array.isArray(schema.attributes)) {
-              return schema.attributes.map((attribute) => ({
-                ...attribute,
-                schemaName: schema.schemaName,
-                credDefName: '',
-                schemaId: schema.schemaId,
-                credDefId: '',
-              }))
-            }
-            return []
-          })
+      if (!w3cSchema) {
+        const selectedCredDefs = getSelectedCredDefData || []
+        const parsedSchemaDetails = Array.isArray(selectedSchemaAttributes)
+          ? selectedSchemaAttributes
+          : []
 
-          const inputArray = allAttributes.map((attribute) => ({
-            displayName: attribute.displayName,
-            attributeName: attribute.attributeName,
-            isChecked: false,
-            value: '',
-            condition: '',
-            options: predicatesConditions,
-            dataType: attribute.schemaDataType,
-            schemaName: attribute.schemaName ?? '',
-            credDefName: attribute.credDefName,
-            schemaId: attribute.schemaId ?? '',
-            credDefId: attribute.credDefId,
-            selectedOption: 'Select',
-            inputError: '',
-            selectError: '',
-          }))
-
-          setAttributeData(inputArray)
+        if (parsedSchemaDetails.length > 0) {
+          const allAttributes = parsedSchemaDetails.flatMap((schema) =>
+            getAttributesFromSchema(schema, selectedCredDefs),
+          )
+          setAttributeData(allAttributes)
         } else {
-          console.error('W3C schema details are not in the expected format.')
+          console.error('Parsed schema details are not in the expected format.')
         }
       } else {
         const selectedCredDefs = getSelectedCredDefData || []

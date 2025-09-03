@@ -293,6 +293,12 @@ const EmailVerification = (): JSX.Element => {
     }
   }
 
+  const createHandleInputChange =
+    (index: number) =>
+    (event: React.ChangeEvent<HTMLInputElement>): void => {
+      handleInputChange(index, event)
+    }
+
   return (
     <div className="px-4 pt-2">
       <div className="col-span-full mb-4 xl:mb-2">
@@ -385,11 +391,9 @@ const EmailVerification = (): JSX.Element => {
                                             id={`email-${index}`}
                                             {...field}
                                             placeholder="Email"
-                                            onChange={(
-                                              event: React.ChangeEvent<HTMLInputElement>,
-                                            ) =>
-                                              handleInputChange(index, event)
-                                            }
+                                            onChange={createHandleInputChange(
+                                              index,
+                                            )}
                                             className="border-input file:text-foreground placeholder:text-muted-foreground focus-visible:ring-ring rounded-md border bg-transparent px-3 py-1 pl-8 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
                                           />
                                         )}
