@@ -49,14 +49,12 @@ const EmailAttributesSelection = (): JSX.Element => {
   const router = useRouter()
   const orgId = useAppSelector((state) => state.organization.orgId)
 
-  const verificationRouteType = useAppSelector(
-    (state) => state.verification.routeType,
-  )
-
   const getSelectedCredDefData = useAppSelector(
     (state) => state.verification.CredDefData,
   )
-
+  const verificationRouteType = useAppSelector(
+    (state) => state.verification.routeType,
+  )
   const selectedSchemaAttributes = useAppSelector(
     (state) => state.verification.schemaAttributes,
   )
@@ -120,6 +118,22 @@ const EmailAttributesSelection = (): JSX.Element => {
     dispatch(setSelectedAttributeData(updatedAttributes))
   }
 
+  const isInvalidNumberAttribute = (attribute: NumberAttribute): boolean => {
+    const isOptionInvalid =
+      attribute.selectedOption === null ||
+      attribute.selectedOption === '' ||
+      attribute.selectedOption === 'Select'
+    const isValueInvalid = attribute.value === null || attribute.value === ''
+    if (!isOptionInvalid && isValueInvalid) {
+      setErrMsg('Value is missing or is not a number')
+      return true
+    } else if (!isValueInvalid && isOptionInvalid) {
+      setErrMsg('Condition is missing')
+      return true
+    }
+    return false
+  }
+
   const getOrgDetails = async (): Promise<void> => {
     setLoading(true)
 
@@ -150,22 +164,6 @@ const EmailAttributesSelection = (): JSX.Element => {
   useEffect(() => {
     getOrgDetails()
   }, [])
-
-  const isInvalidNumberAttribute = (attribute: NumberAttribute): boolean => {
-    const isOptionInvalid =
-      attribute.selectedOption === null ||
-      attribute.selectedOption === '' ||
-      attribute.selectedOption === 'Select'
-    const isValueInvalid = attribute.value === null || attribute.value === ''
-    if (!isOptionInvalid && isValueInvalid) {
-      setErrMsg('Value is missing or is not a number')
-      return true
-    } else if (!isValueInvalid && isOptionInvalid) {
-      setErrMsg('Condition is missing')
-      return true
-    }
-    return false
-  }
 
   const hasInvalidNumberAttributes = (): boolean => {
     const numberAttributes = attributeData?.filter(
