@@ -235,61 +235,6 @@ export const confirmOOBCredentialIssuance = async ({
   }
 }
 
-function mapIndyCredentialDefs(
-  credentialDefs: ICredentials[],
-  schemaType: SchemaTypes | undefined,
-  currentSchemaType: SchemaTypes,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any {
-  return credentialDefs.map(
-    (
-      {
-        schemaName,
-        schemaVersion,
-        credentialDefinition,
-        credentialDefinitionId,
-        schemaIdentifier,
-        schemaAttributes,
-      }: ICredentials,
-      id: number,
-    ) => ({
-      value:
-        (schemaType === SchemaTypes.schema_INDY
-          ? credentialDefinitionId
-          : schemaVersion) ?? '',
-      label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
-      schemaName: schemaName || '',
-      schemaVersion,
-      credentialDefinition,
-      schemaIdentifier,
-      credentialDefinitionId,
-      id,
-      schemaAttributes:
-        schemaAttributes &&
-        typeof schemaAttributes === 'string' &&
-        JSON.parse(schemaAttributes),
-    }),
-  )
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function mapW3CCredentialDefs(credentialDefs: ICredentials[]): any {
-  return credentialDefs.map(
-    ({ name, version, schemaLedgerId, attributes, type }: ICredentials) => ({
-      value: version,
-      label: `${name} [${version}]`,
-      schemaName: name,
-      type,
-      schemaVersion: version,
-      schemaIdentifier: schemaLedgerId,
-      attributes: Array.isArray(attributes)
-        ? attributes
-        : attributes
-          ? JSON.parse(attributes)
-          : [],
-    }),
-  )
-}
-
 export const getSchemaCredentials = async ({
   schemaListAPIParameter,
   setIsAllSchemaFlagSelected,
@@ -308,21 +253,22 @@ export const getSchemaCredentials = async ({
 }: IGetSchemaCredentials): Promise<void> => {
   try {
     let orgDid = ''
+
     const response = await getOrganizationById(orgId)
 
     if (typeof response === 'string') {
       console.error('Error fetching organization:', response)
-      setFailure(null)
-      setSuccess(null)
-      setLoading(false)
-      return
+    } else {
+      const { data } = response
+      orgDid = data?.data?.org_agents[0]?.orgDid
+      // proceed with data
     }
-
-    const { data } = response
-    orgDid = data?.data?.org_agents?.orgDid ?? ''
-
-    setIsAllSchemaFlagSelected(allSchema)
-
+    const allSchemaSelectedFlag = allSchema
+    if (allSchemaSelectedFlag) {
+      setIsAllSchemaFlagSelected(true)
+    } else {
+      setIsAllSchemaFlagSelected(false)
+    }
     let currentSchemaType = schemaType
     if (orgDid?.includes(DidMethod.POLYGON)) {
       currentSchemaType = SchemaTypes.schema_W3C
@@ -334,60 +280,107 @@ export const getSchemaCredentials = async ({
     ) {
       currentSchemaType = SchemaTypes.schema_W3C
       setSchemaTypeValue(SchemaTypeValue.NO_LEDGER)
+
       setCredentialType(CredentialType.JSONLD)
     } else if (orgDid?.includes(DidMethod.INDY)) {
       setCredentialType(CredentialType.INDY)
       currentSchemaType = SchemaTypes.schema_INDY
     }
     setSchemaType(currentSchemaType)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let mappedOptions: any = []
+
+    let options = []
+
     if (
       (currentSchemaType === SchemaTypes.schema_INDY && orgId) ||
-      (currentSchemaType === SchemaTypes.schema_W3C && !isAllSchemaFlagSelected)
+      (currentSchemaType === SchemaTypes.schema_W3C &&
+        isAllSchemaFlagSelected === false)
     ) {
-      const credDefResponse = await getSchemaCredDef(currentSchemaType, orgId)
-      const credDefData = (credDefResponse as AxiosResponse).data
-      if (credDefData?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+      const response = await getSchemaCredDef(currentSchemaType, orgId)
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const credentialDefs = data.data
+        options = credentialDefs.map(
+          (
+            {
+              schemaName,
+              schemaVersion,
+              credentialDefinition,
+              credentialDefinitionId,
+              schemaIdentifier,
+              schemaAttributes,
+            }: ICredentials,
+            id: number,
+          ) => ({
+            value:
+              (schemaType === SchemaTypes.schema_INDY
+                ? credentialDefinitionId
+                : schemaVersion) ?? '',
+            label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+            schemaName: schemaName || '',
+            schemaVersion,
+            credentialDefinition,
+            schemaIdentifier,
+            credentialDefinitionId,
+            id,
+            schemaAttributes:
+              schemaAttributes &&
+              typeof schemaAttributes === 'string' &&
+              JSON.parse(schemaAttributes),
+          }),
+        )
+        setCredentialOptions(options)
+      } else {
         setSuccess(null)
         setFailure(null)
-        setLoading(false)
-        return
       }
-      mappedOptions = mapIndyCredentialDefs(
-        credDefData.data,
-        schemaType,
-        currentSchemaType,
-      )
-      setCredentialOptions(mappedOptions)
       setLoading(false)
-      return
-    }
-
-    if (currentSchemaType === SchemaTypes.schema_W3C && orgId && allSchema) {
-      const allSchemaResponse = await getAllSchemas(
+      // eslint-disable-next-line brace-style
+    } else if (
+      currentSchemaType === SchemaTypes.schema_W3C &&
+      orgId &&
+      allSchemaSelectedFlag
+    ) {
+      const response = await getAllSchemas(
         schemaListAPIParameter,
         currentSchemaType,
         ledgerId,
       )
-      const allSchemaData = (allSchemaResponse as AxiosResponse).data
-      if (allSchemaData?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const credentialDefs = data.data.data
+        options = credentialDefs.map(
+          ({
+            name,
+            version,
+            schemaLedgerId,
+            attributes,
+            type,
+          }: ICredentials) => ({
+            value: version,
+            label: `${name} [${version}]`,
+            schemaName: name,
+            type,
+            schemaVersion: version,
+            schemaIdentifier: schemaLedgerId,
+            attributes: Array.isArray(attributes)
+              ? attributes
+              : attributes
+                ? JSON.parse(attributes)
+                : [],
+          }),
+        )
+        setCredentialOptions(options)
+      } else {
         setSuccess(null)
         setFailure(null)
-        setLoading(false)
-        return
       }
-      mappedOptions = mapW3CCredentialDefs(allSchemaData.data.data)
-      setCredentialOptions(mappedOptions)
       setLoading(false)
-      return
     }
 
-    setCredentialOptions(mappedOptions)
-    setLoading(false)
+    setCredentialOptions(options)
   } catch (error) {
     setSuccess(null)
     setFailure(null)
-    setLoading(false)
   }
 }
