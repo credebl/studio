@@ -280,6 +280,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       }
 
       let networkName: string = ''
+
       if (didMethod === DidMethod.INDY) {
         networkName = data?.data?.org_agents[0]?.orgDid
           .split(':')
@@ -287,8 +288,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           .join(':')
       } else if (didMethod === DidMethod.POLYGON) {
         networkName = data?.data?.org_agents[0]?.orgDid.split(':')[2]
-      } else {
-        networkName = ''
       }
 
       let completeDidMethod: string = ''
@@ -315,6 +314,32 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     } else {
       console.error('Error in fetching organization:::')
     }
+  }
+
+  const getButtonLabel = (): React.ReactNode => {
+    if (isMethodLoading) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Loading...
+        </>
+      )
+    }
+
+    if (
+      isCreatingDid &&
+      method !== DidMethod.POLYGON &&
+      method !== DidMethod.WEB
+    ) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Creating DID...
+        </>
+      )
+    }
+
+    return 'Create DID'
   }
 
   React.useEffect(() => {
@@ -592,21 +617,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
             isCreatingDid
           }
         >
-          {isMethodLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Loading...
-            </>
-          ) : isCreatingDid &&
-            method !== DidMethod.POLYGON &&
-            method !== DidMethod.WEB ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating DID...
-            </>
-          ) : (
-            'Create DID'
-          )}
+          {getButtonLabel()}
         </Button>
       </div>
 

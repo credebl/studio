@@ -12,14 +12,26 @@ const sortingItemSchema = z.object({
   desc: z.boolean(),
 })
 
+/**
+ * Normalize columnIds into a Set<string> or return null.
+ * This avoids nested ternary usage for readability.
+ */
+function normalizeColumnIds(
+  columnIds?: string[] | Set<string>,
+): Set<string> | null {
+  if (!columnIds) {
+    return null
+  }
+  if (columnIds instanceof Set) {
+    return columnIds
+  }
+  return new Set(columnIds)
+}
+
 export const getSortingStateParser = <TData>(
   columnIds?: string[] | Set<string>,
 ): ParserBuilder<ExtendedColumnSort<TData>[]> => {
-  const validKeys = columnIds
-    ? columnIds instanceof Set
-      ? columnIds
-      : new Set(columnIds)
-    : null
+  const validKeys = normalizeColumnIds(columnIds)
 
   return createParser({
     parse: (value) => {
@@ -63,11 +75,7 @@ export type FilterItemSchema = z.infer<typeof filterItemSchema>
 export const getFiltersStateParser = <TData>(
   columnIds?: string[] | Set<string>,
 ): ParserBuilder<ExtendedColumnFilter<TData>[]> => {
-  const validKeys = columnIds
-    ? columnIds instanceof Set
-      ? columnIds
-      : new Set(columnIds)
-    : null
+  const validKeys = normalizeColumnIds(columnIds)
 
   return createParser({
     parse: (value) => {

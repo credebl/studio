@@ -18,7 +18,9 @@ export interface TableHeader {
   subColumnName?: string
   width?: string
 }
+
 export interface Data {
+  id?: string
   handleChange?(value: string): void
   inputType?: string
   data: string | JSX.Element
@@ -26,7 +28,7 @@ export interface Data {
 }
 
 export interface ITableData {
-  clickId?: string | null
+  clickId: string
   data: Data[]
 }
 
@@ -49,18 +51,61 @@ export interface IDataTable {
   message: string
   discription: string
   noExtraHeight?: boolean
-  callback?: (clickId: string | null | undefined) => void
+  callback?: (clickId: string) => void
   displaySelect?: boolean
   showBtn?: boolean
   pageInfo?:
     | {
-        totalItem: number | undefined
-        nextPage: number | undefined
-        lastPage: number | undefined
+        totalItem: number
+        nextPage: number
+        lastPage: number
       }
     | object
   sortOrder?: string
   itemPerPage?: number
+}
+
+interface ProofRowProps {
+  ele: ITableData
+  showBtn?: boolean
+  displaySelect?: boolean
+  callback?: (clickId: string) => void
+}
+
+const ProofRow: React.FC<ProofRowProps> = ({
+  ele,
+  showBtn,
+  displaySelect,
+  callback,
+}) => {
+  const showSelectButton = showBtn && !displaySelect
+  const rowClass = Number(ele.clickId) % 2 !== 0 ? 'bg-muted/30' : ''
+
+  return (
+    <tr key={ele.clickId} className={rowClass}>
+      {ele.data.map((subEle, idx) => (
+        <td
+          key={subEle.id ?? `${ele.clickId}-${idx}`}
+          className="p-4 align-middle text-sm font-normal whitespace-nowrap"
+        >
+          <div>
+            <div>{subEle.data}</div>
+            {subEle.subData}
+          </div>
+        </td>
+      ))}
+      {showSelectButton && (
+        <td>
+          <Button
+            onClick={() => callback?.(ele.clickId)}
+            className="bg-primary hover:bg-primary mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
+          >
+            Select
+          </Button>
+        </td>
+      )}
+    </tr>
+  )
 }
 
 const SortDataTable: React.FC<IDataTable> = ({
@@ -109,16 +154,50 @@ const SortDataTable: React.FC<IDataTable> = ({
     nextPage?: number
     lastPage?: number
   }
-  const startItem = (nextPage - 2) * (itemPerPage ?? 10) + 1
+
+  const startItem = Math.max((nextPage - 2) * (itemPerPage ?? 10) + 1, 1)
   const endItem = Math.min((nextPage - 1) * (itemPerPage ?? 10), totalItem)
 
   const sortValues = [
-    {
-      label: 'Descending',
-      value: 'desc',
-    },
+    { label: 'Descending', value: 'desc' },
     { label: 'Ascending', value: 'asc' },
   ]
+
+  const renderTableBody = (): JSX.Element[] | JSX.Element => {
+    if (loading) {
+      return (
+        <tr key="loading-row" className="hover:bg-muted/30 text-center">
+          <td className="p-2 text-center" colSpan={header.length}>
+            <div className="mb-4 flex w-full items-center justify-center text-center">
+              <Loader />
+            </div>
+          </td>
+        </tr>
+      )
+    }
+
+    if (data?.length) {
+      return data.map((ele) => (
+        <ProofRow
+          key={ele.clickId}
+          ele={ele}
+          showBtn={showBtn}
+          displaySelect={displaySelect}
+          callback={callback}
+        />
+      ))
+    }
+
+    return (
+      <tr key="empty-row" className="text-center">
+        <td className="p-2 text-center" colSpan={header.length}>
+          <div className="mx-auto flex h-full w-full items-center justify-center">
+            <EmptyMessage title={message} description={discription} />
+          </div>
+        </td>
+      </tr>
+    )
+  }
 
   return (
     <section className="w-full">
@@ -126,28 +205,26 @@ const SortDataTable: React.FC<IDataTable> = ({
         <div className="relative overflow-hidden shadow-md sm:rounded-lg">
           {isHeader && (
             <div className="flex flex-col items-center justify-between space-y-3 sm:flex-row sm:space-y-0 sm:space-x-4">
-              <div className="w-full sm:w-1/2">
-                {isSearch && (
-                  <form className="mb-4 flex items-center">
-                    <div className="relative max-w-xs flex-grow">
-                      <Input
-                        type="text"
-                        placeholder="Search..."
-                        value={searchValue}
-                        onChange={onInputChange}
-                        className="w-full pl-8"
-                      />
-                      <IconSearch className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
-                    </div>
-                  </form>
-                )}
-              </div>
+              {isSearch && (
+                <form className="mb-4 flex w-full items-center sm:w-1/2">
+                  <div className="relative max-w-xs flex-grow">
+                    <Input
+                      type="text"
+                      placeholder="Search..."
+                      value={searchValue}
+                      onChange={onInputChange}
+                      className="w-full pl-8"
+                    />
+                    <IconSearch className="text-muted-foreground absolute top-2.5 left-2.5 h-4 w-4" />
+                  </div>
+                </form>
+              )}
 
               <div className="flex flex-shrink-0 items-stretch justify-end space-y-2 sm:w-auto sm:flex-row sm:items-center sm:space-y-0 sm:space-x-3">
                 {isRefresh && (
                   <button
                     onClick={refresh}
-                    className="mt-2 mr-4 items-center rounded-lg focus:z-10 sm:mt-0 sm:mr-0"
+                    className="mt-2 mr-4 rounded-lg focus:z-10 sm:mt-0 sm:mr-0"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -163,7 +240,6 @@ const SortDataTable: React.FC<IDataTable> = ({
                     </svg>
                   </button>
                 )}
-
                 {isSort && (
                   <div className="flex w-full items-center space-x-3 sm:w-auto">
                     <select
@@ -184,174 +260,108 @@ const SortDataTable: React.FC<IDataTable> = ({
               </div>
             </div>
           )}
+
           <div className="overflow-hidden shadow sm:rounded-lg">
             <table className="divide-muted dark:divide-muted min-w-full divide-y border">
               <thead className="bg-muted dark:bg-muted">
                 <tr>
-                  {header &&
-                    header.length > 0 &&
-                    header.map((ele) => (
-                      <th
-                        key={ele.columnName}
-                        scope="col"
-                        className={`text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase ${ele.width}`}
-                      >
-                        <div>{ele.columnName}</div>
-                        {ele.subColumnName && (
-                          <div className="flex">{ele.subColumnName} </div>
-                        )}
-                      </th>
-                    ))}
+                  {header.map((ele) => (
+                    <th
+                      key={ele.columnName}
+                      scope="col"
+                      className={`text-muted-foreground p-4 text-left text-xs font-medium tracking-wider uppercase ${ele.width}`}
+                    >
+                      <div>{ele.columnName}</div>
+                      {ele.subColumnName && (
+                        <div className="flex">{ele.subColumnName}</div>
+                      )}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="">
-                {loading ? (
-                  <tr
-                    key="loading-row"
-                    className="hover:bg-muted/30 text-center"
-                  >
-                    <td className="p-2 text-center" colSpan={header.length}>
-                      <div className="mb-4 flex w-full items-center justify-center text-center">
-                        <Loader />
-                      </div>
-                    </td>
-                  </tr>
-                ) : data?.length ? (
-                  data.map((ele, index) => {
-                    const showSelectButton = showBtn && !displaySelect
-
-                    return (
-                      <tr
-                        key={index}
-                        className={`${index % 2 !== 0 ? 'bg-muted/30' : ''}`}
-                      >
-                        {ele.data.map((subEle, subIndex) => (
-                          <td
-                            key={`row-${ele.clickId}-col-${subIndex}`}
-                            className="p-4 align-middle text-sm font-normal whitespace-nowrap"
-                          >
-                            <div>
-                              <div>{subEle.data}</div>
-                              {subEle.subData}
-                            </div>
-                          </td>
-                        ))}
-
-                        {showSelectButton && (
-                          <td>
-                            <Button
-                              onClick={() => callback?.(ele?.clickId)}
-                              className="bg-primary hover:bg-primary mt-2 mr-2 mb-2 rounded-lg px-5 py-2.5 text-center text-sm font-medium focus:ring-4 focus:outline-none"
-                            >
-                              Select
-                            </Button>
-                          </td>
-                        )}
-                      </tr>
-                    )
-                  })
-                ) : (
-                  <tr key="empty-row" className="text-center">
-                    <td className="p-2 text-center" colSpan={header.length}>
-                      <div className="mx-auto flex h-full w-full items-center justify-center">
-                        <EmptyMessage
-                          title={message}
-                          description={discription}
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
+              <tbody>{renderTableBody()}</tbody>
             </table>
           </div>
-          {loading && isPagination && data.length > 0 ? (
-            ''
-          ) : (
-            <nav
-              className="flex w-full flex-col items-center justify-between space-y-2 p-3 sm:flex-row sm:space-y-0"
-              aria-label="Table navigation"
-            >
-              {!loading && data?.length > 0 && (
-                <span className="mt-2 text-sm font-normal">
-                  Showing{' '}
-                  <span className="font-semibold">
-                    {startItem}-{endItem}
-                  </span>{' '}
-                  of <span className="font-semibold">{totalItem}</span>
-                </span>
-              )}
-              {lastPage > 1 && data?.length > 0 && (
-                <Pagination className="flex items-center justify-end">
-                  <PaginationContent className="justify-end">
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => {
-                          if (currentPage > 1) {
-                            onPageChange(currentPage - 1)
-                          }
-                        }}
-                        isActive={false}
-                        className="bg-muted text-muted-foreground hover:bg-muted/80 mr-4 cursor-pointer rounded-md px-4 py-2 transition-colors"
-                      >
-                        Prev
-                      </PaginationLink>
-                    </PaginationItem>
 
-                    {Array.from({ length: totalPages })
-                      .map((_, idx) => idx + 1)
-                      .filter(
-                        (page) =>
-                          page === 1 ||
-                          page === totalPages ||
-                          Math.abs(page - currentPage) <= 1,
+          {isPagination && data?.length > 0 && !loading && lastPage > 1 && (
+            <nav className="flex w-full flex-col items-center justify-between space-y-2 p-3 sm:flex-row sm:space-y-0">
+              <span className="mt-2 text-sm font-normal">
+                Showing{' '}
+                <span className="font-semibold">
+                  {startItem}-{endItem}
+                </span>{' '}
+                of <span className="font-semibold">{totalItem}</span>
+              </span>
+
+              <Pagination className="flex items-center justify-end">
+                <PaginationContent className="justify-end">
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => {
+                        if (currentPage > 1) {
+                          onPageChange(currentPage - 1)
+                        }
+                      }}
+                      isActive={false}
+                      className="bg-muted text-muted-foreground hover:bg-muted/80 mr-4 cursor-pointer rounded-md px-4 py-2 transition-colors"
+                    >
+                      Prev
+                    </PaginationLink>
+                  </PaginationItem>
+
+                  {Array.from({ length: totalPages })
+                    .map((_, idx) => idx + 1)
+                    .filter(
+                      (page) =>
+                        page === 1 ||
+                        page === totalPages ||
+                        Math.abs(page - currentPage) <= 1,
+                    )
+                    .map((page, index, array) => {
+                      const isCurrent = currentPage === page
+                      const prevPage = array[index - 1]
+                      const showEllipsis = index > 0 && page - prevPage > 1
+
+                      return (
+                        <div key={page} className="flex items-center">
+                          {showEllipsis && (
+                            <span className="text-muted-foreground px-2">
+                              ...
+                            </span>
+                          )}
+                          <PaginationItem>
+                            <PaginationLink
+                              onClick={() => onPageChange(page)}
+                              isActive={isCurrent}
+                              className={cn(
+                                'cursor-pointer rounded-md px-4 py-2 transition-colors',
+                                isCurrent
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-muted text-muted-foreground hover:bg-muted/80',
+                              )}
+                            >
+                              {page}
+                            </PaginationLink>
+                          </PaginationItem>
+                        </div>
                       )
-                      .map((page, index, array) => {
-                        const isCurrent = currentPage === page
-                        const prevPage = array[index - 1]
-                        const showEllipsis = index > 0 && page - prevPage > 1
+                    })}
 
-                        return (
-                          <div key={page} className="flex items-center">
-                            {showEllipsis && (
-                              <span className="text-muted-foreground px-2">
-                                ...
-                              </span>
-                            )}
-                            <PaginationItem>
-                              <PaginationLink
-                                onClick={() => onPageChange(page)}
-                                isActive={isCurrent}
-                                className={cn(
-                                  'cursor-pointer rounded-md px-4 py-2 transition-colors',
-                                  isCurrent
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-muted text-muted-foreground hover:bg-muted/80',
-                                )}
-                              >
-                                {page}
-                              </PaginationLink>
-                            </PaginationItem>
-                          </div>
-                        )
-                      })}
-
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => {
-                          if (currentPage < totalPages) {
-                            onPageChange(currentPage + 1)
-                          }
-                        }}
-                        isActive={false}
-                        className="bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer rounded-md px-4 py-2 transition-colors"
-                      >
-                        Next
-                      </PaginationLink>
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
-              )}
+                  <PaginationItem>
+                    <PaginationLink
+                      onClick={() => {
+                        if (currentPage < totalPages) {
+                          onPageChange(currentPage + 1)
+                        }
+                      }}
+                      isActive={false}
+                      className="bg-muted text-muted-foreground hover:bg-muted/80 cursor-pointer rounded-md px-4 py-2 transition-colors"
+                    >
+                      Next
+                    </PaginationLink>
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </nav>
           )}
         </div>

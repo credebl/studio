@@ -32,6 +32,7 @@ import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
 import { resetAttributeData } from '@/lib/verificationSlice'
 import { useRouter } from 'next/navigation'
+import { v4 as uuidv4 } from 'uuid'
 
 type GroupedSchema = {
   id: string
@@ -43,10 +44,17 @@ type GroupedSchema = {
   purpose: string
 }
 
+type EmailInput = {
+  id: string
+  value: string
+}
+
 const EmailVerification = (): JSX.Element => {
   const [loading, setLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [emailInputs, setEmailInputs] = useState([{ value: '' }])
+  const [emailInputs, setEmailInputs] = useState<EmailInput[]>([
+    { id: uuidv4(), value: '' },
+  ])
   const [w3cSchema, setW3cSchema] = useState<boolean>(false)
 
   const router = useRouter()
@@ -57,23 +65,28 @@ const EmailVerification = (): JSX.Element => {
   const getSelectedW3CSchemaDetails = useAppSelector(
     (state) => state.verification.attributeData,
   )
+
   const handleInputChange = (
-    index: number,
+    id: string,
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
-    const newEmailInputs = [...emailInputs]
-    newEmailInputs[index].value = event.target.value
-    setEmailInputs(newEmailInputs)
+    setEmailInputs((prev) =>
+      prev.map((input) => {
+        if (input.id === id) {
+          return { ...input, value: event.target.value }
+        }
+        return input
+      }),
+    )
   }
 
   const handleAddInput = (): void => {
-    setEmailInputs([...emailInputs, { value: '' }])
+    setEmailInputs([...emailInputs, { id: uuidv4(), value: '' }])
   }
 
-  const handleDeleteInput = (index: number): void => {
+  const handleDeleteInput = (id: string): void => {
     if (emailInputs.length > 1) {
-      const newEmailInputs = emailInputs.filter((_, i) => i !== index)
-      setEmailInputs(newEmailInputs)
+      setEmailInputs(emailInputs.filter((input) => input.id !== id))
     }
   }
 
@@ -231,21 +244,19 @@ const EmailVerification = (): JSX.Element => {
                   },
                 ],
               }
-            } else {
-              if (attr.credDefId) {
-                if (!requestedAttributes[attr.attributeName]) {
-                  requestedAttributes[attr.attributeName] = {
-                    name: attr.attributeName,
-                    restrictions: [],
-                  }
+            } else if (attr.credDefId) {
+              if (!requestedAttributes[attr.attributeName]) {
+                requestedAttributes[attr.attributeName] = {
+                  name: attr.attributeName,
+                  restrictions: [],
                 }
-                requestedAttributes[attr.attributeName].restrictions.push({
-                  // eslint-disable-next-line camelcase
-                  schema_id: attr.schemaId,
-                  // eslint-disable-next-line camelcase
-                  cred_def_id: attr.credDefId,
-                })
               }
+              requestedAttributes[attr.attributeName].restrictions.push({
+                // eslint-disable-next-line camelcase
+                schema_id: attr.schemaId,
+                // eslint-disable-next-line camelcase
+                cred_def_id: attr.credDefId,
+              })
             }
           }
         })
@@ -349,14 +360,12 @@ const EmailVerification = (): JSX.Element => {
                     const disableAddAnother = values.emailData.some(
                       (input, index) => {
                         const hasNoEmail = !input.email
-                        const isTouched =
-                          touched.emailData && touched.emailData[index]
-                        const hasError =
-                          errors.emailData &&
-                          errors.emailData[index] &&
-                          typeof errors.emailData[index] === 'object' &&
-                          'email' in errors.emailData[index] &&
-                          errors.emailData[index].email
+                        const isTouched = touched.emailData?.[index]?.email
+                        const hasError = (
+                          errors.emailData?.[index] as FormikErrors<{
+                            email: string
+                          }>
+                        )?.email
 
                         return hasNoEmail || (isTouched && hasError)
                       },
@@ -366,12 +375,12 @@ const EmailVerification = (): JSX.Element => {
                       <Form>
                         <div className="pb-4">
                           {values.emailData.map((input, index) => (
-                            <div key={index} className="">
+                            <div key={emailInputs[index].id}>
                               <div className="mb-4 rounded-lg border px-4 pt-8 pb-10">
                                 <div className="flex justify-between">
                                   <div className="relative mb-4 flex w-10/12 items-start gap-2">
                                     <Label
-                                      htmlFor={`email-${index}`}
+                                      htmlFor={`email-${emailInputs[index].id}`}
                                       className="mt-2 min-w-[80px] text-base font-semibold"
                                     >
                                       Email ID{' '}
@@ -388,7 +397,7 @@ const EmailVerification = (): JSX.Element => {
                                           field: FieldInputProps<string>
                                         }) => (
                                           <Input
-                                            id={`email-${index}`}
+                                            id={`email-${emailInputs[index].id}`}
                                             {...field}
                                             placeholder="Email"
                                             onChange={createHandleInputChange(
@@ -421,18 +430,17 @@ const EmailVerification = (): JSX.Element => {
                                   </div>
 
                                   {values.emailData.length > 1 && (
-                                    <div
-                                      key={index}
-                                      className="text-destructive flex justify-end sm:w-2/12"
-                                    >
+                                    <div className="text-destructive flex justify-end sm:w-2/12">
                                       <Button
                                         data-testid="deleteBtn"
                                         color="danger"
                                         type="button"
-                                        className={
-                                          'flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0'
+                                        className="flex justify-center border-none bg-transparent shadow-none hover:bg-transparent focus:ring-0"
+                                        onClick={() =>
+                                          handleDeleteInput(
+                                            emailInputs[index].id,
+                                          )
                                         }
-                                        onClick={() => handleDeleteInput(index)}
                                       >
                                         <img
                                           src={delSvg.src}
@@ -465,7 +473,7 @@ const EmailVerification = (): JSX.Element => {
                             variant="outline"
                             onClick={() => {
                               resetForm()
-                              setEmailInputs([{ value: '' }])
+                              setEmailInputs([{ id: uuidv4(), value: '' }])
                             }}
                             disabled={loading}
                             className="mb-4 flex items-center rounded-xl px-4 py-2"
