@@ -223,3 +223,9 @@ export interface ISidebarSliderData {
   value: string
   copyable?: boolean
 }
+
+export interface IAttributeMapping {
+  attributeName: string
+  schemaId: string
+  schemaName: string
+}
