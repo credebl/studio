@@ -161,11 +161,12 @@ export const OrganizationList = (): React.JSX.Element => {
       </div>
 
       <div className="mx-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {loading ? (
+        {loading && (
           <div className="col-span-full mb-4 grid min-h-[50vh] w-full place-items-center">
             <Loader />
           </div>
-        ) : organizationsList.length > 0 ? (
+        )}
+        {organizationsList.length > 0 ? (
           organizationsList.map((org) => (
             <Card
               key={org.id}
@@ -202,7 +203,7 @@ export const OrganizationList = (): React.JSX.Element => {
                     {org.userOrgRoles.length > 0 ? (
                       org.userOrgRoles.map((roles, index) => (
                         <span
-                          key={index}
+                          key={`${roles.orgRole.name}-${index}`}
                           className="bg-secondary text-secondary-foreground rounded-md px-3 py-1 text-sm"
                         >
                           {roles.orgRole.name}

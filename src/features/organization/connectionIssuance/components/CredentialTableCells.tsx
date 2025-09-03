@@ -138,8 +138,7 @@ export const ProofState = ({ state }: { state: string }): React.JSX.Element => {
       userText = ProofRequestStateUserText.presentationReceived
       break
     default:
-      badgeClass = ''
-      userText = state
+      badgeClass = 'none'
   }
 
   return (
