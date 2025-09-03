@@ -89,6 +89,12 @@ function FormikData({
       ))}
     </>
   )
+
+  function hasNoRequiredAttributes(
+    attribute: { isRequired: boolean }[],
+  ): boolean {
+    return !attribute.some((item) => item.isRequired === true)
+  }
   return (
     <Formik
       initialValues={formData}
@@ -353,10 +359,7 @@ function FormikData({
                                 ?.isRequired &&
                               formikHandlers?.errors?.attribute[index]
                                 ?.isRequired &&
-                              !attribute.some(
-                                (item: { isRequired: boolean }) =>
-                                  item.isRequired === true,
-                              ) ? (
+                              hasNoRequiredAttributes(attribute) ? (
                                 <label className="text-destructive h-5 text-xs">
                                   {
                                     formikHandlers?.errors?.attribute[index]
