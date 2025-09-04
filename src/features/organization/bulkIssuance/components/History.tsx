@@ -52,15 +52,16 @@ function statusCell({
 }: {
   row: { original: { failedRecords: number } }
 }): JSX.Element {
+  const failedRecords = row.original.failedRecords > 0
   return (
     <p
       className={`${
-        row.original.failedRecords > 0
+        failedRecords
           ? 'badges-warning text-foreground'
           : 'badges-success text-foreground'
       } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-sm font-medium`}
     >
-      {row.original.failedRecords > 0
+      {failedRecords
         ? BulkIssuanceHistoryData.interrupted
         : BulkIssuanceHistoryData.completed}
     </p>
