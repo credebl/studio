@@ -1,8 +1,13 @@
 /* eslint-disable max-lines */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import { ISelectedAttributes, NumberAttribute } from '../type/interface'
+import {
+  CredDefData,
+  IAttributesDetails,
+  ISchemaAttributeData,
+  ISelectedAttributes,
+  NumberAttribute,
+} from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
 import {
   Select,
@@ -56,7 +61,9 @@ const EmailAttributesSelection = (): JSX.Element => {
   const getSelectedCredDefData = useAppSelector(
     (state) => state.verification.CredDefData,
   )
-
+  const getSelectedW3cSchemaData = useAppSelector(
+    (state) => state.verification.w3cSchemaAttributes,
+  )
   const selectedSchemaAttributes = useAppSelector(
     (state) => state.verification.schemaAttributes,
   )
@@ -205,78 +212,80 @@ const EmailAttributesSelection = (): JSX.Element => {
 
     redirectToAppropriatePage()
   }
-
-  const createAttributeObjects = (
-    schema: any,
-    matchingCredDefs: any[],
-    attributes: {
-      displayName: string
-      attributeName: string
-      schemaDataType: string
-    }[],
+  const mapCredDefs = (
+    selectedCredDefs: CredDefData[],
+    schema: ISchemaAttributeData,
+  ): CredDefData[] =>
+    (Array.isArray(selectedCredDefs)
+      ? selectedCredDefs.filter(
+          (credDef) => credDef.schemaLedgerId === schema.schemaId,
+        )
+      : [])
+  const mapMatchingCredDefs = (
+    matchingCredDefs: CredDefData[],
+    attribute: IAttributesDetails,
+    schema: ISchemaAttributeData,
   ): ISelectedAttributes[] =>
-    matchingCredDefs.flatMap((credDef) =>
-      attributes.map((attribute) => ({
-        displayName: attribute.displayName,
-        attributeName: attribute.attributeName,
-        isChecked: false,
-        value: '',
-        condition: '',
-        options: predicatesConditions,
-        dataType: attribute.schemaDataType,
-        schemaName: schema?.schemaId?.split(':')[2] || '',
-        credDefName: credDef.tag,
-        schemaId: schema.schemaId,
-        credDefId: credDef.credentialDefinitionId,
-        selectedOption: 'Select',
-        inputError: '',
-        selectError: '',
-      })),
-    )
-
-  function getAttributesFromSchema(
-    schema: (typeof selectedSchemaAttributes)[number],
-    selectedCredDefs: typeof getSelectedCredDefData,
-  ): ISelectedAttributes[] {
-    if (!schema.attributes || !Array.isArray(schema.attributes)) {
-      return []
-    }
-
-    const getMatchingCredDefs = (
-      selectedCredDefs: any[],
-      schemaId: string,
-    ): any[] =>
-      (Array.isArray(selectedCredDefs)
-        ? selectedCredDefs.filter(
-            (credDef) => credDef.schemaLedgerId === schemaId,
-          )
-        : [])
-
-    const matchingCredDefs = getMatchingCredDefs(
-      selectedCredDefs,
-      schema.schemaId,
-    )
-    return createAttributeObjects(schema, matchingCredDefs, schema.attributes)
-  }
-
+    matchingCredDefs.map((credDef) => ({
+      displayName: attribute.displayName,
+      attributeName: attribute.attributeName,
+      isChecked: false,
+      value: '',
+      condition: '',
+      options: predicatesConditions,
+      dataType: attribute.schemaDataType,
+      schemaName: schema?.schemaId?.split(':')[2] || '',
+      credDefName: credDef.tag,
+      schemaId: schema.schemaId,
+      credDefId: credDef.credentialDefinitionId,
+      selectedOption: 'Select',
+      inputError: '',
+      selectError: '',
+    }))
   const loadAttributesData = async (): Promise<void> => {
     setLoading(true)
 
     try {
       setAttributeData([])
-      if (!w3cSchema) {
-        const selectedCredDefs = getSelectedCredDefData || []
-        const parsedSchemaDetails = Array.isArray(selectedSchemaAttributes)
-          ? selectedSchemaAttributes
-          : []
+      if (w3cSchema) {
+        const parsedW3CSchemaDetails = getSelectedW3cSchemaData
+        if (
+          Array.isArray(parsedW3CSchemaDetails) &&
+          parsedW3CSchemaDetails.length > 0
+        ) {
+          const allAttributes = parsedW3CSchemaDetails.flatMap((schema) => {
+            if (schema.attributes && Array.isArray(schema.attributes)) {
+              return schema.attributes.map((attribute) => ({
+                ...attribute,
+                schemaName: schema.schemaName,
+                credDefName: '',
+                schemaId: schema.schemaId,
+                credDefId: '',
+              }))
+            }
+            return []
+          })
 
-        if (parsedSchemaDetails.length > 0) {
-          const allAttributes = parsedSchemaDetails.flatMap((schema) =>
-            getAttributesFromSchema(schema, selectedCredDefs),
-          )
-          setAttributeData(allAttributes)
+          const inputArray = allAttributes.map((attribute) => ({
+            displayName: attribute.displayName,
+            attributeName: attribute.attributeName,
+            isChecked: false,
+            value: '',
+            condition: '',
+            options: predicatesConditions,
+            dataType: attribute.schemaDataType,
+            schemaName: attribute.schemaName ?? '',
+            credDefName: attribute.credDefName,
+            schemaId: attribute.schemaId ?? '',
+            credDefId: attribute.credDefId,
+            selectedOption: 'Select',
+            inputError: '',
+            selectError: '',
+          }))
+
+          setAttributeData(inputArray)
         } else {
-          console.error('Parsed schema details are not in the expected format.')
+          console.error('W3C schema details are not in the expected format.')
         }
       } else {
         const selectedCredDefs = getSelectedCredDefData || []
@@ -291,27 +300,8 @@ const EmailAttributesSelection = (): JSX.Element => {
           const allAttributes = parsedSchemaDetails.flatMap((schema) => {
             if (schema.attributes && Array.isArray(schema.attributes)) {
               return schema.attributes.flatMap((attribute) => {
-                const matchingCredDefs = Array.isArray(selectedCredDefs)
-                  ? selectedCredDefs.filter(
-                      (credDef) => credDef.schemaLedgerId === schema.schemaId,
-                    )
-                  : []
-                return matchingCredDefs.map((credDef) => ({
-                  displayName: attribute.displayName,
-                  attributeName: attribute.attributeName,
-                  isChecked: false,
-                  value: '',
-                  condition: '',
-                  options: predicatesConditions,
-                  dataType: attribute.schemaDataType,
-                  schemaName: schema?.schemaId?.split(':')[2] || '',
-                  credDefName: credDef.tag,
-                  schemaId: schema.schemaId,
-                  credDefId: credDef.credentialDefinitionId,
-                  selectedOption: 'Select',
-                  inputError: '',
-                  selectError: '',
-                }))
+                const matchingCredDefs = mapCredDefs(selectedCredDefs, schema)
+                return mapMatchingCredDefs(matchingCredDefs, attribute, schema)
               })
             }
             return []

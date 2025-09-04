@@ -102,7 +102,7 @@ export interface IOption {
   value: string | number
   label: string
 }
-// fixme later
+
 export interface ISelectedAttributes {
   displayName: string
   attributeName: string
@@ -222,4 +222,10 @@ export interface ISidebarSliderData {
   label: string
   value: string
   copyable?: boolean
+}
+
+export interface IAttributeMapping {
+  attributeName: string
+  schemaId: string
+  schemaName: string
 }

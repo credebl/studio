@@ -292,13 +292,11 @@ const EmailVerification = (): JSX.Element => {
       setLoading(false)
     }
   }
-
   const createHandleInputChange =
     (index: number) =>
     (event: React.ChangeEvent<HTMLInputElement>): void => {
       handleInputChange(index, event)
     }
-
   return (
     <div className="px-4 pt-2">
       <div className="col-span-full mb-4 xl:mb-2">

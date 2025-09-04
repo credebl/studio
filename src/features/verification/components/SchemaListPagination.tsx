@@ -14,7 +14,27 @@ function SchemaListPagination({
   schemasListParameter,
   setSchemasListParameter,
   totalItems,
-}: SchemaListPaginationProps): JSX.Element {
+}: Readonly<SchemaListPaginationProps>): JSX.Element {
+  const pages = Array.from({ length: totalItems }, (_, i) => i + 1)
+    .filter(
+      (page) =>
+        page === 1 ||
+        page === totalItems ||
+        Math.abs(page - schemasListParameter.page) <= 1,
+    )
+    .reduce<(number | string)[]>((acc, page, i, arr) => {
+      if (
+        i > 0 &&
+        typeof page === 'number' &&
+        typeof arr[i - 1] === 'number' &&
+        page - arr[i - 1] > 1
+      ) {
+        acc.push(`ellipsis-${arr[i - 1]}-${page}`)
+      }
+      acc.push(page)
+      return acc
+    }, [])
+
   return (
     <Pagination>
       <PaginationContent>
@@ -33,60 +53,36 @@ function SchemaListPagination({
           </PaginationItem>
         )}
 
-        {Array.from({ length: totalItems })
-          .map((_, i) => i + 1)
-          .filter(
-            (page) =>
-              page === 1 ||
-              page === totalItems ||
-              Math.abs(page - schemasListParameter.page) <= 1,
-          )
-          .reduce<(number | string)[]>((acc, page, i, arr) => {
-            if (
-              i > 0 &&
-              typeof page === 'number' &&
-              typeof arr[i - 1] === 'number' &&
-              page - (arr[i - 1] as number) > 1
-            ) {
-              acc.push('...')
-            }
-            acc.push(page)
-            return acc
-          }, [])
-          .map((page, idx) => {
-            if (page === '...') {
-              return (
-                <span
-                  key={`ellipsis-${idx}`}
-                  className="text-muted-foreground px-2"
-                >
-                  ...
-                </span>
-              )
-            }
-
+        {pages.map((page) => {
+          if (typeof page === 'string') {
             return (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    setSchemasListParameter((prev) => ({
-                      ...prev,
-                      page: page as number,
-                    }))
-                  }}
-                  className={`rounded-lg px-4 py-2 ${
-                    schemasListParameter.page === page
-                      ? 'bg-primary text-[var(--color-white)]'
-                      : 'bg-background text-muted-foreground'
-                  }`}
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
+              <span key={page} className="text-muted-foreground px-2">
+                ...
+              </span>
             )
-          })}
+          }
+          return (
+            <PaginationItem key={page}>
+              <PaginationLink
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault()
+                  setSchemasListParameter((prev) => ({
+                    ...prev,
+                    page,
+                  }))
+                }}
+                className={`rounded-lg px-4 py-2 ${
+                  schemasListParameter.page === page
+                    ? 'bg-primary text-[var(--color-white)]'
+                    : 'bg-background text-muted-foreground'
+                }`}
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          )
+        })}
 
         {schemasListParameter.page < totalItems && (
           <PaginationItem>

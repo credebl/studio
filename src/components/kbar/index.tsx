@@ -73,7 +73,8 @@ export default function KBar({
 
     // listen for refresh navigation events
     router.refresh = new Proxy(router.refresh, {
-      apply(target, thisArg, args: []) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      apply(target, thisArg, args: []): any {
         handleRefresh()
         return target.apply(thisArg, args)
       },
@@ -87,8 +88,8 @@ export default function KBar({
       router.push(url)
     }
 
-    const createBaseAction = (navItem: NavItem): KBarAction => {
-      return navItem.url !== '#'
+    const createBaseAction = (navItem: NavItem): KBarAction =>
+      (navItem.url !== '#'
         ? {
             id: `${navItem.title.toLowerCase()}Action`,
             name: navItem.title,
@@ -98,20 +99,25 @@ export default function KBar({
             subtitle: `Go to ${navItem.title}`,
             perform: (): void => navigateTo(navItem.url),
           }
-        : null
-    }
+        : null)
 
+    const convertChildItemToAction = (
+      childItem: NavItem,
+      navItem: NavItem,
+    ): ChildAction => ({
+      id: `${childItem.title.toLowerCase()}Action`,
+      name: childItem.title,
+      shortcut: childItem.shortcut,
+      keywords: childItem.title.toLowerCase(),
+      section: navItem.title,
+      subtitle: `Go to ${childItem.title}`,
+      perform: (): void => navigateTo(childItem.url),
+    })
     // Map child items into actions
     const createChildActions = (navItem: NavItem): ChildAction[] =>
-      navItem.items?.map((childItem: NavItem) => ({
-        id: `${childItem.title.toLowerCase()}Action`,
-        name: childItem.title,
-        shortcut: childItem.shortcut,
-        keywords: childItem.title.toLowerCase(),
-        section: navItem.title,
-        subtitle: `Go to ${childItem.title}`,
-        perform: (): void => navigateTo(childItem.url),
-      })) ?? []
+      navItem.items?.map((childItem: NavItem) =>
+        convertChildItemToAction(childItem, navItem),
+      ) ?? []
 
     return navItems.flatMap((navItem) => {
       const baseAction = createBaseAction(navItem)

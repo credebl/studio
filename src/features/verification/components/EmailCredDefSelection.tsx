@@ -144,6 +144,7 @@ const EmailCredDefSelection = (): JSX.Element => {
                 ),
               },
             ],
+            clickId: ele?.credentialDefinitionId || '',
           }))
 
           allCredDefs = [...allCredDefs, ...tableData]

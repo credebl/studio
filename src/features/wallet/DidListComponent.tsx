@@ -111,6 +111,90 @@ const DateTooltip = ({
     </TooltipContent>
   </Tooltip>
 )
+
+// Shared components
+const CopyDid = ({
+  value,
+  className,
+  showCheck = false,
+  didListLoading,
+}: {
+  value: string
+  className?: string
+  showCheck?: boolean
+  didListLoading?: boolean
+}): React.JSX.Element => {
+  const [copied, setCopied] = useState(false)
+
+  const copyToClipboard = (): void => {
+    const resetCopied = (): void => setCopied(false)
+    const handleCopySuccess = (): void => {
+      setCopied(true)
+      setTimeout(resetCopied, 2000)
+    }
+    const handleCopyError = (): void => {
+      console.error('Failed to copy text to clipboard')
+    }
+    navigator.clipboard
+      .writeText(value)
+      .then(handleCopySuccess)
+      .catch(handleCopyError)
+  }
+
+  if (showCheck) {
+    return (
+      <div className={`flex items-center gap-2 ${className}`}>
+        <span className="truncate">{value}</span>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={copyToClipboard}
+          className="h-8 w-8"
+        >
+          {copied ? (
+            <Check className="h-4 w-4" />
+          ) : (
+            <Copy className="h-4 w-4" />
+          )}
+        </Button>
+      </div>
+    )
+  }
+
+  if (didListLoading) {
+    return <Loader />
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className={`flex items-center gap-2 ${className}`}>
+          <span className="truncate font-mono">{value}</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6"
+            onClick={copyToClipboard}
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>Copy to clipboard</p>
+      </TooltipContent>
+    </Tooltip>
+  )
+}
+
+const TokenWarningMessage = (): React.JSX.Element => (
+  <div className="mt-3 text-xs">
+    <p>Note: You need to have tokens in your wallet to create a DID.</p>
+  </div>
+)
+
 const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
@@ -280,6 +364,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       }
 
       let networkName: string = ''
+
       if (didMethod === DidMethod.INDY) {
         networkName = data?.data?.org_agents[0]?.orgDid
           .split(':')
@@ -287,8 +372,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           .join(':')
       } else if (didMethod === DidMethod.POLYGON) {
         networkName = data?.data?.org_agents[0]?.orgDid.split(':')[2]
-      } else {
-        networkName = ''
       }
 
       let completeDidMethod: string = ''
@@ -315,6 +398,32 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     } else {
       console.error('Error in fetching organization:::')
     }
+  }
+
+  const getButtonLabel = (): React.ReactNode => {
+    if (isMethodLoading) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Loading...
+        </>
+      )
+    }
+
+    if (
+      isCreatingDid &&
+      method !== DidMethod.POLYGON &&
+      method !== DidMethod.WEB
+    ) {
+      return (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Creating DID...
+        </>
+      )
+    }
+
+    return 'Create DID'
   }
 
   React.useEffect(() => {
@@ -460,87 +569,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
   }, [havePrivateKey])
 
-  // Shared components
-  const CopyDid = ({
-    value,
-    className,
-    showCheck = false,
-  }: {
-    value: string
-    className?: string
-    showCheck?: boolean
-  }): React.JSX.Element => {
-    const [copied, setCopied] = useState(false)
-
-    const copyToClipboard = (): void => {
-      const resetCopied = (): void => setCopied(false)
-      const handleCopySuccess = (): void => {
-        setCopied(true)
-        setTimeout(resetCopied, 2000)
-      }
-      const handleCopyError = (): void => {
-        console.error('Failed to copy text to clipboard')
-      }
-      navigator.clipboard
-        .writeText(value)
-        .then(handleCopySuccess)
-        .catch(handleCopyError)
-    }
-
-    if (showCheck) {
-      return (
-        <div className={`flex items-center gap-2 ${className}`}>
-          <span className="truncate">{value}</span>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={copyToClipboard}
-            className="h-8 w-8"
-          >
-            {copied ? (
-              <Check className="h-4 w-4" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-      )
-    }
-
-    if (didListLoading) {
-      return <Loader />
-    }
-
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div className={`flex items-center gap-2 ${className}`}>
-            <span className="truncate font-mono">{value}</span>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6"
-              onClick={copyToClipboard}
-            >
-              <Copy className="h-4 w-4" />
-            </Button>
-          </div>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>Copy to clipboard</p>
-        </TooltipContent>
-      </Tooltip>
-    )
-  }
-
-  const TokenWarningMessage = (): React.JSX.Element => (
-    <div className="mt-3 text-xs">
-      <p>Note: You need to have tokens in your wallet to create a DID.</p>
-    </div>
-  )
-
   return (
     <div className="w-full space-y-4">
       {successMsg && (
@@ -592,21 +620,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
             isCreatingDid
           }
         >
-          {isMethodLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Loading...
-            </>
-          ) : isCreatingDid &&
-            method !== DidMethod.POLYGON &&
-            method !== DidMethod.WEB ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating DID...
-            </>
-          ) : (
-            'Create DID'
-          )}
+          {getButtonLabel()}
         </Button>
       </div>
 
