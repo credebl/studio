@@ -35,9 +35,8 @@ const DeleteModal = ({
             <DialogDescription className="text-gray-500 dark:text-gray-400">
               Are you sure you want to revoke{' '}
               <span className="font-semibold text-gray-900 dark:text-white">
-                {deviceName}
+                {deviceName}?
               </span>
-              ?
             </DialogDescription>
           </div>
         </div>

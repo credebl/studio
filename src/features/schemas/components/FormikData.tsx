@@ -177,7 +177,7 @@ function FormikData({
                       : null}
                   </label>
                 ) : (
-                  <label className="text-destructive h-5 text-xs"></label>
+                  <span className="text-destructive h-5 text-xs"></span>
                 )}
               </div>
             </div>
@@ -202,13 +202,16 @@ function FormikData({
                 return (
                   <div className="relative flex flex-col">
                     {attribute?.map((element: IAttributes, index: number) => (
-                      <div key={`attribute-${index}`} className="relative mt-5">
+                      <div
+                        key={`attribute-${attribute.id}`}
+                        className="relative mt-5"
+                      >
                         <div
-                          key={`attribute-${index}`}
+                          key={`attribute-inner-${attribute.id}`}
                           className="relative flex cursor-pointer flex-col justify-between px-4 sm:flex-row md:flex-row"
                         >
                           <div
-                            key={`attribute-${index}`}
+                            key={`attribute-grid-${attribute.id}`}
                             style={{
                               overflow: 'auto',
                               width: '95%',
@@ -232,9 +235,9 @@ function FormikData({
                                 index,
                                 'attributeName',
                               ) && (
-                                <label className="text-destructive h-5 text-xs">
+                                <span className="text-destructive h-5 text-xs">
                                   Attribute name already exists
-                                </label>
+                                </span>
                               )}
                               {formikHandlers.touched.attribute &&
                               attribute[index] &&
@@ -254,7 +257,7 @@ function FormikData({
                                   }
                                 </label>
                               ) : (
-                                <label className="text-destructive h-5 text-xs"></label>
+                                <span className="text-destructive h-5 text-xs"></span>
                               )}
                             </div>
 
@@ -296,7 +299,7 @@ function FormikData({
                                   }
                                 </label>
                               ) : (
-                                <label className="text-destructive h-5 text-xs"></label>
+                                <span className="text-destructive h-5 text-xs"></span>
                               )}
                             </div>
                             <div className="relative flex max-w-[411px] flex-col items-start gap-x-4 p-2">
@@ -312,9 +315,9 @@ function FormikData({
                                 index,
                                 'displayName',
                               ) && (
-                                <label className="text-destructive h-5 text-xs">
+                                <span className="text-destructive h-5 text-xs">
                                   Display name of attribute already exists
-                                </label>
+                                </span>
                               )}
                               {formikHandlers?.touched?.attribute &&
                               attribute[index] &&
@@ -334,7 +337,7 @@ function FormikData({
                                   }
                                 </label>
                               ) : (
-                                <label className="text-destructive h-5 text-xs"></label>
+                                <span className="text-destructive h-5 text-xs"></span>
                               )}
                             </div>
                           </div>
