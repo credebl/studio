@@ -203,7 +203,7 @@ function FormikData({
                   <div className="relative flex flex-col">
                     {attribute?.map((element: IAttributes, index: number) => (
                       <div
-                        key={`attribute-${attribute.id}`}
+                        key={`attribute-${element.id}`}
                         className="relative mt-5"
                       >
                         <div
