@@ -27,7 +27,6 @@ import { useRouter } from 'next/navigation'
 export const OrganizationList = (): React.JSX.Element => {
   const [organizationsList, setOrganizationsList] = useState<Organization[]>([])
   const [loading, setLoading] = useState(true)
-  const [, setError] = useState<string | null>(null)
   const [searchText, setSearchText] = useState('')
   const [isCreatingOrg, setIsCreatingOrg] = useState(false)
 
@@ -74,8 +73,6 @@ export const OrganizationList = (): React.JSX.Element => {
           total: totalPages,
           totalCount,
         }))
-      } else {
-        setError(response as string)
       }
     } catch (err) {
       console.error('Error fetching organizations:', err)

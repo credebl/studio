@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import React from 'react'
 
-// components/organization/delete-organization-card.tsx
 interface DeleteOrganizationCardProps {
   title?: string
   description?: string
@@ -26,7 +25,7 @@ export function DeleteOrganizationCard({
   count,
   isDisabled = false,
   onDeleteClick,
-}: DeleteOrganizationCardProps): React.JSX.Element {
+}: Readonly<DeleteOrganizationCardProps>): React.JSX.Element {
   const isButtonDisabled = isDisabled || count === 0
 
   return (
