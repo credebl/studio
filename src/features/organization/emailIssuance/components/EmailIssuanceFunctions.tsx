@@ -252,23 +252,30 @@ const mapIndyCredentialDefs = (
         schemaAttributes,
       }: ICredentials,
       id: number,
-    ) => ({
-      value:
-        (schemaType === SchemaTypes.schema_INDY
-          ? credentialDefinitionId
-          : schemaVersion) ?? '',
-      label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
-      schemaName: schemaName || '',
-      schemaVersion,
-      credentialDefinition,
-      schemaIdentifier,
-      credentialDefinitionId,
-      id,
-      schemaAttributes:
-        schemaAttributes &&
-        typeof schemaAttributes === 'string' &&
-        JSON.parse(schemaAttributes),
-    }),
+    ) => {
+      const suffix =
+        currentSchemaType === SchemaTypes.schema_INDY
+          ? ` - (${credentialDefinition})`
+          : ''
+
+      return {
+        value:
+          (schemaType === SchemaTypes.schema_INDY
+            ? credentialDefinitionId
+            : schemaVersion) ?? '',
+        label: `${schemaName} [${schemaVersion}]${suffix}`,
+        schemaName: schemaName || '',
+        schemaVersion,
+        credentialDefinition,
+        schemaIdentifier,
+        credentialDefinitionId,
+        id,
+        schemaAttributes:
+          schemaAttributes &&
+          typeof schemaAttributes === 'string' &&
+          JSON.parse(schemaAttributes),
+      }
+    },
   )
 
 const mapW3CCredentialDefs = (credentialDefs: any): any =>
