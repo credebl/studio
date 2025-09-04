@@ -12,6 +12,7 @@ import { ArrowLeft } from 'lucide-react'
 import { AxiosResponse } from 'axios'
 import { BulkIssuanceStatus } from '@/features/common/enum'
 import { Button } from '@/components/ui/button'
+import { CellContext } from '@tanstack/react-table'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { IConnectionListAPIParameter } from '@/app/api/connection'
 import { ITableData } from '@/features/connections/types/connections-interface'
@@ -25,6 +26,27 @@ import { useRouter } from 'next/navigation'
 
 interface IProps {
   requestId: string
+}
+
+type StatusRow = {
+  isError: boolean
+  status: string
+}
+
+function statusCell(ctx: CellContext<StatusRow, unknown>): JSX.Element {
+  const { isError, status } = ctx.row.original
+
+  return (
+    <p
+      className={`${
+        !isError
+          ? 'badges-success text-foreground'
+          : 'badges-error text-foreground'
+      } text-md flex w-fit justify-center rounded-md px-2 py-0.5 font-medium`}
+    >
+      {status}
+    </p>
+  )
 }
 
 const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
@@ -48,6 +70,18 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
   })
   const orgId = useAppSelector((state: RootState) => state.organization.orgId)
   const router = useRouter()
+
+  function getHistoryErrorMessage(history?: { error?: string }): string {
+    if (!history?.error) {
+      return '-'
+    }
+
+    if (history.error === 'Http Exception') {
+      return 'Credential Issuance failed due to error in Wallet Agent'
+    }
+
+    return history.error.replace(/[[\]"{},]/g, ' ')
+  }
 
   const getHistoryDetails = async (
     apiParameter: IConnectionListAPIParameter,
@@ -89,11 +123,7 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
               ? BulkIssuanceStatus.successful
               : BulkIssuanceStatus.failed,
           isError: history?.isError,
-          error: history?.error
-            ? history.error === 'Http Exception'
-              ? 'Credential Issuance failed due to error in Wallet Agent'
-              : history.error.replace(/[[\]"{},]/g, ' ')
-            : '-',
+          error: getHistoryErrorMessage(history),
         }),
       )
       setHistoryList(historyData)
@@ -154,17 +184,7 @@ const HistoryDetails = ({ requestId }: IProps): JSX.Element => {
       id: 'status',
       title: 'Status',
       accessorKey: 'status',
-      cell: ({ row }) => (
-        <p
-          className={`${
-            row.original.isError === false
-              ? 'badges-success text-foreground'
-              : 'badges-error text-foreground'
-          } text-md flex w-fit justify-center rounded-md px-2 py-0.5 font-medium min-[320]:px-3 sm:mr-0 sm:px-3 md:mr-2 lg:px-3`}
-        >
-          {row.original.status}
-        </p>
-      ),
+      cell: (row) => statusCell({ ...row }),
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
