@@ -40,12 +40,10 @@ interface ProfileFormType {
 
 const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
   const [loading] = useState(false)
-  const [, setOpen] = useState(false)
   const title = initialData ? 'Edit product' : 'Create Your Profile'
   const description = initialData
     ? 'Edit a product.'
     : 'To create your resume, we first need some basic information about you.'
-  const [, setPreviousStep] = useState(0)
   const [currentStep, setCurrentStep] = useState(0)
   const [data, setData] = useState({})
 
@@ -129,14 +127,12 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
       if (currentStep === steps.length - 2) {
         await form.handleSubmit(processForm)()
       }
-      setPreviousStep(currentStep)
       setCurrentStep((step) => step + 1)
     }
   }
 
   const prev = (): void => {
     if (currentStep > 0) {
-      setPreviousStep(currentStep)
       setCurrentStep((step) => step - 1)
     }
   }
@@ -149,12 +145,7 @@ const ProfileCreateForm: React.FC<ProfileFormType> = ({ initialData }) => {
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
+          <Button disabled={loading} variant="destructive" size="sm">
             <IconTrash className="h-4 w-4" />
           </Button>
         )}
