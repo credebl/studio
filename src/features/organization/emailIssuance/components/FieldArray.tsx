@@ -33,7 +33,7 @@ function FieldArrayData({
             index: React.Key | null | undefined,
           ) => (
             <div
-              key={index}
+              key={`${formData1.attributes[0].name}${index}`}
               className="mb-4 rounded-lg border border-gray-200 px-4 pt-8 pb-10"
             >
               <div className="flex justify-between">

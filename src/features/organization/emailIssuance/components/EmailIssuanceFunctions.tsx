@@ -315,7 +315,14 @@ export const getSchemaCredentials = async ({
               (schemaType === SchemaTypes.schema_INDY
                 ? credentialDefinitionId
                 : schemaVersion) ?? '',
-            label: `${schemaName} [${schemaVersion}]${currentSchemaType === SchemaTypes.schema_INDY ? ` - (${credentialDefinition})` : ''}`,
+            label: [
+              `${schemaName} [${schemaVersion}]`,
+              currentSchemaType === SchemaTypes.schema_INDY
+                ? `(${credentialDefinition})`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(' - '),
             schemaName: schemaName || '',
             schemaVersion,
             credentialDefinition,
@@ -356,19 +363,25 @@ export const getSchemaCredentials = async ({
             schemaLedgerId,
             attributes,
             type,
-          }: ICredentials) => ({
-            value: version,
-            label: `${name} [${version}]`,
-            schemaName: name,
-            type,
-            schemaVersion: version,
-            schemaIdentifier: schemaLedgerId,
-            attributes: Array.isArray(attributes)
-              ? attributes
-              : attributes
-                ? JSON.parse(attributes)
-                : [],
-          }),
+          }: ICredentials) => {
+            let parsedAttributes = []
+
+            if (Array.isArray(attributes)) {
+              parsedAttributes = attributes
+            } else if (attributes) {
+              parsedAttributes = JSON.parse(attributes)
+            }
+
+            return {
+              value: version,
+              label: `${name} [${version}]`,
+              schemaName: name,
+              type,
+              schemaVersion: version,
+              schemaIdentifier: schemaLedgerId,
+              attributes: parsedAttributes,
+            }
+          },
         )
         setCredentialOptions(options)
       } else {

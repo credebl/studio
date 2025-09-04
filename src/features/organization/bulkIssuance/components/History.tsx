@@ -39,8 +39,77 @@ import { pathRoutes } from '@/config/pathRoutes'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
-function renderDateCell({ row }: { row: any }): JSX.Element {
+function renderDateCell({
+  row,
+}: {
+  row: { original: { createDateTime: string } }
+}): JSX.Element {
   return <DateCell date={row.original.createDateTime} />
+}
+
+function statusCell({
+  row,
+}: {
+  row: { original: { failedRecords: number } }
+}): JSX.Element {
+  return (
+    <p
+      className={`${
+        row.original.failedRecords > 0
+          ? 'badges-warning text-foreground'
+          : 'badges-success text-foreground'
+      } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-sm font-medium`}
+    >
+      {row.original.failedRecords > 0
+        ? BulkIssuanceHistoryData.interrupted
+        : BulkIssuanceHistoryData.completed}
+    </p>
+  )
+}
+
+type HistoryRow = {
+  id: string
+  status: BulkIssuanceHistory
+  failedRecords: number
+}
+
+export function renderHistoryCell(
+  row: { original: HistoryRow },
+  handleRetry: (id: string) => void,
+  router: ReturnType<typeof useRouter>,
+): JSX.Element {
+  return (
+    <div className="flex">
+      <Button
+        disabled={row.original.status === BulkIssuanceHistory.started}
+        onClick={() =>
+          router.push(
+            `${pathRoutes.organizations.Issuance.history}/${row.original.id}`,
+          )
+        }
+        style={{ height: '2.5rem', minWidth: '4rem' }}
+      >
+        <Eye />
+        <p className="flex items-center justify-center pr-1 text-center">
+          <span className="pl-1">View</span>
+        </p>
+      </Button>
+
+      {row.original.failedRecords > 0 && (
+        <Button
+          variant="secondary"
+          onClick={() => handleRetry(row.original.id)}
+          className="ml-4"
+          style={{ height: '2.5rem', minWidth: '4rem' }}
+        >
+          <p className="flex items-center justify-center pr-1 text-center">
+            <IssuanceRetryIcon />
+            <span>Retry</span>
+          </p>
+        </Button>
+      )}
+    </div>
+  )
 }
 
 const HistoryBulkIssuance = (): JSX.Element => {
@@ -279,57 +348,15 @@ const HistoryBulkIssuance = (): JSX.Element => {
       id: 'status',
       title: 'Status',
       accessorKey: 'status',
-      cell: ({ row }) => (
-        <p
-          className={`${
-            row.original.failedRecords > 0
-              ? 'badges-warning text-foreground'
-              : 'badges-success text-foreground'
-          } mr-0.5 flex w-fit items-center justify-center rounded-md px-2 py-0.5 text-sm font-medium`}
-        >
-          {row.original.failedRecords > 0
-            ? BulkIssuanceHistoryData.interrupted
-            : BulkIssuanceHistoryData.completed}
-        </p>
-      ),
+      cell: statusCell,
       columnFunction: [],
     },
     {
       id: 'actions',
       title: 'Action',
       accessorKey: 'actions',
-      cell: ({ row }) => (
-        <div className="flex">
-          <Button
-            disabled={row.original.status === BulkIssuanceHistory.started}
-            onClick={() => {
-              router.push(
-                `${pathRoutes.organizations.Issuance.history}/${row.original.id}`,
-              )
-            }}
-            className=""
-            style={{ height: '2.5rem', minWidth: '4rem' }}
-          >
-            <Eye />
-            <p className="flex items-center justify-center pr-1 text-center">
-              <span className="pl-1">View</span>{' '}
-            </p>
-          </Button>
-          {row.original.failedRecords > 0 && (
-            <Button
-              variant="secondary"
-              onClick={() => handleRetry(row.original.id)}
-              className="ml-4"
-              style={{ height: '2.5rem', minWidth: '4rem' }}
-            >
-              <p className="flex items-center justify-center pr-1 text-center">
-                <IssuanceRetryIcon />
-                <span>Retry</span>
-              </p>
-            </Button>
-          )}
-        </div>
-      ),
+      cell: ({ row }: { row: { original: HistoryRow } }) =>
+        renderHistoryCell(row, handleRetry, router),
       columnFunction: [],
     },
   ]
