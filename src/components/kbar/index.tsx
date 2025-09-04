@@ -100,7 +100,7 @@ export default function KBar({
             perform: (): void => navigateTo(navItem.url),
           }
         : null)
-    const mapChildProcess = (
+    const convertChildItemToAction = (
       childItem: NavItem,
       navItem: NavItem,
     ): ChildAction => ({
@@ -115,7 +115,7 @@ export default function KBar({
     // Map child items into actions
     const createChildActions = (navItem: NavItem): ChildAction[] =>
       navItem.items?.map((childItem: NavItem) =>
-        mapChildProcess(childItem, navItem),
+        convertChildItemToAction(childItem, navItem),
       ) ?? []
 
     return navItems.flatMap((navItem) => {
