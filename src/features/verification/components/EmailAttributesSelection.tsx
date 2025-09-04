@@ -221,12 +221,11 @@ const EmailAttributesSelection = (): JSX.Element => {
           (credDef) => credDef.schemaLedgerId === schema.schemaId,
         )
       : [])
-  const mapMachingCredDefs = (
+  const mapMatchingCredDefs = (
     matchingCredDefs: CredDefData[],
     attribute: IAttributesDetails,
     schema: ISchemaAttributeData,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ): any =>
+  ): ISelectedAttributes[] =>
     matchingCredDefs.map((credDef) => ({
       displayName: attribute.displayName,
       attributeName: attribute.attributeName,
@@ -302,7 +301,7 @@ const EmailAttributesSelection = (): JSX.Element => {
             if (schema.attributes && Array.isArray(schema.attributes)) {
               return schema.attributes.flatMap((attribute) => {
                 const matchingCredDefs = mapCredDefs(selectedCredDefs, schema)
-                return mapMachingCredDefs(matchingCredDefs, attribute, schema)
+                return mapMatchingCredDefs(matchingCredDefs, attribute, schema)
               })
             }
             return []
