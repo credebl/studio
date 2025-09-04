@@ -62,7 +62,6 @@ const LedgerCard = ({
 )
 
 const LedgerConfig = ({
-  maskedSeeds,
   orgId,
   seeds,
   submitSharedWallet,
@@ -73,7 +72,6 @@ const LedgerConfig = ({
   const [selectedMethod, setSelectedMethod] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState('')
   const [seedVal, setSeedVal] = useState('')
-  const [, setMaskedSeedVal] = useState('')
   const [selectedDid, setSelectedDid] = useState('')
   const [mappedData, setMappedData] = useState<ILedgerConfigData>()
   const [domainValue, setDomainValue] = useState<string>('')
@@ -196,7 +194,6 @@ const LedgerConfig = ({
 
   useEffect(() => {
     setSeedVal(seeds)
-    setMaskedSeedVal(maskedSeeds)
   }, [seeds])
 
   useEffect(() => {
@@ -313,7 +310,6 @@ const LedgerConfig = ({
             formikHandlers.setFieldValue('method', value)
             handleMethodChange(value)
             setDomainValue('')
-            // Reset network when method changes
             formikHandlers.setFieldValue('network', '')
             setSelectedNetwork('')
           }}
