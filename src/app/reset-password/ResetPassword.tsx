@@ -33,7 +33,7 @@ import { setToken } from '@/lib/authSlice'
 import { useTheme } from 'next-themes'
 import { useThemeConfig } from '@/components/active-theme'
 
-interface passwordValues {
+interface IPasswordDetails {
   password: string
   confirmPassword: string
 }
@@ -53,7 +53,7 @@ const ResetPassword = (): JSX.Element => {
   const { resolvedTheme } = useTheme()
   const router = useRouter()
 
-  const submit = async (passwordDetails: passwordValues): Promise<void> => {
+  const submit = async (passwordDetails: IPasswordDetails): Promise<void> => {
     try {
       setLoading(true)
       dispatch(setToken(userToken))
@@ -150,7 +150,7 @@ const ResetPassword = (): JSX.Element => {
                       validateOnBlur
                       validateOnChange
                       enableReinitialize
-                      onSubmit={(values: passwordValues) => {
+                      onSubmit={(values: IPasswordDetails) => {
                         submit(values)
                       }}
                     >
