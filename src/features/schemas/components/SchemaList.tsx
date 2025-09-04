@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 'use client'
 
 import { DidMethod, SchemaTypes } from '@/common/enums'
@@ -38,6 +39,36 @@ import { getOrganizationById } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
 import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
+
+const generatePaginationNumbers = (
+  currentPage: number,
+  lastPage: number,
+  paginationRange: number = 2,
+): (number | string)[] => {
+  const startPage = Math.max(1, currentPage - paginationRange)
+  const endPage = Math.min(lastPage, currentPage + paginationRange)
+  const paginationNumbers = []
+
+  if (startPage > 1) {
+    paginationNumbers.push(1)
+    if (startPage > 2) {
+      paginationNumbers.push('...')
+    }
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    paginationNumbers.push(i)
+  }
+
+  if (endPage < lastPage) {
+    if (endPage < lastPage - 1) {
+      paginationNumbers.push('...')
+    }
+    paginationNumbers.push(lastPage)
+  }
+
+  return paginationNumbers
+}
 
 const SchemaList = (props: {
   schemaSelectionCallback?: (
@@ -95,6 +126,47 @@ const SchemaList = (props: {
   const optionsWithDefault = ["Organization's schema", ...options]
   const skeletonIds = ['skeleton-1', 'skeleton-2', 'skeleton-3', 'skeleton-4']
 
+  const processDidSettings = (did: string): void => {
+    if (
+      did.includes(DidMethod.POLYGON) ||
+      did.includes(DidMethod.KEY) ||
+      did.includes(DidMethod.WEB)
+    ) {
+      setW3CSchema(true)
+      setSchemaType(SchemaTypes.schema_W3C)
+    }
+
+    if (did.includes(DidMethod.INDY)) {
+      setW3CSchema(false)
+      setSchemaType(SchemaTypes.schema_INDY)
+    }
+
+    if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
+      setIsNoLedger(true)
+    }
+  }
+  const extractUserRoles = (
+    roles: UserOrgRole[],
+    organizationId: string,
+  ): { orgRole: string | null; orgRoles: (string | null)[] } => {
+    const matchedRole = roles.find(
+      (role: UserOrgRole) => role.orgId === organizationId,
+    )
+    const matchingRoles = roles
+      .map((role: UserOrgRole) => {
+        if (role.orgId === organizationId) {
+          return role?.orgRole?.name
+        }
+        return null
+      })
+      .filter(Boolean)
+
+    return {
+      orgRole: matchedRole?.orgRole?.name || null,
+      orgRoles: matchingRoles,
+    }
+  }
+
   useEffect(() => {
     async function fetchProfile(): Promise<void> {
       if (!token || !organizationId) {
@@ -104,36 +176,18 @@ const SchemaList = (props: {
       try {
         const response = await getUserProfile(token)
 
-        // Type narrowing: check if response is a string
         if (typeof response === 'string') {
           console.error('API error:', response)
           setOrgRole(null)
           return
         }
 
-        // Type-cast to expected shape after narrowing
         const typedResponse = response as AxiosResponse<GetUserProfileResponse>
 
         const roles = typedResponse?.data?.data?.userOrgRoles ?? []
-        const matchedRole = roles.find(
-          (role: UserOrgRole) => role.orgId === organizationId,
-        )
-        const matchingRoles = roles
-          .map((role: UserOrgRole) => {
-            if (role.orgId === organizationId) {
-              return role?.orgRole?.name
-            } else {
-              return null
-            }
-          })
-          .filter(Boolean)
-        if (matchedRole?.orgRole?.name) {
-          setOrgRoles(matchingRoles)
-          setOrgRole(matchedRole.orgRole.name)
-        } else {
-          setOrgRoles([])
-          setOrgRole(null)
-        }
+        const { orgRole, orgRoles } = extractUserRoles(roles, organizationId)
+        setOrgRoles(orgRoles)
+        setOrgRole(orgRole)
       } catch (error) {
         console.error('Unexpected fetch error:', error)
         setOrgRole(null)
@@ -208,23 +262,7 @@ const SchemaList = (props: {
       }
 
       if (did) {
-        if (
-          did.includes(DidMethod.POLYGON) ||
-          did.includes(DidMethod.KEY) ||
-          did.includes(DidMethod.WEB)
-        ) {
-          setW3CSchema(true)
-          setSchemaType(SchemaTypes.schema_W3C)
-        }
-
-        if (did.includes(DidMethod.INDY)) {
-          setW3CSchema(false)
-          setSchemaType(SchemaTypes.schema_INDY)
-        }
-
-        if (did.includes(DidMethod.KEY) || did.includes(DidMethod.WEB)) {
-          setIsNoLedger(true)
-        }
+        processDidSettings(did)
       }
     }
 
@@ -276,7 +314,6 @@ const SchemaList = (props: {
     setAllSchemaFlag(isAllSchemas)
     dispatch(setAllSchema(isAllSchemas))
 
-    // Reset pagination and search parameters
     setSchemaListAPIParameter({
       itemPerPage,
       page: 1,
@@ -351,33 +388,15 @@ const SchemaList = (props: {
     }
     props.W3CSchemaSelectionCallback?.(schemaId, w3cSchemaDetails)
   }
-  const paginationRange = 2
-  const currentPage = schemaListAPIParameter.page
-  const startPage = Math.max(1, currentPage - paginationRange)
-  const endPage = Math.min(lastPage, currentPage + paginationRange)
+  const paginationNumbers = generatePaginationNumbers(
+    schemaListAPIParameter.page,
+    lastPage,
+  )
 
-  const paginationNumbers = []
-
-  if (startPage > 1) {
-    paginationNumbers.push(1)
-    if (startPage > 2) {
-      paginationNumbers.push('...')
-    }
-  }
-
-  for (let i = startPage; i <= endPage; i++) {
-    paginationNumbers.push(i)
-  }
-
-  if (endPage < lastPage) {
-    if (endPage < lastPage - 1) {
-      paginationNumbers.push('...')
-    }
-    paginationNumbers.push(lastPage)
-  }
+  const isAdmin = orgRoles.includes('admin') || orgRoles.includes('owner')
 
   const handleClick = (): void => {
-    if (orgRoles.includes('admin') || orgRoles.includes('owner')) {
+    if (isAdmin) {
       setLoading(true)
       route.push('/schemas/create')
     }
@@ -420,10 +439,7 @@ const SchemaList = (props: {
           </Select>
           <Button
             onClick={handleClick}
-            disabled={
-              loading ||
-              !(orgRoles.includes('admin') || orgRoles.includes('owner'))
-            }
+            disabled={loading || !isAdmin}
             className="w-full sm:w-auto"
           >
             {loading ? <Loader size={20} /> : <Plus className="mr-2 h-4 w-4" />}
