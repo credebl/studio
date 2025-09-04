@@ -62,6 +62,33 @@ const RequiredAsterisk = (): React.JSX.Element => (
   <span className="text-destructive text-xs">*</span>
 )
 
+const LedgerCard = ({
+  ledger,
+  title,
+  description,
+  icon,
+  selectedLedger,
+  handleLedgerSelect,
+}: {
+  ledger: string
+  title: string
+  description: string
+  icon: React.ReactNode
+  selectedLedger?: string
+  handleLedgerSelect: (ledger: string) => void
+}): React.JSX.Element => (
+  <Card
+    className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
+      selectedLedger === ledger ? 'bg-muted border-2' : 'border'
+    }`}
+    onClick={() => handleLedgerSelect(ledger)}
+  >
+    <div className="mb-4 flex items-center justify-center">{icon}</div>
+    <h3 className="mb-1 text-lg font-semibold">{title}</h3>
+    <p className="text-sm">{description}</p>
+  </Card>
+)
+
 const DedicatedLedgerConfig = ({
   orgId,
   seeds,
@@ -327,29 +354,6 @@ const DedicatedLedgerConfig = ({
     )
   }
 
-  const LedgerCard = ({
-    ledger,
-    title,
-    description,
-    icon,
-  }: {
-    ledger: string
-    title: string
-    description: string
-    icon: React.ReactNode
-  }): React.JSX.Element => (
-    <Card
-      className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
-        selectedLedger === ledger ? 'bg-muted border-2' : 'border'
-      }`}
-      onClick={() => handleLedgerSelect(ledger)}
-    >
-      <div className="mb-4 flex items-center justify-center">{icon}</div>
-      <h3 className="mb-1 text-lg font-semibold">{title}</h3>
-      <p className="text-sm">{description}</p>
-    </Card>
-  )
-
   return (
     <div className="">
       {/* Header with back button */}
@@ -431,6 +435,8 @@ const DedicatedLedgerConfig = ({
             ledger={Ledgers.INDY}
             title=""
             description="Hyperledger Indy"
+            selectedLedger={selectedLedger}
+            handleLedgerSelect={handleLedgerSelect}
             icon={
               <Image
                 src="/images/Indicio.png"
@@ -444,6 +450,8 @@ const DedicatedLedgerConfig = ({
             ledger={Ledgers.POLYGON}
             title=""
             description="Polygon Blockchain"
+            selectedLedger={selectedLedger}
+            handleLedgerSelect={handleLedgerSelect}
             icon={
               <Image
                 src="/images/polygon.png"
@@ -457,6 +465,8 @@ const DedicatedLedgerConfig = ({
             ledger={Ledgers.NO_LEDGER}
             title=""
             description="No Ledger"
+            selectedLedger={selectedLedger}
+            handleLedgerSelect={handleLedgerSelect}
             icon={
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -597,7 +607,7 @@ const DedicatedLedgerConfig = ({
                                     className="font-semibold underline"
                                   >
                                     {polygonScan}
-                                  </a>
+                                  </a>{' '}
                                   .
                                 </div>
                               </div>
