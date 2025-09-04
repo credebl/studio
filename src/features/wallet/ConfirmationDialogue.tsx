@@ -16,9 +16,9 @@ import { XIcon } from 'lucide-react'
 
 export function AlertDialogDemo({
   handler,
-}: {
+}: Readonly<{
   handler: () => void
-}): JSX.Element {
+}>): JSX.Element {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

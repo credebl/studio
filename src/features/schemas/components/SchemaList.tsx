@@ -99,12 +99,11 @@ const SchemaList = (props: {
   )
   const [ledger, setLedger] = useState<string>('')
   const [schemaType, setSchemaType] = useState('')
-  const [, setWalletStatus] = useState(false)
   const [totalItem, setTotalItem] = useState(0)
   const [lastPage, setLastPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
   const [, setSelectedValue] = useState<string>('Organizations schema')
-  const [w3cSchema, setW3CSchema] = useState<boolean>(false)
+  const [w3cSchema, setw3cSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
   const [orgRole, setOrgRole] = useState<string | null>(null)
   const [orgRoles, setOrgRoles] = useState<(string | null)[]>([])
@@ -132,12 +131,12 @@ const SchemaList = (props: {
       did.includes(DidMethod.KEY) ||
       did.includes(DidMethod.WEB)
     ) {
-      setW3CSchema(true)
+      setw3cSchema(true)
       setSchemaType(SchemaTypes.schema_W3C)
     }
 
     if (did.includes(DidMethod.INDY)) {
-      setW3CSchema(false)
+      setw3cSchema(false)
       setSchemaType(SchemaTypes.schema_INDY)
     }
 
@@ -256,10 +255,6 @@ const SchemaList = (props: {
       const did = data?.data?.org_agents?.[0]?.orgDid
       const ledgerId = data?.data?.org_agents?.[0]?.ledgers?.id ?? ''
       setLedger(ledgerId)
-
-      if (data?.data?.org_agents && data?.data?.org_agents.length > 0) {
-        setWalletStatus(true)
-      }
 
       if (did) {
         processDidSettings(did)
