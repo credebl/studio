@@ -12,6 +12,7 @@ import {
   getCredDeffById,
   getSchemaById,
 } from '@/app/api/schema'
+
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -169,10 +170,6 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
     }
   }
 
-  const credDefSelectionCallback = async (): Promise<void> => {
-    router.push('/credentials/issue')
-  }
-
   const fetchLedgerPlatformUrl = async (
     indyNamespace: string,
   ): Promise<void> => {
@@ -232,11 +229,7 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
                   credentialDefinitionId={element.credentialDefinitionId}
                   schemaId={element.schemaLedgerId}
                   revocable={element.revocable}
-                  onClickCallback={credDefSelectionCallback}
                   userRoles={userRoles}
-                  schemaName={schemaDetails?.schema?.name || ''}
-                  schemaVersion={schemaDetails?.schema?.version || ''}
-                  attributes={schemaDetails?.schema?.attrNames}
                 />
               </div>
             ))}

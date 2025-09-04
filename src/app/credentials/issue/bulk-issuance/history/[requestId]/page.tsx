@@ -1,7 +1,7 @@
 import HistoryDetails from '@/features/organization/bulkIssuance/components/HistoryDetail'
 import React from 'react'
 
-type Params = Promise<{ requestId: string }>
+type Params = Promise<{ readonly requestId: string }>
 
 export default async function Page({
   params,
