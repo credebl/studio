@@ -100,6 +100,7 @@ export default function KBar({
             perform: (): void => navigateTo(navItem.url),
           }
         : null)
+
     const convertChildItemToAction = (
       childItem: NavItem,
       navItem: NavItem,

@@ -21,7 +21,7 @@ export default function Table({ csvData }: ITableProps): JSX.Element {
                           {csvData.length > 0 &&
                             Object.keys(csvData[0]).map((header, index) => (
                               <th
-                                key={index}
+                                key={`${header}-${index}`}
                                 className={
                                   'p-4 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-white'
                                 }
@@ -36,7 +36,7 @@ export default function Table({ csvData }: ITableProps): JSX.Element {
                           csvData.length > 0 &&
                           csvData.map((row, rowIndex) => (
                             <tr
-                              key={rowIndex}
+                              key={`${JSON.stringify(row)}-${rowIndex}`}
                               className={`${
                                 rowIndex % 2 !== 0
                                   ? 'bg-gray-50 dark:bg-gray-700'
@@ -45,7 +45,7 @@ export default function Table({ csvData }: ITableProps): JSX.Element {
                             >
                               {Object.values(row).map((cell, cellIndex) => (
                                 <td
-                                  key={cellIndex}
+                                  key={`${cell}-${cellIndex}`}
                                   className={
                                     'p-4 align-middle text-sm font-normal whitespace-nowrap text-gray-900 dark:text-white'
                                   }
