@@ -34,6 +34,33 @@ import Stepper from '@/components/StepperComponent'
 import { envConfig } from '@/config/envConfig'
 import { getDidValidationSchema } from '@/lib/validationSchemas'
 
+const LedgerCard = ({
+  ledger,
+  title,
+  description,
+  icon,
+  selectedLedger,
+  handleLedgerSelect,
+}: {
+  ledger: string
+  title: string
+  description: string
+  icon: ReactNode
+  selectedLedger: string
+  handleLedgerSelect: (ledger: string) => void
+}): React.JSX.Element => (
+  <Card
+    className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
+      selectedLedger === ledger ? 'bg-muted border-2' : 'border'
+    }`}
+    onClick={() => handleLedgerSelect(ledger)}
+  >
+    <div className="mb-4 flex items-center justify-center">{icon}</div>
+    <h3 className="mb-1 text-lg font-semibold">{title}</h3>
+    <p className="text-sm">{description}</p>
+  </Card>
+)
+
 const LedgerConfig = ({
   maskedSeeds,
   orgId,
@@ -314,45 +341,20 @@ const LedgerConfig = ({
   const isSubmitDisabled = (): boolean => {
     if (!selectedLedger) {
       return true
-    } else if (
+    }
+
+    if (
       (selectedLedger === Ledgers.POLYGON && !privateKeyValue) ||
-      (selectedLedger === Ledgers.INDY && (!selectedMethod || !selectedNetwork))
-    ) {
-      return true
-    } else if (
-      (selectedLedger === Ledgers.NO_LEDGER && !selectedMethod) ||
+      (selectedLedger === Ledgers.INDY &&
+        (!selectedMethod || !selectedNetwork)) ||
       (selectedLedger === Ledgers.NO_LEDGER &&
-        selectedMethod === DidMethod.WEB &&
-        !domainValue)
+        (!selectedMethod || (selectedMethod === DidMethod.WEB && !domainValue)))
     ) {
       return true
     }
 
     return false
   }
-
-  const LedgerCard = ({
-    ledger,
-    title,
-    description,
-    icon,
-  }: {
-    ledger: string
-    title: string
-    description: string
-    icon: ReactNode
-  }): React.JSX.Element => (
-    <Card
-      className={`flex cursor-pointer flex-col items-center p-4 text-center shadow transition-all hover:scale-[1.02] ${
-        selectedLedger === ledger ? 'bg-muted border-2' : 'border'
-      }`}
-      onClick={() => handleLedgerSelect(ledger)}
-    >
-      <div className="mb-4 flex items-center justify-center">{icon}</div>
-      <h3 className="mb-1 text-lg font-semibold">{title}</h3>
-      <p className="text-sm">{description}</p>
-    </Card>
-  )
 
   const initialValues: IValuesShared = {
     seed: seedVal || '',
@@ -518,6 +520,8 @@ const LedgerConfig = ({
                   ledger={Ledgers.INDY}
                   title=""
                   description="Hyperledger Indy"
+                  selectedLedger={selectedLedger}
+                  handleLedgerSelect={handleLedgerSelect}
                   icon={
                     <Image
                       src="/images/Indicio.png"
@@ -531,6 +535,8 @@ const LedgerConfig = ({
                   ledger={Ledgers.POLYGON}
                   title=""
                   description="Polygon Blockchain"
+                  selectedLedger={selectedLedger}
+                  handleLedgerSelect={handleLedgerSelect}
                   icon={
                     <Image
                       src="/images/polygon.png"
@@ -544,6 +550,8 @@ const LedgerConfig = ({
                   ledger={Ledgers.NO_LEDGER}
                   title=""
                   description="No Ledger"
+                  selectedLedger={selectedLedger}
+                  handleLedgerSelect={handleLedgerSelect}
                   icon={
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -637,9 +645,9 @@ const LedgerConfig = ({
 
                 {selectedDid && (
                   <div className="mt-6">
-                    <label className="mb-2 block text-sm font-medium">
+                    <p className="mb-2 block text-sm font-medium">
                       Generated DID Method
-                    </label>
+                    </p>
                     <div className="text-muted-foreground rounded-lg">
                       {selectedDid}
                     </div>

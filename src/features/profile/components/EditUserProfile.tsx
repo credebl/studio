@@ -181,9 +181,9 @@ export default function EditUserProfile({
               <div className="flex flex-wrap gap-6">
                 <div>
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
+                    <span className="mb-2 block text-sm font-medium">
                       Profile Image
-                    </label>
+                    </span>
                     <div className="flex items-center space-x-4">
                       {logoImage.imagePreviewUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
@@ -231,9 +231,9 @@ export default function EditUserProfile({
                 </div>
                 <div className="flex flex-1 flex-col gap-4">
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
+                    <span className="mb-2 block text-sm font-medium">
                       First Name <span className="text-destructive">*</span>
-                    </label>
+                    </span>
                     <Field
                       as={Input}
                       innerref={firstNameInputRef}
@@ -253,9 +253,9 @@ export default function EditUserProfile({
                   </div>
 
                   <div>
-                    <label className="mb-2 block text-sm font-medium">
+                    <span className="mb-2 block text-sm font-medium">
                       Last Name <span className="text-destructive">*</span>
-                    </label>
+                    </span>
                     <Field
                       as={Input}
                       name="lastName"
