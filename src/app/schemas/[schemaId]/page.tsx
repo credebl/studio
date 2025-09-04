@@ -6,7 +6,7 @@ type Params = Promise<{ schemaId: string }>
 export default async function SchemaPage({
   params,
 }: {
-  params: Params
+  readonly params: Params
 }): Promise<React.JSX.Element> {
   const { schemaId } = await params
 
