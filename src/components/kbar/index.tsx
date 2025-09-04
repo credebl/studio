@@ -100,18 +100,23 @@ export default function KBar({
             perform: (): void => navigateTo(navItem.url),
           }
         : null)
-
+    const mapChildProcess = (
+      childItem: NavItem,
+      navItem: NavItem,
+    ): ChildAction => ({
+      id: `${childItem.title.toLowerCase()}Action`,
+      name: childItem.title,
+      shortcut: childItem.shortcut,
+      keywords: childItem.title.toLowerCase(),
+      section: navItem.title,
+      subtitle: `Go to ${childItem.title}`,
+      perform: (): void => navigateTo(childItem.url),
+    })
     // Map child items into actions
     const createChildActions = (navItem: NavItem): ChildAction[] =>
-      navItem.items?.map((childItem: NavItem) => ({
-        id: `${childItem.title.toLowerCase()}Action`,
-        name: childItem.title,
-        shortcut: childItem.shortcut,
-        keywords: childItem.title.toLowerCase(),
-        section: navItem.title,
-        subtitle: `Go to ${childItem.title}`,
-        perform: (): void => navigateTo(childItem.url),
-      })) ?? []
+      navItem.items?.map((childItem: NavItem) =>
+        mapChildProcess(childItem, navItem),
+      ) ?? []
 
     return navItems.flatMap((navItem) => {
       const baseAction = createBaseAction(navItem)
