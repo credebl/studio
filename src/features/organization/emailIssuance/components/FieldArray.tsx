@@ -38,12 +38,12 @@ function FieldArrayData({
             >
               <div className="flex justify-between">
                 <div className="relative mb-4 flex w-10/12 items-center gap-2">
-                  <label
+                  <span
                     className="text-base font-semibold dark:text-white"
                     style={fieldArrayLabelStyles}
                   >
                     Email ID <span className="text-destructive">*</span>
-                  </label>
+                  </span>
                   <Field
                     name={`formData[${index}].email`}
                     placeholder={'email'}
@@ -103,9 +103,9 @@ function FieldArrayData({
                 )}
               </div>
 
-              <label className="mt-8 w-20 text-base font-semibold">
+              <span className="mt-8 w-20 text-base font-semibold">
                 Credential data:
-              </label>
+              </span>
               <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2">
                 {formData1.attributes &&
                   formData1?.attributes.length > 0 &&
