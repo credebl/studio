@@ -328,6 +328,7 @@ const Connections = (): JSX.Element => {
         }
       }
     } catch (error) {
+      console.error('Error occurred during proof request:', error)
       setErrMsg('An error occurred. Please try again.')
       setRequestLoader(false)
     }
