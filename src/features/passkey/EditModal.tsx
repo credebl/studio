@@ -22,13 +22,13 @@ const EditModal = (props: {
   onSuccess: (name: string) => void
   initialName?: string
 }): React.JSX.Element => {
-  interface nameValue {
+  interface NameValue {
     name: string
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const formikRef = useRef<any>(null)
 
-  const saveName = (values: nameValue): void => {
+  const saveName = (values: NameValue): void => {
     props.onSuccess(values.name)
     props.closeModal(false)
   }
@@ -54,7 +54,7 @@ const EditModal = (props: {
             validationSchema={yup.object().shape({
               name: yup.string().required('Name is required').trim(),
             })}
-            onSubmit={(values: nameValue) => saveName(values)}
+            onSubmit={(values: NameValue) => saveName(values)}
           >
             {(formikHandlers) => (
               <Form className="space-y-6">

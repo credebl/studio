@@ -37,7 +37,7 @@ export default function PasskeyAddDevice({
   email,
   setOpenModel,
   registerWithPasskey,
-}: PasskeyAddDeviceProps): React.JSX.Element {
+}: Readonly<PasskeyAddDeviceProps>): React.JSX.Element {
   const [fidoUserError, setFidoUserError] = useState<string | null>(null)
   const [nextStep, setNextStep] = useState(false)
   const [passwordVisible, setPasswordVisible] = useState(false)

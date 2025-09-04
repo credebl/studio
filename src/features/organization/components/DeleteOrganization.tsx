@@ -59,7 +59,6 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
     string | React.ReactNode
   >('')
   const [description, setDescription] = useState<string>('')
-  const [, setOrgName] = useState<string>('')
   const dispatch = useAppDispatch()
 
   const fetchOrganizationDetails = async (): Promise<void> => {
@@ -77,11 +76,6 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
         const organizationData = data?.data
         setOrgData(organizationData)
         const walletName = organizationData?.org_agents?.[0]?.walletName
-        const name = organizationData?.name
-
-        if (name) {
-          setOrgName(name)
-        }
 
         if (walletName) {
           setIsWalletPresent(true)
@@ -90,6 +84,7 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
         }
       }
     } catch (error) {
+      console.error('An error occurred:', error)
       setError('Failed to fetch organization details')
     } finally {
       setLoading(false)
