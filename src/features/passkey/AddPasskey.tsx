@@ -44,7 +44,7 @@ const AddPasskey = ({
   const [error, setError] = useState('')
   const [loader, setLoader] = useState(false)
   const [OrgUserEmail, setOrgUserEmail] = useState<string>('')
-  const [deviceList, setDeviceListData] = useState<IDeviceData[]>([])
+  const [deviceList, setDeviceList] = useState<IDeviceData[]>([])
   const [addSuccess, setAddSuccess] = useState<string | null>(null)
   const [editSuccess, setEditSuccess] = useState<string | null>(null)
   const [editFailure, setEditFailure] = useState<string | null>(null)
@@ -52,7 +52,6 @@ const AddPasskey = ({
   const [disableFlag, setDisableFlag] = useState<boolean>(false)
   const [isDevice, setIsDevice] = useState<boolean>(false)
   const [openModel, setOpenModel] = useState<boolean>(false)
-  const [, setErrMsg] = useState<string | null>(null)
 
   const showFidoError = (error: unknown): void => {
     const err = error as AxiosError
@@ -76,10 +75,8 @@ const AddPasskey = ({
     try {
       setLoader(true)
 
-      const userDeviceDetailsResp = await getUserDeviceDetails(
-        OrgUserEmail as string,
-      )
-      const { data } = userDeviceDetailsResp as AxiosResponse
+      const userDeviceDetailsResp = await getUserDeviceDetails(OrgUserEmail)
+      const { data } = userDeviceDetailsResp
       setLoader(false)
       if (userDeviceDetailsResp) {
         const deviceDetails =
@@ -98,9 +95,10 @@ const AddPasskey = ({
         } else {
           setDisableFlag(false)
         }
-        setDeviceListData(deviceDetails)
+        setDeviceList(deviceDetails)
       }
     } catch (error) {
+      console.error('Error fetching device details:', error)
       setAddFailure('Error while fetching the device details')
       setLoader(false)
     }
@@ -194,7 +192,7 @@ const AddPasskey = ({
 
         await verifyRegistrationMethod(verifyRegistrationObj, OrgUserEmail)
       } else {
-        setErrMsg(
+        console.error(
           (generateRegistrationResponse as AxiosResponse)?.data?.message ||
             'An error occurred',
         )
@@ -213,7 +211,7 @@ const AddPasskey = ({
         setOpenModel(true)
       }
     } catch (error) {
-      setLoader(false)
+      console.error('Error adding device:', error)
     }
   }
 

@@ -12,7 +12,7 @@ function RequiredAndDelete({
   values,
   element,
   remove,
-}: IRequiredAndDeleteProps): JSX.Element {
+}: Readonly<IRequiredAndDeleteProps>): JSX.Element {
   return (
     <>
       <div className="absolute bottom-[-8px] left-6">
