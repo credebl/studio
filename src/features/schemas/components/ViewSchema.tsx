@@ -57,13 +57,9 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
   const [credDefList, setCredDefList] = useState<ICredDefCard[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [createLoader, setCreateLoader] = useState<boolean>(false)
-  const [, setCredDeffloader] = useState<boolean>(false)
   const [success, setSuccess] = useState<string | null>(null)
-  const [, setCredDefListErr] = useState<string | null>(null)
-  const [, setSchemaDetailErr] = useState<string | null>(null)
   const [failure, setFailure] = useState<string | null>(null)
   const [orgId, setOrgId] = useState<string>('')
-  const [, setCredDefAuto] = useState<string>('')
   const [ledgerPlatformLoading, setLedgerPlatformLoading] = useState(false)
   const [, setCurrentPage] = useState(initialPageState)
   const [isOpenCreateCredDef, setIsOpenCreateCredDef] = useState<boolean>(false)
@@ -83,12 +79,10 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
       const { data } = SchemaDetails as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setSchemaDetails(data?.data)
-        setCredDefAuto(`${data?.data?.response?.schema?.name} ${nanoid(8)}`)
       } else {
-        setSchemaDetailErr(SchemaDetails as unknown as string)
+        console.error(SchemaDetails as unknown as string)
       }
     } catch (error) {
-      setSchemaDetailErr('Error while fetching schema details')
       console.error('Error while fetching schema details:', error)
     } finally {
       setLoading(false)
@@ -100,19 +94,16 @@ const ViewSchemas = ({ schemaId }: { schemaId: string }): React.JSX.Element => {
     orgId: string,
   ): Promise<void> => {
     try {
-      setCredDeffloader(true)
       const credentialDefinitions = await getCredDeffById(id, orgId)
       const { data } = credentialDefinitions as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setCredDefList(data?.data?.data)
         setCurrentPage((prev) => ({ ...prev, total: data?.data?.totalPages }))
       } else {
-        setCredDefListErr(credentialDefinitions as string)
+        console.error(credentialDefinitions as string)
       }
     } catch (error) {
       console.error('Error while fetching credential definition list:', error)
-    } finally {
-      setCredDeffloader(false)
     }
   }
 

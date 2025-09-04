@@ -43,7 +43,6 @@ const ConnectionList = (props: {
     IConnectionList[]
   >([])
 
-  const [, setLoading] = useState<boolean>(false)
   const [listAPIParameter, setListAPIParameter] =
     useState<IConnectionListAPIParameter>(initialPageState)
   const [totalItem, setTotalItem] = useState(0)
@@ -184,7 +183,6 @@ const ConnectionList = (props: {
   const getConnectionsVerification = async (
     apiParameter: IConnectionListAPIParameter,
   ): Promise<void> => {
-    setLoading(true)
     try {
       const response = await getConnectionsByOrg({
         ...apiParameter,
@@ -215,8 +213,6 @@ const ConnectionList = (props: {
     } catch (error) {
       setConnectionList([])
       setError((error as Error).message)
-    } finally {
-      setLoading(false)
     }
   }
   useEffect(() => {

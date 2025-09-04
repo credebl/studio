@@ -1,7 +1,7 @@
 import { Invitation } from '@/features/invitations/interfaces/invitation-interface'
 import { User } from '../users-interface'
 
-export interface tabDataProps {
+export interface TabDataProps {
   activeTab: string
   setActiveTab: React.Dispatch<React.SetStateAction<string>>
   searchText: string
@@ -10,8 +10,8 @@ export interface tabDataProps {
   usersLoading: boolean
   usersList: User[] | null
   editUserRole: (user: User) => void
-  usersPageState: initialPageState
-  usersPaginationInfo: usersPaginationInfo
+  usersPageState: InitialPageState
+  usersPaginationInfo: UsersPaginationInfo
   handleUsersPageChange: (page: number) => void
   invitationsLoading: boolean
   invitationsList: Invitation[] | null
@@ -19,13 +19,13 @@ export interface tabDataProps {
   setShowDeletePopup: React.Dispatch<React.SetStateAction<boolean>>
   setError: React.Dispatch<React.SetStateAction<string | null>>
   setMessage: React.Dispatch<React.SetStateAction<string | null>>
-  invitationsPageState: initialPageState
-  invitationsPaginationInfo: initialPaginationInfo
+  invitationsPageState: InitialPageState
+  invitationsPaginationInfo: InitialPaginationInfo
   handleInvitationsPageChange: (page: number) => void
   hasAdminRights: boolean
 }
 
-interface initialPageState {
+interface InitialPageState {
   pageNumber: number
   pageSize: number
   search: string
@@ -34,7 +34,7 @@ interface initialPageState {
   total: number
 }
 
-interface usersPaginationInfo {
+interface UsersPaginationInfo {
   totalItems: number
   hasNextPage: boolean
   hasPreviousPage: boolean
@@ -43,7 +43,7 @@ interface usersPaginationInfo {
   lastPage: number
 }
 
-interface initialPaginationInfo {
+interface InitialPaginationInfo {
   totalItems: number
   hasNextPage: boolean
   hasPreviousPage: boolean
