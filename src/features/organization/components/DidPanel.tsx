@@ -25,7 +25,7 @@ export default function SidePanelComponent({
   onOpenChange,
   children,
   title = 'Connection Details',
-}: Props): React.JSX.Element {
+}: Readonly<Props>): React.JSX.Element {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
