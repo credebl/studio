@@ -16,13 +16,13 @@ import { IconSearch } from '@tabler/icons-react'
 import { Input } from '@/components/ui/input'
 import { InviteEmailIcon } from '@/components/iconsSvg'
 import { Roles } from '@/common/enums'
+import { TabDataProps } from './type/type'
 import { TextTitlecase } from '@/utils/TextTransform'
 import { dateConversion } from '@/utils/DateConversion'
 import delSvg from '@/../public/svgs/del.svg'
 import { getStatuses } from './UtilFunctions'
 import renderPagination from './RenderPagination'
 import renderSkeletons from './RenderSkeletons'
-import { tabDataProps } from './type/type'
 
 function TabData({
   activeTab,
@@ -46,7 +46,7 @@ function TabData({
   invitationsPaginationInfo,
   handleInvitationsPageChange,
   hasAdminRights,
-}: Readonly<tabDataProps>): JSX.Element {
+}: Readonly<TabDataProps>): JSX.Element {
   const getStatusClass = useCallback(getStatuses, [])
 
   return (
