@@ -14,10 +14,6 @@ interface IProps {
   credentialDefinitionId: string
   schemaId: string
   revocable: boolean
-  schemaName?: string
-  schemaVersion?: string
-  attributes?: string[]
-  onClickCallback: (schemaId: string, credentialDefinitionId: string) => void
 }
 
 const CredentialDefinitionCard = (props: IProps): React.ReactElement => {
