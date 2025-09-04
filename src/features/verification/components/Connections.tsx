@@ -1,6 +1,10 @@
 'use client'
 
-import { IConnectionList, ISelectedAttributes } from '../type/interface'
+import {
+  IAttributeMapping,
+  IConnectionList,
+  ISelectedAttributes,
+} from '../type/interface'
 import { JSX, useEffect, useState } from 'react'
 import {
   resetAttributeData,
@@ -134,79 +138,100 @@ const Connections = (): JSX.Element => {
     }
   }, [])
 
+  const selectConnectionsFromList = (): {
+    userName: string | JSX.Element
+    connectionId: string | JSX.Element
+  }[] =>
+    selectedConnectionList.map((ele) => ({
+      userName: ele.data[0].data,
+      connectionId: ele.data[1].data,
+    }))
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapCheckedAttributes = (): any =>
+    attributeData
+      .filter((attribute: ISelectedAttributes) => attribute.isChecked)
+      .map((attribute: ISelectedAttributes) => {
+        const basePayload: FilteredAttribute = {
+          attributeName: attribute.attributeName,
+          credDefId: attribute.credDefId,
+          schemaId: attribute.schemaId,
+        }
+
+        if (
+          attribute.dataType === 'number' &&
+          attribute.selectedOption !== 'Select'
+        ) {
+          if (attribute?.selectedOption !== '' && attribute?.value !== '') {
+            return {
+              ...basePayload,
+              condition: attribute.selectedOption,
+              value: attribute.value,
+            }
+          } else {
+            return {
+              ...basePayload,
+            }
+          }
+        }
+        if (attribute.dataType === 'string') {
+          return basePayload
+        }
+
+        return basePayload
+      })
+      .filter(
+        (attr: FilteredAttribute | null): attr is FilteredAttribute =>
+          attr !== null,
+      )
+
+  const checkedW3cAttributes = (): IAttributeMapping[] =>
+    attributeData
+      .filter(
+        (w3cSchemaAttributes: ISelectedAttributes) =>
+          w3cSchemaAttributes.isChecked,
+      )
+      .map((attribute: ISelectedAttributes) => ({
+        attributeName: attribute.attributeName,
+        schemaId: attribute.schemaId,
+        schemaName: attribute.schemaName,
+      }))
+
+  const generateNonW3CCredential = (
+    connectionIds: (string | JSX.Element)[],
+    checkedAttributes: FilteredAttribute[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ): any => ({
+    connectionId: connectionIds.length === 1 ? connectionIds[0] : connectionIds,
+    orgId,
+    proofFormats: {
+      indy: {
+        attributes: checkedAttributes,
+      },
+    },
+    comment: 'string',
+  })
+
   const handleSubmit = async (): Promise<void> => {
     setRequestLoader(true)
     try {
-      const selectedConnections = selectedConnectionList.map((ele) => ({
-        userName: ele.data[0].data,
-        connectionId: ele.data[1].data,
-      }))
+      const selectedConnections = selectConnectionsFromList()
 
       dispatch(setSelectedUser(selectedConnections))
       dispatch(resetSelectedConnections())
 
-      const checkedAttributes: FilteredAttribute[] = attributeData
-        .filter((attribute: ISelectedAttributes) => attribute.isChecked)
-        .map((attribute: ISelectedAttributes) => {
-          const basePayload: FilteredAttribute = {
-            attributeName: attribute.attributeName,
-            credDefId: attribute.credDefId,
-            schemaId: attribute.schemaId,
-          }
+      const checkedAttributes: FilteredAttribute[] = mapCheckedAttributes()
 
-          if (
-            attribute.dataType === 'number' &&
-            attribute.selectedOption !== 'Select'
-          ) {
-            if (attribute?.selectedOption !== '' && attribute?.value !== '') {
-              return {
-                ...basePayload,
-                condition: attribute.selectedOption,
-                value: attribute.value,
-              }
-            } else {
-              return {
-                ...basePayload,
-              }
-            }
-          }
-          if (attribute.dataType === 'string') {
-            return basePayload
-          }
-
-          return basePayload
-        })
-        .filter(
-          (attr: FilteredAttribute | null): attr is FilteredAttribute =>
-            attr !== null,
-        )
-
-      const checkedW3CAttributes = attributeData
-        .filter(
-          (w3cSchemaAttributes: ISelectedAttributes) =>
-            w3cSchemaAttributes.isChecked,
-        )
-        .map((attribute: ISelectedAttributes) => ({
-          attributeName: attribute.attributeName,
-          schemaId: attribute.schemaId,
-          schemaName: attribute.schemaName,
-        }))
+      const checkedW3CAttributes = checkedW3cAttributes()
       const connectionIds = selectedConnections.map((c) => c.connectionId)
 
       let verifyCredentialPayload = null
 
       if (!isW3cDid) {
-        verifyCredentialPayload = {
-          connectionId:
-            connectionIds.length === 1 ? connectionIds[0] : connectionIds,
-          orgId,
-          proofFormats: {
-            indy: {
-              attributes: checkedAttributes,
-            },
-          },
-          comment: 'string',
-        }
+        verifyCredentialPayload = generateNonW3CCredential(
+          connectionIds,
+          checkedAttributes,
+        )
       }
 
       if (isW3cDid) {
