@@ -39,7 +39,7 @@ export default function DeviceDetails({
   refreshList,
   disableRevoke,
   responseMessages,
-}: DeviceDetailsTableProps): React.JSX.Element {
+}: Readonly<DeviceDetailsTableProps>): React.JSX.Element {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openEditModal, setOpenEditModal] = useState(false)
   const [selectedDevice, setSelectedDevice] = useState<DeviceRow | null>(null)
@@ -84,6 +84,7 @@ export default function DeviceDetails({
         responseMessages({ type: 'error', message: 'Device update failed' })
       }
     } catch (err) {
+      console.error('Error updating device:', err)
       responseMessages({ type: 'error', message: 'Error updating device' })
     }
     setOpenEditModal(false)

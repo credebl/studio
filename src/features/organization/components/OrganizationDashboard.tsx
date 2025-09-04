@@ -37,8 +37,6 @@ export const OrganizationDashboard = ({
   const [orgDashboard, setOrgDashboard] = useState<IOrgDashboard | null>(null)
   const [, setLoading] = useState(true)
   const [walletStatus, setWalletStatus] = useState<boolean>(false)
-  const [, setSetupButton] = useState<boolean>(false)
-  const [, setError] = useState<string | null>(null)
 
   const selectedDropdownOrgId = useAppSelector(
     (state) => state.organization.orgId,
@@ -52,7 +50,7 @@ export const OrganizationDashboard = ({
     }
 
     const useOrgId = activeOrgId === orgIdOfDashboard ? orgId : activeOrgId
-    const response = await getOrganizationById(useOrgId as string)
+    const response = await getOrganizationById(useOrgId)
     const { data } = response as AxiosResponse
 
     if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -61,25 +59,23 @@ export const OrganizationDashboard = ({
         data?.data?.org_agents[0]?.orgDid
       ) {
         setWalletStatus(true)
-      } else {
-        setSetupButton(true)
       }
       setOrgData(data?.data)
       setOrgDataForDetails(data?.data)
     } else {
-      setError(response as string)
+      console.error(response as string)
     }
   }
 
   const fetchOrganizationDashboardDetails = async (): Promise<void> => {
     if (orgId) {
-      const response = await getOrgDashboard(orgIdOfDashboard as string)
+      const response = await getOrgDashboard(orgIdOfDashboard)
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         setOrgDashboard(data?.data)
       } else {
-        setError(response as string)
+        console.error(response as string)
       }
     }
   }

@@ -11,7 +11,7 @@ function ActionButtons({
   formikHandlers,
   setShowPopup,
   disabled = false,
-}: ActionButtonsProps): JSX.Element {
+}: Readonly<ActionButtonsProps>): JSX.Element {
   return (
     <div className="float-right mt-16 ml-4 flex gap-4">
       <Button

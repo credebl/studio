@@ -50,7 +50,7 @@ function FormikData({
   setFailure,
   setSuccess,
   loading,
-}: IFormikDataProps): JSX.Element {
+}: Readonly<IFormikDataProps>): JSX.Element {
   const handleAttributeChange =
     (index: number, formikHandlers: FormikProps<IFormData>) =>
     (e: ChangeEvent<HTMLInputElement>) => {

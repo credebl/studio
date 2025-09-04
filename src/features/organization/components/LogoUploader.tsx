@@ -22,7 +22,7 @@ export default function LogoUploader({
   imgError,
   setImgError,
   existingLogoUrl,
-}: LogoUploaderProps): React.JSX.Element {
+}: Readonly<LogoUploaderProps>): React.JSX.Element {
   const handleImageChange = async (
     e: React.ChangeEvent<HTMLInputElement>,
   ): Promise<void> => {
