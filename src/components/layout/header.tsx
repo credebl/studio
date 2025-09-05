@@ -5,6 +5,7 @@ import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
+import AgentHealth from '../AgentHealth'
 import AppLauncher from '../AppLauncher'
 import { Breadcrumbs } from '../breadcrumbs'
 import { OrgSwitcher } from '../org-switcher'
@@ -97,6 +98,7 @@ export default function Header(): React.JSX.Element {
       </div>
 
       <div className="flex items-center gap-2 px-4">
+        <AgentHealth />
         {enableAppLauncher && <AppLauncher />}
 
         {/* NOTE: Currently disabling search and mode toggle */}

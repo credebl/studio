@@ -200,3 +200,21 @@ export const updatePrimaryDid = async (
     return err?.message
   }
 }
+
+export const getAgentHealth = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.checkAgentHealth}`
+  const axiosPayload = {
+    url,
+    config: getHeaderConfigs(),
+  }
+
+  try {
+    const response = await axiosGet(axiosPayload)
+    return response
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
