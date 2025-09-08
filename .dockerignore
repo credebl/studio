@@ -1,0 +1,17 @@
+# Prevent sensitive files from being copied into the Docker image
+
+.pnpm-store
+
+# Git and editor files
+.git
+.gitignore
+.vscode
+.DS_Store
+
+# Logs and cache
+npm-debug.log
+yarn-debug.log
+pnpm-debug.log
+.cache
+dist
+out

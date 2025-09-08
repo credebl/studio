@@ -1,9 +1,0 @@
-<script>
-import { envConfig } from "../config/envConfig";
-	
-	if (window.location.origin === `${envConfig.PUBLIC_REDIRECT_FROM_URL}`) {
-		const credId = new URL(window.location.href).pathname.split('/').pop();
-		window.location.href = `${envConfig.PUBLIC_REDIRECTION_TARGET_URL}/certificates/${credId}`;
-	}
-	
-</script>

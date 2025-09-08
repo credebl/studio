@@ -1,0 +1,110 @@
+import type {
+  ExtendedColumnFilter,
+  ExtendedColumnSort,
+} from '@/types/data-table'
+import { ParserBuilder, createParser } from 'nuqs/server'
+
+import { dataTableConfig } from '@/config/data-table'
+import { z } from 'zod'
+
+const sortingItemSchema = z.object({
+  id: z.string(),
+  desc: z.boolean(),
+})
+
+/**
+ * Normalize columnIds into a Set<string> or return null.
+ * This avoids nested ternary usage for readability.
+ */
+function normalizeColumnIds(
+  columnIds?: string[] | Set<string>,
+): Set<string> | null {
+  if (!columnIds) {
+    return null
+  }
+  if (columnIds instanceof Set) {
+    return columnIds
+  }
+  return new Set(columnIds)
+}
+
+export const getSortingStateParser = <TData>(
+  columnIds?: string[] | Set<string>,
+): ParserBuilder<ExtendedColumnSort<TData>[]> => {
+  const validKeys = normalizeColumnIds(columnIds)
+
+  return createParser({
+    parse: (value) => {
+      try {
+        const parsed = JSON.parse(value)
+        const result = z.array(sortingItemSchema).safeParse(parsed)
+
+        if (!result.success) {
+          return null
+        }
+
+        if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
+          return null
+        }
+
+        return result.data as ExtendedColumnSort<TData>[]
+      } catch {
+        return null
+      }
+    },
+    serialize: (value) => JSON.stringify(value),
+    eq: (a, b) =>
+      a.length === b.length &&
+      a.every(
+        (item, index) =>
+          item.id === b[index]?.id && item.desc === b[index]?.desc,
+      ),
+  })
+}
+
+const filterItemSchema = z.object({
+  id: z.string(),
+  value: z.union([z.string(), z.array(z.string())]),
+  variant: z.enum(dataTableConfig.filterVariants),
+  operator: z.enum(dataTableConfig.operators),
+  filterId: z.string(),
+})
+
+export type FilterItemSchema = z.infer<typeof filterItemSchema>
+
+export const getFiltersStateParser = <TData>(
+  columnIds?: string[] | Set<string>,
+): ParserBuilder<ExtendedColumnFilter<TData>[]> => {
+  const validKeys = normalizeColumnIds(columnIds)
+
+  return createParser({
+    parse: (value) => {
+      try {
+        const parsed = JSON.parse(value)
+        const result = z.array(filterItemSchema).safeParse(parsed)
+
+        if (!result.success) {
+          return null
+        }
+
+        if (validKeys && result.data.some((item) => !validKeys.has(item.id))) {
+          return null
+        }
+
+        return result.data as ExtendedColumnFilter<TData>[]
+      } catch {
+        return null
+      }
+    },
+    serialize: (value) => JSON.stringify(value),
+    eq: (a, b) =>
+      a.length === b.length &&
+      a.every(
+        (filter, index) =>
+          filter.id === b[index]?.id &&
+          filter.value === b[index]?.value &&
+          filter.variant === b[index]?.variant &&
+          filter.operator === b[index]?.operator,
+      ),
+  })
+}
