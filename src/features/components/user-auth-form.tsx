@@ -84,6 +84,7 @@ export default function SignInViewPage(): React.JSX.Element {
   }): Promise<void> => {
     try {
       setLoading(true)
+
       const entityData = {
         email: values.email,
         password: passwordEncryption(values.password || ''),
@@ -94,22 +95,27 @@ export default function SignInViewPage(): React.JSX.Element {
         ...entityData,
         redirect: false,
       })
+
       if (response?.error) {
         let errorMsg: string = ''
 
-        if (response?.error) {
-          if (response.error === 'CredentialsSignin') {
-            errorMsg = 'Invalid Credentials'
-          } else {
-            errorMsg = response.error
-          }
-        } else {
-          errorMsg = 'Sign in failed. Please try again.'
+        switch (response.error) {
+          case 'Invalid Credentials':
+            errorMsg = 'Invalid Credentials.'
+            break
+          case 'fetch failed':
+            errorMsg =
+              'Unable to connect to the server. Please check your network and try again.'
+            break
+          default:
+            errorMsg = 'Sign in failed. Please try again later.'
+            break
         }
-        setAlert(errorMsg)
 
-        console.error('Sign in failed:', response?.error)
+        setAlert(errorMsg)
+        console.error('Sign in failed:', response.error)
       }
+
       setLoading(false)
     } catch (error) {
       setAlert('Something went wrong during sign in. Please try again.')
