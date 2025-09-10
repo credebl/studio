@@ -9,14 +9,25 @@ import React, {
 } from 'react'
 
 const COOKIE_NAME = 'active_theme'
-const CREDEBL_THEMES = 'credebl'
+const CREDEBL_THEME = 'credebl'
 
 function setThemeCookie(theme: string): void {
   if (typeof window === 'undefined') {
     return
   }
+  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${
+    window.location.protocol === 'https:' ? 'Secure;' : ''
+  }`
+}
 
-  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`
+function getThemeFromCookie(): string | null {
+  if (typeof document === 'undefined') {
+    return null
+  }
+  const match = document.cookie.match(
+    new RegExp(`(?:^|; )${COOKIE_NAME}=([^;]*)`),
+  )
+  return match ? decodeURIComponent(match[1]) : null
 }
 
 type ThemeContextType = {
@@ -28,23 +39,27 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ActiveThemeProvider({
   children,
-  initialTheme,
 }: {
   readonly children: ReactNode
-  readonly initialTheme?: string
 }): React.JSX.Element {
+  const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
+
   const [activeTheme, setActiveTheme] = useState<string>(
-    () => initialTheme ?? CREDEBL_THEMES,
+    () =>
+      // Priority: cookie → env → default
+      getThemeFromCookie() ||
+      (envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME),
   )
 
   useEffect(() => {
     setThemeCookie(activeTheme)
 
+    // Remove previous theme classes
     Array.from(document.body.classList)
       .filter((className) => className.startsWith('theme-'))
-      .forEach((className) => {
-        document.body.classList.remove(className)
-      })
+      .forEach((className) => document.body.classList.remove(className))
+
+    // Apply active theme
     document.body.classList.add(`theme-${activeTheme}`)
     if (activeTheme.endsWith('-scaled')) {
       document.body.classList.add('theme-scaled')
@@ -53,7 +68,7 @@ export function ActiveThemeProvider({
 
   const themeContextValue = React.useMemo(
     () => ({ activeTheme, setActiveTheme }),
-    [activeTheme, setActiveTheme],
+    [activeTheme],
   )
 
   return (
