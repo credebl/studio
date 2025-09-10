@@ -7,16 +7,18 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import AddPasskey from '@/features/passkey/AddPasskey'
 import DisplayUserProfile from './DisplayUserProfile'
 import EditUserProfile from './EditUserProfile'
 import { IUserProfile } from '@/components/profile/interfaces'
 import Loader from '@/components/Loader'
+import Sessions from './Sessions'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getUserProfile } from '@/app/api/Auth'
-import { useAppSelector } from '@/lib/hooks'
+import { setProfileid } from '@/lib/profileSlice'
 
 export default function UserProfile(): React.JSX.Element {
   const token = useAppSelector((state) => state.auth.token)
@@ -27,6 +29,7 @@ export default function UserProfile(): React.JSX.Element {
     useState<IUserProfile | null>(null)
   const [activeTab, setActiveTab] = useState<'profile' | 'passkey'>('profile')
   const [isLoading, setIsLoading] = useState(false)
+  const dispatch = useAppDispatch()
 
   const fetchProfile = async (): Promise<void> => {
     if (!token) {
@@ -41,6 +44,7 @@ export default function UserProfile(): React.JSX.Element {
       ) {
         setPrePopulatedUserProfile(response.data.data)
         setUserEmail(response.data.data.email)
+        dispatch(setProfileid(response.data.data.id))
       }
     } catch (error) {
       console.error('Error fetching user profile:', error)
@@ -106,35 +110,42 @@ export default function UserProfile(): React.JSX.Element {
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="passkey">Passkey</TabsTrigger>
+          <TabsTrigger value="sessions">Sessions</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="profile" className="mt-8">
+          <>
+            {renderProfileContent()}
+
+            {/* ✅ Drawer always rendered, controlled by open state */}
+            {prePopulatedUserProfile && (
+              <Sheet open={isEditProfileOpen} onOpenChange={toggleEditProfile}>
+                <SheetContent
+                  side="right"
+                  className="w-[500px] overflow-y-auto sm:w-[600px]"
+                >
+                  <SheetHeader>
+                    <SheetTitle>Edit Profile</SheetTitle>
+                  </SheetHeader>
+                  <EditUserProfile
+                    toggleEditProfile={toggleEditProfile}
+                    userProfileInfo={prePopulatedUserProfile}
+                    updateProfile={updateProfile}
+                  />
+                </SheetContent>
+              </Sheet>
+            )}
+          </>
+        </TabsContent>
+
+        <TabsContent value="passkey" className="mt-8">
+          <AddPasskey email={userEmail} />
+        </TabsContent>
+
+        <TabsContent value="sessions" className="mt-8">
+          <Sessions />
+        </TabsContent>
       </Tabs>
-
-      {activeTab === 'profile' ? (
-        <>
-          {renderProfileContent()}
-
-          {/* ✅ Drawer always rendered, controlled by open state */}
-          {prePopulatedUserProfile && (
-            <Sheet open={isEditProfileOpen} onOpenChange={toggleEditProfile}>
-              <SheetContent
-                side="right"
-                className="w-[500px] overflow-y-auto sm:w-[600px]"
-              >
-                <SheetHeader>
-                  <SheetTitle>Edit Profile</SheetTitle>
-                </SheetHeader>
-                <EditUserProfile
-                  toggleEditProfile={toggleEditProfile}
-                  userProfileInfo={prePopulatedUserProfile}
-                  updateProfile={updateProfile}
-                />
-              </SheetContent>
-            </Sheet>
-          )}
-        </>
-      ) : (
-        <AddPasskey email={userEmail} />
-      )}
     </div>
   )
 }

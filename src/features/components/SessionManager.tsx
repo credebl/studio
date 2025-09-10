@@ -80,6 +80,10 @@ export const SessionManager = ({
         },
       )
       const data = await resp.json()
+      if (!data.data) {
+        localStorage.removeItem('persist:root')
+        router.push('/sign-in')
+      }
       // eslint-disable-next-line
       setSessionDetails(data, redirectTo)
     } catch (error) {
