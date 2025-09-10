@@ -25,7 +25,11 @@ const preventRedirectOnPaths = [
   '/credentials',
   '/verification',
 ]
-const excludeRouteForSessionCheck = ['/verify-email-success', '/reset-password']
+const excludeRouteForSessionCheck = [
+  '/verify-email-success',
+  '/reset-password',
+  'sign-up',
+]
 
 export const SessionManager = ({
   children,
