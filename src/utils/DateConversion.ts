@@ -37,22 +37,24 @@ export const dateConversion = (date: string): string => {
 
   // Still in future → show "in ..."
   if (diffInSeconds < 60) {
-    return diffInSeconds === 1 ? 'In a second' : `In ${diffInSeconds} sec`
+    return diffInSeconds === 1 ? 'After a second' : `After ${diffInSeconds} sec`
   }
 
   const diffInMinutes = Math.floor(diffInSeconds / 60)
   if (diffInMinutes < 60) {
-    return diffInMinutes === 1 ? 'In a minute' : `In ${diffInMinutes} minutes`
+    return diffInMinutes === 1
+      ? 'After a minute'
+      : `After ${diffInMinutes} minutes`
   }
 
   const diffInHours = Math.floor(diffInMinutes / 60)
   if (diffInHours < 24) {
-    return diffInHours === 1 ? 'In an hour' : `In ${diffInHours} hours`
+    return diffInHours === 1 ? 'After an hour' : `After ${diffInHours} hours`
   }
 
   const diffInDays = Math.floor(diffInHours / 24)
   if (diffInDays < 7) {
-    return diffInDays === 1 ? 'Tomorrow' : `In ${diffInDays} days`
+    return diffInDays === 1 ? 'Tomorrow' : `After ${diffInDays} days`
   }
 
   return newDate.toLocaleDateString('en-US', {

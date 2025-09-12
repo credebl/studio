@@ -10,3 +10,11 @@ export interface session {
   sessionType: string
   expiresAt: Date
 }
+
+export interface clientInfo {
+  os: string
+  browser: string
+  deviceType: string
+  rawDetail: string
+  ip: string
+}

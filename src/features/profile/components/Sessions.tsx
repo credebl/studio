@@ -1,6 +1,8 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { JSX, useEffect, useState } from 'react'
+import { Monitor, Smartphone, UserCog } from 'lucide-react'
 import { apiStatusCodes, confirmationMessages } from '@/config/CommonConstant'
+import { clientInfo, session } from '../type/session'
 import { getUserSessions, sessionDelete } from '@/app/api/Auth'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -9,14 +11,13 @@ import { Button } from '@/components/ui/button'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import Loader from '@/components/Loader'
-import { Monitor } from 'lucide-react'
 import { RootState } from '@/lib/store'
 import { dateConversion } from '@/utils/DateConversion'
-import { session } from '../type/session'
 import { useAppSelector } from '@/lib/hooks'
 
 function Sessions(): JSX.Element {
   const [loading, setLoading] = useState(true)
+  const [showDetails, setShowDetails] = useState<string>('')
   const [sessions, setSessions] = useState<session>()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -78,6 +79,40 @@ function Sessions(): JSX.Element {
     }
   }
 
+  function getSessionIcon(
+    record: session,
+    clientInfo: clientInfo,
+  ): JSX.Element | null {
+    if (record.sessionType === 'organization-session') {
+      return (
+        <UserCog size={44} strokeWidth={1} className="text-muted-foreground" />
+      )
+    }
+
+    if (record.sessionType === 'user-session') {
+      const deviceIcons: Record<string, JSX.Element> = {
+        desktop: (
+          <Monitor
+            size={50}
+            strokeWidth={1}
+            className="text-muted-foreground"
+          />
+        ),
+        mobile: (
+          <Smartphone
+            size={44}
+            strokeWidth={1}
+            className="text-muted-foreground"
+          />
+        ),
+      }
+
+      return deviceIcons[clientInfo.deviceType] ?? null
+    }
+
+    return null
+  }
+
   if (loading) {
     return (
       <div>
@@ -131,68 +166,119 @@ function Sessions(): JSX.Element {
         />
         {sessions &&
           Array.isArray(sessions) &&
-          sessions.map((record) => (
-            <div
-              key={record.id}
-              className="mt-2 flex flex-col items-center justify-between rounded-md border p-4 md:flex-row"
-            >
-              <div className="flex items-center gap-4">
-                <div>
-                  <Monitor
-                    size={50}
-                    strokeWidth={1}
-                    className="text-muted-foreground"
-                  />
-                </div>
-                <div>
-                  <div>
-                    ID:{' '}
-                    <span className="text-muted-foreground break-all">
-                      {record.id}
-                    </span>
+          sessions.map((record) => {
+            const clientInfo =
+              typeof record.clientInfo === 'string'
+                ? JSON.parse(record.clientInfo)
+                : record.clientInfo
+            return (
+              <div
+                key={record.id}
+                className="mt-2 rounded-md border p-4 md:flex-row"
+              >
+                <div className="flex flex-col items-center justify-between md:flex-row">
+                  <div className="flex items-center gap-4">
+                    <div className="px-2">
+                      {getSessionIcon(record, clientInfo)}
+                    </div>
+                    <div>
+                      {clientInfo.ip && (
+                        <div>
+                          IP:{' '}
+                          <span className="text-muted-foreground break-all">
+                            {clientInfo.ip ?? 'Not Available'}
+                          </span>
+                        </div>
+                      )}
+                      <div>
+                        Created:{' '}
+                        <span className="text-muted-foreground">
+                          {dateConversion(record.createdAt)}
+                        </span>
+                      </div>
+                      <div>
+                        Expires:{' '}
+                        <span className="text-muted-foreground">
+                          {dateConversion(record.expiresAt)}
+                        </span>
+                      </div>
+                      <div>
+                        Type:{' '}
+                        <span className="text-muted-foreground">
+                          {record.sessionType === 'organization-session'
+                            ? 'Client Session'
+                            : 'User Session'}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    Created:{' '}
-                    <span className="text-muted-foreground">
-                      {dateConversion(record.createdAt)}
-                    </span>
-                  </div>
-                  <div>
-                    Expires:{' '}
-                    <span className="text-muted-foreground">
-                      {dateConversion(record.expiresAt)}
-                    </span>
-                  </div>
-                  <div>
-                    Type:{' '}
-                    <span className="text-muted-foreground">
-                      {record.sessionType}
-                    </span>
-                  </div>
-                </div>
-              </div>
-              <div className="sm:w-0.5/3 text-destructive">
-                {record.id === currentSession ? (
-                  <Badge className="success-alert rounded-full p-1 px-3">
-                    Current Session
-                  </Badge>
-                ) : (
-                  <Button
-                    data-testid="deleteBtn"
-                    type="button"
-                    color="danger"
-                    onClick={() => {
-                      setShowConfirmation(true)
-                      setDeletionId(record.id)
-                    }}
-                    className="flex justify-end bg-transparent p-0 shadow-none hover:bg-transparent focus:ring-0"
+                  <div
+                    className={`sm:w-0.5/3 flex h-[100px] items-center ${record.sessionType !== 'organization-session' && 'pt-10'}`}
                   >
-                    <DeleteIcon />
+                    {record.id === currentSession ? (
+                      <Badge className="success-alert rounded-full p-1 px-3">
+                        Current Session
+                      </Badge>
+                    ) : (
+                      <div>
+                        <Button
+                          data-testid="deleteBtn"
+                          type="button"
+                          color="danger"
+                          onClick={() => {
+                            setShowConfirmation(true)
+                            setDeletionId(record.id)
+                          }}
+                          className="flex justify-end bg-transparent p-0 shadow-none hover:bg-transparent focus:ring-0"
+                        >
+                          <DeleteIcon />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {record.sessionType !== 'organization-session' && (
+                  <Button
+                    onClick={() => {
+                      setShowDetails((prev) => {
+                        if (record.id === prev) {
+                          return ''
+                        }
+                        return record.id
+                      })
+                    }}
+                    variant={'secondary'}
+                    className="mt-2 h-[30px] px-2"
+                  >
+                    {showDetails === record.id
+                      ? 'Hide Details'
+                      : 'Show Details'}
                   </Button>
                 )}
+                <div
+                  className={`${showDetails === record.id ? 'mt-6 h-auto rounded-md border p-4' : ''} mt-2 flex h-[0px] items-center justify-between overflow-hidden text-sm transition-all duration-500`}
+                >
+                  <div className="grid justify-center">
+                    <dt>Browser</dt>
+                    <dd className="text-muted-foreground">
+                      {clientInfo.browser}
+                    </dd>
+                  </div>
+                  <div className="grid justify-center">
+                    <dt>OS</dt>
+                    <dd className="text-muted-foreground">{clientInfo.os}</dd>
+                  </div>
+                  <div className="grid justify-center">
+                    <dt>Device</dt>
+                    <dd className="text-muted-foreground">
+                      {clientInfo.deviceType}
+                    </dd>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
       </CardContent>
     </Card>
   )
