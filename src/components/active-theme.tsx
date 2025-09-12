@@ -4,7 +4,7 @@ import React, {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useState,
 } from 'react'
 
@@ -43,7 +43,7 @@ export function ActiveThemeProvider({
     envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME
   const [activeTheme, setActiveTheme] = useState<string>(defaultTheme)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof window !== 'undefined') {
       setCookie(COOKIE_NAME, activeTheme)
     }
