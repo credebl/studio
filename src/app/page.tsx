@@ -1,4 +1,5 @@
 'use client'
+
 import { JSX, useEffect } from 'react'
 import Loader from '@/components/Loader'
 import { useRouter } from 'next/navigation'
@@ -8,10 +9,15 @@ export default function Home(): JSX.Element {
   const { data: session, status } = useSession()
   const router = useRouter()
 
+  // Read theme from env
+  const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
+  const isSovio = envTheme === 'sovio'
+
   useEffect(() => {
     if (status === 'loading') {
       return
     }
+
     if (session) {
       router.replace('/dashboard')
     } else {
@@ -32,8 +38,8 @@ export default function Home(): JSX.Element {
         <Loader size={90} />
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src="/SOVIO Icon.svg"
-            alt="SOVIO Logo"
+            src={isSovio ? '/SOVIO Icon.svg' : '/images/CREDEBL_ICON.png'}
+            alt={isSovio ? 'SOVIO Logo' : 'CREDEBL Logo'}
             className="h-14 w-14 object-contain"
           />
         </div>
