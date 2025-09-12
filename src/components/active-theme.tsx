@@ -8,34 +8,30 @@ import React, {
   useState,
 } from 'react'
 
-const COOKIE_NAME = 'active_theme'
 const CREDEBL_THEME = 'credebl'
-
-function setThemeCookie(theme: string): void {
-  if (typeof window === 'undefined') {
-    return
-  }
-  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${
-    window.location.protocol === 'https:' ? 'Secure;' : ''
-  }`
-}
-
-function getThemeFromCookie(): string | null {
-  if (typeof document === 'undefined') {
-    return null
-  }
-  const match = document.cookie.match(
-    new RegExp(`(?:^|; )${COOKIE_NAME}=([^;]*)`),
-  )
-  return match ? decodeURIComponent(match[1]) : null
-}
+const COOKIE_NAME = 'active_theme'
 
 type ThemeContextType = {
   readonly activeTheme: string
   readonly setActiveTheme: (theme: string) => void
+  readonly resetTheme: () => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+
+function setCookie(name: string, value: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+  document.cookie = `${name}=${value}; path=/; max-age=31536000; SameSite=Lax`
+}
+
+function clearCookie(name: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+  document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`
+}
 
 export function ActiveThemeProvider({
   children,
@@ -43,16 +39,14 @@ export function ActiveThemeProvider({
   readonly children: ReactNode
 }): React.JSX.Element {
   const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
-
-  const [activeTheme, setActiveTheme] = useState<string>(
-    () =>
-      // Priority: cookie → env → default
-      getThemeFromCookie() ||
-      (envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME),
-  )
+  const defaultTheme =
+    envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME
+  const [activeTheme, setActiveTheme] = useState<string>(defaultTheme)
 
   useEffect(() => {
-    setThemeCookie(activeTheme)
+    if (typeof window !== 'undefined') {
+      setCookie(COOKIE_NAME, activeTheme)
+    }
 
     // Remove previous theme classes
     Array.from(document.body.classList)
@@ -66,8 +60,13 @@ export function ActiveThemeProvider({
     }
   }, [activeTheme])
 
+  const resetTheme = (): void => {
+    clearCookie(COOKIE_NAME)
+    setActiveTheme(defaultTheme)
+  }
+
   const themeContextValue = React.useMemo(
-    () => ({ activeTheme, setActiveTheme }),
+    () => ({ activeTheme, setActiveTheme, resetTheme }),
     [activeTheme],
   )
 
