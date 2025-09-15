@@ -65,6 +65,15 @@ export const SessionManager = ({
     }
   }
 
+  const logoutSession = (): void => {
+    localStorage.removeItem('persist:root')
+    const signInUrl =
+      redirectTo && clientAlias
+        ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+        : '/sign-in'
+    router.push(signInUrl)
+  }
+
   const fetchSessionDetails = async (
     sessionId: string,
     redirectTo: string | null,
@@ -81,8 +90,8 @@ export const SessionManager = ({
       )
       const data = await resp.json()
       if (!data.data) {
-        localStorage.removeItem('persist:root')
-        router.push('/sign-in')
+        logoutSession()
+        return
       }
       // eslint-disable-next-line
       setSessionDetails(data, redirectTo)
@@ -105,12 +114,7 @@ export const SessionManager = ({
           pathname.startsWith(page),
         )
         if (!isIgnoreSessionCheck) {
-          localStorage.removeItem('persist:root')
-          const signInUrl =
-            redirectTo && clientAlias
-              ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-              : '/sign-in'
-          router.push(signInUrl)
+          logoutSession()
         }
       }
     }, 500)
