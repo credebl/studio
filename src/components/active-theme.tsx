@@ -35,12 +35,16 @@ function clearCookie(name: string): void {
 
 export function ActiveThemeProvider({
   children,
+  initialTheme,
 }: {
   readonly children: ReactNode
+  readonly initialTheme?: string
 }): React.JSX.Element {
   const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
   const defaultTheme =
-    envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME
+    initialTheme?.toLowerCase().trim() ||
+    (envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME)
+
   const [activeTheme, setActiveTheme] = useState<string>(defaultTheme)
 
   useLayoutEffect(() => {
