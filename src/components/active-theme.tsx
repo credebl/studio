@@ -4,56 +4,70 @@ import React, {
   ReactNode,
   createContext,
   useContext,
-  useEffect,
+  useLayoutEffect,
   useState,
 } from 'react'
 
+const CREDEBL_THEME = 'credebl'
 const COOKIE_NAME = 'active_theme'
-const CREDEBL_THEMES = 'credebl'
-
-function setThemeCookie(theme: string): void {
-  if (typeof window === 'undefined') {
-    return
-  }
-
-  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${window.location.protocol === 'https:' ? 'Secure;' : ''}`
-}
 
 type ThemeContextType = {
   readonly activeTheme: string
   readonly setActiveTheme: (theme: string) => void
+  readonly resetTheme: () => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
+function setCookie(name: string, value: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+  document.cookie = `${name}=${value}; path=/; max-age=31536000; SameSite=Lax`
+}
+
+function clearCookie(name: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+  document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`
+}
+
 export function ActiveThemeProvider({
   children,
-  initialTheme,
 }: {
   readonly children: ReactNode
-  readonly initialTheme?: string
 }): React.JSX.Element {
-  const [activeTheme, setActiveTheme] = useState<string>(
-    () => initialTheme ?? CREDEBL_THEMES,
-  )
+  const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
+  const defaultTheme =
+    envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME
+  const [activeTheme, setActiveTheme] = useState<string>(defaultTheme)
 
-  useEffect(() => {
-    setThemeCookie(activeTheme)
+  useLayoutEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCookie(COOKIE_NAME, activeTheme)
+    }
 
+    // Remove previous theme classes
     Array.from(document.body.classList)
       .filter((className) => className.startsWith('theme-'))
-      .forEach((className) => {
-        document.body.classList.remove(className)
-      })
+      .forEach((className) => document.body.classList.remove(className))
+
+    // Apply active theme
     document.body.classList.add(`theme-${activeTheme}`)
     if (activeTheme.endsWith('-scaled')) {
       document.body.classList.add('theme-scaled')
     }
   }, [activeTheme])
 
+  const resetTheme = (): void => {
+    clearCookie(COOKIE_NAME)
+    setActiveTheme(defaultTheme)
+  }
+
   const themeContextValue = React.useMemo(
-    () => ({ activeTheme, setActiveTheme }),
-    [activeTheme, setActiveTheme],
+    () => ({ activeTheme, setActiveTheme, resetTheme }),
+    [activeTheme],
   )
 
   return (
