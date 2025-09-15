@@ -1,8 +1,8 @@
 import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { JSX, useEffect, useState } from 'react'
 import { Monitor, Smartphone, UserCog } from 'lucide-react'
+import { Session, clientInfo } from '../type/session'
 import { apiStatusCodes, confirmationMessages } from '@/config/CommonConstant'
-import { clientInfo, session } from '../type/session'
 import { getUserSessions, sessionDelete } from '@/app/api/Auth'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -18,7 +18,7 @@ import { useAppSelector } from '@/lib/hooks'
 function Sessions(): JSX.Element {
   const [loading, setLoading] = useState(true)
   const [showDetails, setShowDetails] = useState<string>('')
-  const [sessions, setSessions] = useState<session>()
+  const [sessions, setSessions] = useState<Session[]>()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [deletionId, setDeletionId] = useState<string | null>(null)
@@ -33,6 +33,7 @@ function Sessions(): JSX.Element {
     if (!userId) {
       setLoading(false)
       setError('User id is missing')
+      return
     }
 
     try {
@@ -59,6 +60,7 @@ function Sessions(): JSX.Element {
     if (!deletionId) {
       setLoading(false)
       setError('Session id is missing')
+      return
     }
 
     try {
@@ -80,7 +82,7 @@ function Sessions(): JSX.Element {
   }
 
   function getSessionIcon(
-    record: session,
+    record: Session,
     clientInfo: clientInfo,
   ): JSX.Element | null {
     if (record.sessionType === 'organization-session') {
