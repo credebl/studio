@@ -443,8 +443,8 @@ export default function SignInViewPage(): React.JSX.Element {
                   <Button
                     type="button"
                     className="text-xs md:text-sm"
-                    onClick={() => route.push('#')}
-                    variant={'outline'}
+                    onClick={() => signIn('google')}
+                    variant="outline"
                   >
                     <Icons.google className="mr-2 h-2 w-2 md:h-4 md:w-4" />
                     Sign in with Google

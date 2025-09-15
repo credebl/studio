@@ -1,7 +1,9 @@
+/* eslint-disable camelcase */
 import { JwtPayload, jwtDecode } from 'jwt-decode'
 import { Session, SessionOptions, User } from 'next-auth'
 
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 import { JWT } from 'next-auth/jwt'
 import { Provider } from 'next-auth/providers/index'
 import { apiRoutes } from '@/config/apiRoutes'
@@ -153,6 +155,50 @@ export const authOptions: MyAuthOptions = {
             throw new Error(error.message)
           }
           throw new Error(JSON.stringify({ message: 'Authorize error' }))
+        }
+      },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      async profile(profile, tokens) {
+        try {
+          const res = await fetch('http://localhost:5000/auth/signin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              provider: 'google',
+              idToken: tokens.id_token,
+              access_token: tokens.access_token,
+              email: profile.email, // Send actual Google email
+              name: profile.name, // Send actual Google name
+            }),
+          })
+
+          if (!res.ok) {
+            throw new Error('Failed to login with Google')
+          }
+
+          const user = await res.json()
+
+          if (user.statusCode !== 200 || !user.data?.access_token) {
+            throw new Error('User not authenticated')
+          }
+
+          const decodedToken = jwtDecode<JwtDataPayload>(user.data.access_token)
+
+          return {
+            id: user.data.session_state || decodedToken.email,
+            email: decodedToken.email || profile.email,
+            name: decodedToken.name || profile.name,
+            access_token: user.data.access_token,
+            refreshToken: user.data.refresh_token,
+            tokenType: user.data.token_type,
+            expiresAt: user.data.expires_in,
+          }
+        } catch (err) {
+          console.error('Google profile error:', err)
+          throw err
         }
       },
     }),
