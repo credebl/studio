@@ -1,14 +1,15 @@
-export interface session {
+export interface Session {
   id: string
   sessionToken: string
   userId: string
   expires: number
   refreshToken: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
   accountId: string
   sessionType: string
-  expiresAt: Date
+  expiresAt: string
+  clientInfo: clientInfo
 }
 
 export interface clientInfo {

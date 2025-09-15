@@ -18,7 +18,7 @@ import Loader from '@/components/Loader'
 import Sessions from './Sessions'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getUserProfile } from '@/app/api/Auth'
-import { setProfileid } from '@/lib/profileSlice'
+import { setProfileId } from '@/lib/profileSlice'
 
 export default function UserProfile(): React.JSX.Element {
   const token = useAppSelector((state) => state.auth.token)
@@ -44,7 +44,7 @@ export default function UserProfile(): React.JSX.Element {
       ) {
         setPrePopulatedUserProfile(response.data.data)
         setUserEmail(response.data.data.email)
-        dispatch(setProfileid(response.data.data.id))
+        dispatch(setProfileId(response.data.data.id))
       }
     } catch (error) {
       console.error('Error fetching user profile:', error)
