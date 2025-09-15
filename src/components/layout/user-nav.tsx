@@ -9,9 +9,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  // DropdownMenuSub,
-  // DropdownMenuSubContent,
-  // DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import React, { useEffect, useState } from 'react'
@@ -153,6 +150,12 @@ export function UserNav(): React.JSX.Element | null {
           <DropdownMenuItem onClick={() => router.push('/developers-setting')}>
             Developer Settings
           </DropdownMenuItem>
+
+          {envConfig.PLATFORM_DATA.enableBillingOption && (
+            <DropdownMenuItem onClick={() => router.push('/billing ')}>
+              Billing
+            </DropdownMenuItem>
+          )}
 
           {/* TODO: Upgrade Theme Selection functionality with multiple theme options dynamically */}
           {/* <DropdownMenuSub>

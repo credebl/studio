@@ -18,6 +18,7 @@ const preventRedirectOnPaths = [
   '/connections',
   '/profile',
   '/developers-setting',
+  '/billing',
   '/schemas',
   '/invitations',
   '/delete-organization',

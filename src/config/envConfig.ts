@@ -31,6 +31,7 @@ const {
   NEXT_PUBLIC_MODE,
   NEXT_PUBLIC_CURRENT_RELEASE,
   NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN,
+  NEXT_PUBLIC_ENABLE_BILLING_OPTION,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 }: any = envVariables
 
@@ -51,6 +52,9 @@ export const envConfig = {
     enableSocialLogin:
       (NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN ||
         process.env.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN) === 'true',
+    enableBillingOption:
+      (NEXT_PUBLIC_ENABLE_BILLING_OPTION ||
+        process.env.NEXT_PUBLIC_ENABLE_BILLING_OPTION) === 'true',
     polygonTestnet:
       NEXT_PUBLIC_POLYGON_TESTNET_URL ||
       process.env.NEXT_PUBLIC_POLYGON_TESTNET_URL,

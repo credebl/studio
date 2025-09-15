@@ -23,6 +23,14 @@ export default function SignUpUser(): React.JSX.Element {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      {/* Subscription Message */}
+      <div className="mb-4 w-full max-w-md rounded-md border border-yellow-300 bg-yellow-50 p-4 text-yellow-800">
+        <p className="mt-1 text-sm">
+          You are registering using <strong>Free plan</strong> with limited
+          usage.
+          <span className="ml-1">Upgrade to avoid any interruptions.</span>
+        </p>
+      </div>
       <div className="bg-card border-border relative z-10 h-full w-[480px] max-w-md overflow-hidden rounded-xl border p-8 shadow-xl transition-transform duration-300">
         <h2 className="mb-2 text-center text-xl font-semibold">
           Create an account
