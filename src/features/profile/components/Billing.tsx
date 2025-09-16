@@ -30,7 +30,7 @@ export default function Billing(): JSX.Element {
       name: 'PRO',
       current: false,
       message:
-        'Please contact us at support@sovio.id to learn more about the PRO plan features.',
+        'Please contact us at sales@sovio.id to learn more about the PRO plan features.',
     },
   ]
 
