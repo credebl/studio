@@ -115,6 +115,10 @@ function Sessions(): JSX.Element {
     return null
   }
 
+  if (!loading && (!sessions || sessions.length === 0)) {
+    return <div>No session Details</div>
+  }
+
   if (loading) {
     return (
       <div>
