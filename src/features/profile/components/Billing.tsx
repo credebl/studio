@@ -3,7 +3,8 @@
 import { JSX } from 'react'
 
 export default function Billing(): JSX.Element {
-  const sovioLandingPageURL = process.env.NEXT_PUBLIC_SOVIO_LANDINGPAGE_URL
+  const sovioLandingPageURL =
+    process.env.NEXT_PUBLIC_SOVIO_LANDINGPAGE_URL || ''
   const plans = [
     {
       name: 'FREE',
@@ -59,7 +60,7 @@ export default function Billing(): JSX.Element {
                 ))}
               </ul>
               <a
-                href={plan.link}
+                href={plan.link || '#'}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`block w-full rounded-lg px-4 py-2 text-center font-medium ${
