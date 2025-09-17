@@ -54,7 +54,7 @@ export default function Billing(): JSX.Element {
               <ul className="mb-6 space-y-2">
                 {plan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-2">
-                    <span className="text-green-600">✔</span>
+                    <span className="green-text">✔</span>
                     {feature}
                   </li>
                 ))}
