@@ -71,9 +71,10 @@ export const authOptions: MyAuthOptions = {
           type: 'string',
         },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         let parsedVerifyAuthObj: Record<string, unknown> = {}
         let parsedObj: PasskeyUser = { userName: '' }
+        const ua = req?.headers?.['user-agent'] || 'unknown'
         try {
           const {
             email,
@@ -109,7 +110,10 @@ export const authOptions: MyAuthOptions = {
               `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
               {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'User-Agent': ua,
+                },
                 body: JSON.stringify(sanitizedPayload),
                 credentials: 'include',
               },
@@ -119,7 +123,10 @@ export const authOptions: MyAuthOptions = {
               `${envConfig.NEXT_PUBLIC_BASE_URL}/${apiRoutes.auth.fidoVerifyAuthentication}${parsedObj.userName}`,
               {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                  'Content-Type': 'application/json',
+                  'User-Agent': ua,
+                },
                 body: JSON.stringify(sanitizedPayload),
               },
             )

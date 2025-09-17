@@ -20,6 +20,8 @@ export const apiRoutes = {
     resetPasswordPath: 'auth/password-reset', // NOSONAR
     refreshToken: '/auth/refresh-token',
     fetchSessionDetails: '/auth/sessionDetails',
+    userSessions: '/auth/userId:/sessions',
+    deleteSession: '/auth/sessionId:/sessions',
   },
 
   users: {

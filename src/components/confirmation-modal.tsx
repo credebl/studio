@@ -55,6 +55,34 @@ const ConfirmationModal = ({
         </button>
       </DialogHeader>
 
+      <div className="w-full">
+        {success && (
+          <div className="w-full" role="alert">
+            <AlertComponent
+              message={success}
+              type={'success'}
+              onAlertClose={() => {
+                if (setSuccess) {
+                  setSuccess(null)
+                }
+              }}
+            />
+          </div>
+        )}
+        {failure && (
+          <div className="w-full" role="alert">
+            <AlertComponent
+              message={failure}
+              type={'failure'}
+              onAlertClose={() => {
+                if (setFailure) {
+                  setFailure(null)
+                }
+              }}
+            />
+          </div>
+        )}
+      </div>
       <div className="p-6 text-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -82,35 +110,6 @@ const ConfirmationModal = ({
         </h3>
 
         {warning && <h4 className="text-done">{warning}</h4>}
-
-        <div className="w-full">
-          {success && (
-            <div className="w-full" role="alert">
-              <AlertComponent
-                message={success}
-                type={'success'}
-                onAlertClose={() => {
-                  if (setSuccess) {
-                    setSuccess(null)
-                  }
-                }}
-              />
-            </div>
-          )}
-          {failure && (
-            <div className="w-full" role="alert">
-              <AlertComponent
-                message={failure}
-                type={'failure'}
-                onAlertClose={() => {
-                  if (setFailure) {
-                    setFailure(null)
-                  }
-                }}
-              />
-            </div>
-          )}
-        </div>
       </div>
 
       <DialogFooter className="mt-4 flex items-center justify-around gap-4">

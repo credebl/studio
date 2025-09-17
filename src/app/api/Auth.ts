@@ -1,4 +1,9 @@
-import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests'
+import {
+  axiosDelete,
+  axiosGet,
+  axiosPost,
+  axiosPut,
+} from '@/services/apiRequests'
 
 import { AxiosResponse } from 'axios'
 import CryptoJS from 'crypto-js'
@@ -228,4 +233,40 @@ export const passwordEncryption = (password: string): string => {
     CRYPTO_PRIVATE_KEY,
   ).toString()
   return encryptedPassword
+}
+
+export const getUserSessions = async (
+  userId: string,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+  const url = apiRoutes.auth.userSessions.replace('userId:', userId)
+  const details = {
+    url,
+    config,
+  }
+  try {
+    const response = await axiosGet(details)
+    return response
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
+export const sessionDelete = async (
+  sessionId: string,
+): Promise<AxiosResponse | string> => {
+  const config = getHeaderConfigs()
+  const url = apiRoutes.auth.deleteSession.replace('sessionId:', sessionId)
+  const details = {
+    url,
+    config,
+  }
+  try {
+    const response = await axiosDelete(details)
+    return response
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
 }

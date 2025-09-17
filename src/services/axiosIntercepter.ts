@@ -4,6 +4,7 @@ import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError } from 'axios'
 
 import { apiRoutes } from '@/config/apiRoutes'
+import { apiStatusCodes } from '@/config/CommonConstant'
 // import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
 import { signOut } from 'next-auth/react'
@@ -162,13 +163,26 @@ instance.interceptors.request.use(
       }),
     }
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
+      if (typeof window !== 'undefined') {
+        logoutAndRedirect()
+      }
+    }
+    return Promise.reject(error)
+  },
 )
 
 // RESPONSE INTERCEPTOR
 instance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) =>
+  async (error: AxiosError) => {
+    if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
+      if (typeof window !== 'undefined') {
+        logoutAndRedirect()
+      }
+    }
+
     // const originalRequest = error.config as AxiosRequestConfig & {
     //   _retry?: boolean
     // }
@@ -194,8 +208,10 @@ instance.interceptors.response.use(
     //     logoutAndRedirect()
     //   }
     // }
+    //
 
-    Promise.reject(error),
+    return Promise.reject(error)
+  },
 )
 
 export { instance, EcosystemInstance }
