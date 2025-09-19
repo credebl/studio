@@ -1,10 +1,11 @@
 {
-  "name": "next-shadcn-dashboard-starter",
-  "version": "1.0.0",
+  "name": "CREDEBL-Studio",
+  "version": "2.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "author": {
-    "name": "Kiran",
-    "url": "https://github.com/Kiranism"
+    "name": "LFDT",
+    "url": "https://www.lfdecentralizedtrust.org/"
   },
   "scripts": {
     "dev": "next dev --turbopack",
