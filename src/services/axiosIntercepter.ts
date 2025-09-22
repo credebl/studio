@@ -163,10 +163,10 @@ instance.interceptors.request.use(
       }),
     }
   },
-  (error) => {
+  async (error) => {
     if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
       if (typeof window !== 'undefined') {
-        logoutAndRedirect()
+        await logoutAndRedirect()
       }
     }
     return Promise.reject(error)
@@ -179,7 +179,7 @@ instance.interceptors.response.use(
   async (error: AxiosError) => {
     if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
       if (typeof window !== 'undefined') {
-        logoutAndRedirect()
+        await logoutAndRedirect()
       }
     }
 
