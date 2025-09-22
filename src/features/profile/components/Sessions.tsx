@@ -84,35 +84,31 @@ function Sessions(): JSX.Element {
   function getSessionIcon(
     record: Session,
     clientInfo: clientInfo,
-  ): JSX.Element | null {
+  ): JSX.Element {
     if (record.sessionType === 'organization-session') {
       return (
         <UserCog size={44} strokeWidth={1} className="text-muted-foreground" />
       )
     }
 
-    if (record.sessionType === 'user-session') {
-      const deviceIcons: Record<string, JSX.Element> = {
-        desktop: (
-          <Monitor
-            size={50}
-            strokeWidth={1}
-            className="text-muted-foreground"
-          />
-        ),
-        mobile: (
-          <Smartphone
-            size={44}
-            strokeWidth={1}
-            className="text-muted-foreground"
-          />
-        ),
-      }
-
-      return deviceIcons[clientInfo.deviceType] ?? null
+    const deviceIcons: Record<string, JSX.Element> = {
+      desktop: (
+        <Monitor size={50} strokeWidth={1} className="text-muted-foreground" />
+      ),
+      mobile: (
+        <Smartphone
+          size={44}
+          strokeWidth={1}
+          className="text-muted-foreground"
+        />
+      ),
     }
 
-    return null
+    if (record.sessionType === 'user-session') {
+      return deviceIcons[clientInfo.deviceType] ?? deviceIcons['desktop']
+    }
+
+    return deviceIcons['desktop']
   }
 
   if (!loading && (!sessions || sessions.length === 0)) {
@@ -175,24 +171,32 @@ function Sessions(): JSX.Element {
           sessions.map((record) => {
             const clientInfo =
               typeof record.clientInfo === 'string'
-                ? JSON.parse(record.clientInfo)
-                : record.clientInfo
+                ? JSON.parse(record?.clientInfo)
+                : record?.clientInfo
             return (
               <div
-                key={record.id}
+                key={record?.id}
                 className="mt-2 rounded-md border p-4 md:flex-row"
               >
                 <div className="flex flex-col items-center justify-between md:flex-row">
                   <div className="flex items-center gap-4">
                     <div className="px-2">
-                      {getSessionIcon(record, clientInfo)}
+                      {clientInfo ? (
+                        getSessionIcon(record, clientInfo)
+                      ) : (
+                        <Monitor
+                          size={50}
+                          strokeWidth={1}
+                          className="text-muted-foreground"
+                        />
+                      )}
                     </div>
                     <div>
-                      {clientInfo.ip && (
+                      {clientInfo?.ip && (
                         <div>
                           IP:{' '}
                           <span className="text-muted-foreground break-all">
-                            {clientInfo.ip ?? 'Not Available'}
+                            {clientInfo?.ip ?? 'Not Available'}
                           </span>
                         </div>
                       )}
@@ -219,9 +223,9 @@ function Sessions(): JSX.Element {
                     </div>
                   </div>
                   <div
-                    className={`sm:w-0.5/3 flex h-[100px] items-center ${record.sessionType !== 'organization-session' && 'pt-10'}`}
+                    className={`sm:w-0.5/3 flex h-[100px] items-center ${record.sessionType !== 'organization-session' && clientInfo?.ip && 'pt-10'}`}
                   >
-                    {record.id === currentSession ? (
+                    {record?.id === currentSession ? (
                       <Badge className="success-alert rounded-full p-1 px-3">
                         Current Session
                       </Badge>
@@ -232,6 +236,8 @@ function Sessions(): JSX.Element {
                           type="button"
                           color="danger"
                           onClick={() => {
+                            setError(null)
+                            setSuccess(null)
                             setShowConfirmation(true)
                             setDeletionId(record.id)
                           }}
@@ -244,44 +250,49 @@ function Sessions(): JSX.Element {
                   </div>
                 </div>
 
-                {record.sessionType !== 'organization-session' && (
-                  <Button
-                    onClick={() => {
-                      setShowDetails((prev) => {
-                        if (record.id === prev) {
-                          return ''
-                        }
-                        return record.id
-                      })
-                    }}
-                    variant={'secondary'}
-                    className="mt-2 h-[30px] px-2"
+                {clientInfo?.ip &&
+                  record.sessionType !== 'organization-session' && (
+                    <Button
+                      onClick={() => {
+                        setShowDetails((prev) => {
+                          if (record.id === prev) {
+                            return ''
+                          }
+                          return record.id
+                        })
+                      }}
+                      variant={'secondary'}
+                      className="mt-2 h-[30px] px-2"
+                    >
+                      {showDetails === record.id
+                        ? 'Hide Details'
+                        : 'Show Details'}
+                    </Button>
+                  )}
+                {clientInfo && (
+                  <div
+                    className={`${showDetails === record.id ? 'mt-6 h-auto rounded-md border p-4' : ''} mt-2 flex h-[0px] items-center justify-between overflow-hidden text-sm transition-all duration-500`}
                   >
-                    {showDetails === record.id
-                      ? 'Hide Details'
-                      : 'Show Details'}
-                  </Button>
+                    <div className="grid justify-center">
+                      <dt>Browser</dt>
+                      <dd className="text-muted-foreground">
+                        {clientInfo?.browser}
+                      </dd>
+                    </div>
+                    <div className="grid justify-center">
+                      <dt>OS</dt>
+                      <dd className="text-muted-foreground">
+                        {clientInfo?.os}
+                      </dd>
+                    </div>
+                    <div className="grid justify-center">
+                      <dt>Device</dt>
+                      <dd className="text-muted-foreground">
+                        {clientInfo?.deviceType}
+                      </dd>
+                    </div>
+                  </div>
                 )}
-                <div
-                  className={`${showDetails === record.id ? 'mt-6 h-auto rounded-md border p-4' : ''} mt-2 flex h-[0px] items-center justify-between overflow-hidden text-sm transition-all duration-500`}
-                >
-                  <div className="grid justify-center">
-                    <dt>Browser</dt>
-                    <dd className="text-muted-foreground">
-                      {clientInfo.browser}
-                    </dd>
-                  </div>
-                  <div className="grid justify-center">
-                    <dt>OS</dt>
-                    <dd className="text-muted-foreground">{clientInfo.os}</dd>
-                  </div>
-                  <div className="grid justify-center">
-                    <dt>Device</dt>
-                    <dd className="text-muted-foreground">
-                      {clientInfo.deviceType}
-                    </dd>
-                  </div>
-                </div>
               </div>
             )
           })}
