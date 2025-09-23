@@ -85,7 +85,7 @@ function Sessions(): JSX.Element {
     record: Session,
     clientInfo: clientInfo,
   ): JSX.Element {
-    if (record.sessionType === 'organization-session') {
+    if (record.sessionType === SESSION_TYPE.ORGANIZATION) {
       return (
         <UserCog size={44} strokeWidth={1} className="text-muted-foreground" />
       )
@@ -104,7 +104,7 @@ function Sessions(): JSX.Element {
       ),
     }
 
-    if (record.sessionType === 'user-session') {
+    if (record.sessionType === SESSION_TYPE.USER) {
       return deviceIcons[clientInfo.deviceType] ?? deviceIcons['desktop']
     }
 
@@ -215,7 +215,7 @@ function Sessions(): JSX.Element {
                       <div>
                         Type:{' '}
                         <span className="text-muted-foreground">
-                          {record.sessionType === 'organization-session'
+                          {record.sessionType === SESSION_TYPE.ORGANIZATION
                             ? 'Client Session'
                             : 'User Session'}
                         </span>
@@ -223,7 +223,7 @@ function Sessions(): JSX.Element {
                     </div>
                   </div>
                   <div
-                    className={`sm:w-0.5/3 flex h-[100px] items-center ${record.sessionType !== 'organization-session' && clientInfo?.ip && 'pt-10'}`}
+                    className={`sm:w-0.5/3 flex h-[100px] items-center ${record.sessionType !== SESSION_TYPE.ORGANIZATION && clientInfo?.ip && 'pt-10'}`}
                   >
                     {record?.id === currentSession ? (
                       <Badge className="success-alert rounded-full p-1 px-3">
@@ -251,7 +251,7 @@ function Sessions(): JSX.Element {
                 </div>
 
                 {clientInfo?.ip &&
-                  record.sessionType !== 'organization-session' && (
+                  record.sessionType !== SESSION_TYPE.ORGANIZATION && (
                     <Button
                       onClick={() => {
                         setShowDetails((prev) => {
