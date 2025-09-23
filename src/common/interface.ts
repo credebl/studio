@@ -26,3 +26,13 @@ export interface IAlertComponent {
   path?: string
   onAlertClose: () => void
 }
+
+export interface EncryptPasswordForSignInResponse {
+  password: string
+  email: string
+  isPassword: boolean
+}
+
+export interface EncryptPasswordResponse {
+  password: string
+}
