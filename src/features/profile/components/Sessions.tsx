@@ -12,6 +12,7 @@ import ConfirmationModal from '@/components/confirmation-modal'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
 import Loader from '@/components/Loader'
 import { RootState } from '@/lib/store'
+import { SESSION_TYPE } from '@/components/types/Sessions'
 import { dateConversion } from '@/utils/DateConversion'
 import { useAppSelector } from '@/lib/hooks'
 
