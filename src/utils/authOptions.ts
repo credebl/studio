@@ -77,7 +77,7 @@ export const authOptions: MyAuthOptions = {
         const ua = req?.headers?.['user-agent'] || undefined
         let clientIp =
           req?.headers?.['x-forwarded-for']?.split(',')[0] || undefined
-        if (clientIp.startsWith('::ffff:')) {
+        if (clientIp && clientIp.startsWith('::ffff:')) {
           clientIp = clientIp.substring(7)
         }
         try {
