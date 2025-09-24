@@ -76,7 +76,7 @@ export const authOptions: MyAuthOptions = {
         let parsedObj: PasskeyUser = { userName: '' }
         const ua = req?.headers?.['user-agent'] || undefined
         let clientIp =
-          req?.headers?.['x-forwarded-for']?.split(',')[0] || 'unknown'
+          req?.headers?.['x-forwarded-for']?.split(',')[0] || undefined
         if (clientIp.startsWith('::ffff:')) {
           clientIp = clientIp.substring(7)
         }
