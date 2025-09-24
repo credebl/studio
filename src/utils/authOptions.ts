@@ -74,7 +74,12 @@ export const authOptions: MyAuthOptions = {
       async authorize(credentials, req) {
         let parsedVerifyAuthObj: Record<string, unknown> = {}
         let parsedObj: PasskeyUser = { userName: '' }
-        const ua = req?.headers?.['user-agent'] || 'unknown'
+        const ua = req?.headers?.['user-agent'] || undefined
+        let clientIp =
+          req?.headers?.['x-forwarded-for']?.split(',')[0] || undefined
+        if (clientIp && clientIp.startsWith('::ffff:')) {
+          clientIp = clientIp.substring(7)
+        }
         try {
           const {
             email,
@@ -113,6 +118,7 @@ export const authOptions: MyAuthOptions = {
                 headers: {
                   'Content-Type': 'application/json',
                   'User-Agent': ua,
+                  'x-forwarded-for': clientIp,
                 },
                 body: JSON.stringify(sanitizedPayload),
                 credentials: 'include',
@@ -126,6 +132,7 @@ export const authOptions: MyAuthOptions = {
                 headers: {
                   'Content-Type': 'application/json',
                   'User-Agent': ua,
+                  'x-forwarded-for': clientIp,
                 },
                 body: JSON.stringify(sanitizedPayload),
               },

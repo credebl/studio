@@ -7,9 +7,7 @@ import {
 
 import { AxiosResponse } from 'axios'
 import CryptoJS from 'crypto-js'
-import { IEncryptPasswordForSignIn } from '@/common/interface'
 import { apiRoutes } from '@/config/apiRoutes'
-import { encryptPasswordActionForSignIn } from '@/app/actions/passwordActions'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
 export interface IUserSignUpData {
@@ -224,17 +222,11 @@ export const addPasswordDetails = async (
   }
 }
 
-export const passwordEncryptionForSignIn = async (
-  password: string,
-  email: string,
-  isPassword: boolean,
-): Promise<IEncryptPasswordForSignIn> =>
-  encryptPasswordActionForSignIn(password, email, isPassword)
-
 export const passwordEncryption = (password: string): string => {
-  const { CRYPTO_PRIVATE_KEY } = process.env
+  const CRYPTO_PRIVATE_KEY: string | undefined =
+    process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY
   if (!CRYPTO_PRIVATE_KEY) {
-    throw new Error('Missing CRYPTO_PRIVATE_KEY')
+    throw new Error('Missing NEXT_PUBLIC_CRYPTO_PRIVATE_KEY')
   }
   const encryptedPassword: string = CryptoJS.AES.encrypt(
     JSON.stringify(password),
