@@ -25,7 +25,7 @@ export default function Billing(): JSX.Element {
     },
     {
       name: 'PRO',
-      link: `${sovioLandingPageURL}/billing`,
+      link: `${sovioLandingPageURL}/pricing`,
       buttonLabel: 'Contact Us',
       features: [
         'Organizations: Unlimited',
