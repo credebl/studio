@@ -15,7 +15,7 @@ import React, { useState } from 'react'
 import {
   forgotPassword,
   getUserProfile,
-  passwordEncryptionForSignIn,
+  passwordEncryption,
 } from '@/app/api/Auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -84,12 +84,11 @@ export default function SignInViewPage(): React.JSX.Element {
   }): Promise<void> => {
     try {
       setLoading(true)
-      const entityData = await passwordEncryptionForSignIn(
-        values.password || '',
-        values.email,
-        isPasswordTab,
-      )
-
+      const entityData = {
+        email: values.email,
+        password: passwordEncryption(values.password || ''),
+        isPassword: isPasswordTab,
+      }
       const response = await signIn('credentials', {
         ...entityData,
         redirect: false,

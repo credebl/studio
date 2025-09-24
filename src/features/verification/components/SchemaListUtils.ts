@@ -87,7 +87,7 @@ export const decryptValue = (value: string): string => {
   try {
     const returnValue = CryptoJS.AES.decrypt(
       value,
-      `${process.env.CRYPTO_PRIVATE_KEY}`,
+      `${process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY}`,
     )
     const decryptedString = returnValue.toString(CryptoJS.enc.Utf8)
     return decryptedString
