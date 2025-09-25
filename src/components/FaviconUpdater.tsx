@@ -7,7 +7,7 @@ const APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE?.trim()
 
 const DEFAULT_CONFIG = {
   favicon: `/favicons/favicon-${APP_ENV || 'credebl'}.ico`,
-  title: `${APP_TITLE}` || 'CREDEBL - Studio',
+  title: APP_TITLE ? APP_TITLE : 'CREDEBL - Studio',
 }
 
 export function FaviconUpdater(): JSX.Element | null {
