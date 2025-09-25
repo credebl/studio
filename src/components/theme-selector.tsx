@@ -1,39 +1,25 @@
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CheckIcon } from 'lucide-react'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
 import { useThemeConfig } from '@/components/active-theme'
 
-const themes = [
-  { name: 'CREDEBL', value: 'credebl' },
-  { name: 'SOVIO', value: 'sovio' },
-]
+type Theme = {
+  name: string
+  value: string
+}
 
 export function ThemeSelector(): React.JSX.Element {
   const { activeTheme, setActiveTheme } = useThemeConfig()
+  const [themes, setThemes] = useState<Theme[]>([])
 
   useEffect(() => {
-    const updateFaviconAndTitle = (): void => {
-      document
-        .querySelectorAll("link[rel~='icon']")
-        .forEach((el) => el.remove())
-
-      const link = document.createElement('link')
-      link.rel = 'icon'
-      link.type = 'image/x-icon'
-      link.href =
-        activeTheme === 'sovio' ? '/favicon-sovio.ico' : '/favicon-credebl.ico'
-      document.head.appendChild(link)
-
-      document.title =
-        activeTheme === 'sovio'
-          ? 'SOVIO - Self-Sovereign Identity platform-V2.0.0'
-          : 'CREDEBL - Studio'
-    }
-
-    updateFaviconAndTitle()
-  }, [activeTheme])
+    fetch('/api/themes')
+      .then((res) => res.json())
+      .then((data) => setThemes(data))
+      .catch((err) => console.error('Error loading themes:', err))
+  }, [])
 
   return (
     <>

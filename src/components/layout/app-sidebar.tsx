@@ -5,7 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import React, { useEffect, useState } from 'react'
+import React, { JSX, useEffect, useState } from 'react'
 import {
   Sidebar,
   SidebarContent,
@@ -34,33 +34,34 @@ import { getOrganizations } from '@/app/api/organization'
 import { navItems } from '@/constants/data'
 import { setSidebarCollapsed } from '@/lib/sidebarSlice'
 import { useTheme } from 'next-themes'
-import { useThemeConfig } from '../active-theme'
+
+const APP_ENV =
+  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+
+const APP_CONFIG = {
+  logo: (theme: string, resolvedTheme: string): string =>
+    (resolvedTheme === 'dark'
+      ? `/logos/${theme}_logo_dark.svg`
+      : `/logos/${theme}_logo.svg`),
+  collapsedLogo: (theme: string): string => `/favicons/favicon-${theme}.ico`,
+  poweredBy: (theme: string): { src: string; alt: string } | null => {
+    if (theme === 'credebl') {
+      return null
+    }
+    return { src: '/images/CREDEBL_Logo_Web.svg', alt: 'Powered by CREDEBL' }
+  },
+}
 
 export default function AppSidebar(): React.JSX.Element {
   const router = useRouter()
   const pathname = usePathname()
 
-  const { activeTheme } = useThemeConfig()
   const { resolvedTheme } = useTheme()
-
-  const logoImageSrc = ((): string => {
-    if (activeTheme === 'credebl') {
-      return resolvedTheme === 'dark'
-        ? '/images/CREDEBL_Logo_Web_Dark.svg'
-        : '/images/CREDEBL_Logo_Web.svg'
-    } else {
-      return resolvedTheme === 'dark'
-        ? '/images/sovio_dark_theme_logo.svg'
-        : '/images/sovio_logo.svg'
-    }
-  })()
-
-  const collapsedLogoImageSrc =
-    activeTheme === 'credebl'
-      ? '/images/CREDEBL_ICON.ico'
-      : '/images/favicon-sovio.ico'
-
   const dispatch = useAppDispatch()
+
+  const logoImageSrc = APP_CONFIG.logo(APP_ENV, resolvedTheme || 'light')
+  const collapsedLogoImageSrc = APP_CONFIG.collapsedLogo(APP_ENV)
+  const poweredBy = APP_CONFIG.poweredBy(APP_ENV)
 
   const [currentPage] = useState(currentPageNumber)
   const [pageSize] = useState(itemPerPage)
@@ -68,12 +69,11 @@ export default function AppSidebar(): React.JSX.Element {
   const [, setOrgList] = useState<Organization[]>([])
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
-
   const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed)
 
   useEffect(() => {
     dispatch(setSidebarCollapsed(true))
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     const fetchOrganizations = async (): Promise<void> => {
@@ -91,7 +91,6 @@ export default function AppSidebar(): React.JSX.Element {
           const orgs = response.data.data.organizations
           setOrgList(orgs)
 
-          // Only set initial organization if no organization is currently selected in Redux
           if (!selectedOrgId && orgs.length > 0) {
             const [firstOrg]: Organization[] = orgs
 
@@ -114,7 +113,6 @@ export default function AppSidebar(): React.JSX.Element {
           setOrgList([])
         }
       } catch (err) {
-        // eslint-disable-next-line no-console
         console.error('Error fetching organizations:', err)
       }
     }
@@ -157,7 +155,7 @@ export default function AppSidebar(): React.JSX.Element {
       <SidebarContent className="overflow-x-hidden">
         <SidebarGroup>
           <SidebarMenu>
-            {navItems.map((item: NavItem) => {
+            {navItems.map((item: NavItem): JSX.Element => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo
               return item?.items && item.items.length > 0 ? (
                 <Collapsible
@@ -218,6 +216,30 @@ export default function AppSidebar(): React.JSX.Element {
         </SidebarGroup>
       </SidebarContent>
 
+      {poweredBy && (
+        <div className="text-muted-foreground flex items-center justify-center border-t p-3 text-sm group-data-[collapsed=true]:flex-col group-data-[collapsed=true]:gap-1">
+          {!isCollapsed ? (
+            <Image
+              src={'/favicons/favicon-credebl.ico'}
+              alt={poweredBy.alt}
+              width={30}
+              height={30}
+              className="h-5 w-auto object-contain"
+            />
+          ) : (
+            <>
+              <span className="mr-2">Powered by</span>
+              <Image
+                src={poweredBy.src}
+                alt={poweredBy.alt}
+                width={90}
+                height={30}
+                className="h-5 w-auto object-contain"
+              />
+            </>
+          )}
+        </div>
+      )}
       <SidebarRail />
     </Sidebar>
   )

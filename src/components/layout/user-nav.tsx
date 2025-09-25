@@ -9,13 +9,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import React, { useEffect, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { IUserProfile } from '../profile/interfaces'
-// import { ThemeSelector } from '../theme-selector'
+import { ThemeSelector } from '../theme-selector'
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
@@ -157,13 +160,12 @@ export function UserNav(): React.JSX.Element | null {
             </DropdownMenuItem>
           )}
 
-          {/* TODO: Upgrade Theme Selection functionality with multiple theme options dynamically */}
-          {/* <DropdownMenuSub>
+          <DropdownMenuSub>
             <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border">
               <ThemeSelector />
             </DropdownMenuSubContent>
-          </DropdownMenuSub> */}
+          </DropdownMenuSub>
         </DropdownMenuGroup>
 
         <DropdownMenuSeparator />
