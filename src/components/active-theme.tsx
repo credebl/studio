@@ -58,16 +58,21 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 interface ActiveThemeProviderProps {
   readonly children: ReactNode
+  readonly initialTheme?: string
 }
 
 export function ActiveThemeProvider({
   children,
+  initialTheme,
 }: ActiveThemeProviderProps): JSX.Element {
   const envTheme: string | undefined =
     process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
 
   /** Determine initial theme */
   const getInitialTheme = (): string => {
+    if (initialTheme) {
+      return initialTheme
+    }
     const cookieTheme = getThemeFromCookie()
     if (cookieTheme) {
       return cookieTheme
