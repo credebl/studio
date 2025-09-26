@@ -223,12 +223,14 @@ export const addPasswordDetails = async (
 }
 
 export const passwordEncryption = (password: string): string => {
-  if (!process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY) {
-    throw new Error('Missing CRYPTO_PRIVATE_KEY')
+  const CRYPTO_PRIVATE_KEY: string | undefined =
+    process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY
+  if (!CRYPTO_PRIVATE_KEY) {
+    throw new Error('Missing NEXT_PUBLIC_CRYPTO_PRIVATE_KEY')
   }
   const encryptedPassword: string = CryptoJS.AES.encrypt(
     JSON.stringify(password),
-    process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY,
+    CRYPTO_PRIVATE_KEY,
   ).toString()
   return encryptedPassword
 }
