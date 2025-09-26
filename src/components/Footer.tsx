@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import React from 'react'
+import { defaultCredeblFooterText } from '../config/CommonConstant'
 
 interface IFooter {
   fixed?: boolean
@@ -8,8 +9,7 @@ interface IFooter {
 const Footer: React.FC<IFooter> = ({ fixed = false }) => {
   const activeTheme = (process.env.NEXT_PUBLIC_ACTIVE_THEME || '').toUpperCase()
   const footerText =
-    process.env.NEXT_PUBLIC_FOOTER_TEXT ||
-    'CREDEBL, a Series of LF Projects, LLC'
+    process.env.NEXT_PUBLIC_FOOTER_TEXT || defaultCredeblFooterText
 
   return (
     <footer

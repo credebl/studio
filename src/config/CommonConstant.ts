@@ -229,3 +229,5 @@ export const bulkIssuanceApiParameter = {
   sortingOrder: 'desc',
   allSearch: '',
 }
+
+export const defaultCredeblFooterText = 'CREDEBL, a Series of LF Projects, LLC'
