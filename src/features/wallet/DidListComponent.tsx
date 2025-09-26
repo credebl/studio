@@ -43,7 +43,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import { dateConversion } from '@/utils/DateConversion'
-import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
@@ -436,8 +435,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   ): Promise<string | null> => {
     try {
       const rpcUrls = {
-        testnet: `${envConfig.PLATFORM_DATA.polygonTestnet}`,
-        mainnet: `${envConfig.PLATFORM_DATA.polygonMainnet}`,
+        testnet: `${process.env.NEXT_PUBLIC_POLYGON_TESTNET_URL}`,
+        mainnet: `${process.env.NEXT_PUBLIC_POLYGON_MAINNET_URL}`,
       }
 
       const networkUrl = rpcUrls?.[network]

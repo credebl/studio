@@ -29,7 +29,6 @@ import Loader from '@/components/Loader'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
-import { envConfig } from '@/config/envConfig'
 import { getDidValidationSchema } from '@/lib/validationSchemas'
 import { getLedgerConfig } from '@/app/api/Agent'
 
@@ -249,15 +248,15 @@ const DedicatedLedgerConfig = ({
 
     let filteredNetworks = Object.keys(networkOptions)
     if (
-      envConfig.MODE === Environment.PROD &&
+      process.env.NEXT_PUBLIC_MODE === Environment.PROD &&
       selectedMethod === DidMethod.POLYGON
     ) {
       filteredNetworks = filteredNetworks.filter(
         (network) => network === Network.MAINNET,
       )
     } else if (
-      (envConfig.MODE === Environment.DEV ||
-        envConfig.MODE === Environment.QA) &&
+      (process.env.NEXT_PUBLIC_MODE === Environment.DEV ||
+        process.env.NEXT_PUBLIC_MODE === Environment.QA) &&
       selectedMethod === DidMethod.POLYGON
     ) {
       filteredNetworks = filteredNetworks.filter(
