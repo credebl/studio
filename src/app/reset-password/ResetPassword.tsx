@@ -31,7 +31,9 @@ import { SubmitIcon } from '@/config/svgs/ResetPassword'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setToken } from '@/lib/authSlice'
 import { useTheme } from 'next-themes'
-import { useThemeConfig } from '@/components/active-theme'
+
+const APP_ENV =
+  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
 
 interface IPasswordDetails {
   password: string
@@ -49,7 +51,6 @@ const ResetPassword = (): JSX.Element => {
   const [showSuggestion, setShowSuggestion] = useState(false)
   const dispatch = useAppDispatch()
   const searchParams = useSearchParams()
-  const { activeTheme } = useThemeConfig()
   const { resolvedTheme } = useTheme()
   const router = useRouter()
 
@@ -85,17 +86,11 @@ const ResetPassword = (): JSX.Element => {
     }
   }
 
-  const logoImageSrc = ((): string => {
-    if (activeTheme === 'credebl') {
-      return resolvedTheme === 'dark'
-        ? '/images/CREDEBL_Logo_Web_Dark.svg'
-        : '/images/CREDEBL_Logo_Web.svg'
-    } else {
-      return resolvedTheme === 'dark'
-        ? '/images/sovio_dark_theme_logo.svg'
-        : '/images/sovio_logo.svg'
-    }
-  })()
+  const logoImageSrc =
+    resolvedTheme === 'dark'
+      ? `/logos/${APP_ENV}_logo_dark.png`
+      : `/logos/${APP_ENV}_logo.svg`
+
   return (
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
       <ToastContainer position="top-center" />

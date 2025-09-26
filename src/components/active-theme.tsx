@@ -1,81 +1,99 @@
 'use client'
 
 import React, {
+  JSX,
   ReactNode,
   createContext,
   useContext,
-  useLayoutEffect,
+  useEffect,
   useState,
 } from 'react'
 
-const CREDEBL_THEME = 'credebl'
 const COOKIE_NAME = 'active_theme'
+const DEFAULT_THEME = 'credebl'
 
-type ThemeContextType = {
-  readonly activeTheme: string
-  readonly setActiveTheme: (theme: string) => void
-  readonly resetTheme: () => void
+/** Set the theme in a cookie */
+function setThemeCookie(theme: string): void {
+  if (typeof window === 'undefined') {
+    return
+  }
+  document.cookie = `${COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax; ${
+    window.location.protocol === 'https:' ? 'Secure;' : ''
+  }`
+}
+
+/** Get the theme from cookie */
+function getThemeFromCookie(): string | null {
+  if (typeof document === 'undefined') {
+    return null
+  }
+  const match = document.cookie.match(
+    new RegExp(`(?:^|; )${COOKIE_NAME}=([^;]*)`),
+  )
+  return match ? decodeURIComponent(match[1]) : null
+}
+
+/** Load CSS file for the selected theme */
+function loadThemeCSS(theme: string): void {
+  if (typeof document === 'undefined') {
+    return
+  }
+  const id = 'dynamic-theme-css'
+  let link = document.getElementById(id) as HTMLLinkElement | null
+  if (!link) {
+    link = document.createElement('link')
+    link.id = id
+    link.rel = 'stylesheet'
+    document.head.appendChild(link)
+  }
+  link.href = `/themes/${theme}_theme.css`
+}
+
+export type ThemeContextType = {
+  activeTheme: string
+  setActiveTheme: (theme: string) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
-function setCookie(name: string, value: string): void {
-  if (typeof document === 'undefined') {
-    return
-  }
-  document.cookie = `${name}=${value}; path=/; max-age=31536000; SameSite=Lax`
-}
-
-function clearCookie(name: string): void {
-  if (typeof document === 'undefined') {
-    return
-  }
-  document.cookie = `${name}=; path=/; max-age=0; SameSite=Lax`
+interface ActiveThemeProviderProps {
+  readonly children: ReactNode
 }
 
 export function ActiveThemeProvider({
   children,
-  initialTheme,
-}: {
-  readonly children: ReactNode
-  readonly initialTheme?: string
-}): React.JSX.Element {
-  const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
-  const defaultTheme =
-    initialTheme?.toLowerCase().trim() ||
-    (envTheme && envTheme.length > 0 ? envTheme : CREDEBL_THEME)
+}: ActiveThemeProviderProps): JSX.Element {
+  const envTheme: string | undefined =
+    process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
 
-  const [activeTheme, setActiveTheme] = useState<string>(defaultTheme)
-
-  useLayoutEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCookie(COOKIE_NAME, activeTheme)
+  /** Determine initial theme */
+  const getInitialTheme = (): string => {
+    const cookieTheme = getThemeFromCookie()
+    if (cookieTheme) {
+      return cookieTheme
     }
+    if (envTheme && envTheme.length > 0) {
+      return envTheme
+    }
+    return DEFAULT_THEME
+  }
 
-    // Remove previous theme classes
+  const [activeTheme, setActiveTheme] = useState<string>(getInitialTheme)
+
+  useEffect(() => {
+    setThemeCookie(activeTheme)
+    loadThemeCSS(activeTheme)
+
+    // Remove old theme classes
     Array.from(document.body.classList)
       .filter((className) => className.startsWith('theme-'))
       .forEach((className) => document.body.classList.remove(className))
 
-    // Apply active theme
     document.body.classList.add(`theme-${activeTheme}`)
-    if (activeTheme.endsWith('-scaled')) {
-      document.body.classList.add('theme-scaled')
-    }
   }, [activeTheme])
 
-  const resetTheme = (): void => {
-    clearCookie(COOKIE_NAME)
-    setActiveTheme(defaultTheme)
-  }
-
-  const themeContextValue = React.useMemo(
-    () => ({ activeTheme, setActiveTheme, resetTheme }),
-    [activeTheme],
-  )
-
   return (
-    <ThemeContext.Provider value={themeContextValue}>
+    <ThemeContext.Provider value={{ activeTheme, setActiveTheme }}>
       {children}
     </ThemeContext.Provider>
   )
@@ -83,7 +101,7 @@ export function ActiveThemeProvider({
 
 export function useThemeConfig(): ThemeContextType {
   const context = useContext(ThemeContext)
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useThemeConfig must be used within an ActiveThemeProvider')
   }
   return context

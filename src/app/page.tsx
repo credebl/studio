@@ -5,13 +5,14 @@ import Loader from '@/components/Loader'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
+const APP_ENV =
+  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+
 export default function Home(): JSX.Element {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  // Read theme from env
-  const envTheme = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
-  const isSovio = envTheme === 'sovio'
+  const logoImageSrc = `/favicons/favicon-${APP_ENV}.ico`
 
   useEffect(() => {
     if (status === 'loading') {
@@ -38,8 +39,8 @@ export default function Home(): JSX.Element {
         <Loader size={90} />
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src={isSovio ? '/SOVIO Icon.svg' : '/images/CREDEBL_ICON.png'}
-            alt={isSovio ? 'SOVIO Logo' : 'CREDEBL Logo'}
+            src={logoImageSrc}
+            alt={`${APP_ENV} Logo`}
             className="h-14 w-14 object-contain"
           />
         </div>

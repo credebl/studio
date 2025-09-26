@@ -1,8 +1,5 @@
 import './globals.css'
 import './theme.css'
-
-import type { Metadata, Viewport } from 'next'
-
 import { FaviconUpdater } from '@/components/FaviconUpdater'
 import { Session as NextAuthSession } from 'next-auth'
 import NextTopLoader from 'nextjs-toploader'
@@ -13,6 +10,7 @@ import React from 'react'
 import { SessionManager } from '@/features/components/SessionManager'
 import StoreProvider from './StoreProvider'
 import { Toaster } from '@/components/ui/sonner'
+import type { Viewport } from 'next'
 import { authOptions } from '@/utils/authOptions'
 import { cn } from '@/lib/utils'
 import { cookies } from 'next/headers'
@@ -25,11 +23,6 @@ type SessionWithExpires = NextAuthSession & { expires: string }
 const META_THEME_COLORS = {
   light: '#ffffff',
   dark: '#09090b',
-}
-
-export const metadata: Metadata = {
-  title: 'CREDEBL - Studio',
-  description: 'CREDEBL - Studio with Next.js and Shadcn',
 }
 
 export const viewport: Viewport = {
@@ -62,8 +55,6 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Default favicon */}
-        <link rel="icon" href="/favicon-credebl.ico" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
