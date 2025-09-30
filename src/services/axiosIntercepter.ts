@@ -6,7 +6,6 @@ import axios, { AxiosError } from 'axios'
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
 // import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
 import { signOut } from 'next-auth/react'
 import { store } from '@/lib/store'
 
@@ -84,7 +83,7 @@ export async function logoutAndRedirect(): Promise<void> {
   }
 
   const response = await fetch(
-    `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
     {
       method: 'POST',
       body: JSON.stringify(payload),

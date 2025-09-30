@@ -1,5 +1,3 @@
-import { envConfig } from './envConfig'
-
 export const pathRoutes = {
   landingPage: {
     landingPage: '/',
@@ -73,7 +71,7 @@ export const pathRoutes = {
     },
   },
   documentation: {
-    root: envConfig.PLATFORM_DATA.docs as string,
+    root: process.env.PUBLIC_PLATFORM_DOCS_URL as string,
   },
   schema: {
     create: '/schemas',

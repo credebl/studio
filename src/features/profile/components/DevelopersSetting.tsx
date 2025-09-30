@@ -12,7 +12,6 @@ import CopyDid from '@/config/CopyDid'
 import Loader from '@/components/Loader'
 import { Roles } from '@/common/enums'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
 import { getOrganizations } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
 import { useAppSelector } from '@/lib/hooks'
@@ -321,7 +320,7 @@ const ClientCredentials = (): React.JSX.Element => {
                   <p className="text-muted-foreground text-sm">
                     Current Version:{' '}
                     <span className="font-medium">
-                      {envConfig.PLATFORM_DATA.version}
+                      {process.env.NEXT_PUBLIC_CURRENT_RELEASE}
                     </span>
                   </p>
                 </Card>

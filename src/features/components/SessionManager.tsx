@@ -5,7 +5,6 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { encryptPasswordAction } from '@/server-actions/encryptPasswordAction'
-import { envConfig } from '@/config/envConfig'
 import { useAppDispatch } from '@/lib/hooks'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
@@ -87,7 +86,7 @@ export const SessionManager = ({
       const encrypted = await encryptPasswordAction(sessionId)
       const encoded = encodeURIComponent(encrypted)
       const resp = await fetch(
-        `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encoded}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encoded}`,
         {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },

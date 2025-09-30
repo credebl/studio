@@ -18,7 +18,6 @@ import { OrganizationDashboard } from '@/features/organization/components/Organi
 import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setLedgerId } from '@/lib/orgSlice'
@@ -186,7 +185,7 @@ export default function Dashboard(): React.JSX.Element {
                 message={ecoMessage}
                 type="warning"
                 viewButton={viewButton}
-                path={`${envConfig.NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
+                path={`${process.env.NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL}${pathRoutes.users.dashboard}`}
                 onAlertClose={() => setEcoMessage('')}
               />
             )}
