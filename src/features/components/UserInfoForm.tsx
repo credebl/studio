@@ -17,13 +17,14 @@ import {
   getUserDeviceDetails,
   verifyRegistration,
 } from '@/app/api/Fido'
-import { addPasswordDetails, passwordEncryption } from '@/app/api/Auth'
 import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { addPasswordDetails } from '@/app/api/Auth'
+import { encryptPasswordAction } from '@/server-actions/encryptPasswordAction'
 import { startRegistration } from '@simplewebauthn/browser'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -109,10 +110,10 @@ export default function UserInfoForm({
     setSuccess(null)
     setFailure(null)
     setShowEmailVerification({ message: '', isError: false, type: '' })
-
+    const encryptedPassword = await encryptPasswordAction(values.password)
     const payload = {
       email,
-      password: passwordEncryption(values.password),
+      password: encryptedPassword,
       isPasskey: false,
       firstName: values.firstName,
       lastName: values.lastName,
@@ -148,12 +149,13 @@ export default function UserInfoForm({
     lastName: string
   }): Promise<void> => {
     const password: string = uuidv4()
+    const encryptedPassword = await encryptPasswordAction(password)
     const payload: AddPasswordDetails = {
       email,
       isPasskey: true,
       firstName: values.firstName,
       lastName: values.lastName,
-      password: passwordEncryption(password),
+      password: encryptedPassword,
     }
 
     setLoading(true)

@@ -12,11 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import React, { useState } from 'react'
-import {
-  forgotPassword,
-  getUserProfile,
-  passwordEncryption,
-} from '@/app/api/Auth'
+import { forgotPassword, getUserProfile } from '@/app/api/Auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -86,7 +82,7 @@ export default function SignInViewPage(): React.JSX.Element {
       setLoading(true)
       const entityData = {
         email: values.email,
-        password: passwordEncryption(values.password || ''),
+        password: values.password || '',
         isPassword: isPasswordTab,
       }
       const response = await signIn('credentials', {
