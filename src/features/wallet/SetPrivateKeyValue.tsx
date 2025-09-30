@@ -10,7 +10,6 @@ import { Label } from '@/components/ui/label'
 import TokenWarningMessage from './TokenWarningMessage'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createPolygonKeyValuePair } from '@/app/api/Agent'
-import { envConfig } from '@/config/envConfig'
 import { ethers } from 'ethers'
 
 export interface IPolygonKeys {
@@ -52,8 +51,8 @@ const SetPrivateKeyValueInput = ({
   ): Promise<string | null> => {
     try {
       const rpcUrls = {
-        testnet: envConfig.PLATFORM_DATA.polygonTestnet,
-        mainnet: envConfig.PLATFORM_DATA.polygonMainnet,
+        testnet: process.env.NEXT_PUBLIC_POLYGON_TESTNET_URL,
+        mainnet: process.env.NEXT_PUBLIC_POLYGON_MAINNET_URL,
       }
 
       const provider = new ethers.JsonRpcProvider(rpcUrls[network])

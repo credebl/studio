@@ -23,7 +23,6 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
 import { signIn } from 'next-auth/react'
@@ -425,7 +424,8 @@ export default function SignInViewPage(): React.JSX.Element {
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 
-            {envConfig.PLATFORM_DATA.enableSocialLogin && (
+            {process.env.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN?.toLowerCase() ===
+              'true' && (
               <>
                 <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
                   <hr className="border-border flex-grow border-t" />
