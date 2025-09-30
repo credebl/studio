@@ -6,7 +6,6 @@ import {
 } from '@/services/apiRequests'
 
 import { AxiosResponse } from 'axios'
-import CryptoJS from 'crypto-js'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
@@ -220,19 +219,6 @@ export const addPasswordDetails = async (
     const err = error as Error
     return err?.message
   }
-}
-
-export const passwordEncryption = (password: string): string => {
-  const CRYPTO_PRIVATE_KEY: string | undefined =
-    process.env.NEXT_PUBLIC_CRYPTO_PRIVATE_KEY
-  if (!CRYPTO_PRIVATE_KEY) {
-    throw new Error('Missing NEXT_PUBLIC_CRYPTO_PRIVATE_KEY')
-  }
-  const encryptedPassword: string = CryptoJS.AES.encrypt(
-    JSON.stringify(password),
-    CRYPTO_PRIVATE_KEY,
-  ).toString()
-  return encryptedPassword
 }
 
 export const getUserSessions = async (
