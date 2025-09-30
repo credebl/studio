@@ -153,7 +153,8 @@ export function UserNav(): React.JSX.Element | null {
             Developer Settings
           </DropdownMenuItem>
 
-          {process.env.NEXT_PUBLIC_ENABLE_BILLING_OPTION === 'true' && (
+          {process.env.NEXT_PUBLIC_ENABLE_BILLING_OPTION?.toLocaleLowerCase() ===
+            'true' && (
             <DropdownMenuItem onClick={() => router.push('/billing ')}>
               Billing
             </DropdownMenuItem>

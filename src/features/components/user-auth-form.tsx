@@ -424,7 +424,8 @@ export default function SignInViewPage(): React.JSX.Element {
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 
-            {process.env.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN === 'true' && (
+            {process.env.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN?.toLocaleLowerCase() ===
+              'true' && (
               <>
                 <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
                   <hr className="border-border flex-grow border-t" />

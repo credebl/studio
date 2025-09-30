@@ -248,15 +248,15 @@ const DedicatedLedgerConfig = ({
 
     let filteredNetworks = Object.keys(networkOptions)
     if (
-      process.env.NEXT_PUBLIC_MODE === Environment.PROD &&
+      process.env.NEXT_PUBLIC_MODE?.toUpperCase() === Environment.PROD &&
       selectedMethod === DidMethod.POLYGON
     ) {
       filteredNetworks = filteredNetworks.filter(
         (network) => network === Network.MAINNET,
       )
     } else if (
-      (process.env.NEXT_PUBLIC_MODE === Environment.DEV ||
-        process.env.NEXT_PUBLIC_MODE === Environment.QA) &&
+      (process.env.NEXT_PUBLIC_MODE?.toUpperCase() === Environment.DEV ||
+        process.env.NEXT_PUBLIC_MODE?.toUpperCase() === Environment.QA) &&
       selectedMethod === DidMethod.POLYGON
     ) {
       filteredNetworks = filteredNetworks.filter(
