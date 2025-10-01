@@ -45,7 +45,7 @@ export default function AppLauncher(): JSX.Element {
   const allApps: AppLauncherInterface[] =
     Array.isArray(selectedOrg?.appLaunchDetails) &&
     selectedOrg.appLaunchDetails.length > 0
-      ? (selectedOrg.appLaunchDetails as unknown as AppLauncherInterface[])
+      ? (selectedOrg.appLaunchDetails as AppLauncherInterface[])
       : appsData
 
   const launcherApps = allApps.filter(
