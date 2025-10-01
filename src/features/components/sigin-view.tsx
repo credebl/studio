@@ -21,7 +21,7 @@ export default function SignInPage(): React.JSX.Element {
 
   const logoImageSrc =
     resolvedTheme === 'dark'
-      ? `/logos/${APP_ENV}_logo_dark.png`
+      ? `/logos/${APP_ENV}_logo_dark.svg`
       : `/logos/${APP_ENV}_logo.svg`
 
   return (
