@@ -11,6 +11,7 @@ interface OrgInfo {
   description?: string
   logoUrl?: string
   roles: string[]
+  appLaunchDetails?: object[]
 }
 
 interface OrgState {

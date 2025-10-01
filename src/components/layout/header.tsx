@@ -42,6 +42,7 @@ export default function Header(): React.JSX.Element {
                 name: defaultOrg.name,
                 description: defaultOrg.description,
                 logoUrl: defaultOrg.logoUrl,
+                appLaunchDetails: defaultOrg.appLaunchDetails,
                 roles:
                   defaultOrg.userOrgRoles?.map(
                     (role: { orgRole: { name: string } }) =>

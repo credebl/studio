@@ -69,7 +69,7 @@ export default function Billing(): JSX.Element {
               <a
                 href={`${sovioLandingPageURL}/pricing?openContact=true`}
                 target="_blank"
-                className="bg-primary block w-full rounded-lg px-4 py-2 text-center font-medium text-white"
+                className="bg-primary text-primary-foreground block w-full rounded-lg px-4 py-2 text-center font-medium"
                 rel="noreferrer"
               >
                 {plan.buttonLabel}
