@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button'
 import Image from 'next/image'
 import { JSX } from 'react'
 import appsData from '../../data/appLauncher.json'
+import { useAppSelector } from '@/lib/hooks'
 
 type AppLauncherInterface = {
   name: string
@@ -21,6 +22,11 @@ type AppLauncherInterface = {
 
 export default function AppLauncher(): JSX.Element {
   const env: string = (process.env.NEXT_PUBLIC_MODE || 'LOCAL').toUpperCase()
+  const currentApp: string = (
+    process.env.NEXT_PUBLIC_APP_NAME || ''
+  ).toUpperCase()
+
+  const selectedOrg = useAppSelector((state) => state.organization.orgInfo)
 
   const getAppLink = (app: AppLauncherInterface): string => {
     switch (env) {
@@ -35,6 +41,16 @@ export default function AppLauncher(): JSX.Element {
         return app.link
     }
   }
+
+  const allApps: AppLauncherInterface[] =
+    Array.isArray(selectedOrg?.appLaunchDetails) &&
+    selectedOrg.appLaunchDetails.length > 0
+      ? (selectedOrg.appLaunchDetails as unknown as AppLauncherInterface[])
+      : appsData
+
+  const launcherApps = allApps.filter(
+    (app) => app.name.toUpperCase() !== currentApp,
+  )
 
   return (
     <Popover>
@@ -70,7 +86,7 @@ export default function AppLauncher(): JSX.Element {
       >
         <h3 className="mb-4 text-center text-lg font-semibold">App Launcher</h3>
         <div className="grid grid-cols-2 place-items-center">
-          {appsData.map((app: AppLauncherInterface) => (
+          {launcherApps.map((app: AppLauncherInterface) => (
             <a
               key={app.name}
               href={getAppLink(app)}
