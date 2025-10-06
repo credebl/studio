@@ -193,7 +193,7 @@ export const authOptions: MyAuthOptions = {
 
     async redirect({ url, baseUrl }) {
       try {
-        const redirectUrl = new URL(url)
+        const redirectUrl = new URL(url, baseUrl)
 
         const cookieDomain = process.env.NEXTAUTH_COOKIE_DOMAIN?.replace(
           /^\./,

@@ -24,7 +24,7 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { addPasswordDetails } from '@/app/api/Auth'
-import { encryptPasswordAction } from '@/server-actions/encryptPasswordAction'
+import { passwordValueEncryption } from '@/utils/passwordEncryption'
 import { startRegistration } from '@simplewebauthn/browser'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -110,7 +110,7 @@ export default function UserInfoForm({
     setSuccess(null)
     setFailure(null)
     setShowEmailVerification({ message: '', isError: false, type: '' })
-    const encryptedPassword = await encryptPasswordAction(values.password)
+    const encryptedPassword = await passwordValueEncryption(values.password)
     const payload = {
       email,
       password: encryptedPassword,
@@ -149,7 +149,7 @@ export default function UserInfoForm({
     lastName: string
   }): Promise<void> => {
     const password: string = uuidv4()
-    const encryptedPassword = await encryptPasswordAction(password)
+    const encryptedPassword = await passwordValueEncryption(password)
     const payload: AddPasswordDetails = {
       email,
       isPasskey: true,
