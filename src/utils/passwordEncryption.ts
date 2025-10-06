@@ -7,8 +7,8 @@ export const passwordValueEncryption = async (
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password: JSON.stringify(value) }),
     })
-    const sessionData = await res.json()
-    const encrypted = sessionData.data
+    const responseData = await res.json()
+    const encrypted = responseData.data
     return encrypted
   } catch (error) {
     console.error('Failed to fetch session details:', error)

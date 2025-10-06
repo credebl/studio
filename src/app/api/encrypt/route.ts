@@ -23,7 +23,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       CRYPTO_PRIVATE_KEY,
     ).toString()
     return NextResponse.json(
-      { message: 'Value encrypted successful', data: encKey },
+      { message: 'Value encrypted successfully', data: encKey },
       { status: apiStatusCodes.API_STATUS_SUCCESS },
     )
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
