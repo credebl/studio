@@ -27,7 +27,7 @@ import { Label } from '@/components/ui/label'
 import PasswordSuggestionBox from './PasswordSuggestionBox'
 import { RootState } from '@/lib/store'
 import { SubmitIcon } from '@/config/svgs/ResetPassword'
-import { encryptPasswordAction } from '@/server-actions/encryptPasswordAction'
+import { passwordValueEncryption } from '@/utils/passwordEncryption'
 import { pathRoutes } from '@/config/pathRoutes'
 import { resetPassword } from '../api/Auth'
 import { setToken } from '@/lib/authSlice'
@@ -61,7 +61,7 @@ const ResetPassword = (): JSX.Element => {
       dispatch(setToken(userToken))
       const verificationCode = searchParams.get('verificationCode')
       const email = searchParams.get('email')
-      const encryptedPassword = await encryptPasswordAction(
+      const encryptedPassword = await passwordValueEncryption(
         passwordDetails?.password,
       )
       const payload = {

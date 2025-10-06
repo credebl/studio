@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { addPasskeyUserDetails } from '@/app/api/Fido'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { encryptPasswordAction } from '@/server-actions/encryptPasswordAction'
+import { passwordValueEncryption } from '@/utils/passwordEncryption'
 
 interface PasswordValue {
   Password: string
@@ -49,7 +49,7 @@ export default function PasskeyAddDevice({
         setFidoUserError('User email is missing. Please refresh the page.')
         return
       }
-      const encryptedPassword = await encryptPasswordAction(values.Password)
+      const encryptedPassword = await passwordValueEncryption(values.Password)
       const payload = {
         password: encryptedPassword,
       }
