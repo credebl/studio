@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 import { apiRoutes } from '@/config/apiRoutes'
 import { envConfig } from '@/config/envConfig'
+import { generateAccessToken } from '@/utils/session'
 import { passwordEncryption } from '@/app/api/Auth'
 import { useAppDispatch } from '@/lib/hooks'
 import { useEffect } from 'react'
@@ -47,7 +48,6 @@ export const SessionManager = ({
   const dispatch = useAppDispatch()
 
   const redirectTo = searchParams.get('redirectTo')
-  const clientAlias = searchParams.get('clientAlias')
 
   const setSessionDetails = (
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,12 +71,7 @@ export const SessionManager = ({
   }
 
   const logoutSession = (): void => {
-    localStorage.removeItem('persist:root')
-    const signInUrl =
-      redirectTo && clientAlias
-        ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-        : '/sign-in'
-    router.push(signInUrl)
+    generateAccessToken()
   }
 
   const fetchSessionDetails = async (
@@ -119,7 +114,7 @@ export const SessionManager = ({
           pathname.startsWith(page),
         )
         if (!isIgnoreSessionCheck) {
-          logoutSession()
+          // logoutSession()
         }
       }
     }, 500)

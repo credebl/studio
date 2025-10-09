@@ -3,11 +3,9 @@
 import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError } from 'axios'
 
-import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
 // import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
-import { signOut } from 'next-auth/react'
+import { generateAccessToken } from '@/utils/session'
 import { store } from '@/lib/store'
 
 // import { setRefreshToken, setToken } from '@/lib/authSlice'
@@ -75,44 +73,7 @@ const EcosystemInstance = axios.create({
 // }
 
 export async function logoutAndRedirect(): Promise<void> {
-  // Integrate the API for delete the session from backend as well
-  const { auth } = store.getState()
-  const token = auth?.token
-  const sessionId = auth?.sessionId
-  const payload = {
-    sessions: [sessionId],
-  }
-
-  const response = await fetch(
-    `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
-    {
-      method: 'POST',
-      body: JSON.stringify(payload),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    },
-  )
-
-  if (!response.ok) {
-    console.error('Logout API failed')
-  }
-
-  const rootKey = 'persist:root'
-
-  if (localStorage.getItem(rootKey)) {
-    localStorage.removeItem(rootKey)
-
-    const interval = setInterval(() => {
-      if (!localStorage.getItem(rootKey)) {
-        clearInterval(interval)
-        signOut({ callbackUrl: '/sign-in' })
-      }
-    }, 100)
-  } else {
-    signOut({ callbackUrl: '/sign-in' })
-  }
+  generateAccessToken()
 }
 
 function isTokenExpired(accessToken: string, refreshToken: string): boolean {
@@ -123,7 +84,7 @@ function isTokenExpired(accessToken: string, refreshToken: string): boolean {
     const { exp: refreshExp } = jwtDecode<JwtPayload>(refreshToken)
     if (refreshExp && refreshExp < currentTime + 10) {
       console.warn('Refresh token expired. Logout the user.')
-      logoutAndRedirect()
+      // logoutAndRedirect()
     }
 
     // Decode and check access token
@@ -149,7 +110,7 @@ instance.interceptors.request.use(
     // let accessToken: string | null = token
 
     if (isTokenExpired(token, refreshToken)) {
-      logoutAndRedirect()
+      // logoutAndRedirect()
       // Note: Need to handle the refresh token related calls
       // isRequested = true
       // accessToken = await refreshAccessToken(refreshToken)

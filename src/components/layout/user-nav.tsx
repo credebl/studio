@@ -22,11 +22,8 @@ import { ThemeSelector } from '../theme-selector'
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { envConfig } from '@/config/envConfig'
+import { generateAccessToken } from '@/utils/session'
 import { getUserProfile } from '@/app/api/Auth'
-import { logout } from '@/lib/authSlice'
-import { persistor } from '@/lib/store'
-import { resetOrgState } from '@/lib/orgSlice'
-import { resetVerificationState } from '@/lib/verificationSlice'
 import { setUserProfileDetails } from '@/lib/userSlice'
 import { signOut } from 'next-auth/react'
 import { useAppSelector } from '@/lib/hooks'
@@ -86,30 +83,26 @@ export function UserNav(): React.JSX.Element | null {
       },
     )
 
-    if (!response.ok) {
+    if (response.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
       console.error('Logout API failed')
-    }
-
-    // 2. Then sign out locally with NextAuth
-    if (localStorage.getItem(rootKey)) {
-      localStorage.removeItem(rootKey)
-
-      const interval = setInterval(() => {
-        if (!localStorage.getItem(rootKey)) {
-          clearInterval(interval)
-          signOut({ callbackUrl: '/sign-in' })
-        }
-      }, 100)
+      await generateAccessToken()
     } else {
-      signOut({ callbackUrl: '/sign-in' })
+      if (localStorage.getItem(rootKey)) {
+        localStorage.removeItem(rootKey)
+
+        const interval = setInterval(() => {
+          if (!localStorage.getItem(rootKey)) {
+            clearInterval(interval)
+            signOut({ callbackUrl: '/sign-in' })
+          }
+        }, 100)
+      } else {
+        signOut({ callbackUrl: '/sign-in' })
+      }
     }
   }
 
   const handleLogout = async (): Promise<void> => {
-    dispatch(resetOrgState())
-    dispatch(resetVerificationState())
-    dispatch(logout())
-    await persistor.purge()
     logoutUser()
   }
 
