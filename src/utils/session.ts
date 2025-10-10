@@ -57,7 +57,6 @@ export const generateAccessToken = async (): Promise<void> => {
       if (data?.data?.refresh_token) {
         store.dispatch(setRefreshToken(data.data.refresh_token))
       }
-      window.location.reload()
     } catch (error) {
       console.error('Failed to generate access token:', error)
     } finally {

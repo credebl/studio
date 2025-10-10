@@ -2,13 +2,10 @@
 
 import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError } from 'axios'
+import { generateAccessToken, logoutUser } from '@/utils/session'
 
 import { apiStatusCodes } from '@/config/CommonConstant'
-// import { apiStatusCodes } from '@/config/CommonConstant'
-import { generateAccessToken } from '@/utils/session'
 import { store } from '@/lib/store'
-
-// import { setRefreshToken, setToken } from '@/lib/authSlice'
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -18,104 +15,45 @@ const EcosystemInstance = axios.create({
   baseURL: process.env.PUBLIC_ECOSYSTEM_BASE_URL,
 })
 
-// interface RefreshTokenResponse {
-//   data: {
-//     access_token: string
-//     refresh_token: string
-//   }
-// }
-
-// interface jwtDataPayload extends JwtPayload {
-//   email?: string
-//   name?: string
-// }
-
-// const state = store.getState()
-// const refreshToken = state?.auth?.refreshToken
-
-//Refresh Token
-// const refreshAccessToken = async (
-//   refreshToken: string,
-// ): Promise<string | null> => {
-//   if (!refreshToken) {
-//     console.error('No refresh token available')
-//     return null
-//   }
-
-//   try {
-//     const response = await axios.post<RefreshTokenResponse>(
-//       `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
-//       { refreshToken },
-//     )
-
-//     if (
-//       response?.status === apiStatusCodes.API_STATUS_SUCCESS &&
-//       response.data?.data
-//     ) {
-//       const AccessToken = response.data.data.access_token
-//       const RefreshToken = response.data.data.refresh_token
-
-//       if (AccessToken && RefreshToken) {
-//         store.dispatch(setToken(AccessToken))
-//         store.dispatch(setRefreshToken(RefreshToken))
-//         return AccessToken
-//       }
-//     }
-//     return null
-//   } catch (error) {
-//     if (axios.isAxiosError(error)) {
-//       console.error('Token refresh failed:', error.response || error.message)
-//     } else {
-//       console.error('Token refresh failed:', error)
-//     }
-//     return null
-//   }
-// }
-
 export async function logoutAndRedirect(): Promise<void> {
   generateAccessToken()
 }
 
-function isTokenExpired(accessToken: string, refreshToken: string): boolean {
-  try {
-    const currentTime = Math.floor(Date.now() / 1000)
-
-    // Decode and check refresh token
-    const { exp: refreshExp } = jwtDecode<JwtPayload>(refreshToken)
-    if (refreshExp && refreshExp < currentTime + 10) {
-      console.warn('Refresh token expired. Logout the user.')
-      // logoutAndRedirect()
-    }
-
-    // Decode and check access token
-    const { exp: accessExp } = jwtDecode<JwtPayload>(accessToken)
-    return accessExp ? accessExp < currentTime + 10 : false
-  } catch (error) {
-    console.error('Error decoding token:', error)
-    return true // Consider token expired if decoding fails
-  }
-}
-
-// REQUEST INTERCEPTOR
 instance.interceptors.request.use(
   async (config) => {
-    const { auth } = store.getState()
-    const token = auth?.token
-    const refreshToken = auth?.refreshToken
-    // let isRequested = false
-    if (!token || !refreshToken) {
+    if (config.url?.includes('/refresh-token')) {
       return config
     }
-
-    // let accessToken: string | null = token
-
-    if (isTokenExpired(token, refreshToken)) {
-      // logoutAndRedirect()
-      // Note: Need to handle the refresh token related calls
-      // isRequested = true
-      // accessToken = await refreshAccessToken(refreshToken)
+    const { auth } = store.getState()
+    const { token } = auth
+    try {
+      const currentTime = Math.floor(Date.now() / 1000)
+      const { refreshToken } = auth
+      const refreshTokenExp = jwtDecode<JwtPayload>(refreshToken).exp
+      const isRefreshTokenExpired = refreshTokenExp
+        ? refreshTokenExp - currentTime < 10
+        : true
+      const { exp: accessExp } = jwtDecode<JwtPayload>(token)
+      const isExpired = accessExp ? accessExp - currentTime < 10 : true
+      if (isExpired && !isRefreshTokenExpired) {
+        await generateAccessToken()
+        const newToken = store.getState().auth?.token
+        if (newToken) {
+          return {
+            ...config,
+            headers: new axios.AxiosHeaders({
+              ...config.headers,
+              Authorization: `Bearer ${newToken}`,
+            }),
+          }
+        }
+      }
+      if (isRefreshTokenExpired) {
+        await logoutUser()
+      }
+    } catch (error) {
+      console.error('Error decoding token:', error)
     }
-
     return {
       ...config,
       headers: new axios.AxiosHeaders({
@@ -137,12 +75,12 @@ instance.interceptors.request.use(
 // RESPONSE INTERCEPTOR
 instance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) => {
-    if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
-      if (typeof window !== 'undefined') {
-        await logoutAndRedirect()
-      }
-    }
+  async (error: AxiosError) =>
+    // if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
+    //   if (typeof window !== 'undefined') {
+    //     await logoutAndRedirect()
+    //   }
+    // }
 
     // const originalRequest = error.config as AxiosRequestConfig & {
     //   _retry?: boolean
@@ -171,8 +109,7 @@ instance.interceptors.response.use(
     // }
     //
 
-    return Promise.reject(error)
-  },
+    Promise.reject(error),
 )
 
 export { instance, EcosystemInstance }
