@@ -1,7 +1,6 @@
 import { setRefreshToken, setToken } from '@/lib/authSlice'
 
 import { apiRoutes } from '@/config/apiRoutes'
-import { envConfig } from '@/config/envConfig'
 import { signOut } from 'next-auth/react'
 import { store } from '@/lib/store'
 
@@ -37,7 +36,7 @@ export const generateAccessToken = async (): Promise<void> => {
   refreshPromise = (async (): Promise<void> => {
     try {
       const resp = await fetch(
-        `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.refreshToken}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
