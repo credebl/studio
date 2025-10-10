@@ -83,7 +83,7 @@ export function UserNav(): React.JSX.Element | null {
     )
 
     if (response.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
-      console.error('Logout API failed')
+      console.error('Logout API failed ')
       await generateAccessToken()
     } else {
       if (localStorage.getItem(rootKey)) {
