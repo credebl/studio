@@ -30,6 +30,7 @@ const excludeRouteForSessionCheck = [
   '/verify-email-success',
   '/reset-password',
   '/sign-up',
+  '/sign-in',
 ]
 
 export const SessionManager = ({
@@ -113,7 +114,7 @@ export const SessionManager = ({
           pathname.startsWith(page),
         )
         if (!isIgnoreSessionCheck) {
-          // logoutSession()
+          router.push('/sign-in')
         }
       }
     }, 500)
