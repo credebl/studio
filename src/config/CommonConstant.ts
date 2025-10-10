@@ -30,6 +30,7 @@ export const apiStatusCodes = {
   API_STATUS_BAD_REQUEST: 400,
   API_STATUS_UNAUTHORIZED: 401,
   API_STATUS_NOT_FOUND: 404,
+  API_STATUS_SERVER_ERROR: 500,
 }
 
 export const storageKeys = {

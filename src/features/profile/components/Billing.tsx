@@ -44,37 +44,40 @@ export default function Billing(): JSX.Element {
   ]
 
   return (
-    <>
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          {plans.map((plan) => (
-            <div key={plan.name} className="rounded-2xl border p-6 shadow-md">
-              <h2 className="mb-4 text-2xl font-bold">{plan.name}</h2>
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {plans.map((plan) => (
+          <div key={plan.name} className="rounded-2xl border p-6 shadow-md">
+            <h2 className="mb-4 text-2xl font-bold">{plan.name}</h2>
 
-              <ul className="mb-6 space-y-2">
-                {plan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-2">
-                    <span className="green-text">✔</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+            <ul className="mb-6 space-y-2">
+              {plan.features.map((feature, idx) => (
+                <li key={idx} className="flex items-start gap-2">
+                  <span className="green-text">✔</span>
+                  {feature}
+                </li>
+              ))}
+            </ul>
+            {plan.name === 'FREE' ? (
+              <button
+                disabled
+                className="bg-secondary w-full cursor-not-allowed rounded-lg px-4 py-2 text-center font-medium text-black"
+              >
+                {plan.buttonLabel}
+              </button>
+            ) : (
               <a
-                href={plan.link || '#'}
+                href={`${sovioLandingPageURL}/pricing?openContact=true`}
                 target="_blank"
-                rel="noopener noreferrer"
-                className={`block w-full rounded-lg px-4 py-2 text-center font-medium ${
-                  plan.name === 'FREE'
-                    ? 'bg-primary text-white'
-                    : 'bg-secondary text-black'
-                }`}
+                className="bg-primary text-primary-foreground block w-full rounded-lg px-4 py-2 text-center font-medium"
+                rel="noreferrer"
               >
                 {plan.buttonLabel}
               </a>
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
+        ))}
       </div>
-    </>
+    </div>
   )
 }

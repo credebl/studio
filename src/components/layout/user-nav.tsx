@@ -21,7 +21,6 @@ import { IUserProfile } from '../profile/interfaces'
 import { ThemeSelector } from '../theme-selector'
 import { apiRoutes } from '@/config/apiRoutes'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
 import { generateAccessToken } from '@/utils/session'
 import { getUserProfile } from '@/app/api/Auth'
 import { setUserProfileDetails } from '@/lib/userSlice'
@@ -72,7 +71,7 @@ export function UserNav(): React.JSX.Element | null {
     }
 
     const response = await fetch(
-      `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.signOut}`,
       {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -147,7 +146,8 @@ export function UserNav(): React.JSX.Element | null {
             Developer Settings
           </DropdownMenuItem>
 
-          {envConfig.PLATFORM_DATA.enableBillingOption && (
+          {process.env.NEXT_PUBLIC_ENABLE_BILLING_OPTION?.toLowerCase() ===
+            'true' && (
             <DropdownMenuItem onClick={() => router.push('/billing ')}>
               Billing
             </DropdownMenuItem>

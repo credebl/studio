@@ -5,7 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { JWT } from 'next-auth/jwt'
 import { Provider } from 'next-auth/providers/index'
 import { apiRoutes } from '@/config/apiRoutes'
-import { envConfig } from '@/config/envConfig'
+import { passwordEncryption } from '@/app/api/server/encryption'
 
 type PasskeyUser = {
   userName: string
@@ -93,7 +93,7 @@ export const authOptions: MyAuthOptions = {
           if (isPassword) {
             sanitizedPayload = {
               email,
-              password,
+              password: passwordEncryption(password || ''),
               isPasskey,
             }
           } else {
@@ -112,7 +112,7 @@ export const authOptions: MyAuthOptions = {
           let res
           if (isPassword) {
             res = await fetch(
-              `${envConfig.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
+              `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.auth.sinIn}`,
               {
                 method: 'POST',
                 headers: {
@@ -126,7 +126,7 @@ export const authOptions: MyAuthOptions = {
             )
           } else if (obj) {
             res = await fetch(
-              `${envConfig.NEXT_PUBLIC_BASE_URL}/${apiRoutes.auth.fidoVerifyAuthentication}${parsedObj.userName}`,
+              `${process.env.NEXT_PUBLIC_BASE_URL}/${apiRoutes.auth.fidoVerifyAuthentication}${parsedObj.userName}`,
               {
                 method: 'POST',
                 headers: {
@@ -193,7 +193,7 @@ export const authOptions: MyAuthOptions = {
 
     async redirect({ url, baseUrl }) {
       try {
-        const redirectUrl = new URL(url)
+        const redirectUrl = new URL(url, baseUrl)
 
         const cookieDomain = process.env.NEXTAUTH_COOKIE_DOMAIN?.replace(
           /^\./,

@@ -12,11 +12,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import React, { useState } from 'react'
-import {
-  forgotPassword,
-  getUserProfile,
-  passwordEncryption,
-} from '@/app/api/Auth'
+import { forgotPassword, getUserProfile } from '@/app/api/Auth'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -27,7 +23,6 @@ import { Input } from '@/components/ui/input'
 import Link from 'next/link'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { envConfig } from '@/config/envConfig'
 import { generateAuthenticationOption } from '@/app/api/Fido'
 import { setProfile } from '@/lib/profileSlice'
 import { signIn } from 'next-auth/react'
@@ -86,7 +81,7 @@ export default function SignInViewPage(): React.JSX.Element {
       setLoading(true)
       const entityData = {
         email: values.email,
-        password: passwordEncryption(values.password || ''),
+        password: values.password || '',
         isPassword: isPasswordTab,
       }
       const response = await signIn('credentials', {
@@ -96,18 +91,20 @@ export default function SignInViewPage(): React.JSX.Element {
       if (response?.error) {
         let errorMsg: string = ''
 
-        if (response?.error) {
-          if (response.error === 'CredentialsSignin') {
-            errorMsg = 'Invalid Credentials'
-          } else {
-            errorMsg = response.error
-          }
-        } else {
-          errorMsg = 'Sign in failed. Please try again.'
+        switch (response.error) {
+          case 'Invalid Credentials':
+            errorMsg = 'Invalid Credentials.'
+            break
+          case 'fetch failed':
+            errorMsg =
+              'Unable to connect to the server. Please check your network and try again.'
+            break
+          default:
+            errorMsg = 'Sign in failed. Please try again later.'
+            break
         }
         setAlert(errorMsg)
-
-        console.error('Sign in failed:', response?.error)
+        console.error('Sign in failed:', response.error)
       }
       setLoading(false)
     } catch (error) {
@@ -429,7 +426,8 @@ export default function SignInViewPage(): React.JSX.Element {
               {isPasswordTab ? 'Sign in' : 'Continue with passkey'}
             </Button>
 
-            {envConfig.PLATFORM_DATA.enableSocialLogin && (
+            {process.env.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN?.toLowerCase() ===
+              'true' && (
               <>
                 <div className="my-2 flex items-center justify-center gap-2 md:my-6 md:gap-4">
                   <hr className="border-border flex-grow border-t" />

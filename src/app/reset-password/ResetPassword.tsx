@@ -14,7 +14,6 @@ import { Eye, EyeOff } from 'lucide-react'
 import { Form, Formik } from 'formik'
 import { JSX, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
-import { passwordEncryption, resetPassword } from '../api/Auth'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useRouter, useSearchParams } from 'next/navigation'
 
@@ -28,7 +27,9 @@ import { Label } from '@/components/ui/label'
 import PasswordSuggestionBox from './PasswordSuggestionBox'
 import { RootState } from '@/lib/store'
 import { SubmitIcon } from '@/config/svgs/ResetPassword'
+import { passwordValueEncryption } from '@/utils/passwordEncryption'
 import { pathRoutes } from '@/config/pathRoutes'
+import { resetPassword } from '../api/Auth'
 import { setToken } from '@/lib/authSlice'
 import { useTheme } from 'next-themes'
 
@@ -60,8 +61,11 @@ const ResetPassword = (): JSX.Element => {
       dispatch(setToken(userToken))
       const verificationCode = searchParams.get('verificationCode')
       const email = searchParams.get('email')
+      const encryptedPassword = await passwordValueEncryption(
+        passwordDetails?.password,
+      )
       const payload = {
-        password: passwordEncryption(passwordDetails?.password),
+        password: encryptedPassword,
         token: verificationCode,
       }
 
@@ -88,7 +92,7 @@ const ResetPassword = (): JSX.Element => {
 
   const logoImageSrc =
     resolvedTheme === 'dark'
-      ? `/logos/${APP_ENV}_logo_dark.png`
+      ? `/logos/${APP_ENV}_logo_dark.svg`
       : `/logos/${APP_ENV}_logo.svg`
 
   return (
