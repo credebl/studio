@@ -2,9 +2,9 @@
 
 import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError } from 'axios'
-import { generateAccessToken, logoutUser } from '@/utils/session'
 
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { generateAccessToken } from '@/utils/session'
 import { store } from '@/lib/store'
 
 const instance = axios.create({
@@ -49,7 +49,7 @@ instance.interceptors.request.use(
         }
       }
       if (isRefreshTokenExpired) {
-        await logoutUser()
+        await generateAccessToken()
       }
     } catch (error) {
       console.error('Error decoding token:', error)
