@@ -96,7 +96,7 @@ export const SessionManager = ({
       // eslint-disable-next-line
       setSessionDetails(data, redirectTo)
     } catch (error) {
-      console.error('Failed to fetch session details:', error)
+      console.error('Failed to fetch session details: ', error)
       throw error
     }
   }
