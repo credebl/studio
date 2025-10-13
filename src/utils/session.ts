@@ -8,6 +8,14 @@ let refreshPromise: Promise<void> | null = null
 
 export async function logoutUser(): Promise<void> {
   const rootKey = 'persist:root'
+  const searchParam =
+    typeof window !== 'undefined'
+      ? new URLSearchParams(window.location.search)
+      : new URLSearchParams()
+  const redirectTo = searchParam.get('redirectTo')
+  const callbackUrl = redirectTo
+    ? `/sign-in?redirectTo=${encodeURIComponent(redirectTo)}`
+    : '/sign-in'
 
   if (localStorage.getItem(rootKey)) {
     localStorage.removeItem(rootKey)
@@ -15,11 +23,11 @@ export async function logoutUser(): Promise<void> {
     const interval = setInterval(() => {
       if (!localStorage.getItem(rootKey)) {
         clearInterval(interval)
-        signOut({ callbackUrl: '/sign-in' })
+        signOut({ callbackUrl })
       }
     }, 100)
   } else {
-    signOut({ callbackUrl: '/sign-in' })
+    signOut({ callbackUrl })
   }
 }
 
