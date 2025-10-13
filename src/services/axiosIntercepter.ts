@@ -21,7 +21,10 @@ export async function logoutAndRedirect(): Promise<void> {
 
 instance.interceptors.request.use(
   async (config) => {
-    if (config.url?.includes('/refresh-token')) {
+    if (
+      config.url?.includes('/refresh-token') ||
+      config.url?.includes('/authentication-options')
+    ) {
       return config
     }
     const { auth } = store.getState()
