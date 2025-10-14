@@ -1,4 +1,5 @@
 #!/bin/sh
-cd "$(dirname "$0")/.."  # Move to project root (outer folder)
+echo "executing pre commit"
+# cd "$(dirname "$0")/.."  # Move to project root (outer folder)
 # cd nextjs                # Move into Next.js folder
 npx lint-staged
