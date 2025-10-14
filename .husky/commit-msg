@@ -1,4 +1,5 @@
-#!/usr/bin/env sh
+#!/bin/bash
+
 echo "executing commit msg"
 # . "$(dirname -- "$0")/_/husky.sh"
 

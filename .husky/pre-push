@@ -1,5 +1,5 @@
-#!/usr/bin/env sh
-echo "executing pre push"
+#!/bin/bash
+
 # . "$(dirname -- "$0")/_/husky.sh"
 
 # ANSI colors
