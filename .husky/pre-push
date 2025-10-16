@@ -30,7 +30,6 @@ while read local_ref local_sha remote_ref remote_sha; do
 			base_branch=${default_branch:-main} 
 		fi
 
-		echo "base branch $base_branch current branch $current_branch"
     base_commit=$(git merge-base "$base_branch" "$current_branch")
     range="$base_commit..$local_sha"
   else
@@ -39,7 +38,7 @@ while read local_ref local_sha remote_ref remote_sha; do
 
   unsigned_commits=""
 
-	echo "range ${range}"
+	echo "commit range ${range}"
   # Loop through each commit in range
   for commit in $(git rev-list $range); do
     # Skip merge commits
@@ -55,7 +54,6 @@ while read local_ref local_sha remote_ref remote_sha; do
     fi
   done
 
-  exit 1
   # If there are unsigned commits, prompt the developer
   if [ -n "$unsigned_commits" ]; then
     echo "${RED}❌ Found unsigned commits:${RESET} $unsigned_commits"
