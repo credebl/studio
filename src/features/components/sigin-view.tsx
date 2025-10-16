@@ -29,7 +29,10 @@ export default function SignInPage(): React.JSX.Element {
 
   switch (alias) {
     case 'VERIFIER':
-      logoImageSrc = '/favicon-sovio.ico'
+      logoImageSrc =
+        resolvedTheme === 'dark'
+          ? '/logos/verifier_logo_dark.png'
+          : '/logos/verifier_logo.png'
       break
 
     default:
