@@ -58,6 +58,7 @@ export interface ISchemaCardProps {
   created: string
   isClickable?: boolean
   showCheckbox?: boolean
+  orgId: string
   onClickCallback?: (SchemaData: {
     schemaId: string
     attributes: string[]

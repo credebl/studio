@@ -14,18 +14,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
 import CustomCheckbox from '@/components/CustomCheckbox'
 import DateTooltip from '@/components/DateTooltip'
 import Loader from '@/components/Loader'
+import { RootState } from '@/lib/store'
 import { ShieldCheck } from 'lucide-react'
 import { dateConversion } from '@/utils/DateConversion'
 import { limitedAttributesLength } from '@/config/CommonConstant'
 import { pathRoutes } from '@/config/pathRoutes'
 import { setSchemaDetails } from '@/lib/schemaStorageSlice'
-import { useAppDispatch } from '@/lib/hooks'
 
 const AttributesList: React.FC<{
   readonly attributes: IAttributes[]
@@ -57,6 +58,7 @@ const AttributesList: React.FC<{
 }
 
 const SchemaCard = (props: Readonly<ISchemaCardProps>): React.JSX.Element => {
+  const orgId = useAppSelector((state: RootState) => state.organization.orgId)
   const [isSelected, setIsSelected] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -242,7 +244,8 @@ const SchemaCard = (props: Readonly<ISchemaCardProps>): React.JSX.Element => {
             </Tooltip>
           </TooltipProvider>
 
-          {props.w3cSchema &&
+          {props.orgId === orgId &&
+            props.w3cSchema &&
             !props.isVerification &&
             !props.isVerificationUsingEmail && (
               <Button

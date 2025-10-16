@@ -474,6 +474,7 @@ const SchemaList = (props: {
                       attributes={element['attributes']}
                       created={element['createDateTime']}
                       showCheckbox={false}
+                      orgId={element['orgId']}
                       selectedSchemas={[]}
                       onClickCallback={schemaSelectionCallback}
                       onClickW3CCallback={W3CSchemaSelectionCallback}
