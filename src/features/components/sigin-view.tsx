@@ -34,6 +34,12 @@ export default function SignInPage(): React.JSX.Element {
           ? '/logos/verifier_logo_dark.png'
           : '/logos/verifier_logo.png'
       break
+    case 'EDUCREDS':
+      logoImageSrc =
+        resolvedTheme === 'dark'
+          ? '/logos/logo_edu_dark.svg'
+          : '/logos/logo_edu.svg'
+      break
 
     default:
       logoImageSrc =
