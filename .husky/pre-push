@@ -14,24 +14,48 @@ echo "🔒 Checking commit signatures..."
 while read local_ref local_sha remote_ref remote_sha; do
   # Determine range of commits
   if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
-		current_branch=$(git rev-parse --abbrev-ref HEAD)
-		base_branch=$(git for-each-ref --format='%(refname:short)' refs/heads/ \
-			| grep -v "^${current_branch}$" \
-			| while read other_branch; do
-					merge_base=$(git merge-base "$current_branch" "$other_branch")
-					echo "$(git rev-list --count ${merge_base}..${current_branch}) $other_branch"
-				done \
-			| sort -n \
-			| head -n1 \
-			| awk '{print $2}')
+      # Use the branch being pushed (may differ from HEAD)
+      if echo "$local_ref" | grep -q '^refs/heads/'; then
+        target_branch=${local_ref#refs/heads/}
+      else
+        target_branch=$(git rev-parse --abbrev-ref HEAD)
+      fi
 
-		if [ -z "$base_branch" ]; then
-			echo "⚠️  Base branch not found — defaulting to 'main'"
-			base_branch=${default_branch:-main} 
-		fi
+      # Find closest local base branch by commit distance (exclude the target itself)
+      base_branch=$(
+        git for-each-ref --format='%(refname:short)' refs/heads/ \
+          | grep -vxF "$target_branch" \
+          | while IFS= read -r other_branch; do
+              merge_base=$(git merge-base "$target_branch" "$other_branch") || continue
+              [ -n "$merge_base" ] || continue
+              echo "$(git rev-list --count "${merge_base}..${target_branch}") $other_branch"
+            done \
+          | sort -n \
+          | head -n1 \
+          | awk '{print $2}'
+      )
 
-    base_commit=$(git merge-base "$base_branch" "$current_branch")
-    range="$base_commit..$local_sha"
+      if [ -z "$base_branch" ]; then
+        # Resolve remote default (origin/HEAD) or use $default_branch/main
+        base_branch=${default_branch:-$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null | sed 's@^origin/@@')}
+        [ -n "$base_branch" ] || base_branch=main
+        echo "⚠️  Base branch not found — defaulting to '${base_branch}'"
+      fi
+
+      # Prefer local base, else remote tracking
+      if git show-ref --verify --quiet "refs/heads/$base_branch"; then
+        base_ref="$base_branch"
+      else
+        base_ref="origin/$base_branch"
+      fi
+
+      base_commit=$(git merge-base "$base_ref" "$target_branch" 2>/dev/null || true)
+      if [ -n "$base_commit" ]; then
+        range="$base_commit..$local_sha"
+      else
+        # Safe minimal fallback: just the tip commit
+        range="$local_sha"
+      fi
   else
     range="$remote_sha..$local_sha"
   fi
@@ -53,6 +77,7 @@ while read local_ref local_sha remote_ref remote_sha; do
       unsigned_commits="$unsigned_commits $commit"
     fi
   done
+	exit 1
 
   # If there are unsigned commits, prompt the developer
   if [ -n "$unsigned_commits" ]; then
