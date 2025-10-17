@@ -15,7 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import DynamicLogo from '@/features/components/DynamicLogo'
+import DynamicApplicationLogo from '@/features/components/DynamicLogo'
 import Footer from '@/components/Footer'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -84,7 +84,7 @@ const ResetPassword = (): JSX.Element => {
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
       <ToastContainer position="top-center" />
       <div className="absolute top-4 left-4 z-20">
-        <DynamicLogo />
+        <DynamicApplicationLogo />
       </div>
 
       <div className="relative flex h-screen w-full items-center justify-center bg-[image:var(--card-gradient)]">

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 
-function DynamicLogo(): JSX.Element {
+function DynamicApplicationLogo(): JSX.Element {
   const APP_ENV =
     process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
   const searchParams = useSearchParams()
@@ -41,4 +41,4 @@ function DynamicLogo(): JSX.Element {
   )
 }
 
-export default DynamicLogo
+export default DynamicApplicationLogo

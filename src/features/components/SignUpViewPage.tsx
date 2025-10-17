@@ -1,6 +1,6 @@
 'use client'
 
-import DynamicLogo from './DynamicLogo'
+import DynamicApplicationLogo from './DynamicLogo'
 import { Metadata } from 'next'
 import React from 'react'
 import SignUpUser from './SignUpUser'
@@ -14,7 +14,7 @@ export default function SignInPage(): React.JSX.Element {
   return (
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
       <div className="absolute top-4 left-4 z-20">
-        <DynamicLogo />
+        <DynamicApplicationLogo />
       </div>
 
       <div className="relative flex h-screen w-full items-center justify-center bg-[image:var(--card-gradient)]">
