@@ -31,14 +31,14 @@ export default function SignInPage(): React.JSX.Element {
     case 'VERIFIER':
       logoImageSrc =
         resolvedTheme === 'dark'
-          ? '/logos/verifier_logo_dark.png'
-          : '/logos/verifier_logo.png'
+          ? `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo_dark.svg`
+          : `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo.svg`
       break
     case 'EDUCREDS':
       logoImageSrc =
         resolvedTheme === 'dark'
-          ? '/logos/logo_edu_dark.svg'
-          : '/logos/logo_edu.svg'
+          ? `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo_dark.svg`
+          : `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo.svg`
       break
 
     default:
