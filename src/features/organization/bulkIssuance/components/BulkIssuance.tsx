@@ -213,7 +213,7 @@ const BulkIssuance = (): JSX.Element => {
 
   useEffect(() => {
     SOCKET.emit('bulk-connection')
-    SOCKET.on('bulk-issuance-process-completed', () => {
+    SOCKET.on('bulk-issuance-process-completed ', () => {
       setSuccess(null)
       // eslint-disable-next-line no-console
       if (!allow.current) {
