@@ -4,24 +4,19 @@ import 'react-toastify/dist/ReactToastify.css'
 
 import * as yup from 'yup'
 
-import {
-  CredeblLogoHeight,
-  CredeblLogoWidth,
-  apiStatusCodes,
-  passwordRegex,
-} from '@/config/CommonConstant'
 import { Eye, EyeOff } from 'lucide-react'
 import { Form, Formik } from 'formik'
 import { JSX, useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify'
+import { apiStatusCodes, passwordRegex } from '@/config/CommonConstant'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import DynamicLogo from '@/features/components/DynamicLogo'
 import Footer from '@/components/Footer'
-import Image from 'next/image'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import PasswordSuggestionBox from './PasswordSuggestionBox'
@@ -31,10 +26,6 @@ import { passwordValueEncryption } from '@/utils/passwordEncryption'
 import { pathRoutes } from '@/config/pathRoutes'
 import { resetPassword } from '../api/Auth'
 import { setToken } from '@/lib/authSlice'
-import { useTheme } from 'next-themes'
-
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
 
 interface IPasswordDetails {
   password: string
@@ -52,7 +43,6 @@ const ResetPassword = (): JSX.Element => {
   const [showSuggestion, setShowSuggestion] = useState(false)
   const dispatch = useAppDispatch()
   const searchParams = useSearchParams()
-  const { resolvedTheme } = useTheme()
   const router = useRouter()
 
   const submit = async (passwordDetails: IPasswordDetails): Promise<void> => {
@@ -90,21 +80,11 @@ const ResetPassword = (): JSX.Element => {
     }
   }
 
-  const logoImageSrc =
-    resolvedTheme === 'dark'
-      ? `/logos/${APP_ENV}_logo_dark.svg`
-      : `/logos/${APP_ENV}_logo.svg`
-
   return (
     <div className="relative flex min-h-screen flex-col bg-[image:var(--card-gradient)]">
       <ToastContainer position="top-center" />
       <div className="absolute top-4 left-4 z-20">
-        <Image
-          height={CredeblLogoHeight}
-          width={CredeblLogoWidth}
-          alt="Logo"
-          src={logoImageSrc}
-        />
+        <DynamicLogo />
       </div>
 
       <div className="relative flex h-screen w-full items-center justify-center bg-[image:var(--card-gradient)]">
