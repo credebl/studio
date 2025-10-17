@@ -236,7 +236,7 @@ const BulkIssuance = (): JSX.Element => {
     SOCKET.on('error-in-bulk-issuance-process', () => {
       setFailure(null)
       // eslint-disable-next-line no-console
-      console.log('error-in-bulk-issuance-process-initiated')
+      console.log('error-in-bulk-issuance-process-initiated ')
       toast.error('Issuance process failed. Please retry', {
         position: 'top-right',
         autoClose: 3000,
