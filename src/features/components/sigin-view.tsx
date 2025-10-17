@@ -27,26 +27,11 @@ export default function SignInPage(): React.JSX.Element {
       ? `/logos/${APP_ENV}_logo_dark.svg`
       : `/logos/${APP_ENV}_logo.svg`
 
-  switch (alias) {
-    case 'VERIFIER':
-      logoImageSrc =
-        resolvedTheme === 'dark'
-          ? `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo_dark.svg`
-          : `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo.svg`
-      break
-    case 'EDUCREDS':
-      logoImageSrc =
-        resolvedTheme === 'dark'
-          ? `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo_dark.svg`
-          : `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo.svg`
-      break
-
-    default:
-      logoImageSrc =
-        resolvedTheme === 'dark'
-          ? `/logos/${APP_ENV}_logo_dark.svg`
-          : `/logos/${APP_ENV}_logo.svg`
-      break
+  if (alias) {
+    logoImageSrc =
+      resolvedTheme === 'dark'
+        ? `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo_dark.svg`
+        : `${process.env.NEXT_PUBLIC_LOGO_BASE_URL}${alias}_logo.svg`
   }
 
   return (
