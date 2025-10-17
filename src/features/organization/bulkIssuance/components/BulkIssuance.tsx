@@ -19,7 +19,6 @@ import {
   apiStatusCodes,
   bulkIssuanceApiParameter,
 } from '@/config/CommonConstant'
-import { handleDiscardFile, handleReset } from './BulkIssuanceUtils'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -36,13 +35,12 @@ import ResetIssue from './ResetIssue'
 import RoleViewButton from '@/components/RoleViewButton'
 import { RootState } from '@/lib/store'
 import SOCKET from '@/config/SocketConfig'
-import SchemaSelectBulk from './SchemaSelectBulk'
 import Steps from './Steps'
 import Table from './Table'
 import { getCsvFileData } from '@/app/api/BulkIssuance'
+import { handleDiscardFile } from './BulkIssuanceUtils'
 import { pathRoutes } from '@/config/pathRoutes'
 import { resetSchemaDetails } from '@/lib/schemaStorageSlice'
-import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
 export interface SelectRef {
@@ -64,7 +62,7 @@ const BulkIssuance = (): JSX.Element => {
     null,
   )
   const [success, setSuccess] = useState<string | null>(null)
-  const [clear, setClear] = useState<boolean>(false)
+  const [clear] = useState<boolean>(false)
   const [failure, setFailure] = useState<string | null>(null)
   const [mounted, setMounted] = useState<boolean>(false)
   const [schemaType, setSchemaType] = useState<SchemaTypes>()
@@ -74,7 +72,6 @@ const BulkIssuance = (): JSX.Element => {
   )
   const [isAllSchema, setIsAllSchema] = useState<boolean>(allSchema ?? false)
   const [attributes, setAttributes] = useState<IAttributes[]>([])
-  const optionsWithDefault = ["Organization's schema", 'All schemas']
   const [schemaListAPIParameters, setSchemaListAPIParameter] = useState(
     bulkIssuanceApiParameter,
   )
@@ -305,14 +302,15 @@ const BulkIssuance = (): JSX.Element => {
     router.push(pathRoutes.organizations.Issuance.issue)
   }
 
-  const handleFilterChange = async (value: string): Promise<void> => {
-    const isAllSchemas = value === 'All schemas'
-    handleReset(context)
-    dispatch(resetSchemaDetails())
-    setClear((prev) => !prev)
-    setIsAllSchema(isAllSchemas)
-    dispatch(setAllSchema(isAllSchemas))
-  }
+  // Temporarily commented will be worked on later */
+  // const handleFilterChange = async (value: string): Promise<void> => {
+  //   const isAllSchemas = value === 'All schemas'
+  //   handleReset(context)
+  //   dispatch(resetSchemaDetails())
+  //   setClear((prev) => !prev)
+  //   setIsAllSchema(isAllSchemas)
+  //   dispatch(setAllSchema(isAllSchemas))
+  // }
 
   const handleSearchChange = (value: string): void => {
     setSchemaListAPIParameter((prev) => ({ ...prev, allSearch: value }))
@@ -389,9 +387,10 @@ const BulkIssuance = (): JSX.Element => {
                         ? 'Select Schema '
                         : 'Select Credential Definition'}
                     </p>
-                    <div className="flex flex-col justify-between gap-8">
+                    <div className="flex flex-col justify-between">
                       <div>
-                        {schemaType === SchemaTypes.schema_W3C && (
+                        {/* Temporarily commented will be worked on later */}
+                        {/* {schemaType === SchemaTypes.schema_W3C && (
                           <SchemaSelectBulk
                             {...{
                               allSchema,
@@ -399,7 +398,7 @@ const BulkIssuance = (): JSX.Element => {
                               optionsWithDefault,
                             }}
                           />
-                        )}
+                        )} */}
                       </div>
                       <div>
                         {mounted && (
