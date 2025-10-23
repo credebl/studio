@@ -3,15 +3,14 @@ import React, { JSX } from 'react'
 import { Card } from '@/components/ui/card'
 import { IAttributes } from '../type/EmailIssuance'
 import { IEmailIssuanceCardProps } from '../../connectionIssuance/type/Issuance'
-import SchemaSelect from './SchemaSelect'
 import { SchemaTypes } from '@/common/enums'
 import { SearchableSelect } from '@/components/SearchableSelect'
 
 function EmailIssuanceCard({
   schemaType,
-  allSchema,
-  handleFilterChange,
-  optionsWithDefault,
+  // allSchema,
+  // handleFilterChange,
+  // optionsWithDefault,
   credentialOptions,
   selectValue,
   clear,
@@ -33,11 +32,12 @@ function EmailIssuanceCard({
                 : 'Select Credential Definition'}
             </div>
             <div className="text-primary-900 flex gap-4">
-              {schemaType === SchemaTypes.schema_W3C && (
+              {/* Temporarily commented will be worked on later */}
+              {/* {schemaType === SchemaTypes.schema_W3C && (
                 <SchemaSelect
                   {...{ allSchema, handleFilterChange, optionsWithDefault }}
                 />
-              )}
+              )} */}
               <div>
                 {mounted && (
                   <SearchableSelect

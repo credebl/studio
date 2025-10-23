@@ -39,7 +39,6 @@ import IssuanceHeader from './IssuanceHeader'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { RootState } from '@/lib/store'
-import SchemaSelect from '../../emailIssuance/components/SchemaSelect'
 import { SearchableSelect } from '@/components/SearchableSelect'
 import SummaryCard from '@/components/SummaryCard'
 import SummaryCardW3c from '@/components/SummaryCardW3c'
@@ -47,7 +46,6 @@ import { getOrganizationById } from '@/app/api/organization'
 import { getSchemaCredDef } from '@/app/api/schema'
 import { pathRoutes } from '@/config/pathRoutes'
 import { resetSchemaDetails } from '@/lib/schemaStorageSlice'
-import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 import { useSelector } from 'react-redux'
 
@@ -77,10 +75,9 @@ const IssueCred = (): React.JSX.Element => {
     GetAllSchemaHelperReturn[]
   >([])
   const [selectValue, setSelectValue] = useState<string>('')
-  const [clear, setClear] = useState<boolean>(false)
+  const [clear] = useState<boolean>(false)
 
   const dispatch = useAppDispatch()
-  const optionsWithDefault = ["Organization's schema", 'All schemas']
 
   const selectedUser = useSelector(
     (state: RootState) => state.storageKeys.SELECTED_USER,
@@ -328,13 +325,14 @@ const IssueCred = (): React.JSX.Element => {
     router.push(pathRoutes.back.issuance.connections)
   }
 
-  const handleFilterChange = async (value: string): Promise<void> => {
-    setSchemaDetails(schemaDetailsInitialState)
-    dispatch(resetSchemaDetails())
-    setClear((prev) => !prev)
-    const isAllSchemas = value === 'All schemas'
-    dispatch(setAllSchema(isAllSchemas))
-  }
+  // Temporarily commented will be worked on later
+  // const handleFilterChange = async (value: string): Promise<void> => {
+  //   setSchemaDetails(schemaDetailsInitialState)
+  //   dispatch(resetSchemaDetails())
+  //   setClear((prev) => !prev)
+  //   const isAllSchemas = value === 'All schemas'
+  //   dispatch(setAllSchema(isAllSchemas))
+  // }
 
   const handleSearchChange = (value: string): void => {
     setSchemaListAPIParameter((prev) => ({ ...prev, allSearch: value }))
@@ -361,11 +359,12 @@ const IssueCred = (): React.JSX.Element => {
               {w3cSchema ? 'Select Schema ' : 'Select Credential Definition'}
             </p>
             <div className="flex md:gap-6">
-              {w3cSchema && (
+              {/* Temporarily commented will be worked on later */}
+              {/* {w3cSchema && (
                 <SchemaSelect
                   {...{ allSchema, handleFilterChange, optionsWithDefault }}
                 />
-              )}
+              )} */}
               <div>
                 <SearchableSelect
                   className="border-muted max-w-lg border-1"
