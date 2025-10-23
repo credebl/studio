@@ -260,6 +260,7 @@ export default function SignInViewPage(): React.JSX.Element {
     try {
       const response = await forgotPassword({
         email: signInForm.getValues('email'),
+        clientAlias,
       })
       const { data } = response as AxiosResponse
 
