@@ -1,6 +1,8 @@
 /* eslint-disable max-lines */
 'use client'
 
+import * as yup from 'yup'
+
 import {
   AgentType,
   DidMethod,
@@ -8,6 +10,7 @@ import {
   WalletSpinupSteps,
 } from '../common/enum'
 import { Card, CardContent } from '@/components/ui/card'
+import { Field, Form, Formik } from 'formik'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
@@ -20,8 +23,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
 import DedicatedAgentForm from './DedicatedAgentForm'
 import { IValuesShared } from '../organization/components/interfaces/organization'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import { Organisation } from '../dashboard/type/organization'
 import PageContainer from '@/components/layout/page-container'
@@ -55,7 +61,7 @@ const WalletSpinup = (): React.JSX.Element => {
     useState<boolean>(false)
   const [isRedirecting, setIsRedirecting] = useState<boolean>(false)
   const [showMainCard, setShowMainCard] = useState<boolean>(true)
-
+  const [showSchemaOptions, setShowSchemaOptions] = useState<boolean>(false)
   const [isApiInProgress, setIsApiInProgress] = useState<boolean>(false)
 
   const walletCompletionHandled = useRef<boolean>(false)
@@ -389,10 +395,8 @@ const WalletSpinup = (): React.JSX.Element => {
     }
   }
 
-  const submitSharedWallet = async (
-    values: IValuesShared,
-    domain: string,
-  ): Promise<void> => {
+  // Simplified Shared Wallet Submission
+  const submitSharedWallet = async (values: IValuesShared): Promise<void> => {
     if (!orgId) {
       setFailure('Organization ID is missing')
       return
@@ -405,23 +409,21 @@ const WalletSpinup = (): React.JSX.Element => {
     setIsApiInProgress(true)
     setShowMainCard(false)
     setLoading(true)
-
-    const ledgerName = values?.network?.split(':')[2]
-    const network = values?.network?.split(':').slice(2).join(':')
-    const polygonNetwork = values?.network?.split(':').slice(1).join(':')
-
+    //  const ledgerName = values?.network?.split(':')[2]
+    //  const network = values?.network?.split(':').slice(2).join(':')
+    //  const polygonNetwork = values?.network?.split(':').slice(1).join(':')
     const payload = {
-      keyType: values.keyType || 'ed25519',
-      method: values.method.split(':')[1] || '',
-      ledger: values.method === DidMethod.INDY ? ledgerName : '',
+      // keyType: values.keyType || 'ed25519',
+      // method: values.method.split(':')[1] || '',
+      // ledger: values.method === DidMethod.INDY ? ledgerName : '',
       label: values.label,
-      privatekey: values.method === DidMethod.POLYGON ? values?.privatekey : '',
-      seed: values.method === DidMethod.POLYGON ? '' : values?.seed || seeds,
-      network: values.method === DidMethod.POLYGON ? polygonNetwork : network,
-      domain: values.method === DidMethod.WEB ? domain : '',
-      role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
-      did: values?.did ?? '',
-      endorserDid: values?.endorserDid ?? '',
+      // privatekey: values.method === DidMethod.POLYGON ? values?.privatekey : '',
+      // seed: values.method === DidMethod.POLYGON ? '' : values?.seed || seeds,
+      // network: values.method === DidMethod.POLYGON ? polygonNetwork : network,
+      // domain: values.method === DidMethod.WEB ? domain : '',
+      // role: values.method === DidMethod.INDY ? values?.role || 'endorser' : '',
+      // did: values?.did ?? '',
+      // endorserDid: values?.endorserDid ?? '',
       clientSocketId: SOCKET.id,
     }
 
@@ -438,12 +440,14 @@ const WalletSpinup = (): React.JSX.Element => {
           setIsApiInProgress(false)
           handleWalletCompletion(false, 'Failed to initiate wallet creation')
         } else {
-          setIsApiInProgress(false)
-          setAgentSpinupCall(true)
-          setShowWalletSteps(true)
-          setWalletSpinStep(1)
-          setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
-          saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
+          setShowSchemaOptions(true)
+          setShowWalletSteps(false)
+          // setIsApiInProgress(false)
+          // setAgentSpinupCall(true)
+          // setShowWalletSteps(true)
+          // setWalletSpinStep(1)
+          // setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
+          // saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
         }
       } else {
         setIsApiInProgress(false)
@@ -463,81 +467,193 @@ const WalletSpinup = (): React.JSX.Element => {
     }
   }
 
-  useEffect(() => {
-    if (socketListenersSetup) {
-      return
-    }
+  // Inline Shared Agent Form Component
+  const SharedAgentFormInline = (): React.JSX.Element => (
+    <div className="mt-4 flex-col gap-4">
+      <Formik
+        initialValues={{ label: '' }}
+        validationSchema={yup.object().shape({
+          label: yup.string().required('Wallet label is required'),
+        })}
+        onSubmit={async (values) => {
+          await submitSharedWallet(values)
+        }}
+      >
+        {({ errors, touched }) => (
+          <Form className="mt-4 max-w-lg space-y-4">
+            <div>
+              <Label htmlFor="label">Wallet Label</Label>
+              <Field
+                as={Input}
+                id="label"
+                name="label"
+                type="text"
+                className="mt-4"
+                placeholder="Enter wallet label"
+              />
+              {errors.label && touched.label && (
+                <span className="text-destructive text-sm font-medium">
+                  {errors.label}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center justify-between pt-4">
+              <Button type="submit" disabled={loading}>
+                {loading ? <Loader /> : 'Create Shared Wallet'}
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
+  )
+  // Handle schema options
+  const handleContinueWithSchema = (): void => {
+    // Redirect to create-schema route with orgId
+    setIsRedirecting(true)
+    const schemaPath = '/template-creation'
+    router.replace(schemaPath)
+  }
 
-    const setupSocketListeners = (): void => {
-      SOCKET.off('agent-spinup-process-initiated')
-      SOCKET.off('agent-spinup-process-completed')
-      SOCKET.off('did-publish-process-initiated')
-      SOCKET.off('did-publish-process-completed')
-      SOCKET.off('invitation-url-creation-started')
-      SOCKET.off('invitation-url-creation-success')
-      SOCKET.off('error-in-wallet-creation-process')
+  const handleSkipSchema = (): void => {
+    // Skip schema creation and redirect to dashboard
+    setIsRedirecting(true)
+    const redirectPath = '/dashboard'
+    router.replace(redirectPath)
+  }
 
-      SOCKET.on('agent-spinup-process-initiated', () => {
-        // eslint-disable-next-line no-console
-        console.log('agent-spinup-process-initiated')
-        setWalletSpinStep(1)
-        setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
-        saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
-      })
+  // Schema Options UI Component
+  const SchemaOptionsUI = (): React.JSX.Element => (
+    <div className="mx-auto mt-4">
+      <Card>
+        <CardContent className="mr-18 ml-18 p-6">
+          <div className="space-y-6 text-center">
+            <div className="mb-6">
+              <p className="text-muted-foreground mt-2">
+                Your wallet has been successfully created.
+              </p>
+            </div>
 
-      SOCKET.on('agent-spinup-process-completed', (data) => {
-        // eslint-disable-next-line no-console
-        console.log('agent-spinup-process-completed', JSON.stringify(data))
-        setWalletSpinStep(2)
-        setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_COMPLETED)
-        saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_COMPLETED, 2)
-      })
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <Card className="border-primary hover:border-primary/80 border-2 p-6 transition-all">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">
+                    Continue with Schema
+                  </h3>
+                  <p className="text-muted-foreground text-sm">
+                    Create and configure schemas for your credentials
+                  </p>
+                  <Button onClick={handleContinueWithSchema} className="w-full">
+                    Continue with Schema
+                  </Button>
+                </div>
+              </Card>
 
-      SOCKET.on('did-publish-process-initiated', (data) => {
-        // eslint-disable-next-line no-console
-        console.log('did-publish-process-initiated', JSON.stringify(data))
-        setWalletSpinStep(3)
-        setSpinupStatus(WalletSpinupStatus.DID_PUBLISH_INITIATED)
-        saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_INITIATED, 3)
-      })
+              <Card className="border-2 border-gray-300 p-6 transition-all hover:border-gray-400">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold">Skip for Now</h3>
+                  <p className="text-muted-foreground text-sm">
+                    Proceed to dashboard without schema configuration
+                  </p>
+                  <Button
+                    onClick={handleSkipSchema}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Skip
+                  </Button>
+                </div>
+              </Card>
+            </div>
 
-      SOCKET.on('did-publish-process-completed', (data) => {
-        // eslint-disable-next-line no-console
-        console.log('did-publish-process-completed', JSON.stringify(data))
-        setWalletSpinStep(4)
-        setSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED)
-        saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED, 4)
-      })
+            <div className="text-muted-foreground mt-4 text-xs">
+              You can always create did and schemas later from the dashboard
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
 
-      const handleInvitationStarted = (): void => {
-        setWalletSpinStep(5)
-        setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED)
-        saveSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED, 5)
-      }
+  // useEffect(() => {
+  //   if (socketListenersSetup) {
+  //     return
+  //   }
 
-      SOCKET.on('invitation-url-creation-started', (data) => {
-        // eslint-disable-next-line no-console
-        console.log('invitation-url-creation-started', JSON.stringify(data))
-        setTimeout(handleInvitationStarted, 1000)
-      })
+  //   const setupSocketListeners = (): void => {
+  //     SOCKET.off('agent-spinup-process-initiated')
+  //     SOCKET.off('agent-spinup-process-completed')
+  //     SOCKET.off('did-publish-process-initiated')
+  //     SOCKET.off('did-publish-process-completed')
+  //     SOCKET.off('invitation-url-creation-started')
+  //     SOCKET.off('invitation-url-creation-success')
+  //     SOCKET.off('error-in-wallet-creation-process')
 
-      SOCKET.on('invitation-url-creation-success', (data) => {
-        // eslint-disable-next-line no-console
-        console.log('invitation-url-creation-success', JSON.stringify(data))
-        handleWalletCompletion(true)
-      })
+  //     SOCKET.on('agent-spinup-process-initiated', () => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('agent-spinup-process-initiated')
+  //       setWalletSpinStep(1)
+  //       setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED)
+  //       saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_INITIATED, 1)
 
-      SOCKET.on('error-in-wallet-creation-process', (data) => {
-        // eslint-disable-next-line no-console
-        console.log('error-in-wallet-creation-process', JSON.stringify(data))
-        handleWalletCompletion(false, 'Wallet Creation Failed')
-      })
+  //       // Show schema options when agent spinup status is 1
+  //       setShowSchemaOptions(true)
+  //       setShowWalletSteps(false)
+  //     })
 
-      setSocketListenersSetup(true)
-    }
+  //     SOCKET.on('agent-spinup-process-completed', (data) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('agent-spinup-process-completed', JSON.stringify(data))
+  //       setWalletSpinStep(2)
+  //       setSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_COMPLETED)
+  //       saveSpinupStatus(WalletSpinupStatus.AGENT_SPINUP_COMPLETED, 2)
+  //     })
 
-    setupSocketListeners()
-  }, [saveSpinupStatus, handleWalletCompletion, socketListenersSetup])
+  //     SOCKET.on('did-publish-process-initiated', (data) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('did-publish-process-initiated', JSON.stringify(data))
+  //       setWalletSpinStep(3)
+  //       setSpinupStatus(WalletSpinupStatus.DID_PUBLISH_INITIATED)
+  //       saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_INITIATED, 3)
+  //     })
+
+  //     SOCKET.on('did-publish-process-completed', (data) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('did-publish-process-completed', JSON.stringify(data))
+  //       setWalletSpinStep(4)
+  //       setSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED)
+  //       saveSpinupStatus(WalletSpinupStatus.DID_PUBLISH_COMPLETED, 4)
+  //     })
+
+  //     const handleInvitationStarted = (): void => {
+  //       setWalletSpinStep(5)
+  //       setSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED)
+  //       saveSpinupStatus(WalletSpinupStatus.INVITATION_CREATION_STARTED, 5)
+  //     }
+
+  //     SOCKET.on('invitation-url-creation-started', (data) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('invitation-url-creation-started', JSON.stringify(data))
+  //       setTimeout(handleInvitationStarted, 1000)
+  //     })
+
+  //     SOCKET.on('invitation-url-creation-success', (data) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('invitation-url-creation-success', JSON.stringify(data))
+  //       handleWalletCompletion(true)
+  //     })
+
+  //     SOCKET.on('error-in-wallet-creation-process', (data) => {
+  //       // eslint-disable-next-line no-console
+  //       console.log('error-in-wallet-creation-process', JSON.stringify(data))
+  //       handleWalletCompletion(false, 'Wallet Creation Failed')
+  //     })
+
+  //     setSocketListenersSetup(true)
+  //   }
+
+  //   setupSocketListeners()
+  // }, [saveSpinupStatus, handleWalletCompletion, socketListenersSetup])
 
   // Polling effect for checking wallet creation completion
   useEffect(() => {
@@ -650,6 +766,11 @@ const WalletSpinup = (): React.JSX.Element => {
     [clearAllTimers],
   )
 
+  // Show schema options when agent spinup is completed via socket
+  if (showSchemaOptions) {
+    return <SchemaOptionsUI />
+  }
+
   const renderContent = (): React.JSX.Element | null => {
     if (isApiInProgress) {
       return (
@@ -705,19 +826,7 @@ const WalletSpinup = (): React.JSX.Element => {
       let formComponent: React.JSX.Element = <></>
 
       if (agentType === AgentType.SHARED) {
-        formComponent = (
-          <SharedAgentForm
-            ledgerConfig={showLedgerConfig}
-            setLedgerConfig={setShowLedgerConfig}
-            maskedSeeds={maskedSeeds}
-            seeds={seeds}
-            orgName={orgData?.name || ''}
-            loading={loading}
-            submitSharedWallet={submitSharedWallet}
-            isCopied={false}
-            orgId={orgId || ''}
-          />
-        )
+        formComponent = formComponent = <SharedAgentFormInline />
       } else {
         formComponent = (
           <DedicatedAgentForm
@@ -760,7 +869,7 @@ const WalletSpinup = (): React.JSX.Element => {
                 {!showLedgerConfig && (
                   <>
                     <div className="mb-6 flex items-center justify-between">
-                      <div>
+                      {/* <div>
                         <h1 className="text-2xl font-semibold">Agent Setup</h1>
                         <p className="text-muted-foreground">
                           Configure your digital agent
@@ -768,9 +877,9 @@ const WalletSpinup = (): React.JSX.Element => {
                       </div>
                       <div className="text-muted-foreground ml-auto text-sm">
                         Step 2 of 4
-                      </div>
+                      </div> */}
                     </div>
-                    <Stepper currentStep={2} totalSteps={4} />
+                    {/* <Stepper currentStep={2} totalSteps={4} /> */}
                   </>
                 )}
 

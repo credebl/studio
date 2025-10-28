@@ -1,83 +1,104 @@
+'use client'
+
 import * as yup from 'yup'
 
 import { Field, Form, Formik } from 'formik'
 import React, { useState } from 'react'
 
+import { AlertComponent } from '@/components/AlertComponent'
+import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { ISharedAgentForm } from '../organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import LedgerConfig from './LedgerConfig'
 import Loader from '@/components/Loader'
+import SOCKET from '@/config/SocketConfig'
+import { WalletSpinupSteps } from '../common/enum'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { spinupSharedAgent } from '@/app/api/Agent'
 
-const SharedAgentForm = ({
-  orgName,
-  orgId,
-  maskedSeeds,
-  seeds,
-  ledgerConfig,
-  setLedgerConfig,
-  submitSharedWallet,
-}: ISharedAgentForm): React.JSX.Element => {
-  const [walletName, setWalletName] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+interface SharedAgentFormProps {
+  orgId: string
+   onSuccess?: (data?: any) => void 
+}
+
+const SharedAgentForm = ({ orgId, onSuccess }: SharedAgentFormProps): React.JSX.Element => {
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)  
+  const [success, setSuccess] = useState<boolean>(false)
+
+  const validationSchema = yup.object({
+    label: yup.string().required('Wallet label is required'),
+  })
+
+  const handleSubmit = async (values: { label: string }) => {
+    setError(null)
+    setLoading(true)
+
+    const payload = {
+      label: values.label,
+      clientSocketId: SOCKET.id,
+    }
+
+    try {
+      const res = (await spinupSharedAgent(payload, orgId)) as AxiosResponse
+      console.log("🚀 ~ handleSubmit ~ res:", res)
+      const { data } = res
+
+     if (
+        data?.statusCode === apiStatusCodes.API_STATUS_CREATED &&
+        data?.data?.agentSpinupStatus === WalletSpinupSteps.AGENT_SPINUP_INITIATED
+      ) {
+        onSuccess?.(data)
+      } else {
+        setError('Failed to create shared wallet')
+      }
+    } catch (err) {
+      console.error(err)
+      setError('Something went wrong while creating shared wallet')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <div className="mt-4 flex-col gap-4">
-      {!ledgerConfig && (
-        <Formik
-          initialValues={{ walletName: '' }}
-          validationSchema={yup.object().shape({
-            walletName: yup.string().required('Wallet name is required'),
-          })}
-          onSubmit={async (values) => {
-            setIsLoading(true)
-            setWalletName(values.walletName)
+    <div className="mt-6">
+      <Formik
+        initialValues={{ label: '' }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ errors, touched }) => (
+          <Form className="space-y-6">
+            <div>
+              <Label htmlFor="label">Wallet Label</Label>
+              <Field
+                as={Input}
+                id="label"
+                name="label"
+                placeholder="Enter wallet label"
+                className="mt-2"
+              />
+              {errors.label && touched.label && (
+                <p className="text-sm text-destructive mt-1">{errors.label}</p>
+              )}
+            </div>
 
-            setTimeout(() => {
-              setLedgerConfig(true)
-              setIsLoading(false)
-            }, 300)
-          }}
-        >
-          {({ errors, touched }) => (
-            <Form className="mt-4 max-w-lg space-y-4">
-              <div>
-                <Label htmlFor="walletName">Wallet Name</Label>
-                <Field
-                  as={Input}
-                  id="walletName"
-                  name="walletName"
-                  type="text"
-                  className="mt-4"
-                  placeholder="Enter wallet name"
-                />
-                {errors.walletName && touched.walletName && (
-                  <span className="text-destructive text-sm font-medium">
-                    {errors.walletName}
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center justify-between pt-4">
-                <Button type="submit" disabled={isLoading}>
-                  {isLoading ? <Loader /> : 'Continue to Ledger Setup'}
-                </Button>
-              </div>
-            </Form>
-          )}
-        </Formik>
-      )}
+            {error && (
+              <AlertComponent
+                message={error}
+                type="failure"
+                onAlertClose={() => setError(null)}
+              />
+            )}
 
-      {ledgerConfig && (
-        <LedgerConfig
-          orgName={orgName}
-          orgId={orgId}
-          maskedSeeds={maskedSeeds}
-          seeds={seeds}
-          submitSharedWallet={submitSharedWallet}
-          walletName={walletName}
-        />
-      )}
+            <div className="flex justify-end">
+              <Button type="submit" disabled={loading}>
+                {loading ? <Loader /> : 'Create Shared Wallet'}
+              </Button>
+            </div>
+          </Form>
+        )}
+      </Formik>
     </div>
   )
 }
