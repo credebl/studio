@@ -30,12 +30,10 @@ const initialPageState = {
 }
 
 export default function Dashboard(): React.JSX.Element {
-  const [walletData, setWalletData] = useState<[]>([])
+  const [walletData, setWalletData] = useState<any[]>([])
   const [walletLoading, setWalletLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(initialPageState)
-  const [informativeMessage, setInformativeMessage] = useState<string | null>(
-    '',
-  )
+  const [informativeMessage, setInformativeMessage] = useState<string | null>('')
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
   const [, setWalletExists] = useState(false)
@@ -66,15 +64,13 @@ export default function Dashboard(): React.JSX.Element {
           )
           setViewButton(true)
         }
-        setCurrentPage({
-          ...currentPage,
-          total: totalPages,
-        })
+        setCurrentPage({ ...currentPage, total: totalPages })
       }
     } catch (err) {
       console.error('An unexpected error occurred', err)
     }
   }
+
   const getAllEcosystemInvitations = async (): Promise<void> => {
     try {
       const response = await getUserEcosystemInvitations(
@@ -83,7 +79,6 @@ export default function Dashboard(): React.JSX.Element {
         '',
         orgId,
       )
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -91,17 +86,13 @@ export default function Dashboard(): React.JSX.Element {
           (invitation: { status: string }) => invitation.status === 'pending',
         )
 
-        if (pendingInvitations && pendingInvitations.length > 0) {
+        if (pendingInvitations?.length > 0) {
           setEcoMessage('You have received invitation to join ecosystem ')
           setViewButton(true)
         }
 
         const totalPages = data?.data?.totalPages
-
-        setCurrentPage({
-          ...currentPage,
-          total: totalPages,
-        })
+        setCurrentPage({ ...currentPage, total: totalPages })
       }
     } catch (err) {
       console.error('An unexpected error occurred.', err)
@@ -114,38 +105,28 @@ export default function Dashboard(): React.JSX.Element {
   }, [])
 
   const fetchOrganizationDetails = async (): Promise<void> => {
-    if (!orgId) {
-      return
-    }
+    if (!orgId) return
     try {
       setWalletLoading(true)
       const response = await getOrganizationById(orgId)
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const orgAgentsList = data?.data?.org_agents
-        const userOrgRoles = data?.data?.userOrgRoles
+        const orgAgentsList = data?.data?.org_agents || []
+        const userOrgRoles = data?.data?.userOrgRoles || []
 
-        if (userOrgRoles && userOrgRoles.length > 0) {
+        if (userOrgRoles.length > 0) {
           setUserOrg(userOrgRoles[0])
         }
 
-        if (
-          typeof response !== 'string' &&
-          response?.data?.data?.org_agents[0]?.ledgers?.id
-        ) {
-          dispatch(
-            setLedgerId(response?.data?.data?.org_agents[0]?.ledgers?.id),
-          )
+        const firstLedgerId = orgAgentsList[0]?.ledgers?.id
+        if (firstLedgerId) {
+          dispatch(setLedgerId(firstLedgerId))
         }
-        if (orgAgentsList && orgAgentsList.length > 0) {
-          setWalletData(orgAgentsList)
-          setWalletExists(true)
-        } else {
-          setWalletData([])
-          setWalletExists(false)
-        }
+
+        console.log('✅ orgAgentsList', orgAgentsList)
+        setWalletData(orgAgentsList)
+        setWalletExists(orgAgentsList.length > 0)
       }
     } catch (error) {
       console.error('Error fetching organization:', error)
@@ -161,10 +142,15 @@ export default function Dashboard(): React.JSX.Element {
   }, [orgId])
 
   const handleCreateWallet = (): void => {
-    // redirect or open wallet creation
     setWalletSetupLoading(true)
-    router.push(`/agent-config?orgId=${orgId}`)
+    router.push(`wallet-setup?orgId=${orgId}`)
   }
+
+  // ✅ Safe logging
+  console.log('walletData', walletData)
+  console.log('walletData----', walletData[0]?.orgDid)
+
+  const currentWallet = walletData[0]
 
   return (
     <PageContainer>
@@ -199,32 +185,69 @@ export default function Dashboard(): React.JSX.Element {
         </div>
 
         {walletLoading ? (
-          <div className=""></div>
+          <div className="flex justify-center py-8">
+            <Loader />
+          </div>
         ) : (
-          walletData.length === 0 && (
-            <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
-              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+          <>
+            {/* ✅ Case 1: No wallet created yet */}
+            {walletData.length === 0 ? (
+              <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+                  <div className="flex flex-col items-start">
+                    <h3 className="text-xl font-semibold">
+                      Wallet lets you create schemas and credential definitions
+                    </h3>
+                    <p className="mt-2 text-sm">
+                      Please create a wallet for your organization to issue and
+                      verify credentials.
+                    </p>
+                  </div>
+                  <Button
+                    disabled={isWalletSetupLoading}
+                    onClick={handleCreateWallet}
+                    className="min-w-[180px]"
+                  >
+                    {isWalletSetupLoading && <Loader />}
+                    Setup Your Wallet
+                    <CreateWalletIcon />
+                  </Button>
+                </div>
+              </div>
+            ) : currentWallet?.orgDid ? (
+              // ✅ Case 2: DID already created
+              <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
                 <div className="flex flex-col items-start">
-                  <h3 className="text-xl font-semibold">
-                    Wallet lets you create schemas and credential definitions
-                  </h3>
-                  <p className="mt-2 text-sm">
-                    Please create wallet for your organization which would help
-                    you to issue and verify credentials for your users.
+                  <h3 className="text-xl font-semibold">Wallet Details</h3>
+                  <p className="mt-2 text-sm text-gray-700">
+                    DID is already created for your organization.
                   </p>
                 </div>
-                <Button
-                  disabled={isWalletSetupLoading}
-                  onClick={handleCreateWallet}
-                  className="min-w-[180px]"
-                >
-                  {isWalletSetupLoading && <Loader />} Setup Your Wallet
-                  <CreateWalletIcon />
-                </Button>
               </div>
-            </div>
-          )
+            ) : (
+              // ✅ Case 3: Wallet exists but DID not yet created
+              <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+                  <div className="flex flex-col items-start">
+                    <h3 className="text-xl font-semibold">Setup your DID</h3>
+                    <p className="mt-2 text-sm">
+                      Your wallet is ready! Now set up a DID for issuing and
+                      verifying credentials.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={() => router.push(`template-creation?orgId=${orgId}`)}
+                    className="min-w-[180px]"
+                  >
+                    Setup Your DID
+                    <CreateWalletIcon />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
         )}
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
             <TabsTrigger value="Overview" className="relative">
@@ -232,7 +255,7 @@ export default function Dashboard(): React.JSX.Element {
             </TabsTrigger>
             <TabsTrigger
               value="Wallet"
-              disabled={walletData && walletData.length === 0}
+              disabled={walletData.length === 0}
             >
               Wallet
             </TabsTrigger>
