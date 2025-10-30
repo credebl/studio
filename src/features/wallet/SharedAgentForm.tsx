@@ -12,19 +12,18 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import SOCKET from '@/config/SocketConfig'
-import { WalletSpinupSteps } from '../common/enum'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { spinupSharedAgent } from '@/app/api/Agent'
 
 interface SharedAgentFormProps {
   orgId: string
-   onSuccess?: (data?: any) => void 
+  onSuccess?: (data?: any) => void
+  disabled?: boolean
 }
 
-const SharedAgentForm = ({ orgId, onSuccess }: SharedAgentFormProps): React.JSX.Element => {
+const SharedAgentForm = ({ orgId, onSuccess, disabled }: SharedAgentFormProps): React.JSX.Element => {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)  
-  const [success, setSuccess] = useState<boolean>(false)
+  const [error, setError] = useState<string | null>(null)
 
   const validationSchema = yup.object({
     label: yup.string().required('Wallet label is required'),
@@ -41,20 +40,17 @@ const SharedAgentForm = ({ orgId, onSuccess }: SharedAgentFormProps): React.JSX.
 
     try {
       const res = (await spinupSharedAgent(payload, orgId)) as AxiosResponse
-      console.log("🚀 ~ handleSubmit ~ res:", res)
       const { data } = res
 
-     if (
-        data?.statusCode === apiStatusCodes.API_STATUS_CREATED &&
-        data?.data?.agentSpinupStatus === WalletSpinupSteps.AGENT_SPINUP_INITIATED
-      ) {
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        // ✅ Let parent handle success message
         onSuccess?.(data)
       } else {
-        setError('Failed to create shared wallet')
+        setError(data?.message || 'Failed to create shared wallet')
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      setError('Something went wrong while creating shared wallet')
+      setError(err.response?.data?.message || 'Something went wrong while creating shared wallet')
     } finally {
       setLoading(false)
     }
@@ -77,6 +73,7 @@ const SharedAgentForm = ({ orgId, onSuccess }: SharedAgentFormProps): React.JSX.
                 name="label"
                 placeholder="Enter wallet label"
                 className="mt-2"
+                disabled={disabled}
               />
               {errors.label && touched.label && (
                 <p className="text-sm text-destructive mt-1">{errors.label}</p>
@@ -92,7 +89,7 @@ const SharedAgentForm = ({ orgId, onSuccess }: SharedAgentFormProps): React.JSX.
             )}
 
             <div className="flex justify-end">
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading || disabled}>
                 {loading ? <Loader /> : 'Create Shared Wallet'}
               </Button>
             </div>

@@ -1,6 +1,7 @@
 'use client'
 
 import * as yup from 'yup'
+
 import { Field, Form, Formik } from 'formik'
 import React, { useState } from 'react'
 
@@ -13,7 +14,7 @@ import Loader from '@/components/Loader'
 import SOCKET from '@/config/SocketConfig'
 import { WalletSpinupSteps } from '../common/enum'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { setAgentConfigDetails } from '@/app/api/Agent' 
+import { setAgentConfigDetails } from '@/app/api/Agent'
 
 interface DedicatedAgentFormProps {
   orgId: string
@@ -52,8 +53,7 @@ const DedicatedAgentForm = ({
 
       const { data } = res
       if (
-        data?.statusCode === apiStatusCodes.API_STATUS_CREATED &&
-        res?.data?.data?.id
+        data?.statusCode === apiStatusCodes.API_STATUS_CREATED 
       ) {
         onSuccess?.(data)
       }
