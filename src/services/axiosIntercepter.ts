@@ -21,23 +21,20 @@ export async function logoutAndRedirect(): Promise<void> {
 
 instance.interceptors.request.use(
   async (config) => {
-    if (
-      config.url?.includes('/refresh-token') ||
-      config.url?.includes('/authentication-options')
-    ) {
+    const { auth } = store.getState()
+    if (!auth?.token || !auth?.refreshToken) {
       return config
     }
-    const { auth } = store.getState()
     const { token } = auth
     try {
       const currentTime = Math.floor(Date.now() / 1000)
       const { refreshToken } = auth
       const refreshTokenExp = jwtDecode<JwtPayload>(refreshToken).exp
       const isRefreshTokenExpired = refreshTokenExp
-        ? refreshTokenExp - currentTime < 10
+        ? refreshTokenExp - currentTime < 1
         : true
       const { exp: accessExp } = jwtDecode<JwtPayload>(token)
-      const isExpired = accessExp ? accessExp - currentTime < 10 : true
+      const isExpired = accessExp ? accessExp - currentTime < 1 : true
       if (isExpired && !isRefreshTokenExpired) {
         await generateAccessToken()
         const newToken = store.getState().auth?.token
@@ -78,41 +75,7 @@ instance.interceptors.request.use(
 // RESPONSE INTERCEPTOR
 instance.interceptors.response.use(
   (response) => response,
-  async (error: AxiosError) =>
-    // if (error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED) {
-    //   if (typeof window !== 'undefined') {
-    //     await logoutAndRedirect()
-    //   }
-    // }
-
-    // const originalRequest = error.config as AxiosRequestConfig & {
-    //   _retry?: boolean
-    // }
-    // const isPasswordCheckRoute = originalRequest?.url?.includes(
-    //   apiRoutes.auth.passkeyUserDetails,
-    // )
-
-    // Automatically logout on 401
-    // if (
-    //   error.response?.status === apiStatusCodes.API_STATUS_UNAUTHORIZED &&
-    //   !originalRequest?._retry &&
-    //   !isPasswordCheckRoute
-    // ) {
-    //   originalRequest._retry = true
-
-    //   const newAccessToken = await refreshAccessToken()
-    //   if (newAccessToken && originalRequest.headers) {
-    //     originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
-    //     return instance(originalRequest)
-    //   }
-
-    //   if (typeof window !== 'undefined') {
-    //     logoutAndRedirect()
-    //   }
-    // }
-    //
-
-    Promise.reject(error),
+  async (error: AxiosError) => Promise.reject(error),
 )
 
 export { instance, EcosystemInstance }
