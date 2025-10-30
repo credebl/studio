@@ -13,7 +13,7 @@ const preventRedirectOnPaths = [
   '/create-organization',
   '/agent-config',
   '/wallet-setup',
-  'template-creation',
+  '/template-creation',
   '/organizations',
   '/users',
   '/connections',
