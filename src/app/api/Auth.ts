@@ -75,6 +75,7 @@ export const resetPassword = async (
 
 export const forgotPassword = async (payload: {
   email: string
+  clientAlias?: string | null
 }): Promise<AxiosResponse | string> => {
   const details = {
     url: apiRoutes.auth.forgotPasswordEndpoint,
