@@ -37,8 +37,8 @@ const WalletSetup = (): React.JSX.Element => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId') ?? ''
-
-  
+  const clientAlias = searchParams.get('clientAlias')
+  const isVerifierClient = clientAlias ? true : false
 
   const handleSharedWalletCreated = (response?: any): void => {
     setSharedWalletResponse(response)
@@ -67,7 +67,6 @@ const WalletSetup = (): React.JSX.Element => {
 
   return (
     <div className="mx-auto mt-10 max-w-5xl">
-      {/* 🔴 Error alert */}
       {alert && (
         <div className="mx-auto mt-6 w-full max-w-5xl" role="alert">
           <AlertComponent
@@ -79,11 +78,11 @@ const WalletSetup = (): React.JSX.Element => {
       )}
 
       <Card className="p-6">
-        {/* Disable form if wallet already created */}
+
         <div
           className={`${
             isAnyWalletCreated
-              ? 'pointer-events-none select-none opacity-60'
+              ? 'pointer-events-none opacity-60 select-none'
               : ''
           }`}
         >
@@ -96,13 +95,14 @@ const WalletSetup = (): React.JSX.Element => {
             }}
             className="grid grid-cols-1 gap-6 md:grid-cols-2"
           >
-            {/* Dedicated Agent */}
             <Label
               htmlFor="dedicated"
               className={`cursor-pointer rounded-2xl border p-5 transition-all ${
-                agentType === AgentType.DEDICATED
-                  ? 'border-blue-500 bg-blue-50 shadow-md'
-                  : 'border-gray-200 hover:border-blue-300'
+                isVerifierClient
+                  ? 'cursor-not-allowed opacity-50' 
+                  : agentType === AgentType.DEDICATED
+                    ? 'border-blue-500 bg-blue-50 shadow-md'
+                    : 'border-gray-200 hover:border-blue-300'
               }`}
             >
               <div className="flex items-start space-x-3">
@@ -110,7 +110,9 @@ const WalletSetup = (): React.JSX.Element => {
                   id="dedicated"
                   className="border"
                   value={AgentType.DEDICATED}
+                  disabled={isVerifierClient} 
                 />
+
                 <div>
                   <h3 className="mb-1 font-semibold text-gray-800">
                     Dedicated Agent
@@ -127,7 +129,6 @@ const WalletSetup = (): React.JSX.Element => {
               </div>
             </Label>
 
-            {/* Shared Agent */}
             <Label
               htmlFor="shared"
               className={`cursor-pointer rounded-2xl border p-5 transition-all ${
@@ -159,7 +160,6 @@ const WalletSetup = (): React.JSX.Element => {
             </Label>
           </RadioGroup>
 
-          {/* Render Form Based on Agent Type */}
           <div className="mt-10">
             {agentType === AgentType.DEDICATED ? (
               <DedicatedAgentForm
@@ -176,7 +176,6 @@ const WalletSetup = (): React.JSX.Element => {
         </div>
       </Card>
 
-      {/* ✅ Dialog (no cross icon) */}
       <Dialog open={isDialogOpen}>
         <DialogContent
           className="max-w-md rounded-2xl text-center"
