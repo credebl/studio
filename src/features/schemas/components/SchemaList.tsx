@@ -11,13 +11,6 @@ import {
   UserOrgRole,
 } from '../type/schemas-interface'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { apiStatusCodes, itemPerPage } from '../../../config/CommonConstant'
 import { getAllSchemas, getAllSchemasByOrgId } from '@/app/api/schema'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
@@ -37,7 +30,6 @@ import SidePanelComponent from '@/config/SidePanelCommon'
 import { Skeleton } from '@/components/ui/skeleton'
 import { getOrganizationById } from '@/app/api/organization'
 import { getUserProfile } from '@/app/api/Auth'
-import { setAllSchema } from '@/lib/storageKeys'
 import { useRouter } from 'next/navigation'
 
 const generatePaginationNumbers = (
@@ -94,15 +86,12 @@ const SchemaList = (props: {
 
   const [, setSchemaListErr] = useState<string | null>('')
   const [loading, setLoading] = useState<boolean>(true)
-  const [allSchemaFlag, setAllSchemaFlag] = useState<boolean>(
-    allSchemaSliceData ?? false,
-  )
+  const [allSchemaFlag] = useState<boolean>(allSchemaSliceData ?? false)
   const [ledger, setLedger] = useState<string>('')
   const [schemaType, setSchemaType] = useState('')
   const [totalItem, setTotalItem] = useState(0)
   const [lastPage, setLastPage] = useState(0)
   const [searchValue, setSearchValue] = useState('')
-  const [, setSelectedValue] = useState<string>('Organizations schema')
   const [w3cSchema, setw3cSchema] = useState<boolean>(false)
   const [isNoLedger, setIsNoLedger] = useState<boolean>(false)
   const [orgRole, setOrgRole] = useState<string | null>(null)
@@ -121,8 +110,8 @@ const SchemaList = (props: {
     sortingOrder: 'desc',
     allSearch: '',
   })
-  const options = ['All schemas']
-  const optionsWithDefault = ["Organization's schema", ...options]
+  // const options = ['All schemas']
+  // const optionsWithDefault = ["Organization's schema", ...options]
   const skeletonIds = ['skeleton-1', 'skeleton-2', 'skeleton-3', 'skeleton-4']
 
   const processDidSettings = (did: string): void => {
@@ -302,42 +291,43 @@ const SchemaList = (props: {
     setSchemaListAPIParameter(updatedParams)
   }
 
-  const handleFilterChange = async (value: string): Promise<void> => {
-    const isAllSchemas = value === 'All schemas'
+  // Temporarily commented will be worked on later
+  // const handleFilterChange = async (value: string): Promise<void> => {
+  //   const isAllSchemas = value === 'All schemas'
 
-    setSelectedValue(value)
-    setAllSchemaFlag(isAllSchemas)
-    dispatch(setAllSchema(isAllSchemas))
+  //   setSelectedValue(value)
+  //   setAllSchemaFlag(isAllSchemas)
+  //   dispatch(setAllSchema(isAllSchemas))
 
-    setSchemaListAPIParameter({
-      itemPerPage,
-      page: 1,
-      search: '',
-      sortBy: 'id',
-      sortingOrder: 'desc',
-      allSearch: '',
-    })
+  //   setSchemaListAPIParameter({
+  //     itemPerPage,
+  //     page: 1,
+  //     search: '',
+  //     sortBy: 'id',
+  //     sortingOrder: 'desc',
+  //     allSearch: '',
+  //   })
 
-    setSearchValue('')
+  //   setSearchValue('')
 
-    if (organizationId) {
-      setLoading(true)
-      try {
-        await getSchemaList(
-          {
-            itemPerPage,
-            page: 1,
-            search: '',
-            sortBy: 'id',
-            allSearch: '',
-          },
-          isAllSchemas,
-        )
-      } finally {
-        setLoading(false)
-      }
-    }
-  }
+  //   if (organizationId) {
+  //     setLoading(true)
+  //     try {
+  //       await getSchemaList(
+  //         {
+  //           itemPerPage,
+  //           page: 1,
+  //           search: '',
+  //           sortBy: 'id',
+  //           allSearch: '',
+  //         },
+  //         isAllSchemas,
+  //       )
+  //     } finally {
+  //       setLoading(false)
+  //     }
+  //   }
+  // }
 
   const schemaSelectionCallback = ({
     schemaId,
@@ -415,7 +405,8 @@ const SchemaList = (props: {
             />
             <IconSearch className="text-muted-foreground absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2" />
           </div>
-          <Select
+          {/* Commented temporarily will we worked on later */}
+          {/* <Select
             defaultValue={
               allSchemaSliceData ? 'All schemas' : "Organization's schema"
             }
@@ -431,7 +422,7 @@ const SchemaList = (props: {
                 </SelectItem>
               ))}
             </SelectContent>
-          </Select>
+          </Select> */}
           <Button
             onClick={handleClick}
             disabled={loading || !isAdmin}
