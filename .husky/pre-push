@@ -11,6 +11,14 @@ RESET="\033[0m"
 
 echo "🔒 Checking commit signatures..."
 
+# Read stdin into a temp file
+TMP_FILE=$(mktemp)
+cat > "$TMP_FILE"
+
+if [ ! -s "$TMP_FILE" ]; then
+  echo "⚠️ Validations wont apply when current branch and remote branch being pushed to are different."
+fi
+
 while read local_ref local_sha remote_ref remote_sha; do
   # Determine range of commits
   if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
@@ -130,6 +138,8 @@ while read local_ref local_sha remote_ref remote_sha; do
       exit 1
     fi
   fi
-done
+done < "$TMP_FILE"
+
+rm -f "$TMP_FILE"
 
 echo "${GREEN}✅ No unsigned commits found${RESET}"
