@@ -16,7 +16,7 @@ TMP_FILE=$(mktemp)
 cat > "$TMP_FILE"
 
 if [ ! -s "$TMP_FILE" ]; then
-  echo "⚠️ Validations wont apply when current branch and remote branch being pushed to are different."
+  echo "⚠️ Validations won't apply when current branch and remote branch being pushed to are different."
 fi
 
 while read local_ref local_sha remote_ref remote_sha; do
@@ -85,7 +85,6 @@ while read local_ref local_sha remote_ref remote_sha; do
       unsigned_commits="$unsigned_commits $commit"
     fi
   done
-	exit 1
 
   # If there are unsigned commits, prompt the developer
   if [ -n "$unsigned_commits" ]; then
