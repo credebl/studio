@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DeleteIcon } from '@/config/svgs/DeleteIcon'
+import { DestructiveConfirmation } from '@/config/svgs/Auth'
 import Loader from '@/components/Loader'
 import { RootState } from '@/lib/store'
 import { SESSION_TYPE } from '@/components/types/Sessions'
@@ -18,7 +19,6 @@ import { useAppSelector } from '@/lib/hooks'
 
 function Sessions(): JSX.Element {
   const [loading, setLoading] = useState(true)
-  const [showDetails, setShowDetails] = useState<string>('')
   const [sessions, setSessions] = useState<Session[]>()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
@@ -43,7 +43,19 @@ function Sessions(): JSX.Element {
         typeof response !== 'string' &&
         response?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS
       ) {
-        setSessions(response.data.data)
+        const sortByDate = response.data.data
+          .sort(
+            (a: Session, b: Session) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          )
+          .filter((session: Session) => session.id !== currentSession)
+        const activeSession = response.data.data.filter(
+          (session: Session) => session.id === currentSession,
+        )
+        if (activeSession) {
+          sortByDate.unshift(...activeSession)
+        }
+        setSessions(sortByDate)
       }
     } catch (error) {
       console.error('Error fetching user sessions:', error)
@@ -158,7 +170,7 @@ function Sessions(): JSX.Element {
           openModal={showConfirmation}
           closeModal={() => setShowConfirmation(false)}
           onSuccess={handleDelete}
-          message={'This Session will be Deleted Permanently.'}
+          message={'This session will be deleted permanently.'}
           buttonTitles={[
             confirmationMessages.cancelConfirmation,
             confirmationMessages.sureConfirmation,
@@ -166,6 +178,7 @@ function Sessions(): JSX.Element {
           isProcessing={loading}
           setFailure={setError}
           setSuccess={setSuccess}
+          image={<DestructiveConfirmation />}
         />
         {sessions &&
           Array.isArray(sessions) &&
@@ -177,9 +190,9 @@ function Sessions(): JSX.Element {
             return (
               <div
                 key={record?.id}
-                className="mt-2 rounded-md border p-4 md:flex-row"
+                className="mt-2 h-auto rounded-md border p-4 md:flex-row lg:h-[130px]"
               >
-                <div className="flex flex-col items-center justify-between md:flex-row">
+                <div className="flex h-full cursor-default flex-wrap items-center justify-between">
                   <div className="flex items-center gap-4">
                     <div className="px-2">
                       {clientInfo ? (
@@ -194,9 +207,9 @@ function Sessions(): JSX.Element {
                     </div>
                     <div>
                       {clientInfo?.ip && (
-                        <div>
+                        <div className="font-mono text-sm font-semibold">
                           IP:{' '}
-                          <span className="text-muted-foreground break-all">
+                          <span className="break-all">
                             {clientInfo?.ip ?? 'Not Available'}
                           </span>
                         </div>
@@ -223,8 +236,38 @@ function Sessions(): JSX.Element {
                       </div>
                     </div>
                   </div>
+                  {clientInfo &&
+                    clientInfo?.ip &&
+                    record.sessionType !== SESSION_TYPE.ORGANIZATION && (
+                      <div
+                        className={
+                          'lg:position-static relative left-4 grid h-auto w-[250px] items-center justify-start overflow-hidden rounded-md p-4 pl-16 text-sm transition-all duration-500 lg:pl-4'
+                        }
+                      >
+                        <div className="flex justify-start">
+                          <dt>Browser :&nbsp;</dt>
+                          <dd className="text-muted-foreground">
+                            {clientInfo?.browser}
+                          </dd>
+                        </div>
+                        <div className="flex justify-start">
+                          <dt>OS :&nbsp;</dt>
+                          <dd className="text-muted-foreground">
+                            {clientInfo?.os}
+                          </dd>
+                        </div>
+                        <div className="flex justify-start">
+                          <dt>Device :&nbsp;</dt>
+                          <dd className="text-muted-foreground">
+                            {clientInfo?.deviceType}
+                          </dd>
+                        </div>
+                      </div>
+                    )}
                   <div
-                    className={`sm:w-0.5/3 flex h-[100px] items-center ${record.sessionType !== SESSION_TYPE.ORGANIZATION && clientInfo?.ip && 'pt-10'}`}
+                    className={
+                      'flex h-[50px] grow items-center justify-end md:w-[130px] lg:grow-0'
+                    }
                   >
                     {record?.id === currentSession ? (
                       <Badge className="success-alert rounded-full p-1 px-3">
@@ -250,50 +293,6 @@ function Sessions(): JSX.Element {
                     )}
                   </div>
                 </div>
-
-                {clientInfo?.ip &&
-                  record.sessionType !== SESSION_TYPE.ORGANIZATION && (
-                    <Button
-                      onClick={() => {
-                        setShowDetails((prev) => {
-                          if (record.id === prev) {
-                            return ''
-                          }
-                          return record.id
-                        })
-                      }}
-                      variant={'secondary'}
-                      className="mt-2 h-[30px] px-2"
-                    >
-                      {showDetails === record.id
-                        ? 'Hide Details'
-                        : 'Show Details'}
-                    </Button>
-                  )}
-                {clientInfo && (
-                  <div
-                    className={`${showDetails === record.id ? 'mt-6 h-auto rounded-md border p-4' : ''} mt-2 flex h-[0px] items-center justify-between overflow-hidden text-sm transition-all duration-500`}
-                  >
-                    <div className="grid justify-center">
-                      <dt>Browser</dt>
-                      <dd className="text-muted-foreground">
-                        {clientInfo?.browser}
-                      </dd>
-                    </div>
-                    <div className="grid justify-center">
-                      <dt>OS</dt>
-                      <dd className="text-muted-foreground">
-                        {clientInfo?.os}
-                      </dd>
-                    </div>
-                    <div className="grid justify-center">
-                      <dt>Device</dt>
-                      <dd className="text-muted-foreground">
-                        {clientInfo?.deviceType}
-                      </dd>
-                    </div>
-                  </div>
-                )}
               </div>
             )
           })}
