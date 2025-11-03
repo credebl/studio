@@ -52,7 +52,7 @@ function Sessions(): JSX.Element {
         const activeSession = response.data.data.filter(
           (session: Session) => session.id === currentSession,
         )
-        if (activeSession) {
+        if (activeSession.length > 0) {
           sortByDate.unshift(...activeSession)
         }
         setSessions(sortByDate)
