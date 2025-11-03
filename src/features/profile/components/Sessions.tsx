@@ -190,10 +190,10 @@ function Sessions(): JSX.Element {
             return (
               <div
                 key={record?.id}
-                className="mt-2 h-auto rounded-md border p-4 md:flex-row lg:h-[130px]"
+                className="mt-2 h-auto rounded-md border p-4 md:flex-row"
               >
                 <div className="flex h-full cursor-default flex-wrap items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex min-w-[300px] items-center gap-4">
                     <div className="px-2">
                       {clientInfo ? (
                         getSessionIcon(record, clientInfo)
@@ -241,7 +241,7 @@ function Sessions(): JSX.Element {
                     record.sessionType !== SESSION_TYPE.ORGANIZATION && (
                       <div
                         className={
-                          'lg:position-static relative left-4 grid h-auto w-[250px] items-center justify-start overflow-hidden rounded-md p-4 pl-16 text-sm transition-all duration-500 lg:pl-4'
+                          'grid h-auto w-[250px] items-center justify-start overflow-hidden rounded-md p-4 pl-20 text-sm transition-all duration-500 lg:pl-4'
                         }
                       >
                         <div className="flex justify-start">
@@ -285,7 +285,7 @@ function Sessions(): JSX.Element {
                             setShowConfirmation(true)
                             setDeletionId(record.id)
                           }}
-                          className="flex justify-end bg-transparent p-0 shadow-none hover:bg-transparent focus:ring-0"
+                          className="flex justify-end bg-transparent p-0 px-3 shadow-none hover:bg-transparent focus:ring-0"
                         >
                           <DeleteIcon />
                         </Button>
