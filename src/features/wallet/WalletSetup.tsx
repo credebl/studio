@@ -38,7 +38,7 @@ const WalletSetup = (): React.JSX.Element => {
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId') ?? ''
   const clientAlias = searchParams.get('clientAlias')
-  const isVerifierClient = clientAlias ? true : false
+  const isVerifierClient = clientAlias?.trim().toUpperCase() === 'VERIFIER'
 
   const handleSharedWalletCreated = (response?: any): void => {
     setSharedWalletResponse(response)
@@ -60,7 +60,7 @@ const WalletSetup = (): React.JSX.Element => {
     }
   }
 
-  const handleContinue = (): void => router.push('/template-creation')
+  const handleContinue = (): void => router.push(`/template-creation?orgId=${orgId}`)
   const handleSkip = (): void => router.push('/dashboard')
 
   const isAnyWalletCreated = !!(sharedWalletResponse || dedicatedWalletResponse)
@@ -78,7 +78,6 @@ const WalletSetup = (): React.JSX.Element => {
       )}
 
       <Card className="p-6">
-
         <div
           className={`${
             isAnyWalletCreated
@@ -99,7 +98,7 @@ const WalletSetup = (): React.JSX.Element => {
               htmlFor="dedicated"
               className={`cursor-pointer rounded-2xl border p-5 transition-all ${
                 isVerifierClient
-                  ? 'cursor-not-allowed opacity-50' 
+                  ? 'cursor-not-allowed opacity-50'
                   : agentType === AgentType.DEDICATED
                     ? 'border-blue-500 bg-blue-50 shadow-md'
                     : 'border-gray-200 hover:border-blue-300'
@@ -110,7 +109,7 @@ const WalletSetup = (): React.JSX.Element => {
                   id="dedicated"
                   className="border"
                   value={AgentType.DEDICATED}
-                  disabled={isVerifierClient} 
+                  disabled={isVerifierClient}
                 />
 
                 <div>
