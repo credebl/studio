@@ -43,7 +43,6 @@ const SharedAgentForm = ({ orgId, onSuccess, disabled }: SharedAgentFormProps): 
       const { data } = res
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        // ✅ Let parent handle success message
         onSuccess?.(data)
       } else {
         setError(data?.message || 'Failed to create shared wallet')

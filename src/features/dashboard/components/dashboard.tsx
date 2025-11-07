@@ -1,5 +1,6 @@
 'use client'
 
+import { IOrgAgent, IOrganisation } from '@/features/organization/components/interfaces/organization'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -12,7 +13,6 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
-import { IOrganisation } from '@/features/organization/components/interfaces/organization'
 import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
 import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
@@ -30,16 +30,18 @@ const initialPageState = {
 }
 
 export default function Dashboard(): React.JSX.Element {
-  const [walletData, setWalletData] = useState<any[]>([])
+  const [walletData, setWalletData] = useState<IOrgAgent[]>([])
   const [walletLoading, setWalletLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(initialPageState)
-  const [informativeMessage, setInformativeMessage] = useState<string | null>('')
+  const [informativeMessage, setInformativeMessage] = useState<string | null>(
+    '',
+  )
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
   const [, setWalletExists] = useState(false)
   const [activeTab, setActiveTab] = useState('Overview')
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
-  const [isWalletSetupLoading, setWalletSetupLoading] = useState<boolean>(false)
+  const [isWalletSetupLoading, setIsWalletSetupLoading] = useState<boolean>(false)
   const orgId = useAppSelector((state) => state?.organization.orgId)
   const [, setUserOrg] = useState(null)
 
@@ -105,7 +107,9 @@ export default function Dashboard(): React.JSX.Element {
   }, [])
 
   const fetchOrganizationDetails = async (): Promise<void> => {
-    if (!orgId) return
+    if (!orgId) {
+      return
+    }
     try {
       setWalletLoading(true)
       const response = await getOrganizationById(orgId)
@@ -124,7 +128,6 @@ export default function Dashboard(): React.JSX.Element {
           dispatch(setLedgerId(firstLedgerId))
         }
 
-        console.log('✅ orgAgentsList', orgAgentsList)
         setWalletData(orgAgentsList)
         setWalletExists(orgAgentsList.length > 0)
       }
@@ -142,13 +145,9 @@ export default function Dashboard(): React.JSX.Element {
   }, [orgId])
 
   const handleCreateWallet = (): void => {
-    setWalletSetupLoading(true)
+    setIsWalletSetupLoading(true)
     router.push(`wallet-setup?orgId=${orgId}`)
   }
-
-  // ✅ Safe logging
-  console.log('walletData', walletData)
-  console.log('walletData----', walletData[0]?.orgDid)
 
   const currentWallet = walletData[0]
 
@@ -253,10 +252,7 @@ export default function Dashboard(): React.JSX.Element {
             <TabsTrigger value="Overview" className="relative">
               Overview
             </TabsTrigger>
-            <TabsTrigger
-              value="Wallet"
-              disabled={walletData.length === 0}
-            >
+            <TabsTrigger value="Wallet" disabled={walletData.length === 0}>
               Wallet
             </TabsTrigger>
           </TabsList>
