@@ -71,7 +71,7 @@ const TemplateCreation = (): React.JSX.Element => {
 
     // Domain validation for did:web
     if (selectedDid === 'did:web' && !domainValue.trim()) {
-      setDomainError('Domain is required for Web method')
+      setDomainError('Domain is required')
       isValid = false
     }
 
