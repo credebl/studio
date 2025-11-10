@@ -30,7 +30,7 @@ const SetDomainValueInput = ({
         placeholder="Please enter domain"
         className={cn(
           'block h-11 w-full truncate rounded-lg p-2.5 text-sm', 
-          domainError ? 'border-destructive focus-visible:ring-destructive' : ''
+          domainError ? 'border-destructive' : ''
         )}
       />
 
