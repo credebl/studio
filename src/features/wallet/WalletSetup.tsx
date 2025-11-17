@@ -18,6 +18,7 @@ import { Card } from '@/components/ui/card'
 import DedicatedAgentForm from './DedicatedAgentForm'
 import { Label } from '@/components/ui/label'
 import SharedAgentForm from './SharedAgentForm'
+import Stepper from '@/components/StepperComponent'
 
 export enum AgentType {
   SHARED = 'shared',
@@ -29,6 +30,7 @@ const WalletSetup = (): React.JSX.Element => {
   const [alert, setAlert] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const totalSteps = 4
 
   const [sharedWalletResponse, setSharedWalletResponse] = useState<any>(null)
   const [dedicatedWalletResponse, setDedicatedWalletResponse] =
@@ -60,7 +62,8 @@ const WalletSetup = (): React.JSX.Element => {
     }
   }
 
-  const handleContinue = (): void => router.push(`/template-creation?orgId=${orgId}`)
+  const handleContinue = (): void =>
+    router.push(`/template-creation?orgId=${orgId}`)
   const handleSkip = (): void => router.push('/dashboard')
 
   const isAnyWalletCreated = !!(sharedWalletResponse || dedicatedWalletResponse)
@@ -85,7 +88,17 @@ const WalletSetup = (): React.JSX.Element => {
               : ''
           }`}
         >
-          <h2 className="mb-6 text-xl font-semibold">Wallet Type</h2>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold">Wallet type</h1>
+              <p className="">Setup wallet for your organization</p>
+            </div>
+
+            <div className="text-muted-foreground text-sm">
+              Step 2 of {totalSteps}
+            </div>
+          </div>
+          <Stepper currentStep={2} totalSteps={totalSteps} />
 
           <RadioGroup
             value={agentType}
@@ -177,7 +190,7 @@ const WalletSetup = (): React.JSX.Element => {
 
       <Dialog open={isDialogOpen}>
         <DialogContent
-          className="max-w-md rounded-2xl text-center"
+          className="max-w-md rounded-2xl text-center [&>button]:hidden"
           onInteractOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >

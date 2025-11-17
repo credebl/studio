@@ -29,6 +29,7 @@ import { DidMethod } from '@/common/enums'
 import PageContainer from '@/components/layout/page-container'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
+import Stepper from '@/components/StepperComponent'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 import { useSearchParams } from 'next/navigation'
@@ -44,8 +45,8 @@ const TemplateCreation = (): React.JSX.Element => {
   const [alert, setAlert] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
-  const [domainError, setDomainError] = useState<string | null>(null) // New state for domain error
-
+  const [domainError, setDomainError] = useState<string | null>(null)
+ const totalSteps = 4
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
 
@@ -62,20 +63,16 @@ const TemplateCreation = (): React.JSX.Element => {
     return visiblePart + maskedPart
   }
 
-  // Validation function
   const validateForm = (): boolean => {
-    // Clear previous errors
     setDomainError(null)
 
     let isValid = true
 
-    // Domain validation for did:web
     if (selectedDid === 'did:web' && !domainValue.trim()) {
       setDomainError('Domain is required')
       isValid = false
     }
 
-    // Add other validations here if needed
     if (!selectedDid) {
       setAlert('Please select a DID method before continuing.')
       isValid = false
@@ -84,9 +81,7 @@ const TemplateCreation = (): React.JSX.Element => {
     return isValid
   }
 
-  // ⚡ Submit Handler with validation
   const handleSubmit = async (): Promise<void> => {
-    // Validate form before submission
     if (!validateForm()) {
       return
     }
@@ -104,7 +99,7 @@ const TemplateCreation = (): React.JSX.Element => {
       if (fullMethod === DidMethod.INDY) {
         network = didParts.slice(-2).join(':')
       } else if (fullMethod === DidMethod.POLYGON) {
-        network = didParts.slice(-1).join(':')
+        network = didParts.slice(-2).join(':')
       }
 
       const payload = {
@@ -134,7 +129,6 @@ const TemplateCreation = (): React.JSX.Element => {
       }
     } catch (error: any) {
       console.error('Error submitting shared wallet:', error)
-      // Handle API validation errors
       if (error.response?.data?.message) {
         const errorMessage = Array.isArray(error.response.data.message)
           ? error.response.data.message.join(', ')
@@ -148,16 +142,14 @@ const TemplateCreation = (): React.JSX.Element => {
     }
   }
 
-  // Handle domain change and clear error when user types
   const handleDomainChange = (value: string) => {
     setDomainValue(value)
-    // Clear error when user starts typing
     if (domainError && value.trim()) {
       setDomainError(null)
     }
   }
 
-  // ✅ UI Options
+
   const protocolOptions = [
     {
       id: 'didcomm',
@@ -218,9 +210,20 @@ const TemplateCreation = (): React.JSX.Element => {
     <PageContainer>
       <div className="min-h-screen bg-gray-50 p-6 md:p-10">
         <div className="mx-auto max-w-4xl space-y-8">
-          {/* Step 1 - Select Protocol */}
           <Card className="border border-gray-200 shadow-sm">
+              
             <CardHeader className="border-b border-gray-100 bg-white">
+              <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-semibold">Wallet type</h1>
+              <p className="">Setup wallet for your organization</p>
+            </div>
+
+            <div className="text-muted-foreground text-sm">
+              Step 3 of {totalSteps}
+            </div>
+          </div>
+          <Stepper currentStep={3} totalSteps={totalSteps} />
               <CardTitle className="text-lg font-semibold text-gray-900">
                 Select Protocol
               </CardTitle>
@@ -264,11 +267,10 @@ const TemplateCreation = (): React.JSX.Element => {
             </CardContent>
           </Card>
 
-          {/* Step 2 - Credential Type */}
           {selectedProtocol && (
             <Card className="border border-gray-200 shadow-sm">
               <div className="m-4">
-                {/* Alerts */}
+        
                 {alert && (
                   <AlertComponent
                     message={alert}
@@ -324,7 +326,6 @@ const TemplateCreation = (): React.JSX.Element => {
                   ))}
                 </div>
 
-                {/* DID Dropdown */}
                 {selectedProtocol === 'didcomm' && selectedOption && (
                   <div className="mt-6">
                     <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -334,7 +335,7 @@ const TemplateCreation = (): React.JSX.Element => {
                       value={selectedDid ?? ''}
                       onValueChange={(value) => {
                         setSelectedDid(value)
-                        setDomainError(null) // Clear errors when DID changes
+                        setDomainError(null) 
                       }}
                     >
                       <SelectTrigger className="w-full md:w-1/2">
@@ -374,7 +375,6 @@ const TemplateCreation = (): React.JSX.Element => {
               </CardHeader>
 
               <CardContent className="space-y-6 pt-6">
-                {/* Private Key Input */}
                 <div>
                   <SetPrivateKeyValueInput
                     orgId={orgId}
@@ -383,7 +383,6 @@ const TemplateCreation = (): React.JSX.Element => {
                   />
                 </div>
 
-                {/* Instruction Steps */}
                 <div className="space-y-5">
                   <h4 className="text-sm font-medium text-gray-800">
                     Steps to get Polygon Testnet Tokens
@@ -440,7 +439,6 @@ const TemplateCreation = (): React.JSX.Element => {
             </Card>
           )}
 
-          {/* SUBMIT BUTTON */}
           {selectedDid && (
             <div className="mt-6 flex flex-col items-end space-y-4">
               <Button

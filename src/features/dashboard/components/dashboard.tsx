@@ -20,6 +20,7 @@ import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
+import { setFirstName } from '@/lib/profileSlice'
 import { setLedgerId } from '@/lib/orgSlice'
 import { useRouter } from 'next/navigation'
 
@@ -47,6 +48,8 @@ export default function Dashboard(): React.JSX.Element {
 
   const dispatch = useAppDispatch()
   const router = useRouter()
+const firstName = useAppSelector((state) => state.profile.firstName)
+
 
   const getAllInvitations = async (): Promise<void> => {
     try {
@@ -179,7 +182,7 @@ export default function Dashboard(): React.JSX.Element {
 
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋
+            Hi, Welcome {firstName} 👋
           </h2>
         </div>
 
