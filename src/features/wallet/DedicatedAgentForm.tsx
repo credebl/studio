@@ -11,14 +11,27 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
-import SOCKET from '@/config/SocketConfig'
-import { WalletSpinupSteps } from '../common/enum'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { setAgentConfigDetails } from '@/app/api/Agent'
 
 interface DedicatedAgentFormProps {
   orgId: string
-  onSuccess?: (data?: any) => void
+  onSuccess?: (data?: WalletResponse) => void
+}
+
+export interface WalletData {
+  id: string
+  orgId: string
+  agentSpinUpStatus: number
+  agentEndPoint: string
+  tenantId: string | null
+  walletName: string
+}
+
+export interface WalletResponse {
+  statusCode: number
+  message: string
+  data: WalletData
 }
 
 const DedicatedAgentForm = ({
@@ -38,7 +51,7 @@ const DedicatedAgentForm = ({
     walletName: string
     agentEndpoint: string
     apiKey: string
-  }) => {
+  }): Promise<void> => {
     setError(null)
     setLoading(true)
 
@@ -52,9 +65,7 @@ const DedicatedAgentForm = ({
       const res = (await setAgentConfigDetails(payload, orgId)) as AxiosResponse
 
       const { data } = res
-      if (
-        data?.statusCode === apiStatusCodes.API_STATUS_CREATED 
-      ) {
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         onSuccess?.(data)
       }
     } catch (err) {
@@ -78,7 +89,6 @@ const DedicatedAgentForm = ({
       >
         {({ errors, touched }) => (
           <Form className="space-y-6">
-            {/* Wallet Name */}
             <div>
               <Label htmlFor="walletName">Wallet Name</Label>
               <Field
@@ -89,13 +99,12 @@ const DedicatedAgentForm = ({
                 className="mt-2"
               />
               {errors.walletName && touched.walletName && (
-                <p className="text-sm text-destructive mt-1">
+                <p className="text-destructive mt-1 text-sm">
                   {errors.walletName}
                 </p>
               )}
             </div>
 
-            {/* Agent Endpoint */}
             <div>
               <Label htmlFor="agentEndpoint">Agent Endpoint</Label>
               <Field
@@ -106,13 +115,12 @@ const DedicatedAgentForm = ({
                 className="mt-2"
               />
               {errors.agentEndpoint && touched.agentEndpoint && (
-                <p className="text-sm text-destructive mt-1">
+                <p className="text-destructive mt-1 text-sm">
                   {errors.agentEndpoint}
                 </p>
               )}
             </div>
 
-            {/* API Key */}
             <div>
               <Label htmlFor="apiKey">API Key</Label>
               <Field
@@ -123,13 +131,10 @@ const DedicatedAgentForm = ({
                 className="mt-2"
               />
               {errors.apiKey && touched.apiKey && (
-                <p className="text-sm text-destructive mt-1">
-                  {errors.apiKey}
-                </p>
+                <p className="text-destructive mt-1 text-sm">{errors.apiKey}</p>
               )}
             </div>
 
-            {/* Error Alert */}
             {error && (
               <AlertComponent
                 message={error}
@@ -138,7 +143,6 @@ const DedicatedAgentForm = ({
               />
             )}
 
-            {/* Submit Button */}
             <div className="flex justify-end">
               <Button type="submit" disabled={loading}>
                 {loading ? <Loader /> : 'Create Dedicated Wallet'}

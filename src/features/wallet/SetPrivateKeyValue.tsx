@@ -24,7 +24,6 @@ interface IProps {
   orgId?: string
   privateKeyValue: string
   setPrivateKeyValue: (val: string) => void
-  // Remove formik from props since we're not using it anymore
 }
 
 const SetPrivateKeyValueInput = ({
@@ -37,7 +36,6 @@ const SetPrivateKeyValueInput = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // ✅ Check wallet balance using ethers.js
   const checkWalletBalance = async (
     privateKey: string,
     network: Network,
@@ -65,17 +63,14 @@ const SetPrivateKeyValueInput = ({
       return null
     }
   }
-
-  // ✅ Check balance when private key value changes
   useEffect(() => {
-    if (privateKeyValue && privateKeyValue.length === 64) {
+    if (privateKeyValue?.length === 64) {
       checkWalletBalance(privateKeyValue, Network.TESTNET)
     } else {
       setErrorMessage(null)
     }
   }, [privateKeyValue])
 
-  // ✅ Reset state when checkbox toggles
   useEffect(() => {
     setPrivateKeyValue('')
     setErrorMessage(null)
@@ -84,11 +79,12 @@ const SetPrivateKeyValueInput = ({
     }
   }, [havePrivateKey])
 
-  // ✅ Generate new Polygon key pair
   const generatePolygonKeyValuePair = async (): Promise<void> => {
     setLoading(true)
     try {
-      const resCreatePolygonKeys = await createPolygonKeyValuePair(orgId as string)
+      const resCreatePolygonKeys = await createPolygonKeyValuePair(
+        orgId as string,
+      )
       const { data } = resCreatePolygonKeys as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -106,7 +102,6 @@ const SetPrivateKeyValueInput = ({
 
   return (
     <div className="relative mb-3">
-      {/* ✅ Checkbox toggle */}
       <div className="mt-4 flex items-center gap-2">
         <Checkbox
           id="havePrivateKey"
@@ -116,7 +111,6 @@ const SetPrivateKeyValueInput = ({
         <Label htmlFor="havePrivateKey">Already have a private key?</Label>
       </div>
 
-      {/* ✅ If user does NOT have a private key */}
       {!havePrivateKey ? (
         <>
           <GenerateBtnPolygon

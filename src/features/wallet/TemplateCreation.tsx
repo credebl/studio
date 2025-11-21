@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { CheckCircle2, Network, Share2 } from 'lucide-react'
+import { CheckCircle2, Info } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {
   Select,
@@ -17,10 +17,13 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  apiStatusCodes,
-  polygonFaucet,
-  polygonScan,
-} from '@/config/CommonConstant'
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import { didExamples, protocolOptions } from '@/config/didOptions'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
@@ -30,9 +33,9 @@ import PageContainer from '@/components/layout/page-container'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
+import { apiStatusCodes } from '@/config/CommonConstant'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
-import { useSearchParams } from 'next/navigation'
 
 const TemplateCreation = (): React.JSX.Element => {
   const [selectedProtocol, setSelectedProtocol] = useState<string | null>(null)
@@ -40,28 +43,23 @@ const TemplateCreation = (): React.JSX.Element => {
   const [isApiInProgress, setIsApiInProgress] = useState<boolean>(false)
   const [selectedDid, setSelectedDid] = useState<string | null>(null)
   const [seeds, setSeeds] = useState<string>('')
-  const [maskedSeeds, setMaskedSeeds] = useState<string>('')
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [alert, setAlert] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [domainError, setDomainError] = useState<string | null>(null)
- const totalSteps = 4
+  const [_createdDid, setCreatedDid] = useState<string | null>(null)
+  const [step, setStep] = useState(3)
+
+  const totalSteps = 4
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
+  const router = useRouter()
 
   useEffect(() => {
     const generatedSeeds = nanoid(32)
-    const masked = maskSeeds(generatedSeeds)
     setSeeds(generatedSeeds)
-    setMaskedSeeds(masked)
   }, [])
-
-  const maskSeeds = (seed: string): string => {
-    const visiblePart = seed.slice(0, -10)
-    const maskedPart = seed.slice(-10).replace(/./g, '*')
-    return visiblePart + maskedPart
-  }
 
   const validateForm = (): boolean => {
     setDomainError(null)
@@ -80,25 +78,23 @@ const TemplateCreation = (): React.JSX.Element => {
 
     return isValid
   }
-
   const handleSubmit = async (): Promise<void> => {
     if (!validateForm()) {
       return
     }
 
     try {
+      setStep(4)
       setIsApiInProgress(true)
       setAlert(null)
       setSuccess(null)
 
       const didParts = selectedDid!.split(':')
-      const fullMethod = didParts.slice(0, 2).join(':')
-      const method = didParts[1]
+      const [didPrefix, method] = didParts
+      const fullMethod = `${didPrefix}:${method}`
       let network = ''
 
-      if (fullMethod === DidMethod.INDY) {
-        network = didParts.slice(-2).join(':')
-      } else if (fullMethod === DidMethod.POLYGON) {
+      if (fullMethod === DidMethod.INDY || fullMethod === DidMethod.POLYGON) {
         network = didParts.slice(-2).join(':')
       }
 
@@ -116,121 +112,137 @@ const TemplateCreation = (): React.JSX.Element => {
         isPrimaryDid: true,
       }
 
-      console.log('🚀 Payload for createDid:', payload)
-
       const spinupRes = await createDid(orgId!, payload)
       const { data } = spinupRes as AxiosResponse
+
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        const generatedDid = data?.did || data?.data?.did || data?.result?.did
+
+        if (!generatedDid) {
+          console.error('API Response:', data)
+          setAlert(
+            'DID created but could not retrieve DID identifier. Please check the response.',
+          )
+          return
+        }
+
+        setCreatedDid(generatedDid)
         setSuccess(data?.message)
         setAlert(null)
+
+        const params = new URLSearchParams({
+          protocol: selectedProtocol || '',
+          credentialType: selectedOption || '',
+          didMethod: selectedDid || '',
+          generatedDid,
+          orgId: orgId || '',
+        })
+        router.push(`/did-details?${params.toString()}`)
       } else {
         setAlert(data?.message || 'Failed to create DID')
         setSuccess(null)
       }
-    } catch (error: any) {
-      console.error('Error submitting shared wallet:', error)
-      if (error.response?.data?.message) {
-        const errorMessage = Array.isArray(error.response.data.message)
-          ? error.response.data.message.join(', ')
-          : error.response.data.message
-        setAlert(errorMessage)
-      } else {
-        setAlert('Error creating DID.')
-      }
+    } catch (error) {
+      console.error('Error creating did', error)
     } finally {
       setIsApiInProgress(false)
     }
   }
 
-  const handleDomainChange = (value: string) => {
+  const handleDomainChange = (value: string): void => {
     setDomainValue(value)
     if (domainError && value.trim()) {
       setDomainError(null)
     }
   }
 
+  type SubOption = {
+    id: string
+    title: string
+    desc: string
+  }
 
-  const protocolOptions = [
-    {
-      id: 'didcomm',
-      title: 'DIDComm',
-      desc: 'Use decentralized identifiers for peer-to-peer verifiable communication.',
-      icon: <Network className="h-6 w-6 text-blue-600" />,
-    },
-    {
-      id: 'oidc',
-      title: 'OIDC',
-      desc: 'Use OpenID Connect-based verifiable credential exchange.',
-      icon: <Share2 className="h-6 w-6 text-green-600" />,
-    },
-  ]
+  let subOptions: SubOption[] = []
+  if (selectedProtocol === 'didcomm') {
+    subOptions = [
+      {
+        id: 'anoncreds',
+        title: 'AnonCreds',
+        desc: 'Privacy-preserving credentials issued over DIDComm.',
+      },
+      {
+        id: 'w3c',
+        title: 'W3C/JSONLD',
+        desc: 'W3C Verifiable Credentials compatible with DIDComm transport.',
+      },
+    ]
+  } else if (selectedProtocol === 'oid') {
+    subOptions = [
+      {
+        id: 'mdoc',
+        title: 'MDOC',
+        desc: 'Mobile Document (ISO/IEC 18013-5) via OID4VC.',
+      },
+      {
+        id: 'sdjwt',
+        title: 'SD-JWT',
+        desc: 'Selective Disclosure JWT-based credentials for OID4VC.',
+      },
+    ]
+  } else {
+    subOptions = []
+  }
 
-  const subOptions =
-    selectedProtocol === 'didcomm'
-      ? [
-          {
-            id: 'anoncreds',
-            title: 'AnonCreds',
-            desc: 'Privacy-preserving credentials issued over DIDComm.',
-          },
-          {
-            id: 'w3c',
-            title: 'W3C',
-            desc: 'W3C Verifiable Credentials compatible with DIDComm transport.',
-          },
-        ]
-      : selectedProtocol === 'oidc'
-        ? [
-            {
-              id: 'mdoc',
-              title: 'MDOC',
-              desc: 'Mobile Document (ISO/IEC 18013-5) via OIDC4VC.',
-            },
-            {
-              id: 'sdjwt',
-              title: 'SD-JWT',
-              desc: 'Selective Disclosure JWT-based credentials for OIDC4VC.',
-            },
-          ]
-        : []
-
-  const didOptions =
-    selectedOption === 'anoncreds'
-      ? [
-          'did:indy:bcovrin:testnet',
-          'did:indy:indicio:demonet',
-          'did:indy:indicio:mainnet',
-          'did:indy:indicio:testnet',
-        ]
-      : selectedOption === 'w3c'
-        ? ['did:polygon:testnet', 'did:polygon:mainnet', 'did:key', 'did:web']
-        : []
+  let didOptions: string[] = []
+  if (selectedOption === 'anoncreds') {
+    didOptions = [
+      'did:indy:bcovrin:testnet',
+      'did:indy:indicio:demonet',
+      'did:indy:indicio:mainnet',
+      'did:indy:indicio:testnet',
+    ]
+  } else if (selectedOption === 'w3c') {
+    didOptions = [
+      'did:polygon:testnet',
+      'did:polygon:mainnet',
+      'did:key',
+      'did:web',
+    ]
+  } else {
+    didOptions = []
+  }
 
   return (
     <PageContainer>
-      <div className="min-h-screen bg-gray-50 p-6 md:p-10">
+      <div className="bg-background min-h-screen p-6 md:p-10">
         <div className="mx-auto max-w-4xl space-y-8">
-          <Card className="border border-gray-200 shadow-sm">
-              
-            <CardHeader className="border-b border-gray-100 bg-white">
+          <Card className="border-border border shadow-sm">
+            <CardHeader className="border-border bg-background border-b">
               <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold">Wallet type</h1>
-              <p className="">Setup wallet for your organization</p>
-            </div>
+                <div>
+                  <h1 className="text-foreground text-2xl font-semibold">
+                    Wallet type
+                  </h1>
+                  <p className="text-muted-foreground">
+                    Setup wallet for your organization
+                  </p>
+                </div>
 
-            <div className="text-muted-foreground text-sm">
-              Step 3 of {totalSteps}
-            </div>
-          </div>
-          <Stepper currentStep={3} totalSteps={totalSteps} />
-              <CardTitle className="text-lg font-semibold text-gray-900">
+                <div className="text-muted-foreground text-sm">
+                  Step {step} of {totalSteps}
+                </div>
+              </div>
+
+              <Stepper currentStep={step} totalSteps={totalSteps} />
+
+              <CardTitle className="text-foreground text-lg font-semibold">
                 Select Protocol
               </CardTitle>
-              <CardDescription className="text-sm text-gray-500">
+              <CardDescription className="text-muted-foreground text-sm">
                 Choose the protocol to issue your credential.
               </CardDescription>
             </CardHeader>
+
             <CardContent className="pt-6">
               <div className="grid gap-4 md:grid-cols-2">
                 {protocolOptions.map((option) => (
@@ -245,22 +257,37 @@ const TemplateCreation = (): React.JSX.Element => {
                     }}
                     className={`relative rounded-xl border-2 p-6 text-left transition-all ${
                       selectedProtocol === option.id
-                        ? 'border-blue-500 bg-blue-50 shadow-sm'
-                        : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                        ? 'border-primary bg-secondary shadow-sm'
+                        : 'border-border bg-background hover:border-foreground/30 hover:shadow-sm'
                     }`}
                   >
-                    {selectedProtocol === option.id && (
-                      <div className="absolute top-3 right-3">
-                        <CheckCircle2 className="h-5 w-5 text-blue-600" />
-                      </div>
+                    {option.id === 'oid' && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="bg-background absolute top-3 right-3 cursor-pointer rounded-full p-1 shadow">
+                              <Info className="text-muted-foreground h-4 w-4" />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-xs text-sm">
+                            <p>
+                              OID4VC is a suite of specifications that
+                              standardizes digital credentials using OAuth 2.0 /
+                              OpenID Connect.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                     )}
-                    <div className="mb-3 inline-flex rounded-lg bg-blue-100 p-3">
-                      {option.icon}
-                    </div>
-                    <h3 className="mb-1 font-semibold text-gray-900">
+
+                    <div className="mb-6">{option.icon}</div>
+
+                    <h3 className="text-foreground mb-1 font-semibold">
                       {option.title}
                     </h3>
-                    <p className="text-sm text-gray-600">{option.desc}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {option.desc}
+                    </p>
                   </button>
                 ))}
               </div>
@@ -268,9 +295,8 @@ const TemplateCreation = (): React.JSX.Element => {
           </Card>
 
           {selectedProtocol && (
-            <Card className="border border-gray-200 shadow-sm">
+            <Card className="border-border border shadow-sm">
               <div className="m-4">
-        
                 {alert && (
                   <AlertComponent
                     message={alert}
@@ -286,11 +312,12 @@ const TemplateCreation = (): React.JSX.Element => {
                   />
                 )}
               </div>
-              <CardHeader className="border-b border-gray-100 bg-white">
-                <CardTitle className="text-lg font-semibold text-gray-900">
+
+              <CardHeader className="border-border bg-background border-b">
+                <CardTitle className="text-foreground text-lg font-semibold">
                   Select Credential Type
                 </CardTitle>
-                <CardDescription className="text-sm text-gray-500">
+                <CardDescription className="text-muted-foreground text-sm">
                   Choose a credential format for{' '}
                   {selectedProtocol.toUpperCase()}.
                 </CardDescription>
@@ -309,48 +336,63 @@ const TemplateCreation = (): React.JSX.Element => {
                       }}
                       className={`relative rounded-xl border-2 p-6 text-left transition-all ${
                         selectedOption === option.id
-                          ? 'border-foreground bg-green-50 shadow-sm'
-                          : 'border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm'
+                          ? 'border-primary bg-secondary shadow-sm'
+                          : 'border-border bg-background hover:border-foreground/30 hover:shadow-sm'
                       }`}
                     >
                       {selectedOption === option.id && (
                         <div className="absolute top-3 right-3">
-                          <CheckCircle2 className="h-5 w-5 text-green-600" />
+                          <CheckCircle2 className="text-primary h-5 w-5" />
                         </div>
                       )}
-                      <h3 className="mb-1 font-semibold text-gray-900">
+
+                      <h3 className="text-foreground mb-1 font-semibold">
                         {option.title}
                       </h3>
-                      <p className="text-sm text-gray-600">{option.desc}</p>
+                      <p className="text-muted-foreground text-sm">
+                        {option.desc}
+                      </p>
                     </button>
                   ))}
                 </div>
 
                 {selectedProtocol === 'didcomm' && selectedOption && (
                   <div className="mt-6">
-                    <label className="mb-2 block text-sm font-medium text-gray-700">
-                      Select DID Method <span className="text-red-500">*</span>
+                    <label className="text-foreground mb-2 block text-sm font-medium">
+                      Select DID Method{' '}
+                      <span className="text-destructive">*</span>
                     </label>
-                    <Select
-                      value={selectedDid ?? ''}
-                      onValueChange={(value) => {
-                        setSelectedDid(value)
-                        setDomainError(null) 
-                      }}
-                    >
-                      <SelectTrigger className="w-full md:w-1/2">
-                        <SelectValue placeholder="Select DID" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {didOptions.map((did) => (
-                          <SelectItem key={did} value={did}>
-                            {did}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+
+                    <div className="flex items-center gap-4">
+                      <Select
+                        value={selectedDid ?? ''}
+                        onValueChange={(value) => {
+                          setSelectedDid(value)
+                          setDomainError(null)
+                        }}
+                      >
+                        <SelectTrigger className="w-full md:w-1/2">
+                          <SelectValue placeholder="Select DID" />
+                        </SelectTrigger>
+
+                        <SelectContent>
+                          {didOptions.map((did) => (
+                            <SelectItem key={did} value={did}>
+                              {did}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+
+                      {selectedDid && (
+                        <div className="text-muted-foreground rounded-md px-3 py-2 text-sm whitespace-nowrap">
+                          e.g. {didExamples[selectedDid]}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
+
                 {selectedDid === 'did:web' && (
                   <SetDomainValueInput
                     domainValue={domainValue}
@@ -363,73 +405,49 @@ const TemplateCreation = (): React.JSX.Element => {
           )}
 
           {selectedDid === 'did:polygon:testnet' && (
-            <Card className="mt-6 border border-gray-200 shadow-sm">
-              <CardHeader className="border-b border-gray-100 bg-white">
-                <CardTitle className="text-lg font-semibold text-gray-900">
+            <Card className="border-border mt-6 border shadow-sm">
+              <CardHeader>
+                <CardTitle className="text-foreground text-lg font-semibold">
                   Polygon Configuration
                 </CardTitle>
-                <CardDescription className="text-sm text-gray-500">
-                  Configure your Polygon DID by setting the private key and
-                  obtaining test tokens.
+                <CardDescription className="text-muted-foreground text-sm">
+                  Configure your Polygon DID by setting the private key.
                 </CardDescription>
               </CardHeader>
 
               <CardContent className="space-y-6 pt-6">
-                <div>
-                  <SetPrivateKeyValueInput
-                    orgId={orgId}
-                    privateKeyValue={privateKeyValue}
-                    setPrivateKeyValue={setPrivateKeyValue}
-                  />
-                </div>
+                <SetPrivateKeyValueInput
+                  orgId={orgId || ''}
+                  privateKeyValue={privateKeyValue}
+                  setPrivateKeyValue={setPrivateKeyValue}
+                />
 
+                {/* Steps */}
                 <div className="space-y-5">
-                  <h4 className="text-sm font-medium text-gray-800">
+                  <h4 className="text-foreground/80 text-sm font-medium">
                     Steps to get Polygon Testnet Tokens
                   </h4>
+
+                  {/* Step box */}
                   <div className="space-y-4">
-                    <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                    <div className="border-border bg-secondary rounded-lg border p-4">
                       <div className="flex items-start space-x-3">
-                        <span className="text-sm font-semibold text-blue-600">
+                        <span className="text-primary text-sm font-semibold">
                           Step 1
                         </span>
-                        <div className="text-sm text-gray-700">
-                          Copy your address and claim free test tokens.
-                          <div className="mt-1">
-                            Visit{' '}
-                            <a
-                              href={polygonFaucet}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-semibold text-blue-600 underline hover:text-blue-700"
-                            >
-                              Polygon Faucet
-                            </a>{' '}
-                            to request tokens.
-                          </div>
+                        <div className="text-foreground/80 text-sm">
+                          Copy your address and claim test tokens.
                         </div>
                       </div>
                     </div>
 
-                    <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+                    <div className="border-border bg-secondary rounded-lg border p-4">
                       <div className="flex items-start space-x-3">
-                        <span className="text-sm font-semibold text-blue-600">
+                        <span className="text-primary text-sm font-semibold">
                           Step 2
                         </span>
-                        <div className="text-sm text-gray-700">
-                          Verify the token balance using Polygon Scan.
-                          <div className="mt-1">
-                            Visit{' '}
-                            <a
-                              href={polygonScan}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="font-semibold text-blue-600 underline hover:text-blue-700"
-                            >
-                              Polygon Scan
-                            </a>{' '}
-                            and paste your address to confirm receipt.
-                          </div>
+                        <div className="text-foreground/80 text-sm">
+                          Verify the balance using Polygon Scan.
                         </div>
                       </div>
                     </div>
@@ -440,11 +458,11 @@ const TemplateCreation = (): React.JSX.Element => {
           )}
 
           {selectedDid && (
-            <div className="mt-6 flex flex-col items-end space-y-4">
+            <div className="mt-6 flex flex-col items-end">
               <Button
                 onClick={handleSubmit}
-                disabled={isApiInProgress || !selectedDid}
-                className="rounded-lg bg-blue-600 px-8 py-2 font-medium text-white shadow-sm transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={isApiInProgress}
+                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-8 py-2 font-medium shadow-sm disabled:opacity-50"
               >
                 {isApiInProgress ? 'Creating DID...' : 'Create DID'}
               </Button>

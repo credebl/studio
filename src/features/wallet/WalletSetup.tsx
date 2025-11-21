@@ -1,18 +1,11 @@
 'use client'
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import React, { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
-import { ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import DedicatedAgentForm from './DedicatedAgentForm'
@@ -25,16 +18,30 @@ export enum AgentType {
   DEDICATED = 'dedicated',
 }
 
+export interface WalletData {
+  id: string
+  orgId: string
+  agentSpinUpStatus: number
+  agentEndPoint: string
+  tenantId: string | null
+  walletName: string
+}
+
+export interface WalletResponse {
+  statusCode: number
+  message: string
+  data: WalletData
+}
+
 const WalletSetup = (): React.JSX.Element => {
   const [agentType, setAgentType] = useState<AgentType>(AgentType.SHARED)
   const [alert, setAlert] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const totalSteps = 4
-
-  const [sharedWalletResponse, setSharedWalletResponse] = useState<any>(null)
+  const [sharedWalletResponse, setSharedWalletResponse] =
+    useState<WalletResponse | null>()
   const [dedicatedWalletResponse, setDedicatedWalletResponse] =
-    useState<any>(null)
+    useState<WalletResponse | null>(null)
 
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -42,20 +49,18 @@ const WalletSetup = (): React.JSX.Element => {
   const clientAlias = searchParams.get('clientAlias')
   const isVerifierClient = clientAlias?.trim().toUpperCase() === 'VERIFIER'
 
-  const handleSharedWalletCreated = (response?: any): void => {
-    setSharedWalletResponse(response)
+  const handleSharedWalletCreated = (response?: WalletResponse): void => {
+    setSharedWalletResponse(response ?? null)
     if (response?.statusCode === 201) {
-      setSuccess(response.message)
       setIsDialogOpen(true)
     } else {
       setAlert(response?.message || 'Failed to create shared wallet')
     }
   }
 
-  const handleDedicatedWalletCreated = (response?: any): void => {
-    setDedicatedWalletResponse(response)
+  const handleDedicatedWalletCreated = (response?: WalletResponse): void => {
+    setDedicatedWalletResponse(response ?? null)
     if (response?.statusCode === 201) {
-      setSuccess(response.message)
       setIsDialogOpen(true)
     } else {
       setAlert(response?.message || 'Failed to create dedicated wallet')
@@ -66,7 +71,21 @@ const WalletSetup = (): React.JSX.Element => {
     router.push(`/template-creation?orgId=${orgId}`)
   const handleSkip = (): void => router.push('/dashboard')
 
-  const isAnyWalletCreated = !!(sharedWalletResponse || dedicatedWalletResponse)
+  const isAnyWalletCreated = Boolean(
+    sharedWalletResponse || dedicatedWalletResponse,
+  )
+
+  const labelClasses = (() => {
+    if (isVerifierClient) {
+      return 'cursor-not-allowed opacity-50'
+    }
+
+    if (agentType === AgentType.DEDICATED) {
+      return 'border-blue-500 bg-blue-50 shadow-md'
+    }
+
+    return 'border-gray-200 hover:border-blue-300'
+  })()
 
   return (
     <div className="mx-auto mt-10 max-w-5xl">
@@ -103,19 +122,15 @@ const WalletSetup = (): React.JSX.Element => {
           <RadioGroup
             value={agentType}
             onValueChange={(value) => {
-              if (!isAnyWalletCreated) setAgentType(value as AgentType)
+              if (!isAnyWalletCreated) {
+                setAgentType(value as AgentType)
+              }
             }}
             className="grid grid-cols-1 gap-6 md:grid-cols-2"
           >
             <Label
               htmlFor="dedicated"
-              className={`cursor-pointer rounded-2xl border p-5 transition-all ${
-                isVerifierClient
-                  ? 'cursor-not-allowed opacity-50'
-                  : agentType === AgentType.DEDICATED
-                    ? 'border-blue-500 bg-blue-50 shadow-md'
-                    : 'border-gray-200 hover:border-blue-300'
-              }`}
+              className={`cursor-pointer rounded-2xl border p-5 transition-all ${labelClasses}`}
             >
               <div className="flex items-start space-x-3">
                 <RadioGroupItem
@@ -189,44 +204,48 @@ const WalletSetup = (): React.JSX.Element => {
       </Card>
 
       <Dialog open={isDialogOpen}>
+        <DialogTitle></DialogTitle>
         <DialogContent
-          className="max-w-md rounded-2xl text-center [&>button]:hidden"
+          className="max-w-md rounded-2xl p-8 text-center [&>button]:hidden"
           onInteractOutside={(e) => e.preventDefault()}
           onEscapeKeyDown={(e) => e.preventDefault()}
         >
-          <DialogHeader>
-            <DialogTitle className="sr-only">
-              Organization Wallet Setup
-            </DialogTitle>
-          </DialogHeader>
-
-          {success && (
-            <div className="my-4">
-              <AlertComponent
-                type="success"
-                message={success}
-                onAlertClose={() => setSuccess(null)}
-              />
+          <div className="flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <svg
+                className="h-9 w-9 text-green-600"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
             </div>
-          )}
+          </div>
 
-          <p className="text-md mb-6 text-center text-gray-600">
-            Would you like to continue with template creation or skip setup for
-            now?
-          </p>
+          <h2 className="text-xl font-semibold text-gray-800">
+            Wallet created successfully!
+          </h2>
 
-          <DialogFooter className="mt-6 flex justify-center gap-4">
-            <Button
-              onClick={handleContinue}
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white"
-            >
-              Continue
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-            <Button variant="outline" onClick={handleSkip}>
+          <p className="text-gray-600">Do you want to continue or skip?</p>
+
+          <div className="flex justify-center gap-4 pt-4">
+            <Button variant="outline" onClick={handleSkip} className="px-6">
               Skip
             </Button>
-          </DialogFooter>
+
+            <Button
+              onClick={handleContinue}
+              className="bg-blue-600 px-6 text-white hover:bg-blue-700"
+            >
+              Continue
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

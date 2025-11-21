@@ -130,9 +130,9 @@ export const signInHeight = 500
 
 export const stepLabels = [
   'Organization',
-  'Agent Config',
-  'Ledger Config',
-  'Processing',
+  'Wallet setup',
+  'DID setup',
+  'Completed',
 ]
 
 export const confirmationMessages = {

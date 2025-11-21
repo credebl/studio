@@ -3,7 +3,7 @@
 import * as yup from 'yup'
 
 import { Field, Form, Formik } from 'formik'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
@@ -13,23 +13,76 @@ import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import SOCKET from '@/config/SocketConfig'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { getOrganizationById } from '@/app/api/organization'
 import { spinupSharedAgent } from '@/app/api/Agent'
 
 interface SharedAgentFormProps {
   orgId: string
-  onSuccess?: (data?: any) => void
+  onSuccess?: (data?: WalletResponse) => void
   disabled?: boolean
 }
 
-const SharedAgentForm = ({ orgId, onSuccess, disabled }: SharedAgentFormProps): React.JSX.Element => {
+export interface WalletData {
+  id: string
+  orgId: string
+  agentSpinUpStatus: number
+  agentEndPoint: string
+  tenantId: string | null
+  walletName: string
+}
+
+export interface WalletResponse {
+  statusCode: number
+  message: string
+  data: WalletData
+}
+
+const SharedAgentForm = ({
+  orgId,
+  onSuccess,
+  disabled,
+}: SharedAgentFormProps): React.JSX.Element => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [orgName, setOrgName] = useState<string>('')
+
+  const fetchOrganizationDetails = async (): Promise<void> => {
+    if (!orgId) {
+      return
+    }
+    try {
+      const response = await getOrganizationById(orgId)
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        const name = data?.data?.name || ''
+        setOrgName(name)
+      }
+    } catch (error) {
+      console.error('Error fetching organization:', error)
+    }
+  }
+
+  const generateWalletLabel = (orgName: string): string => {
+    if (!orgName) {
+      return 'Wallet'
+    }
+
+    const words = orgName.split(/\s+/).filter(Boolean)
+
+    const first = words[0] || ''
+    const second = words[1]?.substring(0, 5) || ''
+
+    const label = `${first}${second}Wallet`
+
+    return label.replace(/[^a-zA-Z0-9]/g, '').slice(0, 25)
+  }
 
   const validationSchema = yup.object({
     label: yup.string().required('Wallet label is required'),
   })
 
-  const handleSubmit = async (values: { label: string }) => {
+  const handleSubmit = async (values: { label: string }): Promise<void> => {
     setError(null)
     setLoading(true)
 
@@ -47,18 +100,23 @@ const SharedAgentForm = ({ orgId, onSuccess, disabled }: SharedAgentFormProps): 
       } else {
         setError(data?.message || 'Failed to create shared wallet')
       }
-    } catch (err: any) {
-      console.error(err)
-      setError(err.response?.data?.message || 'Something went wrong while creating shared wallet')
+    } catch (err) {
+      console.error('Failed to create shared wallet', err)
+      throw error
     } finally {
       setLoading(false)
     }
   }
 
+  useEffect(() => {
+    fetchOrganizationDetails()
+  }, [orgId])
+
   return (
     <div className="mt-6">
       <Formik
-        initialValues={{ label: '' }}
+        enableReinitialize
+        initialValues={{ label: generateWalletLabel(orgName) }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
@@ -75,7 +133,7 @@ const SharedAgentForm = ({ orgId, onSuccess, disabled }: SharedAgentFormProps): 
                 disabled={disabled}
               />
               {errors.label && touched.label && (
-                <p className="text-sm text-destructive mt-1">{errors.label}</p>
+                <p className="text-destructive mt-1 text-sm">{errors.label}</p>
               )}
             </div>
 

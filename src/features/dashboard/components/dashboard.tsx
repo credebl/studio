@@ -1,6 +1,9 @@
 'use client'
 
-import { IOrgAgent, IOrganisation } from '@/features/organization/components/interfaces/organization'
+import {
+  IOrgAgent,
+  IOrganisation,
+} from '@/features/organization/components/interfaces/organization'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -20,7 +23,6 @@ import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
-import { setFirstName } from '@/lib/profileSlice'
 import { setLedgerId } from '@/lib/orgSlice'
 import { useRouter } from 'next/navigation'
 
@@ -39,17 +41,15 @@ export default function Dashboard(): React.JSX.Element {
   )
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
-  const [, setWalletExists] = useState(false)
   const [activeTab, setActiveTab] = useState('Overview')
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
-  const [isWalletSetupLoading, setIsWalletSetupLoading] = useState<boolean>(false)
+  const [isWalletSetupLoading, setIsWalletSetupLoading] =
+    useState<boolean>(false)
   const orgId = useAppSelector((state) => state?.organization.orgId)
-  const [, setUserOrg] = useState(null)
 
   const dispatch = useAppDispatch()
   const router = useRouter()
-const firstName = useAppSelector((state) => state.profile.firstName)
-
+  const firstName = useAppSelector((state) => state.profile.firstName)
 
   const getAllInvitations = async (): Promise<void> => {
     try {
@@ -120,11 +120,6 @@ const firstName = useAppSelector((state) => state.profile.firstName)
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const orgAgentsList = data?.data?.org_agents || []
-        const userOrgRoles = data?.data?.userOrgRoles || []
-
-        if (userOrgRoles.length > 0) {
-          setUserOrg(userOrgRoles[0])
-        }
 
         const firstLedgerId = orgAgentsList[0]?.ledgers?.id
         if (firstLedgerId) {
@@ -132,7 +127,6 @@ const firstName = useAppSelector((state) => state.profile.firstName)
         }
 
         setWalletData(orgAgentsList)
-        setWalletExists(orgAgentsList.length > 0)
       }
     } catch (error) {
       console.error('Error fetching organization:', error)
@@ -152,7 +146,74 @@ const firstName = useAppSelector((state) => state.profile.firstName)
     router.push(`wallet-setup?orgId=${orgId}`)
   }
 
-  const currentWallet = walletData[0]
+  const [currentWallet] = walletData || []
+
+  let walletSection: React.ReactNode = null
+
+  if (walletLoading) {
+    walletSection = (
+      <div className="flex justify-center py-8">
+        <Loader />
+      </div>
+    )
+  } else if (walletData.length === 0) {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-col items-start">
+            <h3 className="text-xl font-semibold">
+              Wallet lets you create schemas and credential definitions
+            </h3>
+            <p className="mt-2 text-sm">
+              Please create a wallet for your organization to issue and verify
+              credentials.
+            </p>
+          </div>
+          <Button
+            disabled={isWalletSetupLoading}
+            onClick={handleCreateWallet}
+            className="min-w-[180px]"
+          >
+            {isWalletSetupLoading && <Loader />}
+            Setup Your Wallet
+            <CreateWalletIcon />
+          </Button>
+        </div>
+      </div>
+    )
+  } else if (currentWallet?.orgDid) {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-start">
+          <h3 className="text-xl font-semibold">Wallet Details</h3>
+          <p className="mt-2 text-sm text-gray-700">
+            DID is already created for your organization.
+          </p>
+        </div>
+      </div>
+    )
+  } else {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-col items-start">
+            <h3 className="text-xl font-semibold">Setup your DID</h3>
+            <p className="mt-2 text-sm">
+              Your wallet is ready! Now set up a DID for issuing and verifying
+              credentials.
+            </p>
+          </div>
+          <Button
+            onClick={() => router.push(`template-creation?orgId=${orgId}`)}
+            className="min-w-[180px]"
+          >
+            Setup Your DID
+            <CreateWalletIcon />
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <PageContainer>
@@ -185,70 +246,7 @@ const firstName = useAppSelector((state) => state.profile.firstName)
             Hi, Welcome {firstName} 👋
           </h2>
         </div>
-
-        {walletLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader />
-          </div>
-        ) : (
-          <>
-            {/* ✅ Case 1: No wallet created yet */}
-            {walletData.length === 0 ? (
-              <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
-                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
-                  <div className="flex flex-col items-start">
-                    <h3 className="text-xl font-semibold">
-                      Wallet lets you create schemas and credential definitions
-                    </h3>
-                    <p className="mt-2 text-sm">
-                      Please create a wallet for your organization to issue and
-                      verify credentials.
-                    </p>
-                  </div>
-                  <Button
-                    disabled={isWalletSetupLoading}
-                    onClick={handleCreateWallet}
-                    className="min-w-[180px]"
-                  >
-                    {isWalletSetupLoading && <Loader />}
-                    Setup Your Wallet
-                    <CreateWalletIcon />
-                  </Button>
-                </div>
-              </div>
-            ) : currentWallet?.orgDid ? (
-              // ✅ Case 2: DID already created
-              <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
-                <div className="flex flex-col items-start">
-                  <h3 className="text-xl font-semibold">Wallet Details</h3>
-                  <p className="mt-2 text-sm text-gray-700">
-                    DID is already created for your organization.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              // ✅ Case 3: Wallet exists but DID not yet created
-              <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
-                <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
-                  <div className="flex flex-col items-start">
-                    <h3 className="text-xl font-semibold">Setup your DID</h3>
-                    <p className="mt-2 text-sm">
-                      Your wallet is ready! Now set up a DID for issuing and
-                      verifying credentials.
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => router.push(`template-creation?orgId=${orgId}`)}
-                    className="min-w-[180px]"
-                  >
-                    Setup Your DID
-                    <CreateWalletIcon />
-                  </Button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
+        {walletSection}
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
