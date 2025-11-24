@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Loader } from 'lucide-react'
 import SharedAgentForm from './SharedAgentForm'
 import Stepper from '@/components/StepperComponent'
+import { apiStatusCodes } from '@/config/CommonConstant'
 
 export enum AgentType {
   SHARED = 'shared',
@@ -54,7 +55,7 @@ const WalletSetup = (): React.JSX.Element => {
 
   const handleSharedWalletCreated = (response?: WalletResponse): void => {
     setSharedWalletResponse(response ?? null)
-    if (response?.statusCode === 201) {
+    if (response?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setIsDialogOpen(true)
     } else {
       setAlert(response?.message || 'Failed to create shared wallet')
@@ -63,7 +64,7 @@ const WalletSetup = (): React.JSX.Element => {
 
   const handleDedicatedWalletCreated = (response?: WalletResponse): void => {
     setDedicatedWalletResponse(response ?? null)
-    if (response?.statusCode === 201) {
+    if (response?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
       setIsDialogOpen(true)
     } else {
       setAlert(response?.message || 'Failed to create dedicated wallet')
