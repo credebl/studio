@@ -167,7 +167,7 @@ export default function OrganizationOnboarding(): React.JSX.Element {
       .max(500)
       .required('Description is required'),
     website: yup.string().url('Enter a valid URL').nullable(),
-    // countryId: yup.number().required('Country is required'),
+    countryId: yup.number().required('Country is required'),
     stateId: yup.number().nullable(),
     cityId: yup.number().nullable(),
   })
@@ -603,14 +603,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     {!isEditMode ? (
                       <Button
                         type="submit"
-                        // disabled={
-                        //   !values.name ||
-                        //   !values.description ||
-                        //   !values.countryId ||
-                        //   (states.length > 0 && !values.stateId) ||
-                        //   (cities.length > 0 && !values.cityId) ||
-                        //   loading
-                        // }
+                        disabled={
+                          !values.name ||
+                          !values.description ||
+                          !values.countryId ||
+                          (states.length > 0 && !values.stateId) ||
+                          (cities.length > 0 && !values.cityId) ||
+                          loading
+                        }
                       >
                         {createLoading ? <Loader /> : 'Create Organization'}
                       </Button>

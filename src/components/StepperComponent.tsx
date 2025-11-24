@@ -22,11 +22,11 @@ const Stepper: React.FC<StepperProps> = ({ currentStep }) => (
               <div
                 className={`flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold shadow-md transition-all duration-300 ${
                   isCompleted
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : isActive
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-200 text-gray-500'
-                }`}
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                } `}
               >
                 {isCompleted ? (
                   <svg
@@ -46,25 +46,28 @@ const Stepper: React.FC<StepperProps> = ({ currentStep }) => (
                   stepNum
                 )}
               </div>
-
               <div
                 className={`mt-3 text-center text-xs font-medium whitespace-nowrap ${
-                  isActive || isCompleted ? 'text-gray-700' : 'text-gray-500'
-                }`}
+                  isActive || isCompleted
+                    ? 'text-foreground'
+                    : 'text-muted-foreground'
+                } `}
               >
                 {label}
               </div>
             </div>
+
+            {/* Connector Line */}
             {index < stepLabels.length - 1 && (
               <div
                 className="flex flex-1 items-center"
                 style={{ marginTop: '24px' }}
               >
-                <div className="relative h-0.5 w-full">
+                <div className="relative h-1 w-full">
                   <div
                     className={`absolute inset-0 transition-all duration-500 ${
-                      currentStep > stepNum ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
+                      currentStep > stepNum ? 'bg-primary' : 'bg-foreground/20'
+                    } `}
                   />
                 </div>
               </div>

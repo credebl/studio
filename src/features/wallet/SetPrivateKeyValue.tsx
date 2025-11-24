@@ -145,7 +145,6 @@ const SetPrivateKeyValueInput = ({
         </>
       ) : (
         <>
-          {/* ✅ If user already has a private key */}
           <div className="relative mt-3 flex items-center">
             <Input
               id="privateKeyValue"
@@ -159,7 +158,6 @@ const SetPrivateKeyValueInput = ({
             />
           </div>
 
-          {/* ✅ Balance warning */}
           {errorMessage && (
             <span className="text-destructive static bottom-0 text-xs">
               {errorMessage}

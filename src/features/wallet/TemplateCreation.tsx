@@ -1,5 +1,7 @@
 'use client'
 
+'use client'
+
 import {
   Card,
   CardContent,
@@ -7,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { InfoText, apiStatusCodes } from '@/config/CommonConstant'
 import React, { useEffect, useState } from 'react'
 import {
   Select,
@@ -32,7 +35,6 @@ import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import TooltipInfo from '@/components/TooltipInfo'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 
@@ -225,10 +227,10 @@ const TemplateCreation = (): React.JSX.Element => {
                     }`}
                   >
                     {option.id === 'didcomm' && (
-                      <TooltipInfo text="DIDComm provides secure messaging between agents and credential exchange." />
+                      <TooltipInfo text={InfoText.DIDCommInfoText} />
                     )}
                     {option.id === 'oid4vc' && (
-                      <TooltipInfo text="OID4VC is a suite of specifications that standardizes the issuance and presentation of digital credentials using OAuth 2.0 and OpenID Connect protocols" />
+                      <TooltipInfo text={InfoText.OID4VCInfoText} />
                     )}
 
                     <div className="mb-6">{option.icon}</div>
@@ -268,12 +270,12 @@ const TemplateCreation = (): React.JSX.Element => {
                         <TooltipInfo
                           text={
                             option.id === 'anoncreds'
-                              ? 'AnonCreds enables privacy-preserving credentials using zero-knowledge proofs.'
+                              ? InfoText.AnonCredsInfoText
                               : option.id === 'w3c'
-                                ? 'W3C VCDM defines interoperable Verifiable Credentials.'
+                                ? InfoText.W3CInfoText
                                 : option.id === 'mdoc'
-                                  ? 'MDOC follows ISO/IEC mobile identity standard.'
-                                  : 'SD-JWT supports selective disclosure JWT credentials.'
+                                  ? InfoText.MDOCInfoText
+                                  : InfoText.SDJWTInfoText
                           }
                         />
 

@@ -50,12 +50,7 @@ export default function DidDetails(): React.JSX.Element {
   return (
     <PageContainer>
       <div className="bg-background flex min-h-screen flex-col items-center px-6 py-10">
-        {/* MAIN OUTER CARD */}
         <Card className="bg-card mx-auto w-full max-w-4xl rounded-2xl p-10 shadow-sm">
-          {/* HEADER + STEPPER */}
-
-          {/* CENTER ICON */}
-
           <div className="flex items-center justify-between">
             <div className="pb-4">
               <h1 className="text-foreground text-2xl font-semibold">

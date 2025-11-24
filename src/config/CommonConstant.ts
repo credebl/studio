@@ -232,3 +232,15 @@ export const bulkIssuanceApiParameter = {
 }
 
 export const defaultCredeblFooterText = 'CREDEBL, a Series of LF Projects, LLC'
+
+export const InfoText = {
+  DIDCommInfoText:
+    'DIDComm provides secure messaging between agents and credential exchange.',
+  OID4VCInfoText:
+    'OID4VC is a suite of specifications that standardizes the issuance and presentation of digital credentials using OAuth 2.0 and OpenID Connect protocols',
+  AnonCredsInfoText:
+    'AnonCreds enables privacy-preserving credentials using zero-knowledge proofs.',
+  W3CInfoText: 'W3C VCDM defines interoperable Verifiable Credentials.',
+  MDOCInfoText: 'MDOC follows ISO/IEC mobile identity standard.',
+  SDJWTInfoText: 'SD-JWT supports selective disclosure JWT credentials.',
+}
