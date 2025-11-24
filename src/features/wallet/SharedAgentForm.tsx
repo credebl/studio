@@ -124,6 +124,10 @@ const SharedAgentForm = ({
           <Form className="space-y-6">
             <div>
               <Label htmlFor="label">Wallet Label</Label>
+              <p className="text-muted-foreground mt-1 text-sm">
+                This label is auto-generated based on your organization name.
+                You can edit it if needed.
+              </p>
               <Field
                 as={Input}
                 id="label"

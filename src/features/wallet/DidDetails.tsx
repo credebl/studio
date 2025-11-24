@@ -1,21 +1,21 @@
 'use client'
 
+import { Card, CardContent } from '@/components/ui/card'
 import {
+  CheckCircle,
+  Copy,
+  FileKey,
   Fingerprint,
+  Key,
   Loader2,
   Shield,
-  FileKey,
-  Key,
-  Copy,
-  CheckCircle,
 } from 'lucide-react'
-import { Card, CardContent } from '@/components/ui/card'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { Button } from '@/components/ui/button'
+import PageContainer from '@/components/layout/page-container'
 import Stepper from '@/components/StepperComponent'
 import { useState } from 'react'
-import PageContainer from '@/components/layout/page-container'
 
 export default function DidDetails(): React.JSX.Element {
   const searchParams = useSearchParams()
@@ -26,9 +26,9 @@ export default function DidDetails(): React.JSX.Element {
   const didMethod = searchParams.get('didMethod')
   const generatedDid = searchParams.get('generatedDid')
   const [copied, setCopied] = useState(false)
-
-  const [loadingSchema, setLoadingSchema] = useState(false)
-  const [loadingDashboard, setLoadingDashboard] = useState(false)
+  const [activeAction, setActiveAction] = useState<
+    'schema' | 'dashboard' | null
+  >(null)
 
   const copyToClipboard = (text: string): void => {
     navigator.clipboard.writeText(text)
@@ -38,12 +38,12 @@ export default function DidDetails(): React.JSX.Element {
   }
 
   const handleSchema = (): void => {
-    setLoadingSchema(true)
+    setActiveAction('schema')
     router.push('/schemas/create')
   }
 
   const handleDashboard = (): void => {
-    setLoadingDashboard(true)
+    setActiveAction('dashboard')
     router.push('/dashboard')
   }
 
@@ -74,57 +74,53 @@ export default function DidDetails(): React.JSX.Element {
 
           <Stepper currentStep={4} totalSteps={totalSteps} />
 
-          {/* DETAILS CARD */}
           <Card className="border-border mb-10 w-full shadow-sm">
-            <CardContent className="space-y-6 pt-6">
-              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-4 transition-colors">
+            <CardContent className="pt-6">
+              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-2 transition-colors">
                 <div className="flex items-center gap-2">
                   <Shield className="text-primary h-4 w-4" />
-                  <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+                  <p className="text-foreground block text-sm font-medium tracking-wide">
                     Protocol
                   </p>
                 </div>
-                <p className="text-foreground bg-background/50 border-border/50 rounded-md border p-3 font-mono text-sm break-all">
+                <p className="text-foreground bg-background/50 border-border/50 rounded-md border p-3 text-sm break-all">
                   {protocol}
                 </p>
               </div>
-              {/* CREDENTIAL TYPE */}
-              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-4 transition-colors">
+              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-2 transition-colors">
                 <div className="flex items-center gap-2">
                   <FileKey className="text-primary h-4 w-4" />
-                  <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+                  <p className="text-foreground block text-sm font-medium tracking-wide">
                     Credential Type
                   </p>
                 </div>
-                <p className="text-foreground bg-background/50 border-border/50 rounded-md border p-3 font-mono text-sm break-all">
+                <p className="text-foreground bg-background/50 border-border/50 rounded-md border p-3 text-sm break-all">
                   {credentialType}
                 </p>
               </div>
 
-              {/* DID METHOD */}
-              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-4 transition-colors">
+              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-2 transition-colors">
                 <div className="flex items-center gap-2">
                   <Key className="text-primary h-4 w-4" />
-                  <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+                  <p className="text-foreground block text-sm font-medium tracking-wide">
                     DID Method
                   </p>
                 </div>
-                <p className="text-foreground bg-background/50 border-border/50 rounded-md border p-3 font-mono text-sm break-all">
+                <p className="text-foreground bg-background/50 border-border/50 rounded-md border p-3 text-sm break-all">
                   {didMethod}
                 </p>
               </div>
 
-              {/* GENERATED DID WITH COPY */}
-              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-4 transition-colors">
+              <div className="bg-muted/30 hover:bg-muted/50 space-y-2 rounded-lg p-2 transition-colors">
                 <div className="flex items-center gap-2">
                   <Fingerprint className="text-primary h-4 w-4" />
-                  <p className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
+                  <p className="text-foreground block text-sm font-medium tracking-wide">
                     Generated DID
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <p className="text-foreground bg-background/50 border-border/50 flex-1 rounded-md border p-3 font-mono text-sm break-all">
+                  <p className="bg-background/50 border-border/50 flex-1 rounded-md border p-3 font-mono text-sm font-semibold break-all">
                     {generatedDid}
                   </p>
 
@@ -145,14 +141,13 @@ export default function DidDetails(): React.JSX.Element {
             </CardContent>
           </Card>
 
-          {/* BUTTONS */}
           <div className="mt-4 flex justify-center gap-4">
             <Button
               className="bg-primary text-primary-foreground px-6"
               onClick={handleSchema}
-              disabled={loadingSchema}
+              disabled={activeAction !== null}
             >
-              {loadingSchema ? (
+              {activeAction === 'schema' ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 'Continue to Schema Creation'
@@ -163,9 +158,9 @@ export default function DidDetails(): React.JSX.Element {
               variant="outline"
               className="border-border text-foreground px-6"
               onClick={handleDashboard}
-              disabled={loadingDashboard}
+              disabled={activeAction !== null}
             >
-              {loadingDashboard ? (
+              {activeAction === 'dashboard' ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 'Go to Dashboard'

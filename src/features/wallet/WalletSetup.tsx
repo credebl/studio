@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import DedicatedAgentForm from './DedicatedAgentForm'
 import { Label } from '@/components/ui/label'
+import { Loader } from 'lucide-react'
 import SharedAgentForm from './SharedAgentForm'
 import Stepper from '@/components/StepperComponent'
 
@@ -42,7 +43,9 @@ const WalletSetup = (): React.JSX.Element => {
     useState<WalletResponse | null>()
   const [dedicatedWalletResponse, setDedicatedWalletResponse] =
     useState<WalletResponse | null>(null)
-
+  const [activeButton, setActiveButton] = useState<'skip' | 'continue' | null>(
+    null,
+  )
   const router = useRouter()
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId') ?? ''
@@ -75,7 +78,7 @@ const WalletSetup = (): React.JSX.Element => {
     sharedWalletResponse || dedicatedWalletResponse,
   )
 
-  const labelClasses = (() => {
+  const getLabelClasses = (): string => {
     if (isVerifierClient) {
       return 'cursor-not-allowed opacity-50'
     }
@@ -83,9 +86,9 @@ const WalletSetup = (): React.JSX.Element => {
     if (agentType === AgentType.DEDICATED) {
       return 'border-blue-500 bg-blue-50 shadow-md'
     }
-
     return 'border-gray-200 hover:border-blue-300'
-  })()
+  }
+  const labelClasses = getLabelClasses()
 
   return (
     <div className="mx-auto mt-10 max-w-5xl">
@@ -232,18 +235,32 @@ const WalletSetup = (): React.JSX.Element => {
             Wallet created successfully!
           </h2>
 
-          <p className="text-gray-600">Do you want to continue or skip?</p>
+          <p className="text-gray-600">
+            Would you like to continue with DID creation or skip it for now?
+          </p>
 
           <div className="flex justify-center gap-4 pt-4">
-            <Button variant="outline" onClick={handleSkip} className="px-6">
-              Skip
+            <Button
+              variant="outline"
+              onClick={() => {
+                setActiveButton('skip')
+                handleSkip()
+              }}
+              className="px-6"
+              disabled={activeButton !== null}
+            >
+              {activeButton === 'skip' ? <Loader /> : 'Skip'}
             </Button>
 
             <Button
-              onClick={handleContinue}
+              onClick={() => {
+                setActiveButton('continue')
+                handleContinue()
+              }}
               className="bg-blue-600 px-6 text-white hover:bg-blue-700"
+              disabled={activeButton !== null}
             >
-              Continue
+              {activeButton === 'continue' ? <Loader /> : 'Continue'}
             </Button>
           </div>
         </DialogContent>

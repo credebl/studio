@@ -8,38 +8,68 @@ interface StepperProps {
   totalSteps: number
 }
 
-const Stepper: React.FC<StepperProps> = ({ currentStep, totalSteps }) => (
-  <div className="mb-6">
-    {/* Progress Bar */}
-    <div className="h-2 rounded-full">
-      <div
-        className="bg-primary h-2 rounded-full transition-all duration-300 ease-in-out"
-        style={{ width: `${(currentStep / totalSteps) * 100}%` }}
-      />
-    </div>
-
-    {/* Step Circles + Labels */}
-    <div className="mt-4 flex justify-between">
+const Stepper: React.FC<StepperProps> = ({ currentStep }) => (
+  <div className="w-full px-4 py-6">
+    <div className="relative mx-auto flex max-w-4xl items-start justify-between">
       {stepLabels.map((label, index) => {
         const stepNum = index + 1
-        const isActive = currentStep >= stepNum
+        const isActive = currentStep === stepNum
+        const isCompleted = currentStep > stepNum
 
         return (
-          <div
-            key={label}
-            className="flex w-full flex-col items-center text-center"
-          >
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
-                isActive
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground'
-              }`}
-            >
-              {stepNum}
+          <React.Fragment key={stepNum}>
+            <div className="relative z-10 flex flex-col items-center">
+              <div
+                className={`flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold shadow-md transition-all duration-300 ${
+                  isCompleted
+                    ? 'bg-blue-600 text-white'
+                    : isActive
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-200 text-gray-500'
+                }`}
+              >
+                {isCompleted ? (
+                  <svg
+                    className="h-6 w-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                ) : (
+                  stepNum
+                )}
+              </div>
+
+              <div
+                className={`mt-3 text-center text-xs font-medium whitespace-nowrap ${
+                  isActive || isCompleted ? 'text-gray-700' : 'text-gray-500'
+                }`}
+              >
+                {label}
+              </div>
             </div>
-            <span className="mt-1 text-xs">{label}</span>
-          </div>
+            {index < stepLabels.length - 1 && (
+              <div
+                className="flex flex-1 items-center"
+                style={{ marginTop: '24px' }}
+              >
+                <div className="relative h-0.5 w-full">
+                  <div
+                    className={`absolute inset-0 transition-all duration-500 ${
+                      currentStep > stepNum ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                  />
+                </div>
+              </div>
+            )}
+          </React.Fragment>
         )
       })}
     </div>

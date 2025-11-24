@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { CheckCircle2, Info } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {
   Select,
@@ -17,12 +16,11 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import { didExamples, protocolOptions } from '@/config/didOptions'
+  didExamples,
+  didOptionsMap,
+  protocolOptions,
+  subOptionsMap,
+} from '@/config/didOptions'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -33,12 +31,15 @@ import PageContainer from '@/components/layout/page-container'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
+import TooltipInfo from '@/components/TooltipInfo'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 
 const TemplateCreation = (): React.JSX.Element => {
-  const [selectedProtocol, setSelectedProtocol] = useState<string | null>(null)
+  const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(
+    null,
+  )
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [isApiInProgress, setIsApiInProgress] = useState<boolean>(false)
   const [selectedDid, setSelectedDid] = useState<string | null>(null)
@@ -48,7 +49,7 @@ const TemplateCreation = (): React.JSX.Element => {
   const [success, setSuccess] = useState<string | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [domainError, setDomainError] = useState<string | null>(null)
-  const [_createdDid, setCreatedDid] = useState<string | null>(null)
+  type Protocol = 'didcomm' | 'oid4vc'
   const [step, setStep] = useState(3)
 
   const totalSteps = 4
@@ -125,8 +126,6 @@ const TemplateCreation = (): React.JSX.Element => {
           )
           return
         }
-
-        setCreatedDid(generatedDid)
         setSuccess(data?.message)
         setAlert(null)
 
@@ -156,61 +155,9 @@ const TemplateCreation = (): React.JSX.Element => {
     }
   }
 
-  type SubOption = {
-    id: string
-    title: string
-    desc: string
-  }
+  const subOptions = subOptionsMap[selectedProtocol!] ?? []
 
-  let subOptions: SubOption[] = []
-  if (selectedProtocol === 'didcomm') {
-    subOptions = [
-      {
-        id: 'anoncreds',
-        title: 'AnonCreds',
-        desc: 'Privacy-preserving credentials issued over DIDComm.',
-      },
-      {
-        id: 'w3c',
-        title: 'W3C/JSONLD',
-        desc: 'W3C Verifiable Credentials compatible with DIDComm transport.',
-      },
-    ]
-  } else if (selectedProtocol === 'oid') {
-    subOptions = [
-      {
-        id: 'mdoc',
-        title: 'MDOC',
-        desc: 'Mobile Document (ISO/IEC 18013-5) via OID4VC.',
-      },
-      {
-        id: 'sdjwt',
-        title: 'SD-JWT',
-        desc: 'Selective Disclosure JWT-based credentials for OID4VC.',
-      },
-    ]
-  } else {
-    subOptions = []
-  }
-
-  let didOptions: string[] = []
-  if (selectedOption === 'anoncreds') {
-    didOptions = [
-      'did:indy:bcovrin:testnet',
-      'did:indy:indicio:demonet',
-      'did:indy:indicio:mainnet',
-      'did:indy:indicio:testnet',
-    ]
-  } else if (selectedOption === 'w3c') {
-    didOptions = [
-      'did:polygon:testnet',
-      'did:polygon:mainnet',
-      'did:key',
-      'did:web',
-    ]
-  } else {
-    didOptions = []
-  }
+  const didOptions = selectedOption ? (didOptionsMap[selectedOption] ?? []) : []
 
   return (
     <PageContainer>
@@ -244,59 +191,7 @@ const TemplateCreation = (): React.JSX.Element => {
             </CardHeader>
 
             <CardContent className="pt-6">
-              <div className="grid gap-4 md:grid-cols-2">
-                {protocolOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedProtocol(option.id)
-                      setSelectedOption(null)
-                      setSelectedDid(null)
-                      setDomainError(null)
-                    }}
-                    className={`relative rounded-xl border-2 p-6 text-left transition-all ${
-                      selectedProtocol === option.id
-                        ? 'border-primary bg-secondary shadow-sm'
-                        : 'border-border bg-background hover:border-foreground/30 hover:shadow-sm'
-                    }`}
-                  >
-                    {option.id === 'oid' && (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <span className="bg-background absolute top-3 right-3 cursor-pointer rounded-full p-1 shadow">
-                              <Info className="text-muted-foreground h-4 w-4" />
-                            </span>
-                          </TooltipTrigger>
-                          <TooltipContent className="max-w-xs text-sm">
-                            <p>
-                              OID4VC is a suite of specifications that
-                              standardizes digital credentials using OAuth 2.0 /
-                              OpenID Connect.
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )}
-
-                    <div className="mb-6">{option.icon}</div>
-
-                    <h3 className="text-foreground mb-1 font-semibold">
-                      {option.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      {option.desc}
-                    </p>
-                  </button>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {selectedProtocol && (
-            <Card className="border-border border shadow-sm">
-              <div className="m-4">
+              <div className="">
                 {alert && (
                   <AlertComponent
                     message={alert}
@@ -312,97 +207,138 @@ const TemplateCreation = (): React.JSX.Element => {
                   />
                 )}
               </div>
+              <div className="mb-8 grid gap-4 md:grid-cols-2">
+                {protocolOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedProtocol(option.id as Protocol)
+                      setSelectedOption(null)
+                      setSelectedDid(null)
+                      setDomainError(null)
+                    }}
+                    className={`relative rounded-xl border-2 p-6 text-left transition-all ${
+                      selectedProtocol === option.id
+                        ? 'border-primary bg-secondary shadow-sm'
+                        : 'border-border bg-background hover:shadow-sm'
+                    }`}
+                  >
+                    {option.id === 'didcomm' && (
+                      <TooltipInfo text="DIDComm provides secure messaging between agents and credential exchange." />
+                    )}
+                    {option.id === 'oid4vc' && (
+                      <TooltipInfo text="OID4VC is a suite of specifications that standardizes the issuance and presentation of digital credentials using OAuth 2.0 and OpenID Connect protocols" />
+                    )}
 
-              <CardHeader className="border-border bg-background border-b">
-                <CardTitle className="text-foreground text-lg font-semibold">
-                  Select Credential Type
-                </CardTitle>
-                <CardDescription className="text-muted-foreground text-sm">
-                  Choose a credential format for{' '}
-                  {selectedProtocol.toUpperCase()}.
-                </CardDescription>
-              </CardHeader>
+                    <div className="mb-6">{option.icon}</div>
 
-              <CardContent className="pt-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  {subOptions.map((option) => (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => {
-                        setSelectedOption(option.id)
-                        setSelectedDid(null)
-                        setDomainError(null)
-                      }}
-                      className={`relative rounded-xl border-2 p-6 text-left transition-all ${
-                        selectedOption === option.id
-                          ? 'border-primary bg-secondary shadow-sm'
-                          : 'border-border bg-background hover:border-foreground/30 hover:shadow-sm'
-                      }`}
-                    >
-                      {selectedOption === option.id && (
-                        <div className="absolute top-3 right-3">
-                          <CheckCircle2 className="text-primary h-5 w-5" />
-                        </div>
-                      )}
+                    <h3 className="text-foreground mb-1 font-semibold">
+                      {option.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {option.desc}
+                    </p>
+                  </button>
+                ))}
+              </div>
 
-                      <h3 className="text-foreground mb-1 font-semibold">
-                        {option.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        {option.desc}
-                      </p>
-                    </button>
-                  ))}
-                </div>
+              {selectedProtocol && (
+                <div className="border-border -mx-6 mt-6 border-t px-6 pt-6">
+                  <p className="text-foreground mb-2 font-medium">
+                    Select Credential Type for {selectedProtocol.toUpperCase()}
+                  </p>
 
-                {selectedProtocol === 'didcomm' && selectedOption && (
-                  <div className="mt-6">
-                    <label className="text-foreground mb-2 block text-sm font-medium">
-                      Select DID Method{' '}
-                      <span className="text-destructive">*</span>
-                    </label>
-
-                    <div className="flex items-center gap-4">
-                      <Select
-                        value={selectedDid ?? ''}
-                        onValueChange={(value) => {
-                          setSelectedDid(value)
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {subOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedOption(option.id)
+                          setSelectedDid(null)
                           setDomainError(null)
                         }}
+                        className={`relative rounded-xl border-2 p-6 text-left transition-all ${
+                          selectedOption === option.id
+                            ? 'border-primary bg-secondary shadow-sm'
+                            : 'border-border bg-background hover:border-foreground/30 hover:shadow-sm'
+                        }`}
                       >
-                        <SelectTrigger className="w-full md:w-1/2">
-                          <SelectValue placeholder="Select DID" />
-                        </SelectTrigger>
+                        <TooltipInfo
+                          text={
+                            option.id === 'anoncreds'
+                              ? 'AnonCreds enables privacy-preserving credentials using zero-knowledge proofs.'
+                              : option.id === 'w3c'
+                                ? 'W3C VCDM defines interoperable Verifiable Credentials.'
+                                : option.id === 'mdoc'
+                                  ? 'MDOC follows ISO/IEC mobile identity standard.'
+                                  : 'SD-JWT supports selective disclosure JWT credentials.'
+                          }
+                        />
 
-                        <SelectContent>
-                          {didOptions.map((did) => (
-                            <SelectItem key={did} value={did}>
-                              {did}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-
-                      {selectedDid && (
-                        <div className="text-muted-foreground rounded-md px-3 py-2 text-sm whitespace-nowrap">
-                          e.g. {didExamples[selectedDid]}
-                        </div>
-                      )}
-                    </div>
+                        <h3 className="text-foreground mb-1 font-semibold">
+                          {option.title}
+                        </h3>
+                        <p className="text-muted-foreground text-sm">
+                          {option.desc}
+                        </p>
+                      </button>
+                    ))}
                   </div>
-                )}
+                </div>
+              )}
 
-                {selectedDid === 'did:web' && (
-                  <SetDomainValueInput
-                    domainValue={domainValue}
-                    setDomainValue={handleDomainChange}
-                    domainError={domainError}
-                  />
-                )}
-              </CardContent>
-            </Card>
-          )}
+              {selectedProtocol === 'didcomm' && selectedOption && (
+                <div className="mt-6">
+                  <label className="text-foreground mb-2 block text-sm font-medium">
+                    Select DID Method{' '}
+                    <span className="text-destructive">*</span>
+                  </label>
+
+                  <div className="flex items-center gap-4">
+                    <Select
+                      value={selectedDid ?? ''}
+                      onValueChange={(value) => {
+                        setSelectedDid(value)
+                        setDomainError(null)
+                      }}
+                    >
+                      <SelectTrigger className="w-full md:w-1/2">
+                        <SelectValue placeholder="Select DID" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        {didOptions.map((did) => (
+                          <SelectItem key={did} value={did}>
+                            {did}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
+                    {selectedDid && (
+                      <div className="rounded-md px-3 py-2 font-mono text-sm font-semibold whitespace-nowrap">
+                        <span className="text-muted-foreground font-normal">
+                          e.g.
+                        </span>
+                        <span className="ml-1">{didExamples[selectedDid]}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* DID:web Domain Input */}
+              {selectedDid === 'did:web' && (
+                <SetDomainValueInput
+                  domainValue={domainValue}
+                  setDomainValue={handleDomainChange}
+                  domainError={domainError}
+                />
+              )}
+            </CardContent>
+          </Card>
 
           {selectedDid === 'did:polygon:testnet' && (
             <Card className="border-border mt-6 border shadow-sm">
@@ -422,13 +358,11 @@ const TemplateCreation = (): React.JSX.Element => {
                   setPrivateKeyValue={setPrivateKeyValue}
                 />
 
-                {/* Steps */}
                 <div className="space-y-5">
                   <h4 className="text-foreground/80 text-sm font-medium">
                     Steps to get Polygon Testnet Tokens
                   </h4>
 
-                  {/* Step box */}
                   <div className="space-y-4">
                     <div className="border-border bg-secondary rounded-lg border p-4">
                       <div className="flex items-start space-x-3">
