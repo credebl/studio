@@ -9,6 +9,7 @@ import { passwordValueEncryption } from '@/utils/passwordEncryption'
 import { useAppDispatch } from '@/lib/hooks'
 import { useEffect } from 'react'
 import { useSession } from 'next-auth/react'
+import { dataDecryption } from '@/utils/dataDecryption'
 
 const preventRedirectOnPaths = [
   '/create-organization',
@@ -52,19 +53,25 @@ export const SessionManager = ({
 
   const redirectTo = searchParams.get('redirectTo')
 
-  const setSessionDetails = (
+  const setSessionDetails = async(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sessionDetails: any,
     redirectTo: string | null,
-  ): void => {
+  ): Promise<void> => {
+    console.log('Setting session details:', sessionDetails)
     const isOnRestrictedPage = preventRedirectOnPaths.some((page) =>
       pathname.startsWith(page),
     )
+    // destructure and set tokens in redux
+    const decreptedSessionToken = await dataDecryption(sessionDetails?.data?.sessionToken)
+    const decreptedRefreshToken = await dataDecryption(sessionDetails?.data?.refreshToken)
+    console.log('Decrypted Session Token:', decreptedSessionToken)
+    // console.log('Decrypted Refresh Token:', decreptedRefreshToken)  
     if (sessionDetails?.data?.sessionToken) {
-      dispatch(setToken(sessionDetails.data.sessionToken))
+      dispatch(setToken(decreptedSessionToken))
     }
     if (sessionDetails?.data?.refreshToken) {
-      dispatch(setRefreshToken(sessionDetails.data.refreshToken))
+      dispatch(setRefreshToken(decreptedRefreshToken))
     }
     if (redirectTo && !isOnRestrictedPage) {
       window.location.href = redirectTo
@@ -91,7 +98,9 @@ export const SessionManager = ({
           headers: { 'Content-Type': 'application/json' },
         },
       )
+      console.log('Fetch session details response status:', resp)
       const data = await resp.json()
+      console.log('Session details fetched:', data)
       if (!data.data) {
         logoutSession()
         return
