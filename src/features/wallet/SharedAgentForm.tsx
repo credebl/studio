@@ -102,7 +102,7 @@ const SharedAgentForm = ({
       }
     } catch (err) {
       console.error('Failed to create shared wallet', err)
-      throw error
+      throw err
     } finally {
       setLoading(false)
     }
