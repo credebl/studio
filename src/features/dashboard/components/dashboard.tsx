@@ -204,7 +204,7 @@ export default function Dashboard(): React.JSX.Element {
             </p>
           </div>
           <Button
-            onClick={() => router.push(`template-creation?orgId=${orgId}`)}
+            onClick={() => router.push(`create-did?orgId=${orgId}`)}
             className="min-w-[180px]"
           >
             Setup Your DID

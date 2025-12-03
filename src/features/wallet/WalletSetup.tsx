@@ -71,8 +71,7 @@ const WalletSetup = (): React.JSX.Element => {
     }
   }
 
-  const handleContinue = (): void =>
-    router.push(`/template-creation?orgId=${orgId}`)
+  const handleContinue = (): void => router.push(`/create-did?orgId=${orgId}`)
   const handleSkip = (): void => router.push('/dashboard')
 
   const isAnyWalletCreated = Boolean(

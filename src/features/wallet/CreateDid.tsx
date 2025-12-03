@@ -36,7 +36,7 @@ import TooltipInfo from '@/components/TooltipInfo'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 
-const TemplateCreation = (): React.JSX.Element => {
+const CreateDid = (): React.JSX.Element => {
   const [selectedProtocol, setSelectedProtocol] = useState<Protocol | null>(
     null,
   )
@@ -408,4 +408,4 @@ const TemplateCreation = (): React.JSX.Element => {
   )
 }
 
-export default TemplateCreation
+export default CreateDid
