@@ -208,39 +208,42 @@ const CreateDid = (): React.JSX.Element => {
                 )}
               </div>
               <div className="mb-8 grid gap-4 md:grid-cols-2">
-                {protocolOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedProtocol(option.id as Protocol)
-                      setSelectedOption(null)
-                      setSelectedDid(null)
-                      setDomainError(null)
-                    }}
-                    className={`relative rounded-xl border-2 p-6 text-left transition-all ${
-                      selectedProtocol === option.id
-                        ? 'border-primary bg-secondary shadow-sm'
-                        : 'border-border bg-background hover:shadow-sm'
-                    }`}
-                  >
-                    {option.id === 'didcomm' && (
-                      <TooltipInfo text={InfoText.DIDCommInfoText} />
-                    )}
-                    {option.id === 'oid4vc' && (
-                      <TooltipInfo text={InfoText.OID4VCInfoText} />
-                    )}
+                {protocolOptions.map((option) => {
+                  const isDisabled = option.id === 'oid4vc'
+                  return (
+                    <button
+                      key={option.id}
+                      type="button"
+                      onClick={() => {
+                        if (isDisabled) {
+                          return
+                        }
+                        setSelectedProtocol(option.id as Protocol)
+                        setSelectedOption(null)
+                        setSelectedDid(null)
+                        setDomainError(null)
+                      }}
+                      disabled={isDisabled}
+                      className={`relative rounded-xl border-2 p-6 text-left transition-all ${selectedProtocol === option.id ? 'border-primary bg-secondary shadow-sm' : 'border-border bg-background hover:shadow-sm'} ${isDisabled ? 'cursor-not-allowed opacity-50' : ''} `}
+                    >
+                      {option.id === 'didcomm' && (
+                        <TooltipInfo text={InfoText.DIDCommInfoText} />
+                      )}
+                      {option.id === 'oid4vc' && (
+                        <TooltipInfo text={InfoText.OID4VCInfoText} />
+                      )}
 
-                    <div className="mb-6">{option.icon}</div>
+                      <div className="mb-6">{option.icon}</div>
 
-                    <h3 className="text-foreground mb-1 font-semibold">
-                      {option.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm">
-                      {option.desc}
-                    </p>
-                  </button>
-                ))}
+                      <h3 className="text-foreground mb-1 font-semibold">
+                        {option.title}
+                      </h3>
+                      <p className="text-muted-foreground text-sm">
+                        {option.desc}
+                      </p>
+                    </button>
+                  )
+                })}
               </div>
 
               {selectedProtocol && (
