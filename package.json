@@ -82,7 +82,7 @@
     "nuqs": "^2.4.1",
     "react": "19.0.1",
     "react-day-picker": "^8.10.1",
-    "react-dom": "19.0.0",
+    "react-dom": "19.0.1",
     "react-dropzone": "^14.3.5",
     "react-hook-form": "^7.55.0",
     "react-qr-code": "^2.0.15",
