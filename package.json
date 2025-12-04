@@ -131,10 +131,14 @@
     "prettier": "3.4.2",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.0.17",
-    "tw-animate-css": "^1.2.4"
+    "tw-animate-css": "^1.2.4",
+    "@types/bun": "latest"
   },
   "overrides": {
     "@types/react": "19.0.1",
     "@types/react-dom": "19.0.2"
+  },
+  "engines": {
+    "node": ">=24"
   }
 }
