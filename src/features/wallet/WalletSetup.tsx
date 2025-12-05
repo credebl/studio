@@ -52,6 +52,7 @@ const WalletSetup = (): React.JSX.Element => {
   const orgId = searchParams.get('orgId') ?? ''
   const clientAlias = searchParams.get('clientAlias')
   const isVerifierClient = clientAlias?.trim().toUpperCase() === 'VERIFIER'
+  const redirectTo = searchParams.get('redirectTo')
 
   const handleSharedWalletCreated = (response?: WalletResponse): void => {
     setSharedWalletResponse(response ?? null)
@@ -71,7 +72,19 @@ const WalletSetup = (): React.JSX.Element => {
     }
   }
 
-  const handleContinue = (): void => router.push(`/create-did?orgId=${orgId}`)
+  const handleContinue = (): void => {
+    setTimeout(() => {
+      const redirectUrl =
+        redirectTo && clientAlias
+          ? `/create-did?orgId=${orgId}&redirectTo=${encodeURIComponent(
+              redirectTo,
+            )}&clientAlias=${clientAlias}`
+          : `/create-did?orgId=${orgId}`
+
+      router.push(redirectUrl)
+    }, 3000)
+  }
+
   const handleSkip = (): void => router.push('/dashboard')
 
   const isAnyWalletCreated = Boolean(
@@ -236,21 +249,25 @@ const WalletSetup = (): React.JSX.Element => {
           </h2>
 
           <p className="text-gray-600">
-            Would you like to continue with DID creation or skip it for now?
+            {redirectTo || clientAlias
+              ? 'Proceed to DID creation to continue your setup.'
+              : 'Would you like to continue with DID creation or skip it for now?'}
           </p>
 
           <div className="flex justify-center gap-4 pt-4">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setActiveButton('skip')
-                handleSkip()
-              }}
-              className="px-6"
-              disabled={activeButton !== null}
-            >
-              {activeButton === 'skip' ? <Loader /> : 'Skip'}
-            </Button>
+            {!redirectTo && !clientAlias && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setActiveButton('skip')
+                  handleSkip()
+                }}
+                className="px-6"
+                disabled={activeButton !== null}
+              >
+                {activeButton === 'skip' ? <Loader /> : 'Skip'}
+              </Button>
+            )}
 
             <Button
               onClick={() => {
