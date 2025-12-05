@@ -1,9 +1,11 @@
+'use client'
+
 import { CommonConstants, Network } from '../common/enum'
-import React, { type ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
+
 import type { AxiosResponse } from 'axios'
 import { Checkbox } from '@/components/ui/checkbox'
 import CopyDid from './CopyDid'
-import { Field } from 'formik'
 import GenerateBtnPolygon from './GenerateBtnPolygon'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,26 +21,15 @@ export interface IPolygonKeys {
 }
 
 interface IProps {
-  setPrivateKeyValue: (val: string) => void
   orgId?: string
-  privateKeyValue: string | undefined
-  formikHandlers: {
-    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
-    handleBlur: (e: React.FocusEvent<HTMLInputElement>) => void
-    errors: {
-      privatekey?: string
-    }
-    touched: {
-      privatekey?: boolean
-    }
-  }
+  privateKeyValue: string
+  setPrivateKeyValue: (val: string) => void
 }
 
 const SetPrivateKeyValueInput = ({
-  setPrivateKeyValue,
   orgId,
   privateKeyValue,
-  formikHandlers,
+  setPrivateKeyValue,
 }: IProps): React.JSX.Element => {
   const [havePrivateKey, setHavePrivateKey] = useState(false)
   const [generatedKeys, setGeneratedKeys] = useState<IPolygonKeys | null>(null)
@@ -72,9 +63,8 @@ const SetPrivateKeyValueInput = ({
       return null
     }
   }
-
   useEffect(() => {
-    if (privateKeyValue && privateKeyValue.length === 64) {
+    if (privateKeyValue?.length === 64) {
       checkWalletBalance(privateKeyValue, Network.TESTNET)
     } else {
       setErrorMessage(null)
@@ -82,13 +72,10 @@ const SetPrivateKeyValueInput = ({
   }, [privateKeyValue])
 
   useEffect(() => {
+    setPrivateKeyValue('')
+    setErrorMessage(null)
     if (havePrivateKey) {
-      setPrivateKeyValue('')
-      setErrorMessage(null)
       setGeneratedKeys(null)
-    } else {
-      setPrivateKeyValue('')
-      setErrorMessage(null)
     }
   }, [havePrivateKey])
 
@@ -109,6 +96,7 @@ const SetPrivateKeyValueInput = ({
       }
     } catch (err) {
       console.error('Generate private key ERROR::::', err)
+      setLoading(false)
     }
   }
 
@@ -122,6 +110,7 @@ const SetPrivateKeyValueInput = ({
         />
         <Label htmlFor="havePrivateKey">Already have a private key?</Label>
       </div>
+
       {!havePrivateKey ? (
         <>
           <GenerateBtnPolygon
@@ -157,26 +146,17 @@ const SetPrivateKeyValueInput = ({
       ) : (
         <>
           <div className="relative mt-3 flex items-center">
-            <Field
-              as={Input}
-              id="privatekey"
-              name="privatekey"
-              className=""
+            <Input
+              id="privateKeyValue"
+              name="privateKeyValue"
+              type="text"
               value={privateKeyValue}
               onChange={(e: ChangeEvent<HTMLInputElement>) => {
                 setPrivateKeyValue(e.target.value)
-                formikHandlers.handleChange(e)
               }}
-              onBlur={formikHandlers.handleBlur}
               placeholder="Enter private key"
             />
           </div>
-
-          <span className="text-destructive static bottom-0 text-xs">
-            {formikHandlers.errors?.privatekey &&
-              formikHandlers.touched?.privatekey &&
-              formikHandlers.errors.privatekey}
-          </span>
 
           {errorMessage && (
             <span className="text-destructive static bottom-0 text-xs">

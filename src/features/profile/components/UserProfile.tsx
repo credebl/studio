@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { setFirstName, setProfileId } from '@/lib/profileSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import AddPasskey from '@/features/passkey/AddPasskey'
@@ -18,7 +19,6 @@ import Loader from '@/components/Loader'
 import Sessions from './Sessions'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getUserProfile } from '@/app/api/Auth'
-import { setProfileId } from '@/lib/profileSlice'
 
 export default function UserProfile(): React.JSX.Element {
   const token = useAppSelector((state) => state.auth.token)
@@ -45,6 +45,7 @@ export default function UserProfile(): React.JSX.Element {
         setPrePopulatedUserProfile(response.data.data)
         setUserEmail(response.data.data.email)
         dispatch(setProfileId(response.data.data.id))
+        dispatch(setFirstName(response.data.data.firstName))
       }
     } catch (error) {
       console.error('Error fetching user profile:', error)

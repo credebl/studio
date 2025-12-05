@@ -261,8 +261,8 @@ export default function OrganizationOnboarding(): React.JSX.Element {
         setTimeout(() => {
           const redirectUrl =
             redirectTo && clientAlias
-              ? `/agent-config?orgId=${orgId}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
-              : `/agent-config?orgId=${orgId}`
+              ? `/wallet-setup?orgId=${orgId}&redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
+              : `/wallet-setup?orgId=${orgId}`
           router.push(redirectUrl)
         }, 3000)
       } else {
