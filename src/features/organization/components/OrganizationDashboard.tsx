@@ -242,10 +242,19 @@ export const OrganizationDashboard = ({
           </CardContent>
         </Card>
 
-        <Card className="shadow transition-all">
+        <Card
+          className={`shadow transition-all hover:scale-102 ${
+            !walletStatus ? 'pointer-events-none opacity-50' : ''
+          }`}
+          onClick={() => {
+            if (walletStatus) {
+              router.push('/')
+            }
+          }}
+        >
           <CardContent className="flex cursor-default items-center justify-between p-6">
             <div>
-              <p className="font-medium">Credentials</p>
+              <p className="font-medium">Templates</p>
               <h3 className="mt-2 text-4xl font-bold">
                 {orgDashboard?.credentialsCount ?? 0}
               </h3>

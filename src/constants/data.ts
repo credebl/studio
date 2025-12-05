@@ -50,6 +50,27 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+  {
+    title: 'Trust',
+    url: '#', // Placeholder as there is no direct link for the parent
+    icon: 'billing',
+    isActive: true,
+
+    items: [
+      {
+        title: 'DID',
+        url: '/create-did',
+        icon: 'userPen',
+        shortcut: ['m', 'm'],
+      },
+      {
+        title: 'x509',
+        shortcut: ['l', 'l'],
+        url: '/x509-certificate',
+        icon: 'login',
+      },
+    ],
+  },
 ]
 
 export interface SaleUser {

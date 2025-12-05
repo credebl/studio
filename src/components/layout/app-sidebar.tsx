@@ -40,9 +40,9 @@ const APP_ENV =
 
 const APP_CONFIG = {
   logo: (theme: string, resolvedTheme: string): string =>
-    (resolvedTheme === 'dark'
+    resolvedTheme === 'dark'
       ? `/logos/${theme}_logo_dark.svg`
-      : `/logos/${theme}_logo.svg`),
+      : `/logos/${theme}_logo.svg`,
   collapsedLogo: (theme: string): string => `/favicons/favicon-${theme}.ico`,
   poweredBy: (theme: string): { src: string; alt: string } | null => {
     if (theme === 'credebl') {
@@ -186,7 +186,13 @@ export default function AppSidebar(): React.JSX.Element {
                               isActive={pathname === subItem.url}
                               className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
                             >
-                              <Link href={subItem.url}>
+                              <Link
+                                href={
+                                  subItem.title === 'DID'
+                                    ? `${subItem.url}?orgId=${selectedOrgId}`
+                                    : subItem.url
+                                }
+                              >
                                 <span>{subItem.title}</span>
                               </Link>
                             </SidebarMenuSubButton>
