@@ -73,19 +73,15 @@ const WalletSetup = (): React.JSX.Element => {
   }
 
   const handleContinue = (): void => {
-    setTimeout(() => {
-      const redirectUrl =
-        redirectTo && clientAlias
-          ? `/create-did?orgId=${orgId}&redirectTo=${encodeURIComponent(
-              redirectTo,
-            )}&clientAlias=${clientAlias}`
-          : `/create-did?orgId=${orgId}`
+    const redirectUrl =
+      redirectTo && clientAlias
+        ? `/create-did?orgId=${orgId}&redirectTo=${encodeURIComponent(
+            redirectTo,
+          )}&clientAlias=${clientAlias}`
+        : `/create-did?orgId=${orgId}`
 
-      router.push(redirectUrl)
-    }, 3000)
+    router.push(redirectUrl)
   }
-
-  const handleSkip = (): void => router.push('/dashboard')
 
   const isAnyWalletCreated = Boolean(
     sharedWalletResponse || dedicatedWalletResponse,
@@ -260,7 +256,7 @@ const WalletSetup = (): React.JSX.Element => {
                 variant="outline"
                 onClick={() => {
                   setActiveButton('skip')
-                  handleSkip()
+                  router.push('/dashboard')
                 }}
                 className="px-6"
                 disabled={activeButton !== null}
