@@ -140,6 +140,7 @@ const CreateDid = (): React.JSX.Element => {
         })
         if (redirectTo && clientAlias) {
           router.push(redirectTo)
+          return
         }
         router.push(`/did-details?${params.toString()}`)
       } else {
