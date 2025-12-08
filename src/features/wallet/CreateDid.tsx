@@ -140,9 +140,9 @@ const CreateDid = (): React.JSX.Element => {
         })
         if (redirectTo && clientAlias) {
           router.push(redirectTo)
-          return
+        } else {
+          router.push(`/did-details?${params.toString()}`)
         }
-        router.push(`/did-details?${params.toString()}`)
       } else {
         setAlert(data?.message || 'Failed to create DID')
         setSuccess(null)
