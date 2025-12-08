@@ -56,6 +56,8 @@ const CreateDid = (): React.JSX.Element => {
   const searchParams = useSearchParams()
   const orgId = searchParams.get('orgId')
   const router = useRouter()
+  const redirectTo = searchParams.get('redirectTo')
+  const clientAlias = searchParams.get('clientAlias')
 
   useEffect(() => {
     const generatedSeeds = nanoid(32)
@@ -136,6 +138,9 @@ const CreateDid = (): React.JSX.Element => {
           generatedDid,
           orgId: orgId || '',
         })
+        if (redirectTo && clientAlias) {
+          router.push(redirectTo)
+        }
         router.push(`/did-details?${params.toString()}`)
       } else {
         setAlert(data?.message || 'Failed to create DID')
