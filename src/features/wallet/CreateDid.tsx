@@ -139,10 +139,7 @@ const CreateDid = (): React.JSX.Element => {
           orgId: orgId || '',
         })
         if (redirectTo && clientAlias) {
-          setTimeout(() => {
-            router.push(redirectTo)
-          }, 3000)
-          return
+          router.push(redirectTo)
         }
         router.push(`/did-details?${params.toString()}`)
       } else {
