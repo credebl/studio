@@ -158,6 +158,7 @@ export const authOptions: MyAuthOptions = {
             return {
               id: user.data.session_state || user.data.email,
               sessionId: user.data.sessionId,
+              accessToken: user.data.access_token,
             }
           }
 
@@ -176,6 +177,7 @@ export const authOptions: MyAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
         token.sessionId = user.sessionId
+        token.accessToken = user.accessToken
       }
       return token
     },
@@ -188,6 +190,7 @@ export const authOptions: MyAuthOptions = {
       token: JWT
     }): Promise<Session> {
       session.sessionId = token.sessionId as string
+      session.accessToken = token.accessToken as string
       return session
     },
 
