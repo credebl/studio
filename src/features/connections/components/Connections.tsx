@@ -32,7 +32,6 @@ export default function Connections(): JSX.Element {
 
   const [isLoading, setIsLoading] = useState(false)
   const [connectionData, setConnectionData] = useState<Connection[]>([])
-
   const [paginationState, setPaginationState] = useState({
     pageIndex: 0,
     pageSize: 10,

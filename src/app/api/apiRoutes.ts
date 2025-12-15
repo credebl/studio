@@ -1,3 +1,5 @@
+import { activateCertificate } from "./x509"
+
 const apiRoutes = {
   auth: {
     sendMail: '/auth/verification-mail',
@@ -108,9 +110,14 @@ const apiRoutes = {
     organizations: '/orgs/public-profile',
     organizationDetails: '/orgs/public-profiles',
   },
-
   setting: {
     setting: '/client_credentials',
+  },
+   x509: {
+    root: '/x509',
+    getallCerts: '/x509',
+    activateCertificate :'/activate',
+    deactivateCertificate :'/deactivate',
   },
 }
 
