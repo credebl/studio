@@ -244,3 +244,12 @@ export const InfoText = {
   MDOCInfoText: 'MDOC follows ISO/IEC mobile identity standard.',
   SDJWTInfoText: 'SD-JWT supports selective disclosure JWT credentials.',
 }
+
+export const confirmationCertificateMessages = {
+  activateCertificateConfirmation:
+    'Are you sure you want to activate this certificate?',
+  deactivateCertificateConfirmation:
+    'Are you sure you want to deactivate this certificate?',
+  deleteCertificateConfirmation:
+    'Are you sure you want to delete this certificate?',
+}

@@ -1,4 +1,3 @@
-import Certificates from '@/features/certificates/Certificates'
 import React from 'react'
 import TemplateCreation from '@/features/templates/TemplateCreation'
 

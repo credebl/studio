@@ -1,7 +1,5 @@
-import React from 'react'
+import React, { JSX } from 'react'
 
-const TemplateCreation = () => {
-  return <div>TemplateCreation</div>
-}
+const TemplateCreation = (): JSX.Element => <div>TemplateCreation</div>
 
 export default TemplateCreation

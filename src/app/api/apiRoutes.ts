@@ -1,5 +1,3 @@
-import { activateCertificate } from "./x509"
-
 const apiRoutes = {
   auth: {
     sendMail: '/auth/verification-mail',
@@ -113,11 +111,12 @@ const apiRoutes = {
   setting: {
     setting: '/client_credentials',
   },
-   x509: {
+  x509: {
     root: '/x509',
     getallCerts: '/x509',
-    activateCertificate :'/activate',
-    deactivateCertificate :'/deactivate',
+    activateCertificate: '/activate',
+    deactivateCertificate: '/deactivate',
+    importCertificate: '/import',
   },
 }
 

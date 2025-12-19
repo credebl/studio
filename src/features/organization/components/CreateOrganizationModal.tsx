@@ -603,14 +603,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                     {!isEditMode ? (
                       <Button
                         type="submit"
-                        // disabled={
-                        //   !values.name ||
-                        //   !values.description ||
-                        //   !values.countryId ||
-                        //   (states.length > 0 && !values.stateId) ||
-                        //   (cities.length > 0 && !values.cityId) ||
-                        //   loading
-                        // }
+                        disabled={
+                          !values.name ||
+                          !values.description ||
+                          !values.countryId ||
+                          (states.length > 0 && !values.stateId) ||
+                          (cities.length > 0 && !values.cityId) ||
+                          loading
+                        }
                       >
                         {createLoading ? <Loader /> : 'Create Organization'}
                       </Button>
@@ -619,14 +619,14 @@ export default function OrganizationOnboarding(): React.JSX.Element {
                         <Button
                           type="button"
                           onClick={() => handleUpdateOrganization(values)}
-                          // disabled={
-                          //   !values.name ||
-                          //   !values.description ||
-                          //   !values.countryId ||
-                          //   (states.length > 0 && !values.stateId) ||
-                          //   (cities.length > 0 && !values.cityId) ||
-                          //   loading
-                          // }
+                          disabled={
+                            !values.name ||
+                            !values.description ||
+                            !values.countryId ||
+                            (states.length > 0 && !values.stateId) ||
+                            (cities.length > 0 && !values.cityId) ||
+                            loading
+                          }
                         >
                           {createLoading ? <Loader /> : 'Save'}
                         </Button>
