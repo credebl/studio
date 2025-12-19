@@ -65,6 +65,7 @@ const ImportCertificateDialog = ({
     if (!parsedCert || !privateKey || !orgId) {
       return
     }
+
     setImporting(true)
     setSuccess(null)
     setError(null)
@@ -92,10 +93,8 @@ const ImportCertificateDialog = ({
         setError(errorMessage)
         onFailure(errorMessage)
       }
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message || 'Failed to import certificate'
+    } catch {
+      const errorMessage = 'An unexpected error occurred'
       setError(errorMessage)
       onFailure(errorMessage)
     } finally {

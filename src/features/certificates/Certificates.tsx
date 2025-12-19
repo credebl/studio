@@ -3,6 +3,14 @@
 import { Card, CardContent } from '@/components/ui/card'
 import React, { JSX, useCallback, useEffect, useState } from 'react'
 import { RefreshCw, Upload } from 'lucide-react'
+import {
+  apiStatusCodes,
+  itemPerPage,
+  pageCount,
+  pageIndex,
+  sortBy,
+  sortOrder,
+} from '@/config/CommonConstant'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -15,7 +23,6 @@ import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { PaginationState } from '@/common/interface'
 import RoleViewButton from '@/components/RoleViewButton'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { certificateSvgComponent } from '@/config/certificateSvgComponent'
 import { getAllx509Certificates } from '@/app/api/x509'
 import { useAppSelector } from '@/lib/hooks'
@@ -41,12 +48,12 @@ const Certificates = (): JSX.Element => {
   const [failure, setFailure] = useState<string | null>(null)
   const [showImportDialog, setShowImportDialog] = useState<boolean>(false)
   const [paginationState, setPaginationState] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-    pageCount: 1,
+    pageIndex,
+    pageSize: itemPerPage,
+    pageCount,
     searchTerm: '',
-    sortBy: 'createdAt',
-    sortOrder: 'desc',
+    sortBy,
+    sortOrder,
   })
 
   const orgId = useAppSelector((state) => state?.organization.orgId)

@@ -98,7 +98,7 @@ const CertificateList = ({
 
   const handleActivate = async (certificateId: string): Promise<boolean> => {
     try {
-      const response = await activateCertificate(orgId || '', certificateId)
+      const response = await activateCertificate(orgId, certificateId)
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -109,27 +109,23 @@ const CertificateList = ({
         return true
       }
 
-      setErrorMessage(data?.message)
+      const errorMessage = data?.message as string
+      setErrorMessage(errorMessage)
       setSuccessMessage(null)
-      onFailure(data?.message)
+      onFailure(errorMessage)
       return false
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      const apiError =
-        error?.response?.data?.error?.message ||
-        error?.response?.data?.message ||
-        'Failed to activate certificate'
-
-      setErrorMessage(apiError)
+    } catch {
+      const errorMessage = 'An unexpected error occurred'
+      setErrorMessage(errorMessage)
       setSuccessMessage(null)
-      onFailure(apiError)
+      onFailure(errorMessage)
       return false
     }
   }
 
   const handleDeactivate = async (certificateId: string): Promise<boolean> => {
     try {
-      const response = await deactivateCertificate(orgId || '', certificateId)
+      const response = await deactivateCertificate(orgId, certificateId)
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -140,47 +136,42 @@ const CertificateList = ({
         return true
       }
 
-      setErrorMessage(data?.message)
+      const errorMessage = data?.message as string
+      setErrorMessage(errorMessage)
       setSuccessMessage(null)
-      onFailure(data?.message)
+      onFailure(errorMessage)
       return false
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-    } catch (error: any) {
-      const apiError =
-        error?.response?.data?.error?.message ||
-        error?.response?.data?.message ||
-        'Failed to deactivate certificate'
-
-      setErrorMessage(apiError)
+    } catch {
+      const errorMessage = 'An unexpected error occurred'
+      setErrorMessage(errorMessage)
       setSuccessMessage(null)
-      onFailure(apiError)
+      onFailure(errorMessage)
       return false
     }
   }
 
   const handleConfirmedAction = async (): Promise<void> => {
-    if (!selectedCert || !actionType) {
+    if (!selectedCert || !actionType || !orgId) {
       return
     }
-
     setActionLoading(true)
 
     let isSuccess = false
 
-    if (actionType === 'activate') {
-      isSuccess = await handleActivate(selectedCert.id)
-    }
+    try {
+      if (actionType === 'activate') {
+        isSuccess = await handleActivate(selectedCert.id)
+      } else if (actionType === 'deactivate') {
+        isSuccess = await handleDeactivate(selectedCert.id)
+      }
 
-    if (actionType === 'deactivate') {
-      isSuccess = await handleDeactivate(selectedCert.id)
-    }
-
-    setActionLoading(false)
-
-    if (isSuccess) {
-      setShowConfirmModal(false)
-      setSelectedCert(null)
-      setActionType(null)
+      if (isSuccess) {
+        setShowConfirmModal(false)
+        setSelectedCert(null)
+        setActionType(null)
+      }
+    } finally {
+      setActionLoading(false)
     }
   }
 
@@ -197,27 +188,24 @@ const CertificateList = ({
     }
   }
 
-  const confirmationMessage: string = ((): string => {
-    switch (actionType) {
-      case 'activate':
-        return confirmationCertificateMessages.activateCertificateConfirmation
-      case 'deactivate':
-        return confirmationCertificateMessages.deactivateCertificateConfirmation
-      default:
-        return 'Are you sure you want to delete this certificate?'
-    }
-  })()
+  const confirmationConfig = {
+    activate: {
+      message: confirmationCertificateMessages.activateCertificateConfirmation,
+      buttons: ['Cancel', 'Activate'],
+    },
+    deactivate: {
+      message:
+        confirmationCertificateMessages.deactivateCertificateConfirmation,
+      buttons: ['Cancel', 'Deactivate'],
+    },
+    delete: {
+      message: 'Are you sure you want to delete this certificate?',
+      buttons: ['Cancel', 'Delete'],
+    },
+  }
 
-  const confirmationButtonTitles = ((): string[] => {
-    switch (actionType) {
-      case 'activate':
-        return ['Cancel', 'Activate']
-      case 'deactivate':
-        return ['Cancel', 'Deactivate']
-      default:
-        return ['Cancel', 'Delete']
-    }
-  })()
+  const { message: confirmationMessage, buttons: confirmationButtonTitles } =
+    confirmationConfig[actionType ?? 'delete']
 
   const statusCell = ({
     row,

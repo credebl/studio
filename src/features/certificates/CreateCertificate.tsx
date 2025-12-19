@@ -2,6 +2,11 @@
 
 import { ArrowLeft, Loader2, X } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  KEY_TYPES,
+  URL_REGEX_PATTERN,
+  apiStatusCodes,
+} from '@/config/CommonConstant'
 import React, { FormEvent, JSX, useState } from 'react'
 import {
   Select,
@@ -16,7 +21,6 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { createCertificate } from '@/app/api/x509'
 import { useAppSelector } from '@/lib/hooks'
 
@@ -46,8 +50,7 @@ const CreateCertificate = ({
   const [countryError, setCountryError] = useState<string | null>(null)
 
   const orgId = useAppSelector((state) => state?.organization.orgId)
-  const URL_REGEX =
-    /^(https?:\/\/)(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})(:\d+)?(\/.*)?$/
+  const URL_REGEX = URL_REGEX_PATTERN
 
   const COUNTRY_CODE_REGEX = /^[A-Z]{2}$/
 
@@ -87,7 +90,8 @@ const CreateCertificate = ({
 
     setCreating(true)
 
-    const keyType = formData.keyType === 'P-256' ? 'p256' : 'ed25519'
+    const keyType =
+      formData.keyType === KEY_TYPES.P_256 ? KEY_TYPES.P256 : KEY_TYPES.ED25519
     const now = new Date()
     const notBefore = new Date(now)
     const notAfter = new Date(now)
@@ -274,8 +278,10 @@ const CreateCertificate = ({
                       <SelectValue placeholder="Select key algorithm" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="P-256">P-256</SelectItem>
-                      <SelectItem value="Ed25519">Ed25519</SelectItem>
+                      <SelectItem value="P-256">{KEY_TYPES.P_256}</SelectItem>
+                      <SelectItem value="Ed25519">
+                        {KEY_TYPES.ED25519}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-muted-foreground text-xs">

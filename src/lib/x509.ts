@@ -1,14 +1,20 @@
+import {
+  KEY_TYPES,
+  cnRegexPattern,
+  sanRegexPattern,
+} from '@/config/CommonConstant'
+
 export function parsePemCertificate(pem: string): {
-  keyType: 'ed25519' | 'p256'
+  keyType: typeof KEY_TYPES.ED25519 | typeof KEY_TYPES.P256
   commonName?: string
 } {
-  let keyType: 'ed25519' | 'p256' = 'p256'
+  let keyType: typeof KEY_TYPES.ED25519 | typeof KEY_TYPES.P256 = KEY_TYPES.P256
 
   if (pem.includes('ED25519')) {
-    keyType = 'ed25519'
+    keyType = KEY_TYPES.ED25519
   }
 
-  const cnRegex = /CN\s*=\s*([^,\n]+)/
+  const cnRegex = cnRegexPattern
   const cnMatch = cnRegex.exec(pem)
   const commonName = cnMatch?.[1]
 
@@ -26,11 +32,11 @@ export function parseBase64X509Certificate(base64Cert: string): {
     .match(/.{1,64}/g)
     ?.join('\n')}\n-----END CERTIFICATE-----`
 
-  const cnRegex = /CN\s*=\s*([^,\n]+)/
+  const cnRegex = cnRegexPattern
   const cnMatch = cnRegex.exec(pem)
   const commonName = cnMatch?.[1]
 
-  const sanRegex = /DNS:([^,\n]+)/g
+  const sanRegex = sanRegexPattern
   const subjectAlternativeNames: string[] = []
 
   let sanMatch: RegExpExecArray | null = null
