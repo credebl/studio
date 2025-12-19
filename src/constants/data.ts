@@ -58,12 +58,6 @@ export const navItems: NavItem[] = [
 
     items: [
       {
-        title: 'DID',
-        url: '/create-did',
-        icon: 'userPen',
-        shortcut: ['m', 'm'],
-      },
-      {
         title: 'x509',
         shortcut: ['l', 'l'],
         url: '/x509-certificate',

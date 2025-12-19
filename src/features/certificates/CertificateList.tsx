@@ -88,7 +88,6 @@ const CertificateList = ({
     cert: Certificate,
     action: 'activate' | 'deactivate' | 'delete',
   ): void => {
-    // 🔥 CLEAR OLD ALERTS
     setSuccessMessage(null)
     setErrorMessage(null)
 
@@ -106,14 +105,12 @@ const CertificateList = ({
         setSuccessMessage(data.message)
         setErrorMessage(null)
         onRefresh()
-        // Notify parent component of success
         onSuccess(data.message)
         return true
       }
 
       setErrorMessage(data?.message)
       setSuccessMessage(null)
-      // Notify parent component of failure
       onFailure(data?.message)
       return false
       /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -125,7 +122,6 @@ const CertificateList = ({
 
       setErrorMessage(apiError)
       setSuccessMessage(null)
-      // Notify parent component of failure
       onFailure(apiError)
       return false
     }
@@ -140,14 +136,12 @@ const CertificateList = ({
         setSuccessMessage(data.message)
         setErrorMessage(null)
         onRefresh()
-        // Notify parent component of success
         onSuccess(data.message)
         return true
       }
 
       setErrorMessage(data?.message)
       setSuccessMessage(null)
-      // Notify parent component of failure
       onFailure(data?.message)
       return false
       /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -159,7 +153,6 @@ const CertificateList = ({
 
       setErrorMessage(apiError)
       setSuccessMessage(null)
-      // Notify parent component of failure
       onFailure(apiError)
       return false
     }
@@ -194,11 +187,13 @@ const CertificateList = ({
   const getStatusClass = (status?: string): string => {
     switch (status) {
       case 'Active':
-        return 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'
+        return 'badges-success text-foreground'
       case 'Inactive':
-        return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
+        return 'badges-error text-foreground'
+      case 'Pending activation':
+        return 'badges-warning text-foreground'
       default:
-        return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+        return 'badges-secondary text-foreground'
     }
   }
 

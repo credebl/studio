@@ -113,7 +113,7 @@ const apiRoutes = {
   },
   x509: {
     root: '/x509',
-    getallCerts: '/x509',
+    getAllCerts: '/x509',
     activateCertificate: '/activate',
     deactivateCertificate: '/deactivate',
     importCertificate: '/import',

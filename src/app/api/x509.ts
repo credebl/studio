@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
-export const createCerificate = async (
+export const createCertificate = async (
   orgId: string,
   data: object,
 ): Promise<AxiosResponse | string> => {

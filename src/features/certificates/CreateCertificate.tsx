@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { createCerificate } from '@/app/api/x509'
+import { createCertificate } from '@/app/api/x509'
 import { useAppSelector } from '@/lib/hooks'
 
 interface CreateCertificateProps {
@@ -145,13 +145,12 @@ const CreateCertificate = ({
     }
 
     try {
-      const response = await createCerificate(orgId || '', payload)
+      const response = await createCertificate(orgId || '', payload)
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         const message = data?.message as string
         setSuccess(message)
-        // Reset form
         setFormData({
           type: 'Issuer Root',
           keyType: 'P-256',
@@ -160,7 +159,6 @@ const CreateCertificate = ({
           alternativeUrl: '',
         })
 
-        // Notify parent
         setTimeout(() => {
           onSuccess(message)
         }, 1500)
@@ -169,15 +167,10 @@ const CreateCertificate = ({
         setFailure(errorMessage)
         onFailure(errorMessage)
       }
-    } catch (error: unknown) {
-      const apiError = error as {
-        response?: { data?: { message?: string; error?: { message?: string } } }
-      }
-      const errorMessage =
-        apiError?.response?.data?.message ||
-        apiError?.response?.data?.error?.message ||
-        'Failed to create certificate'
+    } catch {
+      const errorMessage = 'An unexpected error occurred'
       setFailure(errorMessage)
+      setSuccess(null)
       onFailure(errorMessage)
     } finally {
       setCreating(false)
@@ -282,7 +275,7 @@ const CreateCertificate = ({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="P-256">P-256</SelectItem>
-                      <SelectItem value="Ed25519">Ed25519 </SelectItem>
+                      <SelectItem value="Ed25519">Ed25519</SelectItem>
                     </SelectContent>
                   </Select>
                   <p className="text-muted-foreground text-xs">
@@ -375,7 +368,7 @@ const CreateCertificate = ({
               type="submit"
               disabled={creating}
               size="lg"
-              className="min-w-[160px] gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 min-w-[160px] gap-2"
             >
               {creating ? (
                 <>

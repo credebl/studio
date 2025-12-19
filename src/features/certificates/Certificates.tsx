@@ -9,11 +9,14 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import CertificateList from './CertificateList'
 import CreateCertificate from './CreateCertificate'
+import { Features } from '@/common/enums'
 import ImportCertificateDialog from './ImportCertificateDialog'
 import Loader from '@/components/Loader'
 import PageContainer from '@/components/layout/page-container'
 import { PaginationState } from '@/common/interface'
+import RoleViewButton from '@/components/RoleViewButton'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { certificateSvgComponent } from '@/config/certificateSvgComponent'
 import { getAllx509Certificates } from '@/app/api/x509'
 import { useAppSelector } from '@/lib/hooks'
 
@@ -48,7 +51,6 @@ const Certificates = (): JSX.Element => {
 
   const orgId = useAppSelector((state) => state?.organization.orgId)
 
-  // Clear alerts when view changes
   useEffect(() => {
     setSuccess(null)
     setFailure(null)
@@ -98,7 +100,7 @@ const Certificates = (): JSX.Element => {
     view,
     paginationState.pageIndex,
     paginationState.pageSize,
-    fetchCertificates, // Now included because it's memoized with useCallback
+    fetchCertificates,
   ])
 
   const handleRefresh = (): void => {
@@ -206,12 +208,12 @@ const Certificates = (): JSX.Element => {
                   <Upload className="h-4 w-4" /> Import Certificate
                 </Button>
 
-                <Button
-                  className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                  onClick={() => setView('create')}
-                >
-                  Create New Certificate
-                </Button>
+                <RoleViewButton
+                  buttonTitle="Create Certificate"
+                  feature={Features.CREATE_CERTIFICATE}
+                  svgComponent={certificateSvgComponent()}
+                  onClickEvent={() => setView('create')}
+                />
               </div>
             </div>
 
@@ -223,13 +225,12 @@ const Certificates = (): JSX.Element => {
                 Get started by creating or importing a certificate.
               </p>
               <div className="flex gap-3">
-                <Button
-                  onClick={() => setView('create')}
-                  size="lg"
-                  className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-                >
-                  Create Certificate
-                </Button>
+                <RoleViewButton
+                  buttonTitle="Create Certificate"
+                  feature={Features.CREATE_CERTIFICATE}
+                  svgComponent={certificateSvgComponent()}
+                  onClickEvent={() => setView('create')}
+                />
                 <Button
                   variant="outline"
                   size="lg"
@@ -264,12 +265,12 @@ const Certificates = (): JSX.Element => {
             <Button variant="outline" onClick={() => setShowImportDialog(true)}>
               <Upload className="h-4 w-4" /> Import Certificate
             </Button>
-            <Button
-              className="gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700"
-              onClick={() => setView('create')}
-            >
-              Create New
-            </Button>
+            <RoleViewButton
+              buttonTitle="Create Certificate"
+              feature={Features.CREATE_CERTIFICATE}
+              svgComponent={certificateSvgComponent()}
+              onClickEvent={() => setView('create')}
+            />
           </div>
         </div>
 
