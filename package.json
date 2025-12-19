@@ -7,9 +7,9 @@
     "url": "https://github.com/Kiranism"
   },
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "start": "next start",
+    "dev": "bun run --bun next dev --turbopack",
+    "build": "bun run --bun next build",
+    "start": "bun run --bun next start",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "lint:strict": "eslint --max-warnings=0 src",
