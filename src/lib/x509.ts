@@ -1,17 +1,13 @@
-import {
-  KEY_TYPES,
-  cnRegexPattern,
-  sanRegexPattern,
-} from '@/config/CommonConstant'
+import { cnRegexPattern, sanRegexPattern } from '@/config/CommonConstant'
 
 export function parsePemCertificate(pem: string): {
-  keyType: typeof KEY_TYPES.ED25519 | typeof KEY_TYPES.P256
+  keyType: 'ed25519' | 'p256'
   commonName?: string
 } {
-  let keyType: typeof KEY_TYPES.ED25519 | typeof KEY_TYPES.P256 = KEY_TYPES.P256
+  let keyType: 'ed25519' | 'p256' = 'p256'
 
   if (pem.includes('ED25519')) {
-    keyType = KEY_TYPES.ED25519
+    keyType = 'ed25519'
   }
 
   const cnRegex = cnRegexPattern

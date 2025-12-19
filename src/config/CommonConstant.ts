@@ -30,7 +30,7 @@ export const URL_REGEX_PATTERN =
 
 export const KEY_TYPES = {
   P_256: 'P-256',
-  P256: 'P256',
+  P256: 'p256',
   ED25519: 'ed25519',
 }
 export const sanRegexPattern = /DNS:([^,\n]+)/g
