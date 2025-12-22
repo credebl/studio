@@ -66,7 +66,6 @@ export default function AppSidebar(): React.JSX.Element {
   const [currentPage] = useState(currentPageNumber)
   const [pageSize] = useState(itemPerPage)
   const [searchTerm] = useState('')
-  const [, setOrgList] = useState<Organization[]>([])
 
   const selectedOrgId = useAppSelector((state) => state.organization.orgId)
   const isCollapsed = useAppSelector((state) => state.sidebar.isCollapsed)
@@ -89,7 +88,6 @@ export default function AppSidebar(): React.JSX.Element {
           response?.data?.data?.organizations
         ) {
           const orgs = response.data.data.organizations
-          setOrgList(orgs)
 
           if (!selectedOrgId && orgs.length > 0) {
             const [firstOrg]: Organization[] = orgs
@@ -109,8 +107,6 @@ export default function AppSidebar(): React.JSX.Element {
               }),
             )
           }
-        } else {
-          setOrgList([])
         }
       } catch (err) {
         console.error('Error fetching organizations:', err)
@@ -186,7 +182,13 @@ export default function AppSidebar(): React.JSX.Element {
                               isActive={pathname === subItem.url}
                               className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
                             >
-                              <Link href={subItem.url}>
+                              <Link
+                                href={
+                                  subItem.title === 'DID'
+                                    ? `${subItem.url}?orgId=${selectedOrgId}`
+                                    : subItem.url
+                                }
+                              >
                                 <span>{subItem.title}</span>
                               </Link>
                             </SidebarMenuSubButton>

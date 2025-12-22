@@ -12,15 +12,29 @@ export const schemaVersionRegex = /^\d{1,5}(?:\.\d{1,5})?(?:\.\d{1,5})?$/
 export const proofPurpose = 'assertionMethod'
 export const limitedAttributesLength = 3
 export const itemPerPage = 10
+export const pageIndex = 0
+export const pageCount = 1
 export const allSchemas = 'All schemas'
 export const polygonScan = 'https://mumbai.polygonscan.com/'
 export const createDateTime = 'createDateTime'
 export const totalRecords = 'totalRecords'
 export const successfulRecords = 'successfulRecords'
 export const currentPageNumber = 1
+export const sortBy = 'createdAt'
+export const sortOrder = 'desc'
 export const polygonFaucet = 'https://faucet.polygon.technology/'
 export const UUID_REGEX =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
+export const URL_REGEX_PATTERN =
+  /^(https?:\/\/)(([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})(:\d+)?(\/.*)?$/
+
+export const KEY_TYPES = {
+  P_256: 'P-256',
+  P256: 'p256',
+  ED25519: 'ed25519',
+}
+export const sanRegexPattern = /DNS:([^,\n]+)/g
+export const cnRegexPattern = /CN\s*=\s*([^,\n]+)/
 
 export const apiStatusCodes = {
   API_STATUS_SUCCESS: 200,
@@ -243,4 +257,13 @@ export const InfoText = {
   W3CInfoText: 'W3C VCDM defines interoperable Verifiable Credentials.',
   MDOCInfoText: 'MDOC follows ISO/IEC mobile identity standard.',
   SDJWTInfoText: 'SD-JWT supports selective disclosure JWT credentials.',
+}
+
+export const confirmationCertificateMessages = {
+  activateCertificateConfirmation:
+    'Are you sure you want to activate this certificate?',
+  deactivateCertificateConfirmation:
+    'Are you sure you want to deactivate this certificate?',
+  deleteCertificateConfirmation:
+    'Are you sure you want to delete this certificate?',
 }

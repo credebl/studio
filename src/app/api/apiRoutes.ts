@@ -108,9 +108,15 @@ const apiRoutes = {
     organizations: '/orgs/public-profile',
     organizationDetails: '/orgs/public-profiles',
   },
-
   setting: {
     setting: '/client_credentials',
+  },
+  x509: {
+    root: '/x509',
+    getAllCerts: '/x509',
+    activateCertificate: '/activate',
+    deactivateCertificate: '/deactivate',
+    importCertificate: '/import',
   },
 }
 
