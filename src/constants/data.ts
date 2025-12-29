@@ -118,5 +118,3 @@ export const recentSalesData: SaleUser[] = [
     initials: 'SD',
   },
 ]
-
-export const openSSLHeader = '53616c7465645f5f'
