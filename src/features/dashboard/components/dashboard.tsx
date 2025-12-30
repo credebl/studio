@@ -1,5 +1,9 @@
 'use client'
 
+import {
+  IOrgAgent,
+  IOrganisation,
+} from '@/features/organization/components/interfaces/organization'
 import React, { useEffect, useState } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -12,7 +16,6 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
-import { IOrganisation } from '@/features/organization/components/interfaces/organization'
 import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
 import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
@@ -30,7 +33,7 @@ const initialPageState = {
 }
 
 export default function Dashboard(): React.JSX.Element {
-  const [walletData, setWalletData] = useState<[]>([])
+  const [walletData, setWalletData] = useState<IOrgAgent[]>([])
   const [walletLoading, setWalletLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(initialPageState)
   const [informativeMessage, setInformativeMessage] = useState<string | null>(
@@ -38,15 +41,15 @@ export default function Dashboard(): React.JSX.Element {
   )
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
-  const [, setWalletExists] = useState(false)
   const [activeTab, setActiveTab] = useState('Overview')
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
-  const [isWalletSetupLoading, setWalletSetupLoading] = useState<boolean>(false)
+  const [isWalletSetupLoading, setIsWalletSetupLoading] =
+    useState<boolean>(false)
   const orgId = useAppSelector((state) => state?.organization.orgId)
-  const [, setUserOrg] = useState(null)
 
   const dispatch = useAppDispatch()
   const router = useRouter()
+  const firstName = useAppSelector((state) => state.profile.firstName)
 
   const getAllInvitations = async (): Promise<void> => {
     try {
@@ -66,15 +69,13 @@ export default function Dashboard(): React.JSX.Element {
           )
           setViewButton(true)
         }
-        setCurrentPage({
-          ...currentPage,
-          total: totalPages,
-        })
+        setCurrentPage({ ...currentPage, total: totalPages })
       }
     } catch (err) {
       console.error('An unexpected error occurred', err)
     }
   }
+
   const getAllEcosystemInvitations = async (): Promise<void> => {
     try {
       const response = await getUserEcosystemInvitations(
@@ -83,7 +84,6 @@ export default function Dashboard(): React.JSX.Element {
         '',
         orgId,
       )
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -91,17 +91,13 @@ export default function Dashboard(): React.JSX.Element {
           (invitation: { status: string }) => invitation.status === 'pending',
         )
 
-        if (pendingInvitations && pendingInvitations.length > 0) {
+        if (pendingInvitations?.length > 0) {
           setEcoMessage('You have received invitation to join ecosystem ')
           setViewButton(true)
         }
 
         const totalPages = data?.data?.totalPages
-
-        setCurrentPage({
-          ...currentPage,
-          total: totalPages,
-        })
+        setCurrentPage({ ...currentPage, total: totalPages })
       }
     } catch (err) {
       console.error('An unexpected error occurred.', err)
@@ -120,32 +116,17 @@ export default function Dashboard(): React.JSX.Element {
     try {
       setWalletLoading(true)
       const response = await getOrganizationById(orgId)
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-        const orgAgentsList = data?.data?.org_agents
-        const userOrgRoles = data?.data?.userOrgRoles
+        const orgAgentsList = data?.data?.org_agents || []
 
-        if (userOrgRoles && userOrgRoles.length > 0) {
-          setUserOrg(userOrgRoles[0])
+        const firstLedgerId = orgAgentsList[0]?.ledgers?.id
+        if (firstLedgerId) {
+          dispatch(setLedgerId(firstLedgerId))
         }
 
-        if (
-          typeof response !== 'string' &&
-          response?.data?.data?.org_agents[0]?.ledgers?.id
-        ) {
-          dispatch(
-            setLedgerId(response?.data?.data?.org_agents[0]?.ledgers?.id),
-          )
-        }
-        if (orgAgentsList && orgAgentsList.length > 0) {
-          setWalletData(orgAgentsList)
-          setWalletExists(true)
-        } else {
-          setWalletData([])
-          setWalletExists(false)
-        }
+        setWalletData(orgAgentsList)
       }
     } catch (error) {
       console.error('Error fetching organization:', error)
@@ -161,9 +142,77 @@ export default function Dashboard(): React.JSX.Element {
   }, [orgId])
 
   const handleCreateWallet = (): void => {
-    // redirect or open wallet creation
-    setWalletSetupLoading(true)
-    router.push(`/agent-config?orgId=${orgId}`)
+    setIsWalletSetupLoading(true)
+    router.push(`wallet-setup?orgId=${orgId}`)
+  }
+
+  const [currentWallet] = walletData || []
+
+  let walletSection: React.ReactNode = null
+
+  if (walletLoading) {
+    walletSection = (
+      <div className="flex justify-center py-8">
+        <Loader />
+      </div>
+    )
+  } else if (walletData.length === 0) {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-col items-start">
+            <h3 className="text-xl font-semibold">
+              Wallet lets you create schemas and credential definitions
+            </h3>
+            <p className="mt-2 text-sm">
+              Please create a wallet for your organization to issue and verify
+              credentials.
+            </p>
+          </div>
+          <Button
+            disabled={isWalletSetupLoading}
+            onClick={handleCreateWallet}
+            className="min-w-[180px]"
+          >
+            {isWalletSetupLoading && <Loader />}
+            Setup Your Wallet
+            <CreateWalletIcon />
+          </Button>
+        </div>
+      </div>
+    )
+  } else if (currentWallet?.orgDid) {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-start">
+          <h3 className="text-xl font-semibold">Wallet Details</h3>
+          <p className="mt-2 text-sm text-gray-700">
+            DID is already created for your organization.
+          </p>
+        </div>
+      </div>
+    )
+  } else {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex flex-col items-start">
+            <h3 className="text-xl font-semibold">Setup your DID</h3>
+            <p className="mt-2 text-sm">
+              Your wallet is ready! Now set up a DID for issuing and verifying
+              credentials.
+            </p>
+          </div>
+          <Button
+            onClick={() => router.push(`create-did?orgId=${orgId}`)}
+            className="min-w-[180px]"
+          >
+            Setup Your DID
+            <CreateWalletIcon />
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -194,46 +243,17 @@ export default function Dashboard(): React.JSX.Element {
 
         <div className="mb-6 flex items-center justify-between">
           <h2 className="text-2xl font-bold tracking-tight">
-            Hi, Welcome back 👋
+            Hi, Welcome {firstName} 👋
           </h2>
         </div>
+        {walletSection}
 
-        {walletLoading ? (
-          <div className=""></div>
-        ) : (
-          walletData.length === 0 && (
-            <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
-              <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
-                <div className="flex flex-col items-start">
-                  <h3 className="text-xl font-semibold">
-                    Wallet lets you create schemas and credential definitions
-                  </h3>
-                  <p className="mt-2 text-sm">
-                    Please create wallet for your organization which would help
-                    you to issue and verify credentials for your users.
-                  </p>
-                </div>
-                <Button
-                  disabled={isWalletSetupLoading}
-                  onClick={handleCreateWallet}
-                  className="min-w-[180px]"
-                >
-                  {isWalletSetupLoading && <Loader />} Setup Your Wallet
-                  <CreateWalletIcon />
-                </Button>
-              </div>
-            </div>
-          )
-        )}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList>
             <TabsTrigger value="Overview" className="relative">
               Overview
             </TabsTrigger>
-            <TabsTrigger
-              value="Wallet"
-              disabled={walletData && walletData.length === 0}
-            >
+            <TabsTrigger value="Wallet" disabled={walletData.length === 0}>
               Wallet
             </TabsTrigger>
           </TabsList>

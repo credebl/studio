@@ -1,6 +1,6 @@
-import CryptoJS from 'crypto-js'
 import { NextResponse } from 'next/server'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { passwordEncryption } from '../server/encryption'
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
@@ -18,10 +18,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       )
     }
 
-    const encKey = CryptoJS.AES.encrypt(
-      body.password,
-      CRYPTO_PRIVATE_KEY,
-    ).toString()
+    const encKey = passwordEncryption(body.password)
     return NextResponse.json(
       { message: 'Value encrypted successfully', data: encKey },
       { status: apiStatusCodes.API_STATUS_SUCCESS },

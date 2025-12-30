@@ -27,9 +27,12 @@ const profileSlice = createSlice({
     setProfileId: (state, action: PayloadAction<string>) => {
       state.id = action.payload
     },
+    setFirstName: (state, action: PayloadAction<string>) => {
+      state.firstName = action.payload
+    },
     clearProfile: () => initialState,
   },
 })
 
-export const { setProfile, clearProfile, setProfileId } = profileSlice.actions
+export const { setProfile, clearProfile, setProfileId, setFirstName } = profileSlice.actions
 export default profileSlice.reducer

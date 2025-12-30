@@ -36,3 +36,12 @@ export interface IEncryptPasswordForSignIn {
 export interface IEncryptPasswordResponse {
   password: string
 }
+
+export interface PaginationState {
+  pageIndex: number
+  pageSize: number
+  pageCount: number
+  searchTerm: string
+  sortBy: string
+  sortOrder: 'asc' | 'desc'
+}

@@ -13,6 +13,10 @@ import { useSession } from 'next-auth/react'
 const preventRedirectOnPaths = [
   '/create-organization',
   '/agent-config',
+  '/wallet-setup',
+  '/create-did',
+  '/x509-certificate',
+  '/did-details',
   '/organizations',
   '/users',
   '/connections',

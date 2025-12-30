@@ -93,7 +93,7 @@ export const authOptions: MyAuthOptions = {
           if (isPassword) {
             sanitizedPayload = {
               email,
-              password: passwordEncryption(password || ''),
+              password: passwordEncryption(JSON.stringify(password) || ''),
               isPasskey,
             }
           } else {
