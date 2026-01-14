@@ -38,7 +38,7 @@ const CreateCertificate = ({
   const [formData, setFormData] = useState({
     type: 'Issuer Root',
     keyType: 'P-256',
-    countryCode: 'NL',
+    countryCode: 'US',
     commonName: '',
     alternativeUrl: '',
   })

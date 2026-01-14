@@ -39,6 +39,7 @@ export default function Dashboard(): React.JSX.Element {
   const [informativeMessage, setInformativeMessage] = useState<string | null>(
     '',
   )
+  const [hasOrganization, setHasOrganization] = useState<boolean>(false)
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
   const [activeTab, setActiveTab] = useState('Overview')
@@ -111,25 +112,30 @@ export default function Dashboard(): React.JSX.Element {
 
   const fetchOrganizationDetails = async (): Promise<void> => {
     if (!orgId) {
+      setHasOrganization(false)
+      setWalletData([])
+      setWalletLoading(false)
       return
     }
+
+    setHasOrganization(true)
+    setWalletLoading(true)
     try {
-      setWalletLoading(true)
       const response = await getOrganizationById(orgId)
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const orgAgentsList = data?.data?.org_agents || []
+        setWalletData(orgAgentsList)
 
         const firstLedgerId = orgAgentsList[0]?.ledgers?.id
         if (firstLedgerId) {
           dispatch(setLedgerId(firstLedgerId))
         }
-
-        setWalletData(orgAgentsList)
       }
     } catch (error) {
       console.error('Error fetching organization:', error)
+      setWalletData([])
     } finally {
       setWalletLoading(false)
     }
@@ -138,6 +144,8 @@ export default function Dashboard(): React.JSX.Element {
   useEffect(() => {
     if (orgId) {
       fetchOrganizationDetails()
+    } else {
+      setWalletLoading(false)
     }
   }, [orgId])
 
@@ -154,6 +162,17 @@ export default function Dashboard(): React.JSX.Element {
     walletSection = (
       <div className="flex justify-center py-8">
         <Loader />
+      </div>
+    )
+  } else if (!hasOrganization) {
+    walletSection = (
+      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+        <div className="flex flex-col items-start">
+          <h3 className="text-xl font-semibold">No Organization Found</h3>
+          <p className="mt-2 text-sm">
+            Please create an organization to get started.
+          </p>
+        </div>
       </div>
     )
   } else if (walletData.length === 0) {

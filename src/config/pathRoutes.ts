@@ -31,6 +31,7 @@ export const pathRoutes = {
     credentials: '/verification',
     createSchema: '/schemas/create',
     deleteOrganization: '/delete-organizations',
+    createOrganization: '/create-organization',
 
     viewSchema: '/schemas',
     Issuance: {
