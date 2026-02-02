@@ -38,7 +38,7 @@ const ImportCertificateDialog = ({
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [parsedCert, setParsedCert] = useState<{
-    keyType: 'ed25519' | 'p256'
+    keyType: 'ed25519'
     commonName?: string
     certificatePem: string
   } | null>(null)

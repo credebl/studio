@@ -37,7 +37,7 @@ const CreateCertificate = ({
 }: CreateCertificateProps): JSX.Element => {
   const [formData, setFormData] = useState({
     type: 'Issuer Root',
-    keyType: 'P-256',
+    keyType: '',
     countryCode: 'US',
     commonName: '',
     alternativeUrl: '',
@@ -48,6 +48,7 @@ const CreateCertificate = ({
   const [failure, setFailure] = useState<string | null>(null)
   const [urlError, setUrlError] = useState<string | null>(null)
   const [countryError, setCountryError] = useState<string | null>(null)
+  const [keyTypeError, setKeyTypeError] = useState<string | null>(null)
 
   const orgId = useAppSelector((state) => state?.organization.orgId)
   const URL_REGEX = URL_REGEX_PATTERN
@@ -64,11 +65,19 @@ const CreateCertificate = ({
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
+    setKeyTypeError(null)
 
     setSuccess(null)
     setFailure(null)
     setUrlError(null)
     setCountryError(null)
+
+    if (!formData.keyType) {
+      const errorMessage = 'Key type is required'
+      setKeyTypeError(errorMessage)
+      setFailure(errorMessage)
+      return
+    }
 
     // URL validation
     if (!URL_REGEX.test(formData.alternativeUrl)) {
@@ -91,7 +100,7 @@ const CreateCertificate = ({
     setCreating(true)
 
     const keyType =
-      formData.keyType === KEY_TYPES.P_256 ? KEY_TYPES.P256 : KEY_TYPES.ED25519
+      formData.keyType === KEY_TYPES.P_256 ? KEY_TYPES.P_256 : KEY_TYPES.ED25519
     const now = new Date()
     const notBefore = new Date(now)
     const notAfter = new Date(now)
@@ -284,6 +293,9 @@ const CreateCertificate = ({
                       </SelectItem>
                     </SelectContent>
                   </Select>
+                  {keyTypeError && (
+                    <p className="text-destructive text-xs">{keyTypeError}</p>
+                  )}
                   <p className="text-muted-foreground text-xs">
                     The cryptographic algorithm used for key generation
                   </p>
