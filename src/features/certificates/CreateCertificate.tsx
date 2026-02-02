@@ -38,7 +38,7 @@ const CreateCertificate = ({
   const [formData, setFormData] = useState({
     type: 'Issuer Root',
     keyType: '',
-    countryCode: 'US',
+    countryCode: '',
     commonName: '',
     alternativeUrl: '',
   })
@@ -85,12 +85,14 @@ const CreateCertificate = ({
       return
     }
 
-    // Country code validation
+    if (!formData.countryCode) {
+      setCountryError('Country code is required')
+      return
+    }
     if (!COUNTRY_CODE_REGEX.test(formData.countryCode)) {
       setCountryError('Country code must be 2 uppercase letters (e.g. US, IN)')
       return
     }
-
     const domain = extractDomainFromUrl(formData.alternativeUrl)
     if (!domain) {
       setUrlError('Unable to extract domain from URL')
@@ -167,7 +169,7 @@ const CreateCertificate = ({
         setFormData({
           type: 'Issuer Root',
           keyType: 'P-256',
-          countryCode: 'NL',
+          countryCode: '',
           commonName: '',
           alternativeUrl: '',
         })
@@ -194,7 +196,7 @@ const CreateCertificate = ({
     setFormData({
       type: 'Issuer Root',
       keyType: 'P-256',
-      countryCode: 'NL',
+      countryCode: '',
       commonName: '',
       alternativeUrl: '',
     })
