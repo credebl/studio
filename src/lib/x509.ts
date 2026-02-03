@@ -1,13 +1,13 @@
 import { cnRegexPattern, sanRegexPattern } from '@/config/CommonConstant'
 
 export function parsePemCertificate(pem: string): {
-  keyType: 'ed25519' | 'p256'
+  keyType: 'Ed25519' | 'P-256'
   commonName?: string
 } {
-  let keyType: 'ed25519' | 'p256' = 'p256'
+  let keyType: 'Ed25519' | 'P-256' = 'P-256'
 
-  if (pem.includes('ED25519')) {
-    keyType = 'ed25519'
+  if (pem.includes('Ed25519')) {
+    keyType = 'Ed25519'
   }
 
   const cnRegex = cnRegexPattern
