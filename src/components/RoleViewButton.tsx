@@ -50,6 +50,12 @@ const RoleViewButton = ({
           roles.includes(Roles.VERIFIER)
         )
 
+        case Features.ECOSYSTEM:
+        return (
+
+          roles.includes(Roles.ECOSYSTEM_LEAD)
+        )
+
       default:
         return roles.includes(Roles.OWNER) || roles.includes(Roles.ADMIN)
     }

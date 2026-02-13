@@ -1,0 +1,548 @@
+'use client'
+
+import {
+  IColumnData,
+  ITableMetadata,
+  SortActions,
+  TableStyling,
+  getColumns,
+} from '@/components/ui/generic-table-component/columns'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { MoreVertical, Pencil, Trash2 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Button } from '@/components/ui/button'
+import ConfirmationModal from '@/components/confirmation-modal'
+
+import { Plus, RefreshCw } from 'lucide-react'
+import React, { JSX, useEffect, useState } from 'react'
+
+import { AlertComponent } from '@/components/AlertComponent'
+import { AxiosResponse } from 'axios'
+import { CellContext } from '@tanstack/react-table'
+import { DataTable } from '@/components/ui/generic-table-component/data-table'
+import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
+import Loader from '@/components/Loader'
+import PageContainer from '@/components/layout/page-container'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { pathRoutes } from '@/config/pathRoutes'
+import { useAppSelector } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
+import {
+  createIntent,
+  deleteIntent,
+  getAllIntents,
+  updateIntent,
+} from '@/app/api/Intents'
+
+interface Intent {
+  id: string
+  ecosystemId: string
+  name: string
+  description: string
+  createDateTime: string
+  lastChangedDateTime: string
+}
+
+interface PaginationState {
+  pageIndex: number
+  pageSize: number
+  pageCount: number
+  searchTerm: string
+  sortBy: string
+  sortOrder: SortActions
+}
+
+const IntentList = (): JSX.Element => {
+  const router = useRouter()
+  const orgId = useAppSelector((state) => state.organization.orgId)
+  const ecosystemId = 'b3fd5fc8-d503-4f8e-a55a-5f52bd619688'
+
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [intentList, setIntentList] = useState<Intent[]>([])
+  const [reloading, setReloading] = useState(false)
+  const [openCreate, setOpenCreate] = useState(false)
+  const [creating, setCreating] = useState(false)
+  const [intentName, setIntentName] = useState('')
+  const [intentDesc, setIntentDesc] = useState('')
+  const [success, setSuccess] = useState<string | null>(null)
+  const [failure, setFailure] = useState<string | null>(null)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [selectedIntent, setSelectedIntent] = useState<Intent | null>(null)
+  const [actionType, setActionType] = useState<'delete' | 'update' | null>(null)
+  const [actionLoading, setActionLoading] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
+  const [editIntentId, setEditIntentId] = useState<string | null>(null)
+
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+    pageCount: 1,
+    searchTerm: '',
+    sortBy: 'createDateTime',
+    sortOrder: 'desc',
+  })
+
+  const fetchIntents = async (reload = false): Promise<void> => {
+    if (reload) setReloading(true)
+    else setLoading(true)
+
+    try {
+      const response = await getAllIntents({
+        itemPerPage: pagination.pageSize,
+        page: pagination.pageIndex + 1,
+        search: pagination.searchTerm,
+        sortBy: pagination.sortBy,
+        sortingOrder: pagination.sortOrder,
+        ecosystemId,
+      })
+
+      const { data } = response as AxiosResponse
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setIntentList(data?.data?.data ?? [])
+        setError(null)
+      } else {
+        setIntentList([])
+      }
+    } catch (err) {
+      setIntentList([])
+      setError('Failed to fetch intents')
+      throw err
+    } finally {
+      if (reload) setReloading(false)
+      else setLoading(false)
+    }
+  }
+
+  const handleReload = async (): Promise<void> => {
+    await fetchIntents(true)
+  }
+
+  useEffect(() => {
+    if (!orgId) {
+      setLoading(false)
+      return
+    }
+    fetchIntents()
+  }, [orgId])
+
+  useEffect(() => {
+    if (!success && !failure) return
+
+    const timer = setTimeout(() => {
+      setSuccess(null)
+      setFailure(null)
+
+      if (openCreate) {
+        setOpenCreate(false)
+        setIsEdit(false)
+        setEditIntentId(null)
+        setIntentName('')
+        setIntentDesc('')
+      }
+
+      if (showConfirmModal) {
+        setShowConfirmModal(false)
+        setSelectedIntent(null)
+        setActionType(null)
+      }
+    }, 3000) 
+
+    return () => clearTimeout(timer)
+  }, [success, failure])
+
+  const handleCreateIntent = (): void => {
+    setIsEdit(false)
+    setEditIntentId(null)
+    setIntentName('')
+    setIntentDesc('')
+    setOpenCreate(true)
+  }
+
+  const handleSubmitIntent = async (): Promise<void> => {
+    setSuccess(null)
+    setFailure(null)
+
+    if (!intentName.trim()) {
+      setFailure('Intent name is required')
+      return
+    }
+
+    setCreating(true)
+
+    try {
+      if (isEdit && editIntentId) {
+        const res = (await updateIntent(ecosystemId, editIntentId, {
+          name: intentName,
+          description: intentDesc,
+        })) as AxiosResponse
+
+        if (res?.data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+          setSuccess(res?.data?.message || 'Intent updated successfully')
+
+          setIntentName('')
+          setIntentDesc('')
+          setIsEdit(false)
+          setEditIntentId(null)
+
+          fetchIntents(true)
+          return
+        } else {
+          setFailure(res?.data?.message || 'Failed to update intent')
+          return
+        }
+      }
+
+      const res = (await createIntent(ecosystemId, {
+        name: intentName,
+        description: intentDesc,
+      })) as AxiosResponse
+
+      if (res?.data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setSuccess(res?.data?.message || 'Intent created successfully')
+
+        setIntentName('')
+        setIntentDesc('')
+
+        fetchIntents(true)
+      } else {
+        setFailure(res?.data?.message || 'Failed to create intent')
+      }
+    } catch {
+      setFailure(isEdit ? 'Failed to update intent' : 'Failed to create intent')
+    } finally {
+      setCreating(false)
+    }
+  }
+
+  const openConfirmation = (
+    intent: Intent,
+    action: 'delete' | 'update',
+  ): void => {
+    setSuccess(null)
+    setFailure(null)
+
+    if (action === 'update') {
+      setIsEdit(true)
+      setEditIntentId(intent.id)
+      setIntentName(intent.name)
+      setIntentDesc(intent.description)
+      setOpenCreate(true)
+      return
+    }
+
+    setSelectedIntent(intent)
+    setActionType(action)
+    setShowConfirmModal(true)
+  }
+
+  const handleDeleteIntent = async (intentId: string): Promise<boolean> => {
+    try {
+      const res = await deleteIntent(ecosystemId, intentId)
+
+      if (typeof res === 'string') {
+        setFailure(res)
+        return false
+      }
+
+      if (res?.data?.statusCode === 200) {
+        setSuccess(res?.data?.message || 'Intent deleted successfully')
+        fetchIntents(true)
+        return true
+      }
+
+      setFailure(res?.data?.message || 'Failed to delete intent')
+      return false
+    } catch {
+      setFailure('Something went wrong')
+      return false
+    }
+  }
+
+  const handleConfirmedAction = async (): Promise<void> => {
+    if (!selectedIntent || !actionType) return
+
+    setActionLoading(true)
+
+    let isSuccess = false
+
+    try {
+      if (actionType === 'delete') {
+        await handleDeleteIntent(selectedIntent.id)
+      }
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const actionCell = ({ row }: { row: { original: Intent } }): JSX.Element => {
+    const intent = row.original
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" size="icon">
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+
+        <DropdownMenuContent align="end" className="w-40">
+          {/* UPDATE */}
+          <DropdownMenuItem onClick={() => openConfirmation(intent, 'update')}>
+            <Pencil className="mr-2 h-4 w-4" />
+            Update
+          </DropdownMenuItem>
+
+          {/* DELETE */}
+          <DropdownMenuItem onClick={() => openConfirmation(intent, 'delete')}>
+            <Trash2 className="mr-2 h-4 w-4 text-red-500" />
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    )
+  }
+
+  const columnData: IColumnData[] = [
+    {
+      id: 'name',
+      title: 'Intent',
+      accessorKey: 'name',
+      cell: ({ row }) => (
+        <span className="font-medium">{row.original.name || 'NA'}</span>
+      ),
+      columnFunction: [],
+    },
+    {
+      id: 'description',
+      title: 'Description',
+      accessorKey: 'description',
+      cell: ({ row }) => <span>{row.original.description ?? 'NA'}</span>,
+      columnFunction: [],
+    },
+    {
+      id: 'createDateTime',
+      title: 'Created On',
+      accessorKey: 'createDateTime',
+      cell: ({ row }) =>
+        row.original.createDateTime ? (
+          <DateCell date={row.original.createDateTime} />
+        ) : (
+          <span>NA</span>
+        ),
+      columnFunction: [
+        {
+          sortCallBack: async (order): Promise<void> => {
+            setPagination((prev) => ({
+              ...prev,
+              sortBy: 'connectionId',
+              sortOrder: order,
+            }))
+          },
+        },
+      ],
+    },
+    {
+      id: 'actions',
+      title: 'Actions',
+      accessorKey: 'actions',
+      cell: actionCell,
+      columnFunction: [],
+    },
+  ]
+
+  const metadata: ITableMetadata = {
+    enableSelection: false,
+  }
+
+  const tableStyling: TableStyling = { metadata, columnData }
+  const column = getColumns<Intent>(tableStyling)
+
+  return (
+    <PageContainer>
+      {/* HEADER */}
+      <div className="mb-2 flex flex-wrap items-center justify-between space-y-2 gap-x-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Intents</h2>
+          <p className="text-muted-foreground">Manage ecosystem intents here</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* reload */}
+          <button
+            onClick={handleReload}
+            disabled={reloading}
+            title="Reload"
+            className="bg-secondary text-secondary-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          >
+            <RefreshCw
+              className={`h-5 w-5 ${reloading ? 'animate-spin' : ''}`}
+            />
+          </button>
+
+          {/* create intent */}
+          <button
+            onClick={handleCreateIntent}
+            className="bg-primary text-primary-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            <Plus className="h-4 w-4" />
+            Create Intent
+          </button>
+        </div>
+      </div>
+
+      {/* table */}
+      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <Dialog
+          open={openCreate}
+          onOpenChange={(open) => {
+            setOpenCreate(open)
+
+            if (!open) {
+              setSuccess(null)
+              setFailure(null)
+              setIsEdit(false)
+              setEditIntentId(null)
+              setIntentName('')
+              setIntentDesc('')
+            }
+          }}
+        >
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              {success && (
+                <AlertComponent
+                  message={success}
+                  type="success"
+                  onAlertClose={() => setSuccess(null)}
+                />
+              )}
+
+              {failure && (
+                <AlertComponent
+                  message={failure}
+                  type="failure"
+                  onAlertClose={() => setFailure(null)}
+                />
+              )}
+
+              <DialogTitle>
+                {isEdit ? 'Update Intent' : 'Create Intent'}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="space-y-4 pt-2">
+              {/* Name */}
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Intent Name *</label>
+                <input
+                  type="text"
+                  value={intentName}
+                  onChange={(e) => setIntentName(e.target.value)}
+                  placeholder="Enter intent name"
+                  className="focus:ring-primary w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-sm font-medium">Description</label>
+                <textarea
+                  value={intentDesc}
+                  onChange={(e) => setIntentDesc(e.target.value)}
+                  placeholder="Enter description"
+                  className="focus:ring-primary w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2"
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  onClick={() => setOpenCreate(false)}
+                  className="rounded-md border px-4 py-2 text-sm"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleSubmitIntent}
+                  disabled={creating}
+                  className="bg-primary flex items-center gap-2 rounded-md px-4 py-2 text-sm text-white"
+                >
+                  {creating && (
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  )}
+                  Create
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+        {showConfirmModal && selectedIntent && actionType && (
+          <ConfirmationModal
+            openModal={showConfirmModal}
+            buttonTitles={[
+              'Cancel',
+              actionType === 'delete' ? 'Delete' : 'Update',
+            ]}
+            loading={actionLoading}
+            closeModal={() => {
+              setShowConfirmModal(false)
+              setSelectedIntent(null)
+              setActionType(null)
+            }}
+            onSuccess={(confirmed: boolean): void => {
+              if (confirmed) handleConfirmedAction()
+            }}
+            message={
+              actionType === 'delete'
+                ? 'Are you sure you want to delete this intent?'
+                : 'Update intent functionality coming soon'
+            }
+            isProcessing={actionLoading}
+            success={success}
+            failure={failure}
+            setSuccess={setSuccess}
+            setFailure={setFailure}
+          />
+        )}
+
+        <DataTable
+          isLoading={loading}
+          placeHolder="Search by intent name"
+          data={intentList}
+          columns={column}
+          index={'id'}
+          pageIndex={pagination.pageIndex}
+          pageSize={pagination.pageSize}
+          pageCount={pagination.pageCount}
+          onPageChange={(index) =>
+            setPagination((prev) => ({ ...prev, pageIndex: index }))
+          }
+          onPageSizeChange={(size) =>
+            setPagination((prev) => ({
+              ...prev,
+              pageSize: size,
+              pageIndex: 0,
+            }))
+          }
+          onSearchTerm={(term) =>
+            setPagination((prev) => ({ ...prev, searchTerm: term }))
+          }
+        />
+      </div>
+    </PageContainer>
+  )
+}
+
+export default IntentList

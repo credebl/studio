@@ -16,6 +16,7 @@ const preventRedirectOnPaths = [
   '/wallet-setup',
   '/create-did',
   '/x509-certificate',
+  '/intents',
   '/did-details',
   '/organizations',
   '/users',

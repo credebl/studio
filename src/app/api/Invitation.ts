@@ -114,7 +114,7 @@ export const getUserEcosystemInvitations = async (
   search: string,
   orgId: string,
 ): Promise<AxiosResponse | string> => {
-  const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
+  const url = `${apiRoutes.ecosystem.root}/${orgId}${apiRoutes.ecosystem.usersInvitation}?pageNumber=${pageNumber}&pageSize=${pageSize}&search=${search}`
 
   const config = getHeaderConfigs()
 
