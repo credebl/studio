@@ -36,6 +36,7 @@ export const apiRoutes = {
 
   Ecosystem: {
 		ecosystems: '/ecosystem',
+
 		ecosystemCreationInvite: '/ecosystem/invitation/status',
 		memberInvitations: '/ecosystem/invitations',
     root: '/ecosystem',
