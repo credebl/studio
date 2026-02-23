@@ -203,7 +203,7 @@ export default function AppSidebar(): React.JSX.Element {
                   <SidebarMenuButton
                     asChild
                     tooltip={item.title}
-                    isActive={pathname === item.url}
+                    isActive={pathname.startsWith(item.url)}
                     className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
                   >
                     <Link href={item.url}>

@@ -13,6 +13,7 @@ import storageReducer from './storageKeys'
 import userSlice from './userSlice'
 import verificationSlice from './verificationSlice'
 import walletSpinupSlice from './walletSpinupSlice'
+import ecosystemSlice from  './ecosystemSlice'
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   sidebar: sidebarSlice,
   schema: schemaSlice,
   schemaStorage: schemaStorageSlice,
+  ecosystem: ecosystemSlice
 })
 
 const persistConfig = {
@@ -42,6 +44,7 @@ const persistConfig = {
     'verification',
     'schema',
     'schemaStorage',
+    'ecosystem'
   ],
 }
 

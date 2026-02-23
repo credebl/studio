@@ -65,9 +65,18 @@ export const navItems: NavItem[] = [
       },
     ],
   },
+	{
+    title: 'Ecosystems',
+    url: '/ecosystems',
+    icon: 'world',
+    isActive: false,
+    shortcut: ['e', 'e'],
+    items: [], // no child items
+  },
+,
 ]
 
-export interface SaleUser {
+export interface saleuser {
   id: number
   name: string
   email: string
@@ -76,45 +85,45 @@ export interface SaleUser {
   initials: string
 }
 
-export const recentSalesData: SaleUser[] = [
+export const recentsalesdata: saleuser[] = [
   {
     id: 1,
-    name: 'Olivia Martin',
+    name: 'olivia martin',
     email: 'olivia.martin@email.com',
     amount: '+$1,999.00',
     image: 'https://api.slingacademy.com/public/sample-users/1.png',
-    initials: 'OM',
+    initials: 'om',
   },
   {
     id: 2,
-    name: 'Jackson Lee',
+    name: 'jackson lee',
     email: 'jackson.lee@email.com',
     amount: '+$39.00',
     image: 'https://api.slingacademy.com/public/sample-users/2.png',
-    initials: 'JL',
+    initials: 'jl',
   },
   {
     id: 3,
-    name: 'Isabella Nguyen',
+    name: 'isabella nguyen',
     email: 'isabella.nguyen@email.com',
     amount: '+$299.00',
     image: 'https://api.slingacademy.com/public/sample-users/3.png',
-    initials: 'IN',
+    initials: 'in',
   },
   {
     id: 4,
-    name: 'William Kim',
+    name: 'william kim',
     email: 'will@email.com',
     amount: '+$99.00',
     image: 'https://api.slingacademy.com/public/sample-users/4.png',
-    initials: 'WK',
+    initials: 'wk',
   },
   {
     id: 5,
-    name: 'Sofia Davis',
+    name: 'sofia davis',
     email: 'sofia.davis@email.com',
     amount: '+$39.00',
     image: 'https://api.slingacademy.com/public/sample-users/5.png',
-    initials: 'SD',
+    initials: 'sd',
   },
 ]
