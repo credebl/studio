@@ -19,16 +19,19 @@ import { setEcosystemId, setEcosystemName } from "@/lib/ecosystemSlice"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { apiStatusCodes } from "@/config/CommonConstant"
 import { AlertComponent } from "@/components/AlertComponent"
+import { fetchInvitationsSentForMembers } from "../utils/commonFunctions"
 
 export function Ecosystems(): ReactElement {
   const router = useRouter()
   const orgId = useAppSelector((state) => state.organization.orgId)
+  const sidebar = useAppSelector((state) => state.sidebar.isCollapsed)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [tableData, setTableData] = useState<any[]>([])
   const [walletCreated, setWalletCreated] = useState(false)
   const [isW3C, setIsW3C] = useState(false)
   const [reloading, setReloading] = useState<boolean>(false)
+  const [memberInvitation, setMemberInvitation] = useState<boolean>(false)
   const [invitation, setInvitation] = useState<boolean>(false)
   const [isIssuing, setIsIssuing] = useState(false)
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -104,7 +107,7 @@ export function Ecosystems(): ReactElement {
       accessorKey: 'members',
       columnFunction: [
       ],
-      cell: ({ row }: { row: { original: { memberCount: number } }}) => (<div className="cursor-default text-muted-foreground">{row.original.memberCount - 1}</div>)
+      cell: ({ row }: { row: { original: { memberCount: number } }}) => (<div className="cursor-default text-muted-foreground">{row.original.memberCount}</div>)
     }
 	]
 
@@ -131,6 +134,18 @@ export function Ecosystems(): ReactElement {
    console.log("data",data)
   }
 
+  const fetchInvitationsEcosystem = async () => {
+    const result = await fetchInvitationsSentForMembers(orgId,'' , pagination, EcosystemRoles.ECOSYSTEM_MEMBER);
+    if (result.success) {
+      if (0 < result.tableData.length) {
+        setMemberInvitation(true)
+      }
+    } else {
+        setMemberInvitation(true)
+    }
+  }
+
+  //for ecosystem Invites
 	useEffect(()=>{
     try {
       fetchDataforCreateEcosystemInvites()
@@ -142,6 +157,7 @@ export function Ecosystems(): ReactElement {
     }
 	},[pagination.pageNumber, pagination.pageSize, orgId])
 
+  //for ecosystem data
 	useEffect(()=>{
     try {
       if (timer){
@@ -158,12 +174,14 @@ export function Ecosystems(): ReactElement {
 	useEffect(()=>{
     try {
       fetchDataforEcosystems()
+      fetchInvitationsEcosystem()
     } catch (error) {
      console.error("Error fetching Ecosystem Data for dashboard",error) 
     }finally{
       setLoading(false)	
     }
 	},[])
+
 
   const metadata: ITableMetadata = {
     enableSelection: false,
@@ -187,7 +205,16 @@ export function Ecosystems(): ReactElement {
               onAlertClose={() => setInvitation(false)}
             />
           )}
-      <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
+          {memberInvitation && (
+            <AlertComponent
+              message={'You have pending invitations for ecosystem'}
+              type="warning"
+              viewButton={true}
+              path={'/ecosystems/invitations'}
+              onAlertClose={() => setInvitation(false)}
+            />
+          )}
+      <div className={`-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12 ${sidebar ?'w-[calc(100vw-330px)]':''}`}>
         <DataTable
           isLoading={loading}
           placeHolder="Filter by Ecosystem Name"

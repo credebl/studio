@@ -201,3 +201,9 @@ export enum EcosystemRoles {
   ECOSYSTEM_MEMBER= 'Ecosystem Member',
   ECOSYSTEM_LEAD= 'Ecosystem Lead'
 }
+
+export enum EcosystemMemberInvitation {
+  ACCEPTED = 'accepted',
+  PENDING = 'pending',
+  REJECTED = 'rejected'
+}

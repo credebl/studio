@@ -112,9 +112,18 @@ export const axiosPut = async ({
 export const axiosDelete = async ({
   url,
   config,
+  payload= {}
 }: APIParameters): Promise<AxiosResponse> => {
+  let response:AxiosResponse ;
+  console.log("config",config)
   try {
-    const response = await axiosUser.delete(url, config)
+    if (0 < Object.keys(payload).length) {
+      response =await axiosUser.delete(url, {...config,
+        data: payload
+      })
+    } else{
+      response = await axiosUser.delete(url, config)
+    }
 
     return response
   } catch (error) {

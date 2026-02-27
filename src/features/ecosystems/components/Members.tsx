@@ -1,4 +1,5 @@
 
+
 'use client'
 import { useEffect, useState, type ReactElement } from "react"
 
@@ -13,7 +14,7 @@ import { PaginationState } from "@/common/interface"
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
 import { useRouter } from "next/navigation"
 import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { getEcosystemCreationInvitation, getEcosystemMemberInvitations, getEcosystemsForLead, getOrganizationsForInvite, inviteMemberToEcosystem } from "@/app/api/ecosystem"
+import { deleteEcosystemMember, getEcosystemCreationInvitation, getEcosystemMemberInvitations, getEcosystemMembers, getEcosystemsForLead, getOrganizationsForInvite, inviteMemberToEcosystem, updateMemberStatus } from "@/app/api/ecosystem"
 import { AxiosResponse } from "axios"
 import { EcosystemRoles } from "@/features/common/enum"
 import { setEcosystemName } from "@/lib/ecosystemSlice"
@@ -21,22 +22,24 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { apiStatusCodes } from "@/config/CommonConstant"
 import { AlertComponent } from "@/components/AlertComponent"
 import { dateConversion } from '@/utils/DateConversion'
-import { MemberInvitation } from "@/common/enums"
+import { EcosystemOrgStatus, MemberInvitation } from "@/common/enums"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, RefreshCw } from "lucide-react"
+import { ArrowLeft, Delete, RefreshCw, SquarePen, UserRoundX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { SelectiveSearchEcosystem } from "@/components/SelectiveSearchEcosystem"
-import { fetchInvitationsSentForMembers } from "../utils/commonFunctions"
+import { DotsVerticalIcon } from "@radix-ui/react-icons"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { DeleteIcon } from "@/config/svgs/DeleteIcon"
 
-export function Invitaitons(): ReactElement {
+export function Members(): ReactElement {
   const router = useRouter()
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [tableData, setTableData] = useState<any[]>([])
-  const [orgLoading, setOrgLoading] = useState(false)
+  const [tableLoading, settableLoading] = useState(false)
   const [reloading, setReloading] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [orgList, setOrgList] = useState<{id: string, name: string}[]>([])
@@ -64,6 +67,14 @@ export function Invitaitons(): ReactElement {
 
   const columnData: IColumnData[] = [
     {
+      id: 'organisation',
+      title: 'Organisation',
+      accessorKey: 'organisation',
+      columnFunction: [
+      ],
+      cell: ({ row }: { row: { original: { organisation: string } } }) => (<div className="cursor-default text-muted-foreground">{row.original.organisation}</div>)
+    },
+    {
       id: 'email',
       title: 'Email',
       accessorKey: 'email',
@@ -86,103 +97,68 @@ export function Invitaitons(): ReactElement {
       columnFunction: [
       ],
       cell: ({ row }: { row: { original: { status: string } } }) => (<div className="cursor-default text-muted-foreground">
-        {row.original.status === MemberInvitation.PENDING && <Badge className="status-pending">pending</Badge>}
-        {row.original.status === MemberInvitation.ACCEPTED && <Badge className="status-accepted">accepted</Badge>}
-        {row.original.status === MemberInvitation.REJECTED && <Badge className="status-rejected">rejected</Badge>}
+        {row.original.status === EcosystemOrgStatus.INACTIVE && <Badge className="text-muted-foreground bg-gray-200">inactive</Badge>}
+        {row.original.status === EcosystemOrgStatus.ACTIVE && <Badge className="status-accepted">active</Badge>}
       </div>)
     },
     {
-      id: 'invitedOrg',
-      title: 'Invited Org',
-      accessorKey: 'invitedOrg',
+      id: 'action',
+      title: 'Action',
+      accessorKey: 'action',
       columnFunction: [
       ],
-      cell: ({ row }: { row: { original: { organisation: { name: string } } } }) => (<div className="cursor-default text-muted-foreground">{row.original.organisation.name}</div>)
+      cell: ({ row }: { row: { original: { status: string, orgId: string } } }) => (<div>
+          <Popover>
+              <PopoverTrigger asChild>
+                  <Button variant={'ghost'}>
+                      <DotsVerticalIcon />
+                  </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-50 flex flex-col  p-2 justify-start items-center" align="start">
+                <Button variant={'ghost'} className="flex gap-2 text-muted-foreground w-full justify-start" onClick={()=>handleDeleteEcosystemMember(row.original.orgId)}><UserRoundX />Delete</Button>
+                <hr className="w-full"/>
+                <Button variant={'ghost'} className="flex gap-2 text-muted-foreground w-full justify-start" onClick={()=>handleUpdateMemberStatus(row.original.status === EcosystemOrgStatus.ACTIVE ? EcosystemOrgStatus.INACTIVE : EcosystemOrgStatus.ACTIVE, row.original.orgId)}><SquarePen /><span>{row.original.status === EcosystemOrgStatus.ACTIVE ? 'Deactivate' : 'Activate'}</span></Button>
+              </PopoverContent>
+          </Popover>
+
+      </div>)
     }
   ]
 
-  const fetchInvitationsSentForMembersAsLead = async () => {
-    setLoading(true);
-    
-    const result = await fetchInvitationsSentForMembers(orgId, ecosystemId, pagination);
-    
-    if (result.success) {
-      setTableData(result.tableData);
-      setPagination((prev) => ({ ...prev, totalPages: result.totalPages }));
-    } else {
+  const fetchMembersForEcosystem = async () => {
+    try {
+      setLoading(true)
+      const response = await getEcosystemMembers(ecosystemId, pagination)
+      const { data } = response as AxiosResponse
+      console.log("data", data)
+      if (data?.data?.totalPages) {
+        setPagination((prev) => ({ ...prev, totalPages: data.data.totalPages }))
+      }else{
+        setPagination((prev) => ({ ...prev, totalPages: 0 }))
+      }
+      if (data?.data?.data) {
+        setTableData(data.data.data)
+      }else{
+        setTableData([])
+      }
+    } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   }
-
-  // const fetchInvitationsSentForMembers = async () => {
-  //   try {
-  //     setLoading(true)
-  //     const response = await getEcosystemMemberInvitations(orgId, ecosystemId, pagination)
-  //     const { data } = response as AxiosResponse
-  //     console.log("data", data)
-  //     if (data.data.totalPages) {
-  //       setPagination((prev) => ({ ...prev, totalPages: data.data.totalPages }))
-  //     }
-  //     if (data.data.data) {
-  //       setTableData(data.data.data)
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
 
   useEffect(() => {
     const delay = pagination.searchTerm ? 500 : 0; 
     
     const timer = setTimeout(() => {
-      fetchInvitationsSentForMembersAsLead();
+      fetchMembersForEcosystem();
     }, delay);
 
     return () => clearTimeout(timer);
 
   }, [pagination.pageNumber, pagination.pageSize, pagination.searchTerm, orgId]);
 
-  const fetchOrganizationsList = async ():Promise<void> =>{
-    if(openModal){
-      setOrgLoading(true)
-      try{
-        const response = await getOrganizationsForInvite(orgId,paginationOrgList)
-        const { data } = response as AxiosResponse
-      console.log("data", data)
-      if (data?.data?.orgs) {
-        setOrgList(data.data.orgs)
-      }
-      }catch(error){
-        console.error('Error fetching organizations',error)
-      }finally{
-        setOrgLoading(false)
-      }    
-    }
-  }
-
-  useEffect(()=>{
-    let timer : NodeJS.Timeout
-    if (openModal) {
-      console.log("hiting api in use eff ")
-     timer = setTimeout(()=>
-        fetchOrganizationsList()
-      ,500 
-      )
-    }else{
-      setPaginationOrgList((prev)=> ({...prev, searchTerm: ''}))
-      setSelectedOption('')
-    }
-    return ()=> {if(openModal) {clearInterval(timer)}}
-  },[openModal,paginationOrgList.searchTerm])
-
-  const handleSearch = (selected: string ) => {
-    console.log("trigger ",selected)
-    setPaginationOrgList((prev)=> ({...prev, searchTerm: selected}))
-  }
 
   useEffect(()=>{
     setTimeout(()=>{
@@ -191,78 +167,70 @@ export function Invitaitons(): ReactElement {
     },3000)
   },[success,error])
 
-  const sendInvite =async () => {
-    console.log("send Invite",selectedOption)
+  const handleUpdateMemberStatus = async (status: EcosystemOrgStatus, orgId: string) => {
+    console.log("status",status,orgId)
+    settableLoading(true)
     try {
       const payload = {
-        orgId: selectedOption,
+        orgIds : [orgId],
         ecosystemId
       }
-      const response = await inviteMemberToEcosystem(payload)
+      const response = await updateMemberStatus(status, payload)
       const {data} = response as AxiosResponse
       console.log("data",data)
       console.log("response",response)
-      if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED){
+      console.log("data.status",data.status)
+      if (data && data.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
         console.log("success",data.message)
-         setSuccess(data.message)
-         fetchInvitationsSentForMembersAsLead()
-      }else {
-        if ('string' === typeof response){
-          setError(response)
-        }
+        setSuccess('Successfully updated the ecosystem member status')
+        fetchMembersForEcosystem()
       }
     } catch (err) {
-      console.error("Failed to send member invitation",err)
-      setError('Failed to send member invitation')
+      console.error("failed to update member status",err)
+      setError('Failed to update status for member')
     } finally {
-      setLoading(false)
-      setPaginationOrgList((prev)=> ({...prev, searchTerm: ''}))
-      setSelectedOption('')
-      setOpenModal(false)
+      settableLoading(false)
     }
+  }
 
+  const handleDeleteEcosystemMember = async (orgId: string) =>  {
+    settableLoading(true)
+    console.log("orgId",orgId)
+    try {
+      const payload = {
+        orgIds : [orgId],
+        ecosystemId
+      }
+      const response = await deleteEcosystemMember(payload)
+      const {data} = response as AxiosResponse
+      console.log("data",data)
+      console.log("response",response)
+      console.log("data.status",data.status)
+      if (data && data.statusCode === apiStatusCodes.API_STATUS_SUCCESS){
+        console.log("success",data.message)
+        setSuccess('Ecosystem member deleted successfully')
+        fetchMembersForEcosystem()
+      }
+    } catch (err) {
+      console.error("Failed to delete member",err)
+      setError('Failed to delete member')
+    } finally {
+      settableLoading(false)
+    }
   }
 
   const metadata: ITableMetadata = {
     enableSelection: false,
   }
+
   const tableStyling: TableStyling = { metadata, columnData }
 
   const column = getColumns<any>(tableStyling)
   return <div className="">
-    <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent
-        className="sm:max-w-2xl"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle>Send Member Invitation</DialogTitle>
-        </DialogHeader>
-
-        <label className="text-muted-foreground">Selected organisation</label>
-        <SelectiveSearchEcosystem
-          className="mt-0"
-          options={orgList}
-          value={selectedOption}
-          getOptionValue={(v) => v.id}
-          getOptionLabel={(v) => v.name}
-          onValueChange={(v) => setSelectedOption(v.id)}
-          onSearchChange={(v)=> handleSearch(v)}
-          enableInternalSearch = {false}
-          disabled = {loading}
-          placeholder="Find a organisation..."
-        />
-        <div className="ml-auto mt-5">
-          <Button onClick={sendInvite}>
-            Send Invite
-          </Button>
-        </div>
-        </DialogContent>
-      </Dialog>
     <div className="mb-2">
       {/* <p className="text-muted-foreground">
             Here&apos;s a list of all ecosystems
-          </p> */}
+      </p> */}
     </div>
       {
         (!!error || !!success) &&
@@ -276,7 +244,7 @@ export function Invitaitons(): ReactElement {
       <div className="flex items-center gap-2 absolute">
         {/* Reload Button */}
         <button
-          onClick={() => (fetchInvitationsSentForMembersAsLead())}
+          onClick={() => (fetchMembersForEcosystem())}
           disabled={loading}
           title="Reload table data"
           className="bg-secondary text-secondary-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
@@ -285,15 +253,12 @@ export function Invitaitons(): ReactElement {
             className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`}
           />
         </button>
-        <Button onClick={()=>setOpenModal(true)}>
-          Invite Member
-        </Button>
       </div>
     </div>
     <div className="flex-1 overflow-auto py-4 px-1 lg:flex-row lg:space-y-0 lg:space-x-12">
       <DataTable
-        isLoading={loading}
-        placeHolder="Filter by email, status or invited org"
+        isLoading={tableLoading}
+        placeHolder="Filter by email, status or organisation"
         data={tableData}
         columns={column}
         index={'id'}

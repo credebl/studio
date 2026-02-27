@@ -55,13 +55,11 @@ export function SelectiveSearchEcosystem<T>({
   const [searchValue, setSearchValue] = React.useState('')
   const wait = React.useRef<NodeJS.Timeout | undefined>(undefined)
 
-  // Find the currently selected object based on the 'value' string passed in
   const selected = React.useMemo(() => 
     options.find((opt) => getOptionValue(opt) === value),
     [options, value, getOptionValue]
   )
 
-  // Reset search when popover closes
   React.useEffect(() => {
     if (!open) setSearchValue('')
   }, [open])
@@ -86,7 +84,7 @@ export function SelectiveSearchEcosystem<T>({
           disabled={disabled}
           className={cn("flex w-full justify-between items-center", className)}
         >
-          <span className="truncate">
+          <span className="truncate text-muted-foreground">
             {selected ? getOptionLabel(selected) : placeholder}
           </span>
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -112,7 +110,7 @@ export function SelectiveSearchEcosystem<T>({
                 return (
                   <CommandItem
                     key={val}
-                    value={label} // Command's internal filtering uses 'value' prop
+                    value={label} 
                     onSelect={() => {
                       onValueChange?.(option)
                       setOpen(false)

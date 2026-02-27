@@ -11,6 +11,7 @@ import { useAppSelector } from '@/lib/hooks';
 import { apiStatusCodes } from '@/config/CommonConstant';
 import { AxiosResponse } from 'axios';
 import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
 const Create = () => {
     const [ecosystemDetail, setEcosystemDetail] = useState({
@@ -87,6 +88,7 @@ const Create = () => {
             />
           </div>
         )}
+
     <Formik
       initialValues={{
         name: '',

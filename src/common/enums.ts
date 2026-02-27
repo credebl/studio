@@ -108,5 +108,11 @@ export enum ProofType {
 
 export enum MemberInvitation {
   ACCEPTED = 'accepted',
-  PENDING = 'pending'
+  PENDING = 'pending',
+  REJECTED = 'rejected'
+}
+
+export enum EcosystemOrgStatus {
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE'
 }
