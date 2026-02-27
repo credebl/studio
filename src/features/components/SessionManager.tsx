@@ -19,6 +19,7 @@ const preventRedirectOnPaths = [
   '/did-details',
   '/organizations',
   '/users',
+  '/ecosystems',
   '/connections',
   '/profile',
   '/developers-setting',

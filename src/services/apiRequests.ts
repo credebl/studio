@@ -210,9 +210,15 @@ export const ecosystemAxiosPut = async ({
 export const ecosystemAxiosDelete = async ({
   url,
   config,
+  payload = {},
 }: APIParameters): Promise<AxiosResponse> => {
   try {
-    const response = await ecosystemAxiosUser.delete(url, config)
+    const hasPayload = Object.keys(payload).length > 0
+
+    const response = await axiosUser.delete(
+      url,
+      hasPayload ? { ...config, data: payload } : config,
+    )
 
     return response
   } catch (error) {
