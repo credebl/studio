@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/popover'
 import { ReactElement, useEffect, useState } from 'react'
 import { RefreshCw, SquarePen, UserRoundX } from 'lucide-react'
+import { apiStatusCodes, confirmationMessages } from '@/config/CommonConstant'
 import {
   deleteEcosystemMember,
   getEcosystemMembers,
@@ -23,11 +24,12 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
+import { DestructiveConfirmation } from '@/config/svgs/Auth'
 import { DotsVerticalIcon } from '@radix-ui/react-icons'
 import { EcosystemOrgStatus } from '@/common/enums'
 import { ILeadsInvitationTable } from '../Interface/ecosystemInterface'
-import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
 import { useAppSelector } from '@/lib/hooks'
 
@@ -39,6 +41,8 @@ export function Members(): ReactElement {
   const [tableData, setTableData] = useState<ILeadsInvitationTable[]>([])
   const [tableLoading, settableLoading] = useState(false)
 
+  const [deletionId, setDeletionId] = useState<string>('')
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false)
   const ecosystemId = useAppSelector((state) => state.ecosystem.id)
   const [pagination, setPagination] = useState({
     pageSize: 10,
@@ -94,11 +98,11 @@ export function Members(): ReactElement {
       settableLoading(false)
     }
   }
-  const handleDeleteEcosystemMember = async (orgId: string): Promise<void> => {
+  const handleDeleteEcosystemMember = async (): Promise<void> => {
     settableLoading(true)
     try {
       const payload = {
-        orgIds: [orgId],
+        orgIds: [deletionId],
         ecosystemId,
       }
       const response = await deleteEcosystemMember(payload)
@@ -112,6 +116,8 @@ export function Members(): ReactElement {
       setError('Failed to delete member')
     } finally {
       settableLoading(false)
+      setDeletionId('')
+      setShowConfirmation(false)
     }
   }
 
@@ -193,9 +199,10 @@ export function Members(): ReactElement {
               <Button
                 variant={'ghost'}
                 className="text-muted-foreground flex w-full justify-start gap-2"
-                onClick={() =>
-                  handleDeleteEcosystemMember(row.original.organisation.id)
-                }
+                onClick={() => {
+                  setDeletionId(row.original.organisation.id)
+                  setShowConfirmation(true)
+                }}
               >
                 <UserRoundX />
                 Delete
@@ -253,6 +260,23 @@ export function Members(): ReactElement {
   const column = getColumns<ILeadsInvitationTable>(tableStyling)
   return (
     <div className="">
+      <ConfirmationModal
+        loading={false}
+        success={success}
+        failure={error}
+        openModal={showConfirmation}
+        closeModal={() => setShowConfirmation(false)}
+        onSuccess={handleDeleteEcosystemMember}
+        message={'Are you sure to delete this member'}
+        buttonTitles={[
+          confirmationMessages.cancelConfirmation,
+          confirmationMessages.sureConfirmation,
+        ]}
+        isProcessing={loading}
+        setFailure={setError}
+        setSuccess={setSuccess}
+        image={<DestructiveConfirmation />}
+      />
       <div className="mb-2"></div>
       {(Boolean(error) || Boolean(success)) && (
         <AlertComponent
