@@ -1,24 +1,23 @@
-
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 
 interface Ecosystem {
-    id: string,
-    name: string
+  id: string
+  name: string
 }
 
 const initialState: Ecosystem = {
-    id: '',
-    name: ''
+  id: '',
+  name: '',
 }
 
 const ecosystemSlice = createSlice({
   name: 'ecosystem',
   initialState,
   reducers: {
-    setEcosystemName: (state, action: PayloadAction<{name: string}>) => {
+    setEcosystemName: (state, action: PayloadAction<{ name: string }>) => {
       state.name = action.payload.name
     },
-    setEcosystemId: (state, action: PayloadAction<{id: string}>) => {
+    setEcosystemId: (state, action: PayloadAction<{ id: string }>) => {
       state.id = action.payload.id
     },
   },

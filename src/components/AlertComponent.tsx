@@ -9,7 +9,6 @@ export const AlertComponent = ({
   onAlertClose,
   path = '',
 }: IAlertComponent): React.JSX.Element | boolean => {
-  console.log("type",type)
   const getAlertClass = (): string => {
     switch (type) {
       case 'warning':

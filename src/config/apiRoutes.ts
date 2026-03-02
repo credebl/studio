@@ -35,9 +35,9 @@ export const apiRoutes = {
   },
 
   Ecosystem: {
-		ecosystems: '/ecosystem',
-		ecosystemInvitationStatus: '/ecosystem/invitation/status',
-		memberInvitations: '/ecosystem/invitations',
+    ecosystems: '/ecosystem',
+    ecosystemInvitationStatus: '/ecosystem/invitation/status',
+    memberInvitations: '/ecosystem/invitations',
     inviteMember: '/ecosystem/invitation',
     ecosystemMembers: '/ecosystem/members',
     updateMemberStatus: '/ecosystem/member/status',
@@ -91,7 +91,7 @@ export const apiRoutes = {
     deleteVerifications: '/verification-records',
     deleteIssaunce: '/issuance-records',
     deleteConnections: '/connections',
-    getAllPlatformOrgs: '/orgs/:orgId/get-all-platform-organisations'
+    getAllPlatformOrgs: '/orgs/:orgId/get-all-platform-organisations',
   },
   connection: {
     create: '/connections',

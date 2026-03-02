@@ -1,47 +1,47 @@
-
 'use client'
-import { useEffect, useState, type ReactElement } from "react"
 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   IColumnData,
   ITableMetadata,
-  SortActions,
   TableStyling,
   getColumns,
 } from '../../../components/ui/generic-table-component/columns'
-import { PaginationState } from "@/common/interface"
+import { ReactElement, useEffect, useState } from 'react'
+import {
+  getOrganizationsForInvite,
+  inviteMemberToEcosystem,
+} from '@/app/api/ecosystem'
+
+import { AlertComponent } from '@/components/AlertComponent'
+import { AxiosResponse } from 'axios'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
-import { useRouter } from "next/navigation"
-import { useAppDispatch, useAppSelector } from "@/lib/hooks"
-import { getEcosystemCreationInvitation, getEcosystemMemberInvitations, getEcosystemsForLead, getOrganizationsForInvite, inviteMemberToEcosystem } from "@/app/api/ecosystem"
-import { AxiosResponse } from "axios"
-import { EcosystemRoles } from "@/features/common/enum"
-import { setEcosystemName } from "@/lib/ecosystemSlice"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import { apiStatusCodes } from "@/config/CommonConstant"
-import { AlertComponent } from "@/components/AlertComponent"
+import { ILeadsInvitationTable } from '../Interface/ecosystemInterface'
+import { MemberInvitation } from '@/common/enums'
+import { RefreshCw } from 'lucide-react'
+import { SelectiveSearchEcosystem } from '@/components/SelectiveSearchEcosystem'
+import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
-import { MemberInvitation } from "@/common/enums"
-import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, RefreshCw } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { SelectiveSearchEcosystem } from "@/components/SelectiveSearchEcosystem"
-import { fetchInvitationsSentForMembers } from "../utils/commonFunctions"
+import { fetchInvitationsSentForMembers } from '../utils/commonFunctions'
+import { useAppSelector } from '@/lib/hooks'
 
 export function Invitaitons(): ReactElement {
-  const router = useRouter()
   const orgId = useAppSelector((state) => state.organization.orgId)
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
-  const [tableData, setTableData] = useState<any[]>([])
-  const [orgLoading, setOrgLoading] = useState(false)
-  const [reloading, setReloading] = useState<boolean>(false)
+  const [tableData, setTableData] = useState<ILeadsInvitationTable[]>([])
+  const [, setOrgLoading] = useState(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const [orgList, setOrgList] = useState<{id: string, name: string}[]>([])
+  const [orgList, setOrgList] = useState<{ id: string; name: string }[]>([])
   const [selectedOption, setSelectedOption] = useState<string>('')
-  const dispatch = useAppDispatch()
 
   const ecosystemId = useAppSelector((state) => state.ecosystem.id)
   const [pagination, setPagination] = useState({
@@ -67,160 +67,158 @@ export function Invitaitons(): ReactElement {
       id: 'email',
       title: 'Email',
       accessorKey: 'email',
-      columnFunction: [
-      ],
-      cell: ({ row }: { row: { original: { email: string } } }) => (<div className="cursor-default">{row.original.email}</div>)
+      columnFunction: [],
+      cell: ({ row }: { row: { original: { email: string } } }) => (
+        <div className="cursor-default">{row.original.email}</div>
+      ),
     },
     {
       id: 'date',
       title: 'Date',
       accessorKey: 'date',
-      columnFunction: [
-      ],
-      cell: ({ row }: { row: { original: { createDateTime: string } } }) => (<div className="cursor-default text-muted-foreground">{dateConversion(row.original.createDateTime)}</div>)
+      columnFunction: [],
+      cell: ({ row }: { row: { original: { createDateTime: string } } }) => (
+        <div className="text-muted-foreground cursor-default">
+          {dateConversion(row.original.createDateTime)}
+        </div>
+      ),
     },
     {
       id: 'status',
       title: 'Status',
       accessorKey: 'status',
-      columnFunction: [
-      ],
-      cell: ({ row }: { row: { original: { status: string } } }) => (<div className="cursor-default text-muted-foreground">
-        {row.original.status === MemberInvitation.PENDING && <Badge className="status-pending">pending</Badge>}
-        {row.original.status === MemberInvitation.ACCEPTED && <Badge className="status-accepted">accepted</Badge>}
-        {row.original.status === MemberInvitation.REJECTED && <Badge className="status-rejected">rejected</Badge>}
-      </div>)
+      columnFunction: [],
+      cell: ({ row }: { row: { original: { status: string } } }) => (
+        <div className="text-muted-foreground cursor-default">
+          {row.original.status === MemberInvitation.PENDING && (
+            <Badge className="status-pending">pending</Badge>
+          )}
+          {row.original.status === MemberInvitation.ACCEPTED && (
+            <Badge className="status-accepted">accepted</Badge>
+          )}
+          {row.original.status === MemberInvitation.REJECTED && (
+            <Badge className="status-rejected">rejected</Badge>
+          )}
+        </div>
+      ),
     },
     {
       id: 'invitedOrg',
       title: 'Invited Org',
       accessorKey: 'invitedOrg',
-      columnFunction: [
-      ],
-      cell: ({ row }: { row: { original: { organisation: { name: string } } } }) => (<div className="cursor-default text-muted-foreground">{row.original.organisation.name}</div>)
-    }
+      columnFunction: [],
+      cell: ({
+        row,
+      }: {
+        row: { original: { organisation: { name: string } } }
+      }) => (
+        <div className="text-muted-foreground cursor-default">
+          {row.original.organisation.name}
+        </div>
+      ),
+    },
   ]
 
-  const fetchInvitationsSentForMembersAsLead = async () => {
-    setLoading(true);
-    
-    const result = await fetchInvitationsSentForMembers(orgId, ecosystemId, pagination);
-    
-    if (result.success) {
-      setTableData(result.tableData);
-      setPagination((prev) => ({ ...prev, totalPages: result.totalPages }));
-    } else {
-      console.error("Error fetching data:", error);
-    }
-    
-    setLoading(false);
-  }
+  const fetchInvitationsSentForMembersAsLead = async (): Promise<void> => {
+    setLoading(true)
 
-  // const fetchInvitationsSentForMembers = async () => {
-  //   try {
-  //     setLoading(true)
-  //     const response = await getEcosystemMemberInvitations(orgId, ecosystemId, pagination)
-  //     const { data } = response as AxiosResponse
-  //     console.log("data", data)
-  //     if (data.data.totalPages) {
-  //       setPagination((prev) => ({ ...prev, totalPages: data.data.totalPages }))
-  //     }
-  //     if (data.data.data) {
-  //       setTableData(data.data.data)
-  //     }
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }
+    const result = await fetchInvitationsSentForMembers(
+      orgId,
+      ecosystemId,
+      pagination,
+    )
+
+    if (result.success) {
+      setTableData(result.tableData)
+      setPagination((prev) => ({ ...prev, totalPages: result.totalPages }))
+    } else {
+      console.error('Error fetching data:', error)
+    }
+
+    setLoading(false)
+  }
 
   useEffect(() => {
-    const delay = pagination.searchTerm ? 500 : 0; 
-    
+    const delay = pagination.searchTerm ? 500 : 0
+
     const timer = setTimeout(() => {
-      fetchInvitationsSentForMembersAsLead();
-    }, delay);
+      fetchInvitationsSentForMembersAsLead()
+    }, delay)
 
-    return () => clearTimeout(timer);
+    return () => clearTimeout(timer)
+  }, [pagination.pageNumber, pagination.pageSize, pagination.searchTerm, orgId])
 
-  }, [pagination.pageNumber, pagination.pageSize, pagination.searchTerm, orgId]);
-
-  const fetchOrganizationsList = async ():Promise<void> =>{
-    if(openModal){
+  const fetchOrganizationsList = async (): Promise<void> => {
+    if (openModal) {
       setOrgLoading(true)
-      try{
-        const response = await getOrganizationsForInvite(orgId,paginationOrgList)
+      try {
+        const response = await getOrganizationsForInvite(
+          orgId,
+          paginationOrgList,
+        )
         const { data } = response as AxiosResponse
-      console.log("data", data)
-      if (data?.data?.orgs) {
-        setOrgList(data.data.orgs)
-      }
-      }catch(error){
-        console.error('Error fetching organizations',error)
-      }finally{
+        if (data?.data?.orgs) {
+          setOrgList(data.data.orgs)
+        }
+      } catch (error) {
+        console.error('Error fetching organizations', error)
+      } finally {
         setOrgLoading(false)
-      }    
+      }
     }
   }
 
-  useEffect(()=>{
-    let timer : NodeJS.Timeout
+  useEffect(() => {
+    let timer: NodeJS.Timeout | undefined = undefined
     if (openModal) {
-      console.log("hiting api in use eff ")
-     timer = setTimeout(()=>
-        fetchOrganizationsList()
-      ,500 
-      )
-    }else{
-      setPaginationOrgList((prev)=> ({...prev, searchTerm: ''}))
+      timer = setTimeout(() => fetchOrganizationsList(), 500)
+    } else {
+      setPaginationOrgList((prev) => ({ ...prev, searchTerm: '' }))
       setSelectedOption('')
     }
-    return ()=> {if(openModal) {clearInterval(timer)}}
-  },[openModal,paginationOrgList.searchTerm])
+    return () => {
+      if (openModal) {
+        clearInterval(timer)
+      }
+    }
+  }, [openModal, paginationOrgList.searchTerm])
 
-  const handleSearch = (selected: string ) => {
-    console.log("trigger ",selected)
-    setPaginationOrgList((prev)=> ({...prev, searchTerm: selected}))
+  const handleSearch = (selected: string): void => {
+    setPaginationOrgList((prev) => ({ ...prev, searchTerm: selected }))
   }
 
-  useEffect(()=>{
-    setTimeout(()=>{
+  useEffect(() => {
+    setTimeout(() => {
       setSuccess(null)
       setError(null)
-    },3000)
-  },[success,error])
+    }, 3000)
+  }, [success, error])
 
-  const sendInvite =async () => {
-    console.log("send Invite",selectedOption)
+  const sendInvite = async (): Promise<void> => {
     try {
       const payload = {
         orgId: selectedOption,
-        ecosystemId
+        ecosystemId,
       }
       const response = await inviteMemberToEcosystem(payload)
-      const {data} = response as AxiosResponse
-      console.log("data",data)
-      console.log("response",response)
-      if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED){
-        console.log("success",data.message)
-         setSuccess(data.message)
-         fetchInvitationsSentForMembersAsLead()
-      }else {
-        if ('string' === typeof response){
+      const { data } = response as AxiosResponse
+      if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setSuccess(data.message)
+        fetchInvitationsSentForMembersAsLead()
+      } else {
+        if (typeof response === 'string') {
           setError(response)
         }
       }
     } catch (err) {
-      console.error("Failed to send member invitation",err)
+      console.error('Failed to send member invitation', err)
       setError('Failed to send member invitation')
     } finally {
       setLoading(false)
-      setPaginationOrgList((prev)=> ({...prev, searchTerm: ''}))
+      setPaginationOrgList((prev) => ({ ...prev, searchTerm: '' }))
       setSelectedOption('')
       setOpenModal(false)
     }
-
   }
 
   const metadata: ITableMetadata = {
@@ -228,92 +226,90 @@ export function Invitaitons(): ReactElement {
   }
   const tableStyling: TableStyling = { metadata, columnData }
 
-  const column = getColumns<any>(tableStyling)
-  return <div className="">
-    <Dialog open={openModal} onOpenChange={setOpenModal}>
-      <DialogContent
-        className="sm:max-w-2xl"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        <DialogHeader>
-          <DialogTitle>Send Member Invitation</DialogTitle>
-        </DialogHeader>
+  const column = getColumns<ILeadsInvitationTable>(tableStyling)
+  return (
+    <div className="">
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent
+          className="sm:max-w-2xl"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <DialogHeader>
+            <DialogTitle>Send Member Invitation</DialogTitle>
+          </DialogHeader>
 
-        <label className="text-muted-foreground">Selected organisation</label>
-        <SelectiveSearchEcosystem
-          className="mt-0"
-          options={orgList}
-          value={selectedOption}
-          getOptionValue={(v) => v.id}
-          getOptionLabel={(v) => v.name}
-          onValueChange={(v) => setSelectedOption(v.id)}
-          onSearchChange={(v)=> handleSearch(v)}
-          enableInternalSearch = {false}
-          disabled = {loading}
-          placeholder="Find a organisation..."
-        />
-        <div className="ml-auto mt-5">
-          <Button onClick={sendInvite}>
-            Send Invite
-          </Button>
-        </div>
+          <label className="text-muted-foreground">Selected organisation</label>
+          <SelectiveSearchEcosystem
+            className="mt-0"
+            options={orgList}
+            value={selectedOption}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.name}
+            onValueChange={(v) => setSelectedOption(v.id)}
+            onSearchChange={(v) => handleSearch(v)}
+            enableInternalSearch={false}
+            disabled={loading}
+            placeholder="Find a organisation..."
+          />
+          <div className="mt-5 ml-auto">
+            <Button onClick={sendInvite}>Send Invite</Button>
+          </div>
         </DialogContent>
       </Dialog>
-    <div className="mb-2">
-      {/* <p className="text-muted-foreground">
+      <div className="mb-2">
+        {/* <p className="text-muted-foreground">
             Here&apos;s a list of all ecosystems
           </p> */}
-    </div>
-      {
-        (!!error || !!success) &&
+      </div>
+      {(Boolean(error) || Boolean(success)) && (
         <AlertComponent
           message={success ?? error}
           type={success ? 'success' : 'failure'}
-          onAlertClose={() =>{ setError(null); setSuccess(null)}}
+          onAlertClose={() => {
+            setError(null)
+            setSuccess(null)
+          }}
         />
-      }
-    <div className="flex justify-end relative">
-      <div className="flex items-center gap-2 absolute">
-        {/* Reload Button */}
-        <button
-          onClick={() => (fetchInvitationsSentForMembersAsLead())}
-          disabled={loading}
-          title="Reload table data"
-          className="bg-secondary text-secondary-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-        >
-          <RefreshCw
-            className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`}
-          />
-        </button>
-        <Button onClick={()=>setOpenModal(true)}>
-          Invite Member
-        </Button>
+      )}
+      <div className="relative flex justify-end">
+        <div className="absolute flex items-center gap-2">
+          {/* Reload Button */}
+          <button
+            onClick={() => fetchInvitationsSentForMembersAsLead()}
+            disabled={loading}
+            title="Reload table data"
+            className="bg-secondary text-secondary-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          >
+            <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+          <Button onClick={() => setOpenModal(true)}>Invite Member</Button>
+        </div>
+      </div>
+      <div className="flex-1 overflow-auto px-1 py-4 lg:flex-row lg:space-y-0 lg:space-x-12">
+        <DataTable
+          isLoading={loading}
+          placeHolder="Filter by email, status or invited org"
+          data={tableData}
+          columns={column}
+          index={'id'}
+          pageIndex={pagination.pageNumber}
+          pageSize={pagination.pageSize}
+          pageCount={pagination.totalPages}
+          onPageChange={(index: number) =>
+            setPagination((prev) => ({ ...prev, pageNumber: index }))
+          }
+          onPageSizeChange={(size: number) => {
+            setPagination((prev) => ({
+              ...prev,
+              pageSize: size,
+              pageNumber: 0,
+            }))
+          }}
+          onSearchTerm={(term: string) =>
+            setPagination((prev) => ({ ...prev, searchTerm: term }))
+          }
+        />
       </div>
     </div>
-    <div className="flex-1 overflow-auto py-4 px-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-      <DataTable
-        isLoading={loading}
-        placeHolder="Filter by email, status or invited org"
-        data={tableData}
-        columns={column}
-        index={'id'}
-        pageIndex={pagination.pageNumber}
-        pageSize={pagination.pageSize}
-        pageCount={pagination.totalPages}
-        onPageChange={(index: number) =>
-          setPagination((prev) => ({ ...prev, pageNumber: index }))
-        }
-        onPageSizeChange={(size: number) => {
-          setPagination((prev) => ({
-            ...prev,
-            pageSize: size,
-            pageNumber: 0,
-          }))
-        }}
-        onSearchTerm={(term: string) =>
-          setPagination((prev) => ({ ...prev, searchTerm: term }))
-        }
-      />
-    </div>
-  </div>
+  )
 }

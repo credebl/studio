@@ -1,28 +1,30 @@
 import {
+  EcosystemMemberInvitation,
+  EcosystemRoles,
+} from '@/features/common/enum'
+import {
   axiosDelete,
   axiosGet,
   axiosPost,
   axiosPut,
-  ecosystemAxiosPost,
 } from '@/services/apiRequests'
 
 import { AxiosResponse } from 'axios'
+import { EcosystemOrgStatus } from '@/common/enums'
 import { apiRoutes } from '@/config/apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
-import { EcosystemOrgStatus } from '@/common/enums'
-import { EcosystemMemberInvitation, EcosystemRoles } from '@/features/common/enum'
 
 interface IPagination {
-pageSize: number,
-pageNumber: number,
-searchTerm?: string,
-sortBy?: string,
-sortField?: string,
+  pageSize: number
+  pageNumber: number
+  searchTerm?: string
+  sortBy?: string
+  sortField?: string
 }
 
 export const getEcosystemsForLead = async (
-orgId : string,
-options: IPagination
+  orgId: string,
+  options: IPagination,
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.ecosystems}?pageNumber=${options.pageNumber + 1}&pageSize=${options.pageSize}&orgId=${orgId}&search=${options.searchTerm}`
 
@@ -41,13 +43,12 @@ options: IPagination
   }
 }
 
-
 export const createEcosystem = async (
-orgId : string,
-payload: {
-    name: string,
+  orgId: string,
+  payload: {
+    name: string
     description: string
-}
+  },
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.ecosystems}?&orgId=${orgId}`
 
@@ -67,8 +68,10 @@ payload: {
   }
 }
 
-export const getEcosystemCreationInvitation = async (): Promise<AxiosResponse | string> => {
-  const url = `${apiRoutes.Ecosystem.ecosystemInvitationStatus}`
+export const getEcosystemCreationInvitation = async (): Promise<
+  AxiosResponse | string
+> => {
+  const url = `${apiRoutes.Ecosystem.ecosystemInvitationStatus}?status=${EcosystemMemberInvitation.ACCEPTED}`
 
   const config = getHeaderConfigs()
 
@@ -86,10 +89,10 @@ export const getEcosystemCreationInvitation = async (): Promise<AxiosResponse | 
 }
 
 export const getEcosystemMemberInvitations = async (
-  orgId : string,
+  orgId: string,
   ecosystemId: string,
   options: IPagination,
-  role: EcosystemRoles
+  role: EcosystemRoles,
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.memberInvitations}?pageNumber=${options.pageNumber + 1}&pageSize=${options.pageSize}&orgId=${orgId}${ecosystemId && `&ecosystemId=${ecosystemId}`}&search=${options.searchTerm}&role=${role}`
 
@@ -108,12 +111,11 @@ export const getEcosystemMemberInvitations = async (
   }
 }
 
-
 export const getOrganizationsForInvite = async (
-  orgId : string,
-  options: IPagination
+  orgId: string,
+  options: IPagination,
 ): Promise<AxiosResponse | string> => {
-  const url = `${apiRoutes.organizations.getAllPlatformOrgs.replace(':orgId',orgId)}?pageNumber=${options.pageNumber + 1}&pageSize=${options.pageSize}&orgId=${orgId}&search=${options.searchTerm}`
+  const url = `${apiRoutes.organizations.getAllPlatformOrgs.replace(':orgId', orgId)}?pageNumber=${options.pageNumber + 1}&pageSize=${options.pageSize}&orgId=${orgId}&search=${options.searchTerm}`
 
   const config = getHeaderConfigs()
 
@@ -130,13 +132,10 @@ export const getOrganizationsForInvite = async (
   }
 }
 
-
-export const inviteMemberToEcosystem = async (
-  payload: {
-      orgId: string,
-      ecosystemId: string
-  }
-): Promise<AxiosResponse | string> => {
+export const inviteMemberToEcosystem = async (payload: {
+  orgId: string
+  ecosystemId: string
+}): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.inviteMember}`
 
   const config = getHeaderConfigs()
@@ -155,10 +154,9 @@ export const inviteMemberToEcosystem = async (
   }
 }
 
-
 export const getEcosystemMembers = async (
-  ecosystemId : string,
-  options: IPagination
+  ecosystemId: string,
+  options: IPagination,
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.ecosystemMembers}?pageNumber=${options.pageNumber + 1}&pageSize=${options.pageSize}&ecosystemId=${ecosystemId}&search=${options.searchTerm}`
 
@@ -177,13 +175,12 @@ export const getEcosystemMembers = async (
   }
 }
 
-
 export const updateMemberStatus = async (
   status: EcosystemOrgStatus,
   payload: {
-      orgIds: string[],
-      ecosystemId: string
-  }
+    orgIds: string[]
+    ecosystemId: string
+  },
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.updateMemberStatus}?status=${status}`
 
@@ -203,12 +200,10 @@ export const updateMemberStatus = async (
   }
 }
 
-export const deleteEcosystemMember = async (
-  payload: {
-      orgIds: string[],
-      ecosystemId: string
-  }
-): Promise<AxiosResponse | string> => {
+export const deleteEcosystemMember = async (payload: {
+  orgIds: string[]
+  ecosystemId: string
+}): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.deleteMember}`
 
   const config = getHeaderConfigs()
@@ -218,7 +213,6 @@ export const deleteEcosystemMember = async (
     payload,
     config,
   }
-  console.log("axios payload",axiosPayload)
 
   try {
     return await axiosDelete(axiosPayload)
@@ -228,13 +222,12 @@ export const deleteEcosystemMember = async (
   }
 }
 
-
 export const acceptRejectMemberInvitation = async (
-  status: EcosystemMemberInvitation, 
+  status: EcosystemMemberInvitation,
   payload: {
-      orgId: string,
-      ecosystemId: string
-  }
+    orgId: string
+    ecosystemId: string
+  },
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.Ecosystem.ecosystemInvitationStatus}?status=${status}`
 
