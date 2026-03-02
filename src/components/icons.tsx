@@ -13,6 +13,7 @@ import {
   IconDotsVertical,
   IconFile,
   IconFileText,
+  IconGlobe,
   IconHelpCircle,
   IconLayoutDashboard,
   IconLayoutKanban,
@@ -32,6 +33,7 @@ import {
   IconUserCircle,
   IconUserEdit,
   IconUserX,
+  IconWorld,
   IconX,
 } from '@tabler/icons-react'
 
@@ -71,4 +73,5 @@ export const Icons = {
   check: IconCheck,
   connections: IconTopologyStar,
   organization: IconBuildingSkyscraper,
+	world: IconWorld
 }
