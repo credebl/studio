@@ -256,11 +256,7 @@ export function Invitaitons(): ReactElement {
           </div>
         </DialogContent>
       </Dialog>
-      <div className="mb-2">
-        {/* <p className="text-muted-foreground">
-            Here&apos;s a list of all ecosystems
-          </p> */}
-      </div>
+      <div className="mb-2"></div>
       {(Boolean(error) || Boolean(success)) && (
         <AlertComponent
           message={success ?? error}

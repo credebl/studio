@@ -175,9 +175,7 @@ const MemberInvite = (): JSX.Element => {
                     'group bg-card cursor-default rounded-xl border transition-all duration-200'
                   }
                 >
-                  {/* Main Row - stacks on mobile */}
                   <div className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:gap-6 sm:p-5">
-                    {/* Top section: Org + Status on mobile */}
                     <div className="flex items-center justify-between gap-3 sm:min-w-[180px] sm:justify-start">
                       <div className="flex items-center gap-3">
                         <div className="bg-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-lg">
@@ -194,9 +192,7 @@ const MemberInvite = (): JSX.Element => {
                       </div>
                     </div>
 
-                    {/* Middle details */}
                     <div className="flex flex-wrap items-center gap-x-6 gap-y-3 sm:flex-nowrap">
-                      {/* Invited By */}
                       <div className="flex min-w-[140px] items-center gap-3">
                         <Globe className="text-muted-foreground h-4 w-4 shrink-0" />
                         <div>
@@ -209,7 +205,6 @@ const MemberInvite = (): JSX.Element => {
                         </div>
                       </div>
 
-                      {/* Date */}
                       <div className="flex min-w-[110px] items-center gap-3">
                         <CalendarDays className="text-muted-foreground h-4 w-4 shrink-0" />
                         <div>
@@ -223,7 +218,6 @@ const MemberInvite = (): JSX.Element => {
                       </div>
                     </div>
 
-                    {/* Actions */}
                     <div className="flex items-center gap-2.5 sm:ml-auto">
                       <div className="flex w-full items-center gap-2 sm:w-auto">
                         <Button
