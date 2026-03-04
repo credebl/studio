@@ -13,7 +13,6 @@ import {
   IconDotsVertical,
   IconFile,
   IconFileText,
-  IconGlobe,
   IconHelpCircle,
   IconLayoutDashboard,
   IconLayoutKanban,
@@ -73,5 +72,5 @@ export const Icons = {
   check: IconCheck,
   connections: IconTopologyStar,
   organization: IconBuildingSkyscraper,
-	world: IconWorld
+  world: IconWorld,
 }

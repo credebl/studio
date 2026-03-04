@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { persistReducer, persistStore } from 'redux-persist'
 
 import authSlice from './authSlice'
+import ecosystemSlice from './ecosystemSlice'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
 import schemaSlice from './schemaSlice'
@@ -13,7 +14,6 @@ import storageReducer from './storageKeys'
 import userSlice from './userSlice'
 import verificationSlice from './verificationSlice'
 import walletSpinupSlice from './walletSpinupSlice'
-import ecosystemSlice from  './ecosystemSlice'
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -27,7 +27,7 @@ const rootReducer = combineReducers({
   sidebar: sidebarSlice,
   schema: schemaSlice,
   schemaStorage: schemaStorageSlice,
-  ecosystem: ecosystemSlice
+  ecosystem: ecosystemSlice,
 })
 
 const persistConfig = {
@@ -44,7 +44,7 @@ const persistConfig = {
     'verification',
     'schema',
     'schemaStorage',
-    'ecosystem'
+    'ecosystem',
   ],
 }
 
