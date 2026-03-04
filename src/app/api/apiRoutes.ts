@@ -20,7 +20,7 @@ const apiRoutes = {
     refreshToken: '/auth/refresh-token',
   },
   Ecosystem: {
-		ecosystems:'/ecosystem/all-ecosystem',
+    ecosystems: '/ecosystem/all-ecosystem',
     root: '/ecosystem',
     usersInvitation: '/users/invitations',
     endorsements: {
