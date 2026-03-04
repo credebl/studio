@@ -25,7 +25,7 @@ export const apiRoutes = {
   },
 
   intents: {
-    root:'intents'
+    root:'/intent'
   },
 
   users: {

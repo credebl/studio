@@ -1,17 +1,27 @@
-import { apiRoutes } from "@/config/apiRoutes"
-import { getHeaderConfigs } from "@/config/GetHeaderConfigs"
-import { axiosDelete, axiosGet, axiosPost, axiosPut } from "@/services/apiRequests"
-import { AxiosResponse } from "axios"
+import {
+  axiosDelete,
+  axiosGet,
+  axiosPost,
+  axiosPut,
+} from '@/services/apiRequests'
 
-export const getAllIntents = async ({
-  page,
-  itemPerPage,
-  search,
-  sortBy,
-  sortingOrder,
-  ecosystemId,
-}: any): Promise<string | AxiosResponse> => {
-  const url = `${apiRoutes.ecosystem.root}/${apiRoutes.intents.root}/${ecosystemId}?pageSize=${itemPerPage}&pageNumber=${page}&search=${search}&sortBy=${sortingOrder}&sortField=${sortBy}`
+import { AxiosResponse } from 'axios'
+import { apiRoutes } from '@/config/apiRoutes'
+import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
+
+interface IPagination {
+  page: number
+  itemPerPage: number
+  search?: string
+  sortBy?: string
+  sortingOrder?: string
+}
+
+export const getAllIntents = async (
+  ecosystemId: string,
+  options: IPagination,
+): Promise<string | AxiosResponse> => {
+  const url = `${apiRoutes.intents.root}${apiRoutes.Ecosystem.root}/${ecosystemId}?pageSize=${options.itemPerPage}&pageNumber=${options.page}&search=${options.search}&sortBy=${options.sortingOrder}&sortField=${options.sortBy}`
   const axiosPayload = {
     url,
     config: getHeaderConfigs(),
@@ -27,10 +37,9 @@ export const getAllIntents = async ({
 
 export const createIntent = async (
   ecosystemId: string,
-  payload: { name: string; description: string }
+  payload: { name: string; description: string },
 ): Promise<string | AxiosResponse> => {
-  const url = `${apiRoutes.ecosystem.root}/${apiRoutes.intents.root}/${ecosystemId}`
-
+  const url = `${apiRoutes.intents.root}${apiRoutes.Ecosystem.root}/${ecosystemId}`
   const axiosPayload = {
     url,
     payload,
@@ -50,7 +59,7 @@ export const updateIntent = async (
   intentId: string,
   data: { name: string; description: string },
 ): Promise<string | AxiosResponse> => {
-  const url = `/v1/ecosystem/intents/${ecosystemId}/${intentId}`
+  const url = `${apiRoutes.intents.root}${apiRoutes.Ecosystem.root}/${ecosystemId}/${intentId}`
 
   const axiosPayload = {
     url,
@@ -70,7 +79,7 @@ export const deleteIntent = async (
   ecosystemId: string,
   intentId: string,
 ): Promise<string | AxiosResponse> => {
-  const url = `/v1/ecosystem/intents/${ecosystemId}/${intentId}`
+  const url = `${apiRoutes.intents.root}${apiRoutes.Ecosystem.root}/${ecosystemId}/${intentId}`
 
   const axiosPayload = {
     url,

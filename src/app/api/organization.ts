@@ -238,7 +238,7 @@ export const createSchemaRequest = async (
   // endorsementId: string,
   orgId: string,
 ): Promise<AxiosResponse | string> => {
-  const url = `${apiRoutes.ecosystem.root}/${orgId}${apiRoutes.ecosystem.endorsements.createSchemaRequest}`
+  const url = `${apiRoutes.Ecosystem.root}/${orgId}${apiRoutes.Ecosystem.endorsements.createSchemaRequest}`
   const payload = data
   const axiosPayload = {
     url,

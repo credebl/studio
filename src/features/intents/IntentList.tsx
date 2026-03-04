@@ -1,48 +1,43 @@
 'use client'
 
 import {
-  IColumnData,
-  ITableMetadata,
-  SortActions,
-  TableStyling,
-  getColumns,
-} from '@/components/ui/generic-table-component/columns'
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { MoreVertical, Pencil, Trash2 } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
-import ConfirmationModal from '@/components/confirmation-modal'
-
-import { Plus, RefreshCw } from 'lucide-react'
+import {
+  IColumnData,
+  ITableMetadata,
+  SortActions,
+  TableStyling,
+  getColumns,
+} from '@/components/ui/generic-table-component/columns'
+import { MoreVertical, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import React, { JSX, useEffect, useState } from 'react'
-
-import { AlertComponent } from '@/components/AlertComponent'
-import { AxiosResponse } from 'axios'
-import { CellContext } from '@tanstack/react-table'
-import { DataTable } from '@/components/ui/generic-table-component/data-table'
-import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
-import Loader from '@/components/Loader'
-import PageContainer from '@/components/layout/page-container'
-import { apiStatusCodes } from '@/config/CommonConstant'
-import { pathRoutes } from '@/config/pathRoutes'
-import { useAppSelector } from '@/lib/hooks'
-import { useRouter } from 'next/navigation'
 import {
   createIntent,
   deleteIntent,
   getAllIntents,
   updateIntent,
 } from '@/app/api/Intents'
+
+import { AlertComponent } from '@/components/AlertComponent'
+import { AxiosResponse } from 'axios'
+import { Button } from '@/components/ui/button'
+import ConfirmationModal from '@/components/confirmation-modal'
+import { DataTable } from '@/components/ui/generic-table-component/data-table'
+import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
+import PageContainer from '@/components/layout/page-container'
+import { apiStatusCodes } from '@/config/CommonConstant'
+import { useAppSelector } from '@/lib/hooks'
+import { useRouter } from 'next/navigation'
 
 interface Intent {
   id: string
@@ -51,6 +46,10 @@ interface Intent {
   description: string
   createDateTime: string
   lastChangedDateTime: string
+}
+
+interface IntentListProps {
+  ecosystemId: string
 }
 
 interface PaginationState {
@@ -62,13 +61,11 @@ interface PaginationState {
   sortOrder: SortActions
 }
 
-const IntentList = (): JSX.Element => {
-  const router = useRouter()
+const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
   const orgId = useAppSelector((state) => state.organization.orgId)
-  const ecosystemId = 'b3fd5fc8-d503-4f8e-a55a-5f52bd619688'
 
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [intentList, setIntentList] = useState<Intent[]>([])
   const [reloading, setReloading] = useState(false)
   const [openCreate, setOpenCreate] = useState(false)
@@ -94,19 +91,19 @@ const IntentList = (): JSX.Element => {
   })
 
   const fetchIntents = async (reload = false): Promise<void> => {
+    if (!ecosystemId) return
+
     if (reload) setReloading(true)
     else setLoading(true)
 
     try {
-      const response = await getAllIntents({
+      const response = await getAllIntents(ecosystemId, {
         itemPerPage: pagination.pageSize,
         page: pagination.pageIndex + 1,
         search: pagination.searchTerm,
         sortBy: pagination.sortBy,
         sortingOrder: pagination.sortOrder,
-        ecosystemId,
       })
-
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -130,12 +127,13 @@ const IntentList = (): JSX.Element => {
   }
 
   useEffect(() => {
-    if (!orgId) {
+    if (!orgId || !ecosystemId) {
       setLoading(false)
       return
     }
+
     fetchIntents()
-  }, [orgId])
+  }, [orgId, ecosystemId])
 
   useEffect(() => {
     if (!success && !failure) return
@@ -157,7 +155,7 @@ const IntentList = (): JSX.Element => {
         setSelectedIntent(null)
         setActionType(null)
       }
-    }, 3000) 
+    }, 3000)
 
     return () => clearTimeout(timer)
   }, [success, failure])
@@ -171,6 +169,10 @@ const IntentList = (): JSX.Element => {
   }
 
   const handleSubmitIntent = async (): Promise<void> => {
+    if (!ecosystemId) {
+  setFailure('Ecosystem not available')
+  return
+}
     setSuccess(null)
     setFailure(null)
 
@@ -249,6 +251,7 @@ const IntentList = (): JSX.Element => {
 
   const handleDeleteIntent = async (intentId: string): Promise<boolean> => {
     try {
+      if (!ecosystemId) return false
       const res = await deleteIntent(ecosystemId, intentId)
 
       if (typeof res === 'string') {
