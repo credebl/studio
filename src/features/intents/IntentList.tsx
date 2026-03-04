@@ -1,12 +1,6 @@
 'use client'
 
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -28,16 +22,15 @@ import {
   updateIntent,
 } from '@/app/api/Intents'
 
-import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
+import IntentFormDialog from './IntentFormDialog'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { useAppSelector } from '@/lib/hooks'
-import { useRouter } from 'next/navigation'
 
 interface Intent {
   id: string
@@ -91,10 +84,15 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
   })
 
   const fetchIntents = async (reload = false): Promise<void> => {
-    if (!ecosystemId) return
+    if (!ecosystemId) {
+      return
+    }
 
-    if (reload) setReloading(true)
-    else setLoading(true)
+    if (reload) {
+      setReloading(true)
+    } else {
+      setLoading(true)
+    }
 
     try {
       const response = await getAllIntents(ecosystemId, {
@@ -117,8 +115,11 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
       setError('Failed to fetch intents')
       throw err
     } finally {
-      if (reload) setReloading(false)
-      else setLoading(false)
+      if (reload) {
+        setReloading(false)
+      } else {
+        setLoading(false)
+      }
     }
   }
 
@@ -136,7 +137,9 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
   }, [orgId, ecosystemId])
 
   useEffect(() => {
-    if (!success && !failure) return
+    if (!success && !failure) {
+      return
+    }
 
     const timer = setTimeout(() => {
       setSuccess(null)
@@ -170,9 +173,9 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
 
   const handleSubmitIntent = async (): Promise<void> => {
     if (!ecosystemId) {
-  setFailure('Ecosystem not available')
-  return
-}
+      setFailure('Ecosystem not available')
+      return
+    }
     setSuccess(null)
     setFailure(null)
 
@@ -251,7 +254,9 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
 
   const handleDeleteIntent = async (intentId: string): Promise<boolean> => {
     try {
-      if (!ecosystemId) return false
+      if (!ecosystemId) {
+        return false
+      }
       const res = await deleteIntent(ecosystemId, intentId)
 
       if (typeof res === 'string') {
@@ -274,11 +279,11 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
   }
 
   const handleConfirmedAction = async (): Promise<void> => {
-    if (!selectedIntent || !actionType) return
+    if (!selectedIntent || !actionType) {
+      return
+    }
 
     setActionLoading(true)
-
-    let isSuccess = false
 
     try {
       if (actionType === 'delete') {
@@ -317,6 +322,15 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
     )
   }
 
+  const resetFormState = (): void => {
+    setSuccess(null)
+    setFailure(null)
+    setIsEdit(false)
+    setEditIntentId(null)
+    setIntentName('')
+    setIntentDesc('')
+  }
+
   const columnData: IColumnData[] = [
     {
       id: 'name',
@@ -339,11 +353,11 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
       title: 'Created On',
       accessorKey: 'createDateTime',
       cell: ({ row }) =>
-        row.original.createDateTime ? (
+        (row.original.createDateTime ? (
           <DateCell date={row.original.createDateTime} />
         ) : (
           <span>NA</span>
-        ),
+        )),
       columnFunction: [
         {
           sortCallBack: async (order): Promise<void> => {
@@ -407,90 +421,22 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
 
       {/* table */}
       <div className="-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12">
-        <Dialog
+        <IntentFormDialog
           open={openCreate}
-          onOpenChange={(open) => {
-            setOpenCreate(open)
-
-            if (!open) {
-              setSuccess(null)
-              setFailure(null)
-              setIsEdit(false)
-              setEditIntentId(null)
-              setIntentName('')
-              setIntentDesc('')
-            }
-          }}
-        >
-          <DialogContent className="sm:max-w-[500px]">
-            <DialogHeader>
-              {success && (
-                <AlertComponent
-                  message={success}
-                  type="success"
-                  onAlertClose={() => setSuccess(null)}
-                />
-              )}
-
-              {failure && (
-                <AlertComponent
-                  message={failure}
-                  type="failure"
-                  onAlertClose={() => setFailure(null)}
-                />
-              )}
-
-              <DialogTitle>
-                {isEdit ? 'Update Intent' : 'Create Intent'}
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4 pt-2">
-              {/* Name */}
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Intent Name *</label>
-                <input
-                  type="text"
-                  value={intentName}
-                  onChange={(e) => setIntentName(e.target.value)}
-                  placeholder="Enter intent name"
-                  className="focus:ring-primary w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                  value={intentDesc}
-                  onChange={(e) => setIntentDesc(e.target.value)}
-                  placeholder="Enter description"
-                  className="focus:ring-primary w-full rounded-md border px-3 py-2 text-sm outline-none focus:ring-2"
-                  rows={3}
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  onClick={() => setOpenCreate(false)}
-                  className="rounded-md border px-4 py-2 text-sm"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  onClick={handleSubmitIntent}
-                  disabled={creating}
-                  className="bg-primary flex items-center gap-2 rounded-md px-4 py-2 text-sm text-white"
-                >
-                  {creating && (
-                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  )}
-                  Create
-                </button>
-              </div>
-            </div>
-          </DialogContent>
-        </Dialog>
+          setOpen={setOpenCreate}
+          isEdit={isEdit}
+          intentName={intentName}
+          intentDesc={intentDesc}
+          setIntentName={setIntentName}
+          setIntentDesc={setIntentDesc}
+          handleSubmit={handleSubmitIntent}
+          creating={creating}
+          success={success}
+          failure={failure}
+          setSuccess={setSuccess}
+          setFailure={setFailure}
+          resetFormState={resetFormState}
+        />
         {showConfirmModal && selectedIntent && actionType && (
           <ConfirmationModal
             openModal={showConfirmModal}
@@ -505,7 +451,9 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
               setActionType(null)
             }}
             onSuccess={(confirmed: boolean): void => {
-              if (confirmed) handleConfirmedAction()
+              if (confirmed) {
+                handleConfirmedAction()
+              }
             }}
             message={
               actionType === 'delete'

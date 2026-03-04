@@ -63,12 +63,6 @@ export const navItems: NavItem[] = [
         url: '/x509-certificate',
         icon: 'login',
       },
-      // {
-      //   title: 'Intents',
-      //   shortcut: ['l', 'l'],
-      //   url: '/intents',
-      //   icon: 'login',
-      // },
     ],
   },
   {
