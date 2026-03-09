@@ -2,9 +2,9 @@
 
 import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError } from 'axios'
+import { generateAccessToken, logoutUser } from '@/utils/session'
 
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { generateAccessToken } from '@/utils/session'
 import { store } from '@/lib/store'
 
 const instance = axios.create({
@@ -31,11 +31,8 @@ instance.interceptors.request.use(
       const { refreshToken } = auth
       const client = jwtDecode<JwtPayload>(refreshToken).azp
 
-      if (
-        client === process.env.NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID &&
-        process.env.NEXT_PUBLIC_ADMIN_PORTAL_URL
-      ) {
-        window.location.href = process.env.NEXT_PUBLIC_ADMIN_PORTAL_URL
+      if (client === process.env.NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID) {
+        logoutUser()
       }
       const refreshTokenExp = jwtDecode<JwtPayload>(refreshToken).exp
       const isRefreshTokenExpired = refreshTokenExp
