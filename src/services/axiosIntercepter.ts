@@ -29,6 +29,14 @@ instance.interceptors.request.use(
     try {
       const currentTime = Math.floor(Date.now() / 1000)
       const { refreshToken } = auth
+      const client = jwtDecode<JwtPayload>(refreshToken).azp
+
+      if (
+        client === process.env.NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID &&
+        process.env.NEXT_PUBLIC_ADMIN_PORTAL_URL
+      ) {
+        window.location.href = process.env.NEXT_PUBLIC_ADMIN_PORTAL_URL
+      }
       const refreshTokenExp = jwtDecode<JwtPayload>(refreshToken).exp
       const isRefreshTokenExpired = refreshTokenExp
         ? refreshTokenExp - currentTime < 1

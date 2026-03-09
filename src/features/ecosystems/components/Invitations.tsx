@@ -14,6 +14,11 @@ import {
 } from '../../../components/ui/generic-table-component/columns'
 import { ReactElement, useEffect, useState } from 'react'
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import {
   getOrganizationsForInvite,
   inviteMemberToEcosystem,
 } from '@/app/api/ecosystem'
@@ -79,7 +84,14 @@ export function Invitaitons(): ReactElement {
       columnFunction: [],
       cell: ({ row }: { row: { original: { createDateTime: string } } }) => (
         <div className="text-muted-foreground cursor-default">
-          {dateConversion(row.original.createDateTime)}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p>{dateConversion(row.original.createDateTime)}</p>
+            </TooltipTrigger>
+            <TooltipContent side="left" align="center" sideOffset={5}>
+              <p>{new Date(row.original.createDateTime).toLocaleString()}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       ),
     },
