@@ -13,6 +13,10 @@ import {
   TableStyling,
   getColumns,
 } from '@/components/ui/generic-table-component/columns'
+import IntentFormDialog, {
+  IntentFormHandlers,
+  IntentFormState,
+} from './IntentFormDialog'
 import { MoreVertical, Pencil, Plus, RefreshCw, Trash2 } from 'lucide-react'
 import React, { JSX, useEffect, useState } from 'react'
 import {
@@ -27,7 +31,6 @@ import { Button } from '@/components/ui/button'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
-import IntentFormDialog from './IntentFormDialog'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { useAppSelector } from '@/lib/hooks'
@@ -132,7 +135,6 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
       setLoading(false)
       return
     }
-
     fetchIntents()
   }, [orgId, ecosystemId])
 
@@ -163,11 +165,17 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
     return () => clearTimeout(timer)
   }, [success, failure])
 
-  const handleCreateIntent = (): void => {
+  const resetFormState = (): void => {
+    setSuccess(null)
+    setFailure(null)
     setIsEdit(false)
     setEditIntentId(null)
     setIntentName('')
     setIntentDesc('')
+  }
+
+  const handleCreateIntent = (): void => {
+    resetFormState()
     setOpenCreate(true)
   }
 
@@ -257,6 +265,7 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
       if (!ecosystemId) {
         return false
       }
+
       const res = await deleteIntent(ecosystemId, intentId)
 
       if (typeof res === 'string') {
@@ -306,13 +315,11 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-40">
-          {/* UPDATE */}
           <DropdownMenuItem onClick={() => openConfirmation(intent, 'update')}>
             <Pencil className="mr-2 h-4 w-4" />
             Update
           </DropdownMenuItem>
 
-          {/* DELETE */}
           <DropdownMenuItem onClick={() => openConfirmation(intent, 'delete')}>
             <Trash2 className="mr-2 h-4 w-4 text-red-500" />
             Delete
@@ -320,15 +327,6 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
         </DropdownMenuContent>
       </DropdownMenu>
     )
-  }
-
-  const resetFormState = (): void => {
-    setSuccess(null)
-    setFailure(null)
-    setIsEdit(false)
-    setEditIntentId(null)
-    setIntentName('')
-    setIntentDesc('')
   }
 
   const columnData: IColumnData[] = [
@@ -386,6 +384,24 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
   const tableStyling: TableStyling = { metadata, columnData }
   const column = getColumns<Intent>(tableStyling)
 
+  const intentFormState: IntentFormState = {
+    intentName,
+    intentDesc,
+    isEdit,
+    creating,
+    success,
+    failure,
+  }
+
+  const intentFormHandlers: IntentFormHandlers = {
+    setIntentName,
+    setIntentDesc,
+    setSuccess,
+    setFailure,
+    handleSubmit: handleSubmitIntent,
+    resetFormState,
+  }
+
   return (
     <PageContainer>
       {/* HEADER */}
@@ -424,19 +440,10 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
         <IntentFormDialog
           open={openCreate}
           setOpen={setOpenCreate}
-          isEdit={isEdit}
-          intentName={intentName}
-          intentDesc={intentDesc}
-          setIntentName={setIntentName}
-          setIntentDesc={setIntentDesc}
-          handleSubmit={handleSubmitIntent}
-          creating={creating}
-          success={success}
-          failure={failure}
-          setSuccess={setSuccess}
-          setFailure={setFailure}
-          resetFormState={resetFormState}
+          formState={intentFormState}
+          handlers={intentFormHandlers}
         />
+
         {showConfirmModal && selectedIntent && actionType && (
           <ConfirmationModal
             openModal={showConfirmModal}
