@@ -41,6 +41,7 @@ export enum Features {
   ISSUANCE = 'issuance',
   VERIFICATION = 'verification',
   CREATE_CERTIFICATE = 'create_certificate',
+  ECOSYSTEM = 'ecosystem'
 }
 
 export enum SchemaTypes {
@@ -65,6 +66,8 @@ export enum Roles {
   ISSUER = 'issuer',
   VERIFIER = 'verifier',
   MEMBER = 'member',
+  ECOSYSTEM_LEAD = 'ecosystem lead',
+  ECOSYSTEM_MEMBER = 'ecosystem member'
 }
 
 export enum OrganizationRoles {
