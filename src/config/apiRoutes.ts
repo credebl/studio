@@ -24,6 +24,10 @@ export const apiRoutes = {
     deleteSession: '/auth/sessionId:/sessions',
   },
 
+  intents: {
+    root: '/intent',
+  },
+
   users: {
     userProfile: '/users/profile',
     checkUser: '/users/',

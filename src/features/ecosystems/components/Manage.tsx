@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Create from './Create'
+import IntentList from '@/features/intents/IntentList'
 import { Invitaitons } from './Invitations'
 import { Members } from './Members'
 import { useAppSelector } from '@/lib/hooks'
@@ -14,6 +15,7 @@ import { useAppSelector } from '@/lib/hooks'
 const Manage = (): JSX.Element => {
   const [activeTab, setActiveTab] = useState('Invitations')
   const ecosystemName = useAppSelector((state) => state.ecosystem.name)
+  const ecosystemId = useAppSelector((state) => state.ecosystem.id)
   const searchParams = useSearchParams()
   const showCreateForm = searchParams.get('createNew') === 'true'
   const router = useRouter()
@@ -57,6 +59,7 @@ const Manage = (): JSX.Element => {
           <TabsTrigger value="Members" className="relative">
             Members
           </TabsTrigger>
+          <TabsTrigger value="Intents">Intents</TabsTrigger>
           <TabsTrigger value="Create" disabled={!showCreateForm}>
             Create
           </TabsTrigger>
@@ -67,6 +70,10 @@ const Manage = (): JSX.Element => {
         <TabsContent value="Members">
           <Members />
         </TabsContent>
+        <TabsContent value="Intents" className="mt-2">
+          <IntentList ecosystemId={ecosystemId} />
+        </TabsContent>
+
         <TabsContent
           value="Create"
           className="mt-2 space-y-4 rounded-md border p-4"
