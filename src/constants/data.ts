@@ -65,14 +65,6 @@ export const navItems: NavItem[] = [
       },
     ],
   },
-  {
-    title: 'Ecosystems',
-    url: '/ecosystems',
-    icon: 'world',
-    isActive: false,
-    shortcut: ['e', 'e'],
-    items: [], // no child items
-  },
 ]
 
 export interface saleuser {

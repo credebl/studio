@@ -246,3 +246,23 @@ export const acceptRejectMemberInvitation = async (
     return err?.message
   }
 }
+
+export const getEcosystemEnableStausApi = async (): Promise<
+  AxiosResponse | string
+> => {
+  const url = `${apiRoutes.Ecosystem.ecosystemEnableStatus}`
+
+  const config = getHeaderConfigs()
+
+  const axiosPayload = {
+    url,
+    config,
+  }
+
+  try {
+    return await axiosGet(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}

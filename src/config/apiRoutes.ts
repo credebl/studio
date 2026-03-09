@@ -42,6 +42,7 @@ export const apiRoutes = {
     ecosystemMembers: '/ecosystem/members',
     updateMemberStatus: '/ecosystem/member/status',
     deleteMember: '/ecosystem/member',
+    ecosystemEnableStatus: '/ecosystem/status',
     root: '/ecosystem',
     usersInvitation: '/users/invitations',
     endorsements: {

@@ -156,10 +156,10 @@ export function Ecosystems(): ReactElement {
   const fetchDataforEcosystems = async (): Promise<void> => {
     const response = await getEcosystemsForLead(orgId, pagination)
     const { data } = response as AxiosResponse
-    if (data.data.totalPages) {
+    if (data && data.data.totalPages) {
       setPagination((prev) => ({ ...prev, totalPages: data.data.totalPages }))
     }
-    if (data.data.data) {
+    if (data && data.data.data) {
       setTableData(data.data.data)
     }
   }
