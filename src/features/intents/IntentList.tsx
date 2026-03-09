@@ -350,7 +350,7 @@ const IntentList = ({ ecosystemId }: IntentListProps): JSX.Element => {
       id: 'createDateTime',
       title: 'Created On',
       accessorKey: 'createDateTime',
-      cell: ({ row }) =>
+      cell: ({ row }): JSX.Element =>
         (row.original.createDateTime ? (
           <DateCell date={row.original.createDateTime} />
         ) : (

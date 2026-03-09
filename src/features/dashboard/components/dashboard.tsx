@@ -21,8 +21,10 @@ import { OrganizationDashboard } from '@/features/organization/components/Organi
 import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { getEcosystemEnableStausApi } from '@/app/api/ecosystem'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
+import { setEcosystemEnableStatus } from '@/lib/ecosystemSlice'
 import { setLedgerId } from '@/lib/orgSlice'
 import { useRouter } from 'next/navigation'
 
@@ -105,9 +107,20 @@ export default function Dashboard(): React.JSX.Element {
     }
   }
 
+  async function getEcosystemEnableStatus(): Promise<void> {
+    try {
+      const response = await getEcosystemEnableStausApi()
+      const { data } = response as AxiosResponse
+      dispatch(setEcosystemEnableStatus(data?.data ?? false))
+    } catch (error) {
+      console.error('failed to fetch ecosystem status', error)
+    }
+  }
+
   useEffect(() => {
     getAllInvitations()
     getAllEcosystemInvitations()
+    getEcosystemEnableStatus()
   }, [])
 
   const fetchOrganizationDetails = async (): Promise<void> => {

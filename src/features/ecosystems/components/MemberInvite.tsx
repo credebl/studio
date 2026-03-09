@@ -14,6 +14,11 @@ import {
   EcosystemRoles,
 } from '@/features/common/enum'
 import { JSX, useEffect, useState } from 'react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -212,7 +217,26 @@ const MemberInvite = (): JSX.Element => {
                             Received
                           </p>
                           <p className="text-foreground text-sm leading-none">
-                            {dateConversion(invitation.createDateTime)}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span>
+                                  {dateConversion(
+                                    dateConversion(invitation.createDateTime),
+                                  )}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                side="top"
+                                align="center"
+                                sideOffset={5}
+                              >
+                                <span>
+                                  {new Date(
+                                    dateConversion(invitation.createDateTime),
+                                  ).toLocaleString()}
+                                </span>
+                              </TooltipContent>
+                            </Tooltip>
                           </p>
                         </div>
                       </div>

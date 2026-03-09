@@ -13,6 +13,11 @@ import {
 } from '@/components/ui/popover'
 import { ReactElement, useEffect, useState } from 'react'
 import { RefreshCw, SquarePen, UserRoundX } from 'lucide-react'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { apiStatusCodes, confirmationMessages } from '@/config/CommonConstant'
 import {
   deleteEcosystemMember,
@@ -153,7 +158,14 @@ export function Members(): ReactElement {
       columnFunction: [],
       cell: ({ row }: { row: { original: { createDateTime: string } } }) => (
         <div className="text-muted-foreground cursor-default">
-          {dateConversion(row.original.createDateTime)}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <p>{dateConversion(row.original.createDateTime)}</p>
+            </TooltipTrigger>
+            <TooltipContent side="left" align="center" sideOffset={5}>
+              <p>{new Date(row.original.createDateTime).toLocaleString()}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       ),
     },
