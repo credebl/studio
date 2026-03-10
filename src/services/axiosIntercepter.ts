@@ -23,10 +23,6 @@ export async function logoutAndRedirect(): Promise<void> {
   generateAccessToken()
 }
 
-interface JwtPaylodCustom extends JwtPayload {
-  azp?: string
-}
-
 instance.interceptors.request.use(
   async (config) => {
     const { auth } = store.getState()
