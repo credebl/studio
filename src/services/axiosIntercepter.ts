@@ -19,6 +19,10 @@ export async function logoutAndRedirect(): Promise<void> {
   generateAccessToken()
 }
 
+interface JwtPaylodCustom extends JwtPayload {
+  azp?: string
+}
+
 instance.interceptors.request.use(
   async (config) => {
     const { auth } = store.getState()
@@ -29,7 +33,7 @@ instance.interceptors.request.use(
     try {
       const currentTime = Math.floor(Date.now() / 1000)
       const { refreshToken } = auth
-      const client = jwtDecode<JwtPayload>(refreshToken).azp
+      const client = jwtDecode<JwtPaylodCustom>(refreshToken).azp
 
       if (client === process.env.NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID) {
         logoutUser()

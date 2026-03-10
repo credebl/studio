@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createEcosystem } from '@/app/api/ecosystem'
+import { generateSessionToken } from '@/app/api/users'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
@@ -54,8 +55,12 @@ const Create = (): React.JSX.Element => {
     try {
       const response = await createEcosystem(orgId, values)
       const { data } = response as AxiosResponse
+      if (typeof response === 'string') {
+        setFailure(response)
+      }
       if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setSuccess(data.message)
+        await generateSessionToken()
         setTimeout(() => router.push('/ecosystems'), 2000)
       }
     } catch (err) {

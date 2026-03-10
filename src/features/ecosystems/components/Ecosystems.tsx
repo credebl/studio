@@ -1,12 +1,12 @@
 'use client'
+
 import {
   IColumnData,
   ITableMetadata,
   TableStyling,
   getColumns,
 } from '../../../components/ui/generic-table-component/columns'
-
-import { type ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -17,14 +17,15 @@ import {
   getEcosystemCreationInvitation,
   getEcosystemsForLead,
 } from '@/app/api/ecosystem'
-
 import { setEcosystemId, setEcosystemName } from '@/lib/ecosystemSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
+
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { DataTable } from '../../../components/ui/generic-table-component/data-table'
 import { EcosystemRoles } from '@/features/common/enum'
 import { IEcosystemTableData } from '../Interface/ecosystemInterface'
+import { RefreshCw } from 'lucide-react'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { fetchInvitationsSentForMembers } from '../utils/commonFunctions'
 import { useRouter } from 'next/navigation'
@@ -146,14 +147,17 @@ export function Ecosystems(): ReactElement {
   ]
 
   const fetchDataforCreateEcosystemInvites = async (): Promise<void> => {
+    setLoading(true)
     const response = await getEcosystemCreationInvitation()
     const { data } = response as AxiosResponse
-    if (data.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+    if (data && data.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
       setInvitation(data.status)
     }
+    setLoading(false)
   }
 
   const fetchDataforEcosystems = async (): Promise<void> => {
+    setLoading(true)
     const response = await getEcosystemsForLead(orgId, pagination)
     const { data } = response as AxiosResponse
     if (data && data.data.totalPages) {
@@ -162,9 +166,11 @@ export function Ecosystems(): ReactElement {
     if (data && data.data.data) {
       setTableData(data.data.data)
     }
+    setLoading(false)
   }
 
   const fetchInvitationsEcosystem = async (): Promise<void> => {
+    setLoading(true)
     const result = await fetchInvitationsSentForMembers(
       orgId,
       '',
@@ -178,6 +184,7 @@ export function Ecosystems(): ReactElement {
     } else {
       setMemberInvitation(true)
     }
+    setLoading(false)
   }
 
   //for ecosystem Invites
@@ -230,30 +237,48 @@ export function Ecosystems(): ReactElement {
   const column = getColumns<IEcosystemTableData>(tableStyling)
   return (
     <div className="mx-6">
-      <div>
-        <h2 className="text-2xl font-bold tracking-tight">Ecosystems</h2>
-        <p className="text-muted-foreground">
-          Here&apos;s a list of all ecosystems
-        </p>
+      <div className="flex justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Ecosystems</h2>
+          <p className="text-muted-foreground">
+            Here&apos;s a list of all ecosystems
+          </p>
+        </div>
+        <div className="relative mt-auto">
+          <button
+            onClick={() => {
+              fetchDataforCreateEcosystemInvites()
+              fetchInvitationsEcosystem()
+              fetchDataforEcosystems()
+            }}
+            disabled={loading}
+            title="Reload table data"
+            className="bg-secondary text-secondary-foreground focus-visible:ring-ring right-4 inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+          >
+            <RefreshCw className={`h-5 w-5 ${loading ? 'animate-spin' : ''}`} />
+          </button>
+        </div>
       </div>
-      {invitation && (
-        <AlertComponent
-          message={'You have been invited to cerate a new ecosystem'}
-          type="warning"
-          viewButton={true}
-          path={'/ecosystems/manage?createNew=true'}
-          onAlertClose={() => setInvitation(false)}
-        />
-      )}
-      {memberInvitation && (
-        <AlertComponent
-          message={'You have pending invitations for ecosystem'}
-          type="warning"
-          viewButton={true}
-          path={'/ecosystems/invitations'}
-          onAlertClose={() => setInvitation(false)}
-        />
-      )}
+      <div className="relative z-10 mt-1">
+        {invitation && (
+          <AlertComponent
+            message={'You have been invited to cerate a new ecosystem'}
+            type="warning"
+            viewButton={true}
+            path={'/ecosystems/manage?createNew=true'}
+            onAlertClose={() => setInvitation(false)}
+          />
+        )}
+        {memberInvitation && (
+          <AlertComponent
+            message={'You have pending invitations for ecosystem'}
+            type="warning"
+            viewButton={true}
+            path={'/ecosystems/invitations'}
+            onAlertClose={() => setInvitation(false)}
+          />
+        )}
+      </div>
       <div
         className={`-mx-4 flex-1 overflow-auto px-4 py-1 lg:flex-row lg:space-y-0 lg:space-x-12 ${sidebar ? 'w-[calc(100vw-330px)]' : ''}`}
       >
