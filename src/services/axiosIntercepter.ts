@@ -7,6 +7,10 @@ import { generateAccessToken, logoutUser } from '@/utils/session'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { store } from '@/lib/store'
 
+interface JwtPaylodCustom extends JwtPayload {
+  azp?: string
+}
+
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
 })
