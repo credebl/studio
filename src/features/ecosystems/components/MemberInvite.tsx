@@ -222,9 +222,7 @@ const MemberInvite = (): JSX.Element => {
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <span>
-                                  {dateConversion(
-                                    dateConversion(invitation.createDateTime),
-                                  )}
+                                  {dateConversion(invitation.createDateTime)}
                                 </span>
                               </TooltipTrigger>
                               <TooltipContent
@@ -234,7 +232,7 @@ const MemberInvite = (): JSX.Element => {
                               >
                                 <span>
                                   {new Date(
-                                    dateConversion(invitation.createDateTime),
+                                    invitation.createDateTime,
                                   ).toLocaleString()}
                                 </span>
                               </TooltipContent>
