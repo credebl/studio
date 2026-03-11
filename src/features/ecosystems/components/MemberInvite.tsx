@@ -31,6 +31,7 @@ import { acceptRejectMemberInvitation } from '@/app/api/ecosystem'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { dateConversion } from '@/utils/DateConversion'
 import { fetchInvitationsSentForMembers } from '../utils/commonFunctions'
+import { generateSessionToken } from '@/app/api/users'
 import { useAppSelector } from '@/lib/hooks'
 
 const MemberInvite = (): JSX.Element => {
@@ -87,6 +88,7 @@ const MemberInvite = (): JSX.Element => {
       const { data } = response as AxiosResponse
       if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setSuccess(data.message)
+        await generateSessionToken()
         fetchInvitations()
       }
     } catch (err) {

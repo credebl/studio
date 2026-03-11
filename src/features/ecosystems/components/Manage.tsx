@@ -60,9 +60,11 @@ const Manage = (): JSX.Element => {
             Members
           </TabsTrigger>
           <TabsTrigger value="Intents">Intents</TabsTrigger>
-          <TabsTrigger value="Create" disabled={!showCreateForm}>
-            Create
-          </TabsTrigger>
+          {showCreateForm && (
+            <TabsTrigger value="Create" disabled={!showCreateForm}>
+              Create
+            </TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="Invitations">
           <Invitaitons />

@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createEcosystem } from '@/app/api/ecosystem'
+import { generateSessionToken } from '@/app/api/users'
+import { retryWithDelay } from '../utils/commonFunctions'
 import { useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
 
@@ -39,7 +41,6 @@ const Create = (): React.JSX.Element => {
   useEffect(() => {
     setTimeout(() => {
       setSuccess(null)
-      setFailure(null)
     }, 5000)
   }, [success, failure])
 
@@ -50,12 +51,21 @@ const Create = (): React.JSX.Element => {
     setLoading(true)
     setSuccess(null)
     setFailure(null)
-
     try {
       const response = await createEcosystem(orgId, values)
       const { data } = response as AxiosResponse
+      if (typeof response === 'string') {
+        setFailure(response)
+      }
       if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED) {
         setSuccess(data.message)
+        try {
+          await retryWithDelay(generateSessionToken, 3, 1500)
+          setTimeout(() => router.push('/ecosystems'), 2000)
+        } catch (tokenErr) {
+          setFailure('Session update failed. Please log out and log in again.')
+          return
+        }
         setTimeout(() => router.push('/ecosystems'), 2000)
       }
     } catch (err) {

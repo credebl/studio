@@ -41,3 +41,28 @@ export const fetchInvitationsSentForMembers = async (
     return { tableData: [], totalPages: 0, success: false }
   }
 }
+
+const wait = (ms: number): Promise<number> =>
+  new Promise((res) => setTimeout(res, ms))
+
+export async function retryWithDelay<T>(
+  fn: () => Promise<T>,
+  retries = 3,
+  delay = 1000,
+): Promise<T> {
+  const response = await fn()
+
+  const { data } = response as AxiosResponse
+  const token = data?.data?.access_token
+
+  if (token) {
+    return data
+  } else {
+    if (retries <= 0) {
+      throw new Error('MAX_RETRIES_REACHED')
+    }
+
+    await wait(delay)
+    return retryWithDelay(fn, retries - 1, delay)
+  }
+}
