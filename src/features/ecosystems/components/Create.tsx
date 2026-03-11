@@ -41,7 +41,6 @@ const Create = (): React.JSX.Element => {
   useEffect(() => {
     setTimeout(() => {
       setSuccess(null)
-      setFailure(null)
     }, 5000)
   }, [success, failure])
 
@@ -52,7 +51,6 @@ const Create = (): React.JSX.Element => {
     setLoading(true)
     setSuccess(null)
     setFailure(null)
-
     try {
       const response = await createEcosystem(orgId, values)
       const { data } = response as AxiosResponse
@@ -63,10 +61,10 @@ const Create = (): React.JSX.Element => {
         setSuccess(data.message)
         try {
           await retryWithDelay(generateSessionToken, 3, 1500)
+          setTimeout(() => router.push('/ecosystems'), 2000)
         } catch (tokenErr) {
-          setFailure(
-            'Failed to update token. Please logout and login again to get the feature working correctly.',
-          )
+          setFailure('Session update failed. Please log out and log in again.')
+          return
         }
         setTimeout(() => router.push('/ecosystems'), 2000)
       }

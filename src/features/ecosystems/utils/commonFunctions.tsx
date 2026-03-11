@@ -50,12 +50,18 @@ export async function retryWithDelay<T>(
   retries = 3,
   delay = 1000,
 ): Promise<T> {
-  try {
-    return await fn()
-  } catch (error) {
+  const response = await fn()
+
+  const { data } = response as AxiosResponse
+  const token = data?.data?.access_token
+
+  if (token) {
+    return data
+  } else {
     if (retries <= 0) {
-      throw error
+      throw new Error('MAX_RETRIES_REACHED')
     }
+
     await wait(delay)
     return retryWithDelay(fn, retries - 1, delay)
   }
