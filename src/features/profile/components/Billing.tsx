@@ -3,8 +3,7 @@
 import { JSX } from 'react'
 
 export default function Billing(): JSX.Element {
-  const sovioLandingPageURL =
-    process.env.NEXT_PUBLIC_SOVIO_LANDINGPAGE_URL || ''
+  const sovioLandingPageURL = process.env.NEXT_PUBLIC_LANDINGPAGE_URL || ''
   const plans = [
     {
       name: 'FREE',
