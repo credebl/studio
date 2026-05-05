@@ -24,6 +24,10 @@ export const apiRoutes = {
     deleteSession: '/auth/sessionId:/sessions',
   },
 
+  intents: {
+    root: '/intent',
+  },
+
   users: {
     userProfile: '/users/profile',
     checkUser: '/users/',
@@ -35,6 +39,14 @@ export const apiRoutes = {
   },
 
   Ecosystem: {
+    ecosystems: '/ecosystem',
+    ecosystemInvitationStatus: '/ecosystem/invitation/status',
+    memberInvitations: '/ecosystem/invitations',
+    inviteMember: '/ecosystem/invitation',
+    ecosystemMembers: '/ecosystem/members',
+    updateMemberStatus: '/ecosystem/member/status',
+    deleteMember: '/ecosystem/member',
+    ecosystemEnableStatus: '/ecosystem/status',
     root: '/ecosystem',
     usersInvitation: '/users/invitations',
     endorsements: {
@@ -84,6 +96,7 @@ export const apiRoutes = {
     deleteVerifications: '/verification-records',
     deleteIssaunce: '/issuance-records',
     deleteConnections: '/connections',
+    getAllPlatformOrgs: '/orgs/:orgId/get-all-platform-organisations',
   },
   connection: {
     create: '/connections',

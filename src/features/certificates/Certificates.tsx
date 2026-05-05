@@ -163,6 +163,25 @@ const Certificates = (): JSX.Element => {
     </>
   )
 
+  if (!orgId && view === 'list') {
+    return (
+      <PageContainer>
+        <Card className="border-dashed">
+          <CardContent className="pt-6">
+            <div className="flex min-h-[300px] flex-col items-center justify-center text-center">
+              <h3 className="mb-2 text-2xl font-semibold">
+                No organization created
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-md">
+                Please create an organization to manage X.509 certificates.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </PageContainer>
+    )
+  }
+
   if (loading && view === 'list' && certificates.length === 0) {
     return (
       <div className="flex min-h-[500px] items-center justify-center">

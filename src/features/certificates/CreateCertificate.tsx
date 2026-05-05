@@ -30,6 +30,12 @@ interface CreateCertificateProps {
   onFailure: (message: string) => void
 }
 
+const getLocalDateTime = (): string => {
+  const now = new Date()
+  const offset = now.getTimezoneOffset() * 60000
+  return new Date(now.getTime() - offset).toISOString().slice(0, 16)
+}
+
 const CreateCertificate = ({
   onCancel,
   onSuccess,
@@ -37,10 +43,12 @@ const CreateCertificate = ({
 }: CreateCertificateProps): JSX.Element => {
   const [formData, setFormData] = useState({
     type: 'Issuer Root',
-    keyType: 'P-256',
-    countryCode: 'NL',
+    keyType: '',
+    countryCode: '',
     commonName: '',
     alternativeUrl: '',
+    validFrom: getLocalDateTime(),
+    expiryDate: '',
   })
 
   const [creating, setCreating] = useState<boolean>(false)
@@ -48,6 +56,8 @@ const CreateCertificate = ({
   const [failure, setFailure] = useState<string | null>(null)
   const [urlError, setUrlError] = useState<string | null>(null)
   const [countryError, setCountryError] = useState<string | null>(null)
+  const [keyTypeError, setKeyTypeError] = useState<string | null>(null)
+  const [expiryError, setExpiryError] = useState<string | null>(null)
 
   const orgId = useAppSelector((state) => state?.organization.orgId)
   const URL_REGEX = URL_REGEX_PATTERN
@@ -64,11 +74,33 @@ const CreateCertificate = ({
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault()
+    setKeyTypeError(null)
+    setExpiryError(null)
 
     setSuccess(null)
     setFailure(null)
     setUrlError(null)
     setCountryError(null)
+
+    if (!formData.keyType) {
+      const errorMessage = 'Key type is required'
+      setKeyTypeError(errorMessage)
+      setFailure(errorMessage)
+      return
+    }
+
+    if (!formData.expiryDate) {
+      setExpiryError('Expiry date is required')
+      return
+    }
+
+    const validFromDate = new Date(formData.validFrom)
+    const expiryDate = new Date(formData.expiryDate)
+
+    if (expiryDate <= validFromDate) {
+      setExpiryError('Expiry date must be later than valid from date')
+      return
+    }
 
     // URL validation
     if (!URL_REGEX.test(formData.alternativeUrl)) {
@@ -76,12 +108,14 @@ const CreateCertificate = ({
       return
     }
 
-    // Country code validation
+    if (!formData.countryCode) {
+      setCountryError('Country code is required')
+      return
+    }
     if (!COUNTRY_CODE_REGEX.test(formData.countryCode)) {
       setCountryError('Country code must be 2 uppercase letters (e.g. US, IN)')
       return
     }
-
     const domain = extractDomainFromUrl(formData.alternativeUrl)
     if (!domain) {
       setUrlError('Unable to extract domain from URL')
@@ -91,11 +125,9 @@ const CreateCertificate = ({
     setCreating(true)
 
     const keyType =
-      formData.keyType === KEY_TYPES.P_256 ? KEY_TYPES.P256 : KEY_TYPES.ED25519
-    const now = new Date()
-    const notBefore = new Date(now)
-    const notAfter = new Date(now)
-    notAfter.setFullYear(notAfter.getFullYear() + 1)
+      formData.keyType === KEY_TYPES.P_256 ? KEY_TYPES.P_256 : KEY_TYPES.ED25519
+    const notBefore = new Date(formData.validFrom)
+    const notAfter = new Date(formData.expiryDate)
 
     const payload = {
       authorityKey: {
@@ -158,9 +190,11 @@ const CreateCertificate = ({
         setFormData({
           type: 'Issuer Root',
           keyType: 'P-256',
-          countryCode: 'NL',
+          countryCode: '',
           commonName: '',
           alternativeUrl: '',
+          validFrom: getLocalDateTime(),
+          expiryDate: '',
         })
 
         setTimeout(() => {
@@ -185,9 +219,11 @@ const CreateCertificate = ({
     setFormData({
       type: 'Issuer Root',
       keyType: 'P-256',
-      countryCode: 'NL',
+      countryCode: '',
       commonName: '',
       alternativeUrl: '',
+      validFrom: getLocalDateTime(),
+      expiryDate: '',
     })
     setSuccess(null)
     setFailure(null)
@@ -284,6 +320,9 @@ const CreateCertificate = ({
                       </SelectItem>
                     </SelectContent>
                   </Select>
+                  {keyTypeError && (
+                    <p className="text-destructive text-xs">{keyTypeError}</p>
+                  )}
                   <p className="text-muted-foreground text-xs">
                     The cryptographic algorithm used for key generation
                   </p>
@@ -311,6 +350,39 @@ const CreateCertificate = ({
                   {countryError && (
                     <p className="text-destructive text-xs">{countryError}</p>
                   )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">Valid From</Label>
+                    <Input
+                      type="datetime-local"
+                      className="h-11"
+                      value={formData.validFrom}
+                      disabled
+                    />
+                    <p className="text-muted-foreground text-xs">
+                      Starts immediately
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <Label className="text-base font-medium">
+                      Expiry Date <span className="text-destructive">*</span>
+                    </Label>
+                    <Input
+                      type="datetime-local"
+                      className="h-11"
+                      min={formData.validFrom}
+                      value={formData.expiryDate}
+                      onChange={(e) =>
+                        setFormData({ ...formData, expiryDate: e.target.value })
+                      }
+                    />
+                    {expiryError && (
+                      <p className="text-destructive text-xs">{expiryError}</p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="space-y-3">

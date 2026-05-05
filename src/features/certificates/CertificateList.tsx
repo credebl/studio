@@ -23,9 +23,10 @@ import {
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
+import { CellContext } from '@tanstack/react-table'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
-import { dateConversion } from '@/utils/DateConversion'
+import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
 import { useAppSelector } from '@/lib/hooks'
 
 export interface PaginationState {
@@ -58,6 +59,71 @@ interface CertificateListProps {
   onRefresh: () => void
   onSuccess: (message: string | null) => void
   onFailure: (message: string | null) => void
+}
+
+const StatusCell = ({
+  row,
+}: CellContext<Certificate, unknown>): JSX.Element => {
+  const { status } = row.original
+
+  const getStatusClass = (value?: string): string => {
+    switch (value) {
+      case 'Active':
+        return 'badges-success text-foreground'
+      case 'Inactive':
+        return 'badges-error text-foreground'
+      case 'Pending activation':
+        return 'badges-warning text-foreground'
+      default:
+        return 'badges-secondary text-foreground'
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className={`inline-flex min-w-[90px] items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${getStatusClass(
+          status,
+        )}`}
+      >
+        {status}
+      </span>
+    </div>
+  )
+}
+
+const CommonNameCell = ({
+  row,
+}: CellContext<Certificate, unknown>): JSX.Element => (
+  <span className="max-w-[220px] truncate text-sm font-medium">
+    {row.original.commonName || '—'}
+  </span>
+)
+
+const KeyTypeCell = ({
+  row,
+}: CellContext<Certificate, unknown>): JSX.Element => (
+  <span className="max-w-[220px] truncate text-sm font-medium">
+    {row.original.keyType || '—'}
+  </span>
+)
+
+const ValidFromCell = ({
+  row,
+}: CellContext<Certificate, unknown>): JSX.Element => {
+  if (!row.original.validFrom) {
+    return <span>—</span>
+  }
+  return <DateCell date={row.original.validFrom} />
+}
+
+const ExpiryCell = ({
+  row,
+}: CellContext<Certificate, unknown>): JSX.Element => {
+  if (!row.original.expiry) {
+    return <span>—</span>
+  }
+  return <DateCell date={row.original.expiry} />
 }
 
 const CertificateList = ({
@@ -175,19 +241,6 @@ const CertificateList = ({
     }
   }
 
-  const getStatusClass = (status?: string): string => {
-    switch (status) {
-      case 'Active':
-        return 'badges-success text-foreground'
-      case 'Inactive':
-        return 'badges-error text-foreground'
-      case 'Pending activation':
-        return 'badges-warning text-foreground'
-      default:
-        return 'badges-secondary text-foreground'
-    }
-  }
-
   const confirmationConfig = {
     activate: {
       message: confirmationCertificateMessages.activateCertificateConfirmation,
@@ -206,24 +259,6 @@ const CertificateList = ({
 
   const { message: confirmationMessage, buttons: confirmationButtonTitles } =
     confirmationConfig[actionType ?? 'delete']
-
-  const statusCell = ({
-    row,
-  }: {
-    row: { original: Certificate }
-  }): JSX.Element => {
-    const { status } = row.original
-
-    return (
-      <div className="flex items-center gap-2">
-        <span
-          className={`inline-flex min-w-[90px] items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${getStatusClass(status)}`}
-        >
-          {status}
-        </span>
-      </div>
-    )
-  }
 
   const actionCell = ({
     row,
@@ -272,42 +307,35 @@ const CertificateList = ({
       id: 'commonName',
       title: 'Common Name',
       accessorKey: 'commonName',
-      cell: ({ row }): JSX.Element => (
-        <span className="max-w-[220px] truncate text-sm font-medium">
-          {row.original.commonName || '—'}
-        </span>
-      ),
+      cell: CommonNameCell,
+      columnFunction: [],
+    },
+    {
+      id: 'keyType',
+      title: 'Key Type',
+      accessorKey: 'keyType',
+      cell: KeyTypeCell,
       columnFunction: [],
     },
     {
       id: 'validFrom',
       title: 'Valid From',
       accessorKey: 'validFrom',
-      cell: ({ row }): JSX.Element => (
-        <span className="text-sm">
-          {row.original.validFrom
-            ? dateConversion(row.original.validFrom)
-            : '—'}
-        </span>
-      ),
+      cell: ValidFromCell,
       columnFunction: [],
     },
     {
       id: 'expiry',
       title: 'Expiry',
       accessorKey: 'expiry',
-      cell: ({ row }): JSX.Element => (
-        <span className="text-sm">
-          {row.original.expiry ? dateConversion(row.original.expiry) : '—'}
-        </span>
-      ),
+      cell: ExpiryCell,
       columnFunction: [],
     },
     {
       id: 'status',
       title: 'Status',
       accessorKey: 'status',
-      cell: statusCell,
+      cell: StatusCell,
       columnFunction: [],
     },
     {

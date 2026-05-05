@@ -1,18 +1,34 @@
-import { cnRegexPattern, sanRegexPattern } from '@/config/CommonConstant'
+import {
+  KEY_TYPES,
+  cnRegexPattern,
+  sanRegexPattern,
+} from '@/config/CommonConstant'
+
+import { X509Certificate } from '@peculiar/x509'
 
 export function parsePemCertificate(pem: string): {
-  keyType: 'ed25519' | 'p256'
+  keyType: 'Ed25519' | 'P-256'
   commonName?: string
 } {
-  let keyType: 'ed25519' | 'p256' = 'p256'
+  const cert = new X509Certificate(pem)
 
-  if (pem.includes('ED25519')) {
-    keyType = 'ed25519'
+  const algorithm = cert.publicKey.algorithm.name
+
+  let keyType: 'Ed25519' | 'P-256' = 'P-256'
+  if (algorithm === KEY_TYPES.ED25519) {
+    keyType = 'Ed25519'
+  } else if (
+    algorithm === 'ECDSA' &&
+    cert.publicKey.algorithm.name === KEY_TYPES.P_256
+  ) {
+    keyType = 'P-256'
   }
 
-  const cnRegex = cnRegexPattern
-  const cnMatch = cnRegex.exec(pem)
-  const commonName = cnMatch?.[1]
+  const commonName = cert.subject
+    .split(',')
+    .map((s) => s.trim())
+    .find((s) => s.startsWith('CN='))
+    ?.substring(3)
 
   return {
     keyType,

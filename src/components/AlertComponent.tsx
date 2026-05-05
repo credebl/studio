@@ -1,4 +1,5 @@
 import { IAlertComponent } from '@/common/interface'
+import Link from 'next/link'
 import React from 'react'
 
 export const AlertComponent = ({
@@ -37,7 +38,7 @@ export const AlertComponent = ({
                 <div>{message}</div>
                 {viewButton && (
                   <div className="mr-2 flex justify-end text-right text-base md:w-32 lg:w-48">
-                    <a href={path}>View more... </a>
+                    <Link href={path}>View more... </Link>
                   </div>
                 )}
               </div>

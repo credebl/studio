@@ -2,10 +2,14 @@
 
 import { JwtPayload, jwtDecode } from 'jwt-decode'
 import axios, { AxiosError } from 'axios'
+import { generateAccessToken, logoutUser } from '@/utils/session'
 
 import { apiStatusCodes } from '@/config/CommonConstant'
-import { generateAccessToken } from '@/utils/session'
 import { store } from '@/lib/store'
+
+interface JwtPaylodCustom extends JwtPayload {
+  azp?: string
+}
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -29,6 +33,11 @@ instance.interceptors.request.use(
     try {
       const currentTime = Math.floor(Date.now() / 1000)
       const { refreshToken } = auth
+      const client = jwtDecode<JwtPaylodCustom>(refreshToken).azp
+
+      if (client === process.env.NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID) {
+        logoutUser()
+      }
       const refreshTokenExp = jwtDecode<JwtPayload>(refreshToken).exp
       const isRefreshTokenExpired = refreshTokenExp
         ? refreshTokenExp - currentTime < 1

@@ -19,6 +19,7 @@ import {
   deleteVerificationRecords,
   getOrganizationReferences,
 } from '@/app/api/deleteorganization'
+import { resetOrgState, setTenantData } from '@/lib/orgSlice'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import type { AxiosResponse } from 'axios'
@@ -30,7 +31,6 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { deleteConnectionRecords } from '@/app/api/connection'
 import { getOrganizationById } from '@/app/api/organization'
 import { pathRoutes } from '@/config/pathRoutes'
-import { setTenantData } from '@/lib/orgSlice'
 import { toast } from 'sonner'
 import { useAppDispatch } from '@/lib/hooks'
 
@@ -219,6 +219,7 @@ export default function DeleteOrganizationPage(): React.JSX.Element {
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         toast.success(data?.message)
+        dispatch(resetOrgState())
         await fetchOrganizationReferences()
         setShowPopup(false)
         dispatch(setTenantData(null))
