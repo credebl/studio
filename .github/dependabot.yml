@@ -17,9 +17,15 @@ updates:
     open-pull-requests-limit: 10
 
     groups:
+      # Group all patch updates into one PR
+      patch-updates:
+        apply: always
+        update-types:
+          - "patch"
+
+      # Group all minor updates into one PR
       minor-updates:
-        patterns:
-          - "*"
+        apply: always
         update-types:
           - "minor"
 
@@ -28,7 +34,7 @@ updates:
 
     labels:
       - "dependencies"
-      - "pnpm"                   # updated from "npm" to reflect pnpm
+      - "pnpm"
 
     commit-message:
       prefix: "chore"
@@ -39,12 +45,23 @@ updates:
   # =========================
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "main"       # always open PRs against main
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
+
+    groups:
+      # GitHub Actions: 1 PR for patch, 1 PR for minor
+      patch-updates:
+        apply: always
+        update-types:
+          - "patch"
+      minor-updates:
+        apply: always
+        update-types:
+          - "minor"
 
     labels:
       - "dependencies"
@@ -53,25 +70,29 @@ updates:
     commit-message:
       prefix: "ci"
 
-    groups:
-      minor-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-
   # =========================
   # Docker
   # =========================
   - package-ecosystem: "docker"
     directories:
       - "/"
-    target-branch: "main"       # open Docker PRs to main
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
+
+    groups:
+      # Docker: 1 PR for patch, 1 PR for minor
+      patch-updates:
+        apply: always
+        update-types:
+          - "patch"
+      minor-updates:
+        apply: always
+        update-types:
+          - "minor"
 
     labels:
       - "dependencies"
@@ -79,10 +100,3 @@ updates:
 
     commit-message:
       prefix: "build"
-
-    groups:
-      minor-updates:
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
