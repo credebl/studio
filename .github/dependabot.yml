@@ -6,14 +6,14 @@ updates:
   # =========================
   # pnpm Dependencies (via npm ecosystem)
   # =========================
-  - package-ecosystem: "npm"
-    directory: "/"              # or "/client" if package.json is inside a subfolder
-    target-branch: "main"       # always open PRs against main
+  - package-ecosystem: 'npm'
+    directory: '/' # or "/client" if package.json is inside a subfolder
+    target-branch: 'main' # always open PRs against main
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Kolkata"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Kolkata'
     open-pull-requests-limit: 10
 
     groups:
@@ -21,82 +21,82 @@ updates:
       patch-updates:
         apply: always
         update-types:
-          - "patch"
+          - 'patch'
 
       # Group all minor updates into one PR
       minor-updates:
         apply: always
         update-types:
-          - "minor"
+          - 'minor'
 
     allow:
-      - dependency-type: "all"
+      - dependency-type: 'all'
 
     labels:
-      - "dependencies"
-      - "pnpm"
+      - 'dependencies'
+      - 'pnpm'
 
     commit-message:
-      prefix: "chore"
-      include: "scope"
+      prefix: 'chore'
+      include: 'scope'
 
   # =========================
   # GitHub Actions
   # =========================
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    target-branch: "main"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    target-branch: 'main'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Kolkata"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Kolkata'
 
     groups:
       # GitHub Actions: 1 PR for patch, 1 PR for minor
       patch-updates:
         apply: always
         update-types:
-          - "patch"
+          - 'patch'
       minor-updates:
         apply: always
         update-types:
-          - "minor"
+          - 'minor'
 
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
 
     commit-message:
-      prefix: "ci"
+      prefix: 'ci'
 
   # =========================
   # Docker
   # =========================
-  - package-ecosystem: "docker"
+  - package-ecosystem: 'docker'
     directories:
-      - "/"
-    target-branch: "main"
+      - '/'
+    target-branch: 'main'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "Asia/Kolkata"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'Asia/Kolkata'
 
     groups:
       # Docker: 1 PR for patch, 1 PR for minor
       patch-updates:
         apply: always
         update-types:
-          - "patch"
+          - 'patch'
       minor-updates:
         apply: always
         update-types:
-          - "minor"
+          - 'minor'
 
     labels:
-      - "dependencies"
-      - "docker"
+      - 'dependencies'
+      - 'docker'
 
     commit-message:
-      prefix: "build"
+      prefix: 'build'
