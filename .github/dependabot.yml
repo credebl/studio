@@ -1,0 +1,100 @@
+# .github/dependabot.yml
+
+version: 2
+
+updates:
+  # =========================
+  # pnpm Dependencies (via npm ecosystem)
+  # =========================
+  - package-ecosystem: "npm"
+    directory: "/"              # or "/client" if package.json is inside a subfolder
+    target-branch: "main"       # always open PRs against main
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 10
+
+    groups:
+      # Group all patch updates into ONE PR
+      patch-updates:
+        update-types:
+          - "patch"
+
+      # Group all minor updates into ONE PR
+      minor-updates:
+        update-types:
+          - "minor"
+
+    allow:
+      - dependency-type: "all"
+
+    labels:
+      - "dependencies"
+      - "pnpm"
+
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+
+  # =========================
+  # GitHub Actions
+  # =========================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+
+    groups:
+      # Group all patch updates into one PR
+      patch-updates:
+        update-types:
+          - "patch"
+
+      # Group all minor updates into one PR
+      minor-updates:
+        update-types:
+          - "minor"
+
+    labels:
+      - "dependencies"
+      - "github-actions"
+
+    commit-message:
+      prefix: "ci"
+
+  # =========================
+  # Docker
+  # =========================
+  - package-ecosystem: "docker"
+    directories:
+      - "/"
+    target-branch: "main"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Kolkata"
+
+    groups:
+      # Group all patch updates into one PR
+      patch-updates:
+        update-types:
+          - "patch"
+
+      # Group all minor updates into one PR
+      minor-updates:
+        update-types:
+          - "minor"
+
+    labels:
+      - "dependencies"
+      - "docker"
+
+    commit-message:
+      prefix: "build"
