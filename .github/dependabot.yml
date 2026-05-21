@@ -14,7 +14,6 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Kolkata"
-    open-pull-requests-limit: 10
 
     groups:
       # Group all patch updates into ONE PR
@@ -62,6 +61,7 @@ updates:
           - "minor"
 
     labels:
+      - "devops"
       - "dependencies"
       - "github-actions"
 
@@ -93,6 +93,7 @@ updates:
           - "minor"
 
     labels:
+      - "devops"
       - "dependencies"
       - "docker"
 
