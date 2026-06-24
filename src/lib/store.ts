@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from 'redux-persist'
 
 import authSlice from './authSlice'
 import ecosystemSlice from './ecosystemSlice'
+import oid4vcSlice from './oid4vc'
 import orgSlice from './orgSlice'
 import profileSlice from './profileSlice'
 import schemaSlice from './schemaSlice'
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   schema: schemaSlice,
   schemaStorage: schemaStorageSlice,
   ecosystem: ecosystemSlice,
+  oid4vc: oid4vcSlice,
 })
 
 const persistConfig = {
