@@ -1,4 +1,5 @@
-#!/bin/sh
-cd "$(dirname "$0")/.."  # Move to project root (outer folder)
-# cd nextjs                # Move into Next.js folder
+#!/usr/bin/env sh
+
+. "$(dirname -- "$0")/_/husky.sh"
+
 npx lint-staged
