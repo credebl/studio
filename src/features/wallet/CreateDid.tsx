@@ -349,7 +349,7 @@ const CreateDid = (): React.JSX.Element => {
             </CardContent>
           </Card>
 
-          {selectedDid === 'did:polygon:testnet' && (
+          {(selectedDid === 'did:polygon:testnet' || selectedDid === 'did:polygon:mainnet') && (
             <Card className="border-border mt-6 border shadow-sm">
               <CardHeader>
                 <CardTitle className="text-foreground text-lg font-semibold">
