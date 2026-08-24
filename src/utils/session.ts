@@ -53,7 +53,7 @@ export const generateAccessToken = async (): Promise<void> => {
       )
 
       const data = await resp.json()
-      if (data.message === 'Refresh token has expired' || resp.status === 404) {
+      if (!resp.ok) {
         logoutUser()
         return
       }

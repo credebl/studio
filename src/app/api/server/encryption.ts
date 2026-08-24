@@ -1,32 +1,55 @@
-import Base64 from 'crypto-js/enc-base64'
-import Hex from 'crypto-js/enc-hex'
+import crypto from 'crypto'
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const AES = require('crypto-js/aes')
-export const passwordEncryption = (password: string): string => {
+const SALTED_MAGIC = Buffer.from('Salted__')
+
+function evpBytesToKey(
+  password: Buffer,
+  salt: Buffer,
+  keyLen: number,
+  ivLen: number,
+): { key: Buffer; iv: Buffer } {
+  let data = Buffer.alloc(0)
+  let prev = Buffer.alloc(0)
+
+  while (data.length < keyLen + ivLen) {
+    const md5 = crypto.createHash('md5')
+    md5.update(Buffer.concat([prev, password, salt]))
+    prev = Buffer.from(md5.digest() as Uint8Array)
+    data = Buffer.concat([data, prev])
+  }
+
+  return {
+    key: data.subarray(0, keyLen),
+    iv: data.subarray(keyLen, keyLen + ivLen),
+  }
+}
+
+export function passwordEncryption(password: string): string {
   if (typeof window !== 'undefined') {
-    throw new Error('passwordEncryption is server-only')
+    throw new Error('Server-only function')
   }
 
-  const { CRYPTO_PRIVATE_KEY } = process.env
-  if (!CRYPTO_PRIVATE_KEY) {
-    throw new Error('Missing CRYPTO_PRIVATE_KEY in environment variables')
-  }
-  if (!process.env.OPENSSL_HEADER) {
-    throw new Error('Missing OPENSSL_HEADER in environment variables')
+  const secret = process.env.CRYPTO_PRIVATE_KEY
+  if (!secret) {
+    throw new Error('Missing CRYPTO_PRIVATE_KEY')
   }
 
-  const encrypted = AES.encrypt(password, CRYPTO_PRIVATE_KEY)
+  // OpenSSL uses 8-byte salt
+  const salt = crypto.randomBytes(8)
 
-  if (encrypted.salt) {
-    const saltedHeader = Hex.parse(process.env.OPENSSL_HEADER)
+  const { key, iv } = evpBytesToKey(
+    Buffer.from(secret, 'utf8'),
+    salt,
+    32, // AES-256
+    16, // IV
+  )
 
-    const combined = saltedHeader
-      .concat(encrypted.salt)
-      .concat(encrypted.ciphertext)
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv)
+  const encrypted = Buffer.concat([
+    cipher.update(password, 'utf8'),
+    cipher.final(),
+  ])
 
-    return Base64.stringify(combined)
-  }
-
-  return encrypted.toString(Base64)
+  // OpenSSL format: Salted__ + salt + ciphertext
+  return Buffer.concat([SALTED_MAGIC, salt, encrypted]).toString('base64')
 }
