@@ -274,8 +274,8 @@ importers:
         version: 5.0.15(@types/react@19.0.1)(immer@10.1.1)(react@19.0.1)(use-sync-external-store@1.5.0(react@19.0.1))
     devDependencies:
       '@eslint/js':
-        specifier: ^9.26.0
-        version: 9.26.0
+        specifier: ^9.39.5
+        version: 9.39.5
       '@faker-js/faker':
         specifier: ^10.5.0
         version: 10.5.0
@@ -427,8 +427,8 @@ packages:
     resolution: {integrity: sha512-ZSjtmelB7IJfWD2Fvb7+Z+ChTIKWq6kjda95fLcQKNS5aheVHn4IkfgRQE3sIIzTcSLwLcLZUD9UBt+V7+h+Pw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
-  '@eslint/js@9.26.0':
-    resolution: {integrity: sha512-I9XlJawFdSMvWjDt6wksMCrgns5ggLNfFwFvnShsleWruvXM514Qxk8V246efTw+eo9JABvVz+u3q2RiAowKxQ==}
+  '@eslint/js@9.39.5':
+    resolution: {integrity: sha512-QywQuszQh77pIXCsq998c8hbhSTI/azTty1Z6N53dmAudKHhy573j3yvRLsX2BSp8YpLtoCEG8E9DJe+8zUh4A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@faker-js/faker@10.5.0':
@@ -4420,7 +4420,7 @@ snapshots:
 
   '@eslint/js@8.48.0': {}
 
-  '@eslint/js@9.26.0': {}
+  '@eslint/js@9.39.5': {}
 
   '@faker-js/faker@10.5.0': {}
 
