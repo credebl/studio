@@ -92,7 +92,7 @@
     "react-resizable-panels": "^2.1.7",
     "react-responsive": "^10.0.0",
     "react-toastify": "^11.0.5",
-    "recharts": "^2.15.1",
+    "recharts": "^3.10.1",
     "redux-persist": "^6.0.0",
     "sharp": "^0.35.4",
     "socket.io-client": "^4.8.3",
