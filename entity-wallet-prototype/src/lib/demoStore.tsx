@@ -118,8 +118,9 @@ const FRESH: DemoState = dayZeroState(SEED);
  *  12 — NDI is Anand (root) and Kinzang (platform admin) only: Kinley Wangdi
  *       and the inherited Studio staff list are gone, so a version-11 save
  *       would still offer to drive as someone the story no longer has.
- *  13 — Root is named "Root", not Anand Acharya. A version-12 save would
- *       keep greeting root by the old name.
+ *  13 — Root is named "Root", not Anand Acharya, and approves nothing;
+ *       Tshendu joins Kinzang as the second platform admin (FLOW-ONB-02
+ *       v0.6). A version-12 save keeps the old name and one admin.
  */
 const SEED_VERSION = 13;
 
@@ -296,6 +297,29 @@ const newDidId = (method: string): string => {
   }
 };
 const rid = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
+
+/**
+ * FLOW-ONB-02 P7 — the named platform admins who are active: an account that
+ * exists and is not locked or suspended. One definition, used wherever the
+ * flow counts admins, as the spec asks.
+ */
+const activeAdmins = (s: DemoState) => s.people.filter((p) => p.platformRole === "admin" && p.hasAccount !== false);
+
+/**
+ * FLOW-ONB-02 P8 — whether the root account may issue another administrator
+ * invitation, and if not, why. Root brings admins on only while fewer than
+ * two are active, and only as many as it takes to reach two (S9). The same
+ * answer decides whether SCR-INV-01 offers root the form at all, so the
+ * screen never offers something the store would then refuse.
+ */
+function rootInviteBlock(s: DemoState): "two_active" | "enough_pending" | null {
+  const active = activeAdmins(s).length;
+  if (active >= 2) return "two_active";
+  const pending = s.orgInvitations.filter(
+    (i) => i.kind === "A" && i.invitedBy === "root" && i.state === "PENDING" && !(i.expiresAt && i.expiresAt < today()),
+  ).length;
+  return active + pending >= 2 ? "enough_pending" : null;
+}
 
 /**
  * FLOW-ONB-02 step 9 for a member invitation: the invitee joins the named
@@ -585,13 +609,19 @@ interface DemoActions {
     legalIdentity: string;
     purpose: string;
     needsSecondApproval: boolean;
-  }) => string;
-  /** Step 2 — a second administrator approves. Refuses self-approval (E11). */
-  approveInvitation: (id: string) => { ok: true } | { ok: false; error: "E11" };
+  }) => { ok: true; id: string } | { ok: false; error: "E12" };
+  /**
+   * Step 2 — a second administrator approves. Refuses self-approval (E11),
+   * and the root account, which approves nothing (E13).
+   */
+  approveInvitation: (id: string) => { ok: true } | { ok: false; error: "E11" | "E13" };
   /** The second administrator declines to send it. */
   refuseInvitation: (id: string) => void;
-  /** Revoked by the inviter before acceptance (E5), or withdrawn before approval. */
-  withdrawInvitation: (id: string) => void;
+  /**
+   * Revoked by the inviter before acceptance (E5), or withdrawn before
+   * approval. The root account gives a reason, which is logged (S9).
+   */
+  withdrawInvitation: (id: string, rootReason?: string) => void;
   /** Resend after a delivery failure (E8). The token stays the same. */
   resendInvitation: (id: string) => void;
   /** Steps 7–9 — accept, after re-checking the invitation is still good. */
@@ -658,11 +688,22 @@ interface DemoActions {
    * screen only renders what comes back.
    */
   signIn: (email: string) => { ok: true; personId: PersonId | null } | { ok: false };
-  /** Root invites one of NDI's staff to administer the platform (kind A). */
-  /** Root invites someone, by address, to administer the platform. */
+  /**
+   * Kind A — someone is invited to administer the platform. A platform
+   * admin's invitation waits for a second, distinct admin (P3, S2), and is
+   * refused while fewer than two are active (E12). The root account's is
+   * sent straight away, but only under S9 — fewer than two active, no more
+   * than it takes to reach two, with a reason and the custodians named —
+   * and is otherwise refused (E14).
+   */
   invitePlatformAdmin: (
     email: string,
-  ) => { ok: true; id: string } | { ok: false; error: "not_root" | "already" | "invalid" };
+    root?: { reason: string; custodians: string },
+  ) =>
+    | { ok: true; id: string; queued: boolean }
+    | { ok: false; error: "E1" | "E3" | "E12" | "E14" | "invalid" };
+  /** P7 and P8, as the server would answer them — for SCR-INV-01 to render. */
+  adminStatus: () => { active: number; rootBlock: "two_active" | "enough_pending" | null };
   /**
    * The invitee of a platform-admin invitation sets up their account from the
    * link — name and password — which accepts the invitation in the same step.
@@ -1706,6 +1747,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       },
 
       proposeOrganisation: ({ email, legalName, legalIdentity, purpose, needsSecondApproval }) => {
+        /* P7, E12: a second approval needs a second named admin to give it.
+           Refused up front rather than left waiting for nobody. */
+        if (needsSecondApproval && activeAdmins(stateRef.current).length < 2) {
+          log("Invitation refused — fewer than two administrators to approve it");
+          return { ok: false, error: "E12" };
+        }
         const id = rid("inv");
         setState((s) => ({
           ...s,
@@ -1741,7 +1788,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             ? `Designation of ${legalName} proposed — awaiting a second administrator`
             : `Invitation sent to ${email.trim()} to register ${legalName}`,
         );
-        return id;
+        return { ok: true, id };
       },
 
       approveInvitation: (id) => {
@@ -1752,8 +1799,14 @@ export function DemoProvider({ children }: { children: ReactNode }) {
            screen shows the control disabled with the reason (UXD-03) — this
            is the check that would hold even if it did not. The attempt is
            recorded as a control failure, not silently ignored. */
+        /* E13: the root account approves nothing — not even in an
+           emergency. SCR-INV-02 isn't offered to it; this holds regardless. */
+        if (s0.people.find((p) => p.id === s0.harness.persona)?.platformRole === "root") {
+          log("Control failure — the root account tried to approve an invitation", NDI_ORG);
+          return { ok: false, error: "E13" };
+        }
         if (!inv || inv.invitedBy === s0.harness.persona) {
-          log("Control failure — an administrator tried to approve their own designation");
+          log("Control failure — an administrator tried to approve their own invitation", NDI_ORG);
           return { ok: false, error: "E11" };
         }
         setState((s) => ({
@@ -1766,13 +1819,17 @@ export function DemoProvider({ children }: { children: ReactNode }) {
                   approvedBy: s.harness.persona,
                   decidedAt: today(),
                   sentAt: today(),
-                  expiresAt: inDays(INVITATION_DAYS.O),
+                  expiresAt: inDays(inv.kind === "A" ? INVITATION_DAYS.A : INVITATION_DAYS.O),
                   delivery: "delivered",
                 }
               : i,
           ),
         }));
-        log(`Designation of ${inv.legalName} approved and sent`);
+        log(
+          inv.kind === "A"
+            ? `Invitation to ${inv.email} as a platform administrator approved and sent`
+            : `Designation of ${inv.legalName} approved and sent`,
+        );
         return { ok: true };
       },
 
@@ -1784,13 +1841,22 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           ),
         })),
 
-      withdrawInvitation: (id) =>
+      withdrawInvitation: (id, rootReason) => {
+        const s0 = stateRef.current;
+        /* The root account may revoke only what it issued, and each use is
+           logged with its reason (S9). */
+        if (s0.people.find((p) => p.id === s0.harness.persona)?.platformRole === "root") {
+          const inv = s0.orgInvitations.find((i) => i.id === id);
+          if (!inv || inv.invitedBy !== "root" || !rootReason?.trim()) return;
+          log(`Root account used — revoked the invitation to ${inv.email}. Reason: ${rootReason.trim()}`, NDI_ORG);
+        }
         setState((s) => ({
           ...s,
           orgInvitations: s.orgInvitations.map((i) =>
             i.id === id ? { ...i, state: "REVOKED", decidedAt: today() } : i,
           ),
-        })),
+        }));
+      },
 
       resendInvitation: (id) =>
         setState((s) => ({
@@ -1832,7 +1898,12 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         const inviter = s0.people.find((p) => p.id === inv.invitedBy);
         const inviterStillMay =
           inv.kind === "A"
-            ? inviter?.platformRole === "root"
+            ? /* Step 8: a root-issued invitation still needs S9 to hold —
+                 once two admins are active it is void (E6, AC-16). An
+                 admin's needs its inviter still to be one. */
+              inviter?.platformRole === "root"
+              ? activeAdmins(s0).length < 2
+              : isPlatformAdmin(inviter)
             : inv.kind === "W"
               ? isPlatformAdmin(inviter)
               : inv.kind === "O"
@@ -2038,7 +2109,11 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       },
 
       decideManualReview: (id, approve, reason) =>
-        setState((s) => ({
+        setState((s) => {
+          /* A named platform admin decides — never the root account, which
+             does no routine work (FLOW-ONB-02 S9). */
+          if (s.people.find((p) => p.id === s.harness.persona)?.platformRole !== "admin") return s;
+          return {
           ...s,
           manualReviews: s.manualReviews.map((m) =>
             m.id === id
@@ -2051,7 +2126,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
                 }
               : m,
           ),
-        })),
+          };
+        }),
 
       completeOrgOnboarding: () => {
         const s0 = stateRef.current;
@@ -2164,20 +2240,36 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         })),
 
 
-      invitePlatformAdmin: (emailIn) => {
+      invitePlatformAdmin: (emailIn, root) => {
         const s0 = stateRef.current;
         const me = s0.people.find((p) => p.id === s0.harness.persona);
-        /* Only root may make an administrator — refused here, not merely
-           hidden on the screen, because the screen is not the boundary. */
-        if (me?.platformRole !== "root") return { ok: false, error: "not_root" };
+        const asRoot = me?.platformRole === "root";
+        /* P2: a platform admin, or the root account — refused here, not
+           merely hidden on the screen, because the screen is not the
+           boundary. */
+        if (!asRoot && !isPlatformAdmin(me)) return { ok: false, error: "E1" };
         const email = emailIn.trim().toLowerCase();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "invalid" };
         const person = s0.people.find((p) => p.email.toLowerCase() === email);
         if (
           isPlatformAdmin(person) ||
-          s0.orgInvitations.some((i) => i.kind === "A" && i.email.toLowerCase() === email && i.state === "PENDING")
+          s0.orgInvitations.some(
+            (i) => i.kind === "A" && i.email.toLowerCase() === email && (i.state === "PENDING" || i.state === "PENDING_APPROVAL"),
+          )
         ) {
-          return { ok: false, error: "already" };
+          return { ok: false, error: "E3" };
+        }
+        if (asRoot) {
+          /* P8, E14: only under S9, and only with a reason and the
+             custodians named. Refused, logged and alerted otherwise. */
+          if (rootInviteBlock(s0) || !root?.reason.trim() || !root.custodians.trim()) {
+            log("Control failure — the root account tried to add an administrator outside its emergency rule", NDI_ORG);
+            return { ok: false, error: "E14" };
+          }
+        } else if (activeAdmins(s0).length < 2) {
+          /* P7, E12: an admin's invitation needs a second admin to approve. */
+          log("Invitation refused — fewer than two administrators to approve it", NDI_ORG);
+          return { ok: false, error: "E12" };
         }
         const id = rid("inv");
         setState((s) => ({
@@ -2192,22 +2284,36 @@ export function DemoProvider({ children }: { children: ReactNode }) {
               legalName: null,
               legalIdentity: null,
               purpose: "Platform administrator",
-              needsSecondApproval: false,
+              /* S2: every Kind A needs a second named admin — except the
+                 root account's, which S9 checks and logs instead. */
+              needsSecondApproval: !asRoot,
+              rootReason: asRoot ? root!.reason.trim() : null,
+              rootCustodians: asRoot ? root!.custodians.trim() : null,
               invitedBy: s.harness.persona,
               approvedBy: null,
               createdAt: today(),
-              sentAt: today(),
-              expiresAt: inDays(INVITATION_DAYS.O),
-              state: "PENDING",
-              delivery: "delivered",
+              sentAt: asRoot ? today() : null,
+              expiresAt: asRoot ? inDays(INVITATION_DAYS.A) : null,
+              state: asRoot ? "PENDING" : "PENDING_APPROVAL",
+              delivery: asRoot ? "delivered" : "not_sent",
               decidedAt: null,
               acceptedName: null,
             },
             ...s.orgInvitations,
           ],
         }));
-        log(`${email} invited as a platform administrator`);
-        return { ok: true, id };
+        log(
+          asRoot
+            ? `Root account used — invited ${email} as a platform administrator. Reason: ${root!.reason.trim()}. Custodians: ${root!.custodians.trim()}`
+            : `${email} proposed as a platform administrator — awaiting a second administrator`,
+          NDI_ORG,
+        );
+        return { ok: true, id, queued: !asRoot };
+      },
+
+      adminStatus: () => {
+        const s0 = stateRef.current;
+        return { active: activeAdmins(s0).length, rootBlock: rootInviteBlock(s0) };
       },
 
       setUpPlatformAdmin: (invitationId, nameIn) => {
@@ -2229,7 +2335,16 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           return { ok: false, error: "E4" };
         }
         if (inv.state !== "PENDING") return { ok: false, error: "E5" };
-        if (inviter?.platformRole !== "root") return { ok: false, error: "E6" };
+        /* Step 8: the root account's invitation still needs S9 to hold;
+           an admin's needs its inviter still to be one (E6). */
+        const stillMay = inviter?.platformRole === "root" ? activeAdmins(s0).length < 2 : isPlatformAdmin(inviter);
+        if (!stillMay) {
+          setState((s) => ({
+            ...s,
+            orgInvitations: s.orgInvitations.map((i) => (i.id === invitationId ? { ...i, state: "VOID" as const } : i)),
+          }));
+          return { ok: false, error: "E6" };
+        }
         if (!name) return { ok: false, error: "invalid" };
         /* Someone the story already knows (Kinzang) keeps their
            record; anyone else becomes the "newadmin" persona. */
@@ -2321,7 +2436,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         setState((s) => {
           const req = s.accessRequests.find((a) => a.id === id);
           const me = s.people.find((p) => p.id === s.harness.persona);
-          if (!req || req.state !== "PENDING" || !isPlatformAdmin(me)) return s;
+          /* A named platform admin — never the root account (S9). */
+          if (!req || req.state !== "PENDING" || me?.platformRole !== "admin") return s;
           const org = s.organizations.find((o) => o.id === req.orgId);
           const decided = { decidedBy: s.harness.persona, decidedAt: today() };
           if (!approve) {

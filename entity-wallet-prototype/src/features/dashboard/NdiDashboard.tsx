@@ -19,12 +19,15 @@ import { useDemo } from "@/lib/demoStore";
  * matters is that nobody can bring an organisation on until a platform admin
  * exists. So the page leads with that — who administers the platform, and
  * what is waiting for a decision — and puts the Studio's own work beside it
- * as links. Root's primary action is inviting an admin, because only root
- * can; an admin's is the queue, because that is their job.
+ * as links. Root's primary action is inviting the first two admins, while
+ * it still may (FLOW-ONB-02 S9); an admin's is the queue, because that is
+ * their job. Once two are active, root has nothing routine to do here, and
+ * the page says so rather than offering a form that would be refused.
  */
 export function NdiDashboard({ name }: { name: string }) {
-  const { people, organizations, orgInvitations, accessRequests, currentPerson, firstRun } = useDemo();
+  const { people, organizations, orgInvitations, accessRequests, currentPerson, firstRun, adminStatus: platformStatus } = useDemo();
   const isRoot = currentPerson.platformRole === "root";
+  const rootMayInvite = isRoot && platformStatus().rootBlock === null;
 
   const admins = people.filter((p) => p.platformRole === "admin" && p.hasAccount !== false);
   const invited = orgInvitations.filter((i) => i.kind === "A" && i.state === "PENDING");
@@ -58,18 +61,20 @@ export function NdiDashboard({ name }: { name: string }) {
         }
         lead={
           isRoot
-            ? "You're NDI's root administrator. Everything the Studio does is here, and so is the platform itself — starting with who runs it."
+            ? rootMayInvite
+              ? "You're using the NDI root account. Its one job now is bringing on the platform's first two administrators — after that, they run it."
+              : "You're using the NDI root account. Two administrators run the platform; the root account is for emergencies only."
             : "You administer the platform for Bhutan NDI. Organisations' requests come to you; the Studio is here too."
         }
         action={
-          isRoot ? (
+          rootMayInvite ? (
             <Link href="/admin/team">
               <GradientButton>
                 <Icon name="users" size={16} strokeWidth={2} />
                 Invite a platform admin
               </GradientButton>
             </Link>
-          ) : (
+          ) : isRoot ? undefined : (
             <Link href="/admin/organisations">
               <GradientButton>
                 <Icon name="building" size={16} strokeWidth={2} />
@@ -88,9 +93,11 @@ export function NdiDashboard({ name }: { name: string }) {
               <StatusPill status={adminStatus.status} label={adminStatus.label} />
             </div>
             <p className="m-0 text-[13px] leading-[1.6] text-muted">
-              {admins.length > 0
-                ? `${admins.map((a) => a.name).join(", ")} ${admins.length === 1 ? "reviews" : "review"} organisations' requests.`
-                : "Nobody can bring an organisation onto the platform until at least one admin has accepted."}
+              {admins.length >= 2
+                ? `${admins.map((a) => a.name).join(" and ")} run the platform, and approve what each other propose.`
+                : admins.length === 1
+                  ? `${admins[0].name} is the only administrator. Anything that needs a second administrator's approval waits until there are two.`
+                  : "The platform needs two administrators: every approval takes a second one."}
             </p>
             <Link href="/admin/team" className="ndi-plainlink text-[12.5px] font-medium text-accent">
               {isRoot ? "Manage platform admins" : "See platform admins"}

@@ -12,6 +12,8 @@ interface NavChild {
   label: string;
   href: string;
   icon: IconName;
+  /** Hidden from the NDI root account, which this page is never offered to. */
+  notForRoot?: boolean;
 }
 
 /**
@@ -94,12 +96,15 @@ const PRIMARY: NavItem[] = [
     children: [
       { label: "Organisations", href: "/admin/organisations", icon: "building" },
       { label: "Invitations", href: "/admin/invitations", icon: "mail" },
-      { label: "Approvals", href: "/admin/approvals", icon: "userCheck" },
+      /* Never offered to the root account, which approves nothing
+         (FLOW-ONB-02 S2, E13; UX-EW-01 SCR-INV-02). */
+      { label: "Approvals", href: "/admin/approvals", icon: "userCheck", notForRoot: true },
       { label: "Manual review", href: "/admin/reviews", icon: "fileText" },
     ],
   },
-  /* Root's alone: making administrators. */
-  { label: "Platform admins", icon: "users", href: "/admin/team", platform: "root" },
+  /* Administrators invite each other (Kind A, FLOW-ONB-02 v0.6); the root
+     account brings on the first two and restores them in an emergency. */
+  { label: "Platform admins", icon: "users", href: "/admin/team", platform: "admin" },
 
   /* For an organisation already on NDI without a wallet: the way to ask. */
   { label: "Entity Wallet", icon: "wallet", href: "/entity-wallet", personas: ORG_OWNERS, needs: "no-holder" },
@@ -336,7 +341,7 @@ export function Sidebar({ open = false, onClose }: SidebarProps) {
 
                   {isOpen ? (
                     <div className="mt-0.5 flex flex-col gap-0.5 pb-1 pl-[22px]">
-                      {item.children.map((child) => (
+                      {item.children.filter((child) => !(child.notForRoot && currentPerson.platformRole === "root")).map((child) => (
                         <Link
                           key={child.href}
                           href={child.href}

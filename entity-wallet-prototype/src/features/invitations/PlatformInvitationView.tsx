@@ -27,14 +27,14 @@ import { ReviewInvitationView } from "./ReviewInvitationView";
  * existing NDI organisation invited to hold its own records (W) — get the
  * screen below: the same informed-consent shape, with what each one grants.
  *
- * KINDS A AND W ARE THE PROTOTYPE'S, NOT FLOW-ONB-02'S
+ * KIND A IS NOW THE SPEC'S; KIND W IS STILL THE PROTOTYPE'S
  *
- * FLOW-ONB-02 defines Kind M and Kind O only. Platform admins are a
- * deployment precondition there (P6), and an existing organisation reaching
- * Flow 2 has no invitation at all. The prototype needed to show both on
- * screen, so it added these two kinds; they reuse Kind O's 30-day expiry.
- * They are recorded as deviations in the PR and on the what's-real page, so
- * the showcase doesn't take them as round-1 evidence for the spec.
+ * The prototype added Kind A for administrators before the specification
+ * had it. FLOW-ONB-02 v0.6 (§1.1, §12 item 7) now defines it: 14 days, a
+ * second administrator's approval, and the root account issuing it only at
+ * bootstrap or in an emergency. Kind W — an existing NDI organisation
+ * invited to hold its own records — is still the prototype's, and stays
+ * recorded as a deviation on the what's-real page.
  */
 export function InvitationView({ id }: { id: string }) {
   const { orgInvitations } = useDemo();
@@ -47,8 +47,11 @@ export function InvitationView({ id }: { id: string }) {
  * WHAT EACH ONE HAS TO MAKE CLEAR
  *
  * An administrator's invitation grants power over other people's
- * organisations, so it names who is granting it (root, by name) and says
- * plainly what it does not include: acting for any business.
+ * organisations, so it names who is granting it and says plainly what it
+ * does not include. Named as a person — except the root account's, which
+ * names "Bhutan NDI root administrator": the platform can't tell which of
+ * the two custodians acted, so naming one would state something it doesn't
+ * know (UXD-56).
  *
  * AN ADMINISTRATOR SETS UP HERE, NOT THROUGH SIGN-UP
  *
@@ -218,7 +221,11 @@ function PlatformInvitationView({ id }: { id: string }) {
     setResult("declined");
   };
 
-  const inviterName = inviter?.name ?? "NDI";
+  const byRoot = inv?.invitedBy === "root";
+  const inviterName = byRoot ? "Bhutan NDI root administrator" : inviter?.name ?? "NDI";
+  /* Who to ask for a new one. Never the root account itself — it isn't a
+     contact anyone should be sent to (UX-EW-01 §3.5, ONB-02/E4). */
+  const askWho = byRoot ? "the NDI platform team" : inviterName;
   const orgName = org?.name ?? inv?.legalName ?? "your organisation";
 
   return (
@@ -231,7 +238,7 @@ function PlatformInvitationView({ id }: { id: string }) {
       }
       lead={
         admin
-          ? "Read what it gives you before you accept. Administering the platform means deciding other organisations' requests."
+          ? "Read what it gives you before you accept. Administering the platform means approving what other administrators propose."
           : "Read what it gives you before you accept. This lets the organisation keep its own proof of registration and show it itself."
       }
     >
@@ -242,18 +249,18 @@ function PlatformInvitationView({ id }: { id: string }) {
         </>
       ) : face === "expired" ? (
         /* E4 names who to ask; it is not the revoked copy (UX-EW-01 §3.5). */
-        <Outcome title="This invitation has expired" body={`Ask ${inviterName} to send you a new one.`} />
+        <Outcome title="This invitation has expired" body={`Ask ${askWho} to send you a new one.`} />
       ) : face === "revoked" ? (
-        <Outcome title="This invitation is no longer valid" body={`If you think you should still have it, ask ${inviterName}.`} />
+        <Outcome title="This invitation is no longer valid" body={`If you think you should still have it, ask ${askWho}.`} />
       ) : face === "void" ? (
         /* E6: the person has just consented and is being refused, so it
            reads as a lapse, never a rejection of them. */
         <Outcome
           title="This invitation can no longer be accepted"
-          body={`It has lapsed since it was sent — nothing you did caused that. Ask ${inviterName} to send you a new one.`}
+          body={`It has lapsed since it was sent — nothing you did caused that. Ask ${askWho} to send you a new one.`}
         />
       ) : face === "declined" ? (
-        <Outcome title="You've declined this invitation" body={`${inviterName} has been told.`} />
+        <Outcome title="You've declined this invitation" body={`${byRoot ? "The NDI platform team has" : `${inviterName} has`} been told.`} />
       ) : face === "accepted" ? (
         <>
           <AuthCardHeader title="You've already accepted this invitation" />
@@ -278,14 +285,14 @@ function PlatformInvitationView({ id }: { id: string }) {
               <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
                 <Icon name="check" size={14} strokeWidth={2.4} className="mt-[5px] flex-none text-accent" />
                 {admin
-                  ? "Decide organisations' requests about what they're allowed to do on the platform, with your name on each decision, and invite organisations onto it."
+                  ? "Administer the Bhutan NDI platform, including approving what other administrators propose."
                   : `Let ${orgName} keep its own proof of registration, and the records other agencies give it, and show them itself — with the people it chooses able to act for it, within limits it sets.`}
               </p>
               <p className="m-0 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">What this does not do</p>
               <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
                 <Icon name="close" size={14} strokeWidth={2.4} className="mt-[5px] flex-none" style={{ color: "var(--text-faint)" }} />
                 {admin
-                  ? "It doesn't let you act for any organisation, or see anything they keep. Making other administrators stays with root."
+                  ? "This does not let you approve anything you propose yourself."
                   : `It doesn't change anything ${orgName} already does on the platform. And it doesn't confirm you represent it — the register is still asked, after you prove who you are.`}
               </p>
             </div>

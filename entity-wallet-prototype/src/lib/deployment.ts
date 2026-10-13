@@ -34,5 +34,9 @@ export const SENDS_PER_ADDRESS_PER_HOUR = 5;
  */
 export const RESEND_COOLDOWN_SECONDS = 30;
 
-/** FLOW-ONB-02 §12 item 3 — invitations expire after 14 days (M) or 30 (O). */
-export const INVITATION_DAYS = { M: 14, O: 30 } as const;
+/**
+ * FLOW-ONB-02 §12 item 3 — invitations expire after 14 days (M) or 30 (O).
+ * Kind A, added by item 7, takes 14 like Kind M: the invitee is NDI staff,
+ * not an agency moving on institutional timescales.
+ */
+export const INVITATION_DAYS = { M: 14, O: 30, A: 14 } as const;

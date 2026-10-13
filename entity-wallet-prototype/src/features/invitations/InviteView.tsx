@@ -16,7 +16,7 @@ import { useReveal } from "@/components/ui/useReveal";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { Icon } from "@/components/ui/icons";
 import { INVITATION_DAYS } from "@/lib/deployment";
-import { isPlatformAdmin, roleIn, shortOrgName } from "@/lib/demoData";
+import { roleIn, shortOrgName } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 import { LOCAL_MS } from "@/lib/demoTiming";
 
@@ -85,7 +85,9 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
   const [sent, setSent] = useState<Sent | null>(null);
 
   const myRole = roleIn(org, currentPerson);
-  const permitted = kind === "M" ? myRole === "Owner" || myRole === "Admin" : isPlatformAdmin(currentPerson);
+  /* Kind O: a named platform admin. The root account issues no member or
+     agency invitation (FLOW-ONB-02 S9). */
+  const permitted = kind === "M" ? myRole === "Owner" || myRole === "Admin" : currentPerson.platformRole === "admin";
 
   const back = kind === "M" ? "/members" : "/admin/invitations";
   const loading = busy || forced === "loading";
@@ -114,7 +116,9 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
             <p className="relative z-[4] text-[13.5px] leading-[1.6] text-muted">
               {kind === "M"
                 ? `You don't have permission to invite people to ${shortOrgName(orgName)}. Ask its owner.`
-                : "Only NDI platform administrators can bring an organisation onto the platform."}
+                : currentPerson.platformRole === "root"
+                  ? "The root account doesn't bring organisations onto the platform — platform administrators do."
+                  : "Only NDI platform administrators can bring an organisation onto the platform."}
             </p>
           </Panel>
         </div>
@@ -163,7 +167,7 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
         setSent({ kind: "sent", email: email.trim(), id: result.id });
       } else {
         const needsSecondApproval = purpose === "foundational";
-        proposeOrganisation({
+        const proposed = proposeOrganisation({
           email,
           legalName: legalName.trim(),
           legalIdentity: legalIdentity.trim(),
@@ -174,6 +178,11 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
               : "Register as an ordinary business."),
           needsSecondApproval,
         });
+        /* E12: nobody to give the second approval (P7). */
+        if (!proposed.ok) {
+          setError("There's no other administrator to approve this. Ask the root account custodians to restore one.");
+          return;
+        }
         setSent({ kind: needsSecondApproval ? "queued" : "sent", email: email.trim() });
       }
     }, LOCAL_MS);

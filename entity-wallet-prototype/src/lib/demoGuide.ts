@@ -77,7 +77,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 0,
     title: "Onboarding onto the Entity Wallet",
     happening:
-      "Three onboardings, in the order they have to happen: NDI's root administrator signs in, root invites a platform admin who sets up their account, and Pelden Trading's director signs up for an account of their own. Nothing is real: the dashed \"Prototype\" panels stand in for an inbox.",
+      "Three onboardings, in the order they have to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, and Pelden Trading's director signs up for an account of their own. Nothing is real: the dashed \"Prototype\" panels stand in for an inbox.",
     doThis:
       "Press **Next**. The guide takes you to each screen and tells you what to press; you do the clicking. **Minimise** tucks this card away when it's in the way.",
   },
@@ -97,19 +97,23 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 1,
     title: "NDI's own organisation",
     happening:
-      "Root lands in Bhutan NDI's organisation, which is ready from the start: the whole Studio — credentials, schemas, trust, ecosystems — and NDI administration beside it. Nobody administers the platform yet.",
+      "Root lands in Bhutan NDI's organisation, which is ready from the start: the whole Studio and NDI administration. Root is NDI's own account, held by two custodians together — not a person's — and its one job now is bringing on the first two administrators.",
     doThis: "Press **Invite a platform admin**.",
     route: "/dashboard",
     persona: "root",
   },
-  /* ---- 2 · Platform admin onboarding ---- */
+  /* ---- 2 · Platform admin onboarding ----
+     Two administrators, because the root account approves nothing
+     (FLOW-ONB-02 v0.6, S2): every second approval is a second named admin.
+     Root brings both on at bootstrap, each with a reason and the custodians
+     present (S9), and can add no more once two are active. */
   {
     chapter: 2,
-    title: "Invite a platform admin",
+    title: "Invite the first platform admin",
     happening:
-      "Root's first job is to invite the people who will run the platform day to day. Root types the address the invitation goes to — nobody is an admin until root decides to trust them. Until one accepts, no organisation can be added.",
+      "Root types the address the invitation goes to — nobody is an admin until NDI decides to trust them. Using the root account is logged with a reason and the custodians present, and every administrator is told.",
     doThis:
-      "Type **kinzang.dorji@bhutanndi.bt**, press **Send invitation**, then **Open the invitation as kinzang.dorji@bhutanndi.bt** (dashed — it stands in for the invitee's inbox).",
+      "Type **kinzang.dorji@bhutanndi.bt**, a reason such as **Bringing on the first administrators**, the custodians present such as **Karma and Sonam**, press **Send invitation**, then **Open the invitation as kinzang.dorji@bhutanndi.bt** (dashed — it stands in for the invitee's inbox).",
     route: "/admin/team",
     persona: "root",
   },
@@ -117,22 +121,39 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 2,
     title: "Kinzang sets up the account",
     happening:
-      "The invitation is the onboarding. It names who is granting it and what it does not include — acting for any business — and the account is set up right here. No separate sign-up: the link already proves the address.",
+      "The invitation is the onboarding. It's from the Bhutan NDI root administrator — the account, not a person — and says what it gives and what it doesn't: Kinzang can't approve anything Kinzang proposes. The account is set up right here; the link already proves the address.",
     doThis:
       "Enter **Kinzang Dorji**, a password such as **Thimphu-Chorten-2026**, the same password again to confirm, then press **Set up account and accept**.",
     match: "^/invitation/[^/]+$",
   },
   {
     chapter: 2,
-    title: "Kinzang is a platform admin",
+    title: "Invite the second platform admin",
     happening:
-      "In Bhutan NDI's organisation as a platform admin: the Studio and NDI administration — but not Platform admins, because only root makes admins.",
-    doThis: "Press **Next** — with an admin in place, a company can now come onto the platform.",
+      "One administrator isn't enough: anything that needs approving needs a second named one, and the root account won't be it. So root invites one more — and after that, root's form is gone.",
+    doThis:
+      "Type **tshendu@bhutanndi.bt**, the same reason and custodians, press **Send invitation**, then **Open the invitation as tshendu@bhutanndi.bt**.",
+    say: "The root account is break-glass. Once two people run the platform, it can't add anyone else.",
+    route: "/admin/team",
+    persona: "root",
+  },
+  {
+    chapter: 2,
+    title: "Tshendu sets up the account",
+    happening: "The same invitation Kinzang had, from the same root account.",
+    doThis:
+      "Enter **Tshendu**, a password such as **Thimphu-Chorten-2026**, the same password again, then press **Set up account and accept**.",
+    match: "^/invitation/[^/]+$",
+  },
+  {
+    chapter: 2,
+    title: "Two platform admins",
+    happening:
+      "Kinzang and Tshendu run the platform now and approve what each other propose. From here, a new administrator is invited by one of them and approved by the other — the root account is for emergencies only.",
+    doThis: "Press **Next** — with administrators in place, a company can now come onto the platform.",
     route: "/dashboard",
     /* No persona: setting up the account already drives the console as
-       whoever accepted. Forcing the seeded admin here broke the step when
-       the invitation went to any other address — the seeded record has no
-       admin role on day zero, so the sidebar came up empty. */
+       whoever accepted. */
   },
   /* ---- 3 · A new company signs up ---- */
   {

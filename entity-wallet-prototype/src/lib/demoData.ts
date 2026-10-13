@@ -249,6 +249,7 @@ export type PersonaId =
   | "yeshey"
   | "root"
   | "tshering"
+  | "tshendu"
   /* Whoever root last invited as an admin by an address the story does not
      already know. Like "invitee", not a named character: the person is
      whoever root typed, and exists only once they have set up. */
@@ -257,12 +258,12 @@ export type PersonaId =
 /** The drivable personas, in story order. One list, so the harness, the nav
  *  and the acceptance screen cannot disagree about who exists.
  *
- *  Two kinds arrived with Flow 1. NDI's administrators: Root, and Kinzang
- *  Dorji the platform admin — the two the story names, and
- *  the only two it needs. A foundational-issuer designation takes two
- *  distinct administrators, and root counts as the second (FLOW-ONB-02 S2),
- *  so a second seeded admin — there used to be one, Kinley Wangdi — was a
- *  person the story never introduced. And "invitee" is whoever last accepted a member invitation: not a named
+ *  Two kinds arrived with Flow 1. NDI's administrators: the root account,
+ *  and two named platform admins, Kinzang Dorji and Tshendu. Two, because
+ *  the root account approves nothing (FLOW-ONB-02 v0.6, S2, E13): every
+ *  second approval is a second named admin, and anything needing one is
+ *  refused while fewer than two are active (P7, E12). Root brings both on
+ *  at bootstrap (S9). And "invitee" is whoever last accepted a member invitation: not a named
  *  character, because the person is whoever the owner typed into the invite
  *  form, and their record only exists once they have accepted. The harness
  *  shows a persona only while its person exists, so the invitee appears the
@@ -276,11 +277,12 @@ export const PERSONAS: PersonaId[] = [
   "yeshey",
   "root",
   "tshering",
+  "tshendu",
   "newadmin",
 ];
 
 /** NDI's own administrators — not members of any business on the platform. */
-export const PLATFORM_ADMINS: PersonaId[] = ["tshering"];
+export const PLATFORM_ADMINS: PersonaId[] = ["tshering", "tshendu"];
 
 /**
  * NDI's root administrator — seeded once by the deployment (Flow 1
@@ -826,6 +828,11 @@ export interface OrgInvitation {
   purpose: string | null;
   /** Whether POL-CAP requires a second administrator for what this grants. */
   needsSecondApproval: boolean;
+  /* ---- Kind A issued by the root account (FLOW-ONB-02 S9, P8) ---- */
+  /** Why the root account was used — required, logged and alerted. */
+  rootReason?: string | null;
+  /** The custodians present, since the platform can't tell which acted (S10). */
+  rootCustodians?: string | null;
   /* ---- Both ---- */
   invitedBy: PersonId;
   approvedBy: PersonId | null;
@@ -1274,7 +1281,7 @@ export const SEED: DemoState = {
       location: "Thimphu, Bhutan",
       visibility: "public",
       capabilities: ["issuer", "verifier"],
-      memberIds: ["root", "tshering"],
+      memberIds: ["root", "tshering", "tshendu"],
     },
     {
       /* The entity the whole Entity Wallet story is about. */
@@ -1528,14 +1535,24 @@ export const SEED: DemoState = {
       memberRole: "Member",
     },
     {
-      /* The two NDI administrators a foundational-issuer invitation needs.
-         Neither belongs to Pelden Trading or to any business: they act for
-         the platform administration organisation, which is seeded rather
-         than onboarded (Flow 1 design D9). */
+      /* The two NDI administrators every second approval needs — the
+         root account approves nothing (FLOW-ONB-02 S2). Neither belongs to
+         Pelden Trading or to any business: they act for the platform
+         administration organisation, which is seeded rather than onboarded
+         (Flow 1 design D9). */
       id: "tshering",
       name: "Kinzang Dorji",
       cid: "•••• •••• 3317",
       email: "kinzang.dorji@bhutanndi.bt",
+      title: "Platform admin · Bhutan NDI",
+      cidVerified: true,
+      platformRole: "admin",
+    },
+    {
+      id: "tshendu",
+      name: "Tshendu",
+      cid: "•••• •••• 4528",
+      email: "tshendu@bhutanndi.bt",
       title: "Platform admin · Bhutan NDI",
       cidVerified: true,
       platformRole: "admin",
@@ -2638,9 +2655,8 @@ export const SEED: DemoState = {
       purpose: "Foundational issuer for companies — issues the Business Registration every company chains back to.",
       needsSecondApproval: true,
       invitedBy: "tshering",
-      /* Root as the second administrator — S2 allows it, and the story has
-         one platform admin, not two. */
-      approvedBy: "root",
+      /* A second named administrator — never the root account (S2). */
+      approvedBy: "tshendu",
       createdAt: day(-128),
       sentAt: day(-127),
       expiresAt: day(-97),
@@ -2871,11 +2887,19 @@ export function dayZeroState(seed: DemoState): DemoState {
 }
 
 /**
- * Day zero, one chapter on: root has invited Kinzang Dorji and Kinzang has
- * set up as a platform admin. The state the guided demo reaches when the
- * platform-admin chapter ends — so a company's onboarding walked on its own
- * starts on the same platform the guide reaches, with someone to review a
- * case the register cannot match, and no business on it yet.
+ * Day zero, one chapter on: root has invited Kinzang Dorji and Tshendu, and
+ * both have set up as platform admins. The state the guided demo reaches
+ * when the platform-admin chapter ends — so a company's onboarding walked on
+ * its own starts on the same platform the guide reaches, with no business
+ * on it yet.
+ *
+ * TWO, BECAUSE THE ROOT ACCOUNT APPROVES NOTHING
+ *
+ * With root counting as a second approver, one admin used to be enough.
+ * FLOW-ONB-02 v0.6 took that away (S2, E13): every second approval is a
+ * named admin, and anything that needs one is refused while fewer than two
+ * are active (P7, E12). So bootstrap is root bringing on two, each with the
+ * reason and the custodians recorded (S9) — the invitations below say so.
  *
  * WHY NOT THE LIVED-IN STORY
  *
@@ -2887,38 +2911,41 @@ export function dayZeroState(seed: DemoState): DemoState {
  */
 export function platformReadyState(seed: DemoState): DemoState {
   const zero = dayZeroState(seed);
-  const admin = "tshering";
+  const admins = ["tshering", "tshendu"] as const;
   const invitedAt = day(-1);
   return {
     ...zero,
     organizations: zero.organizations.map((o) =>
-      o.id === NDI_ORG ? { ...o, memberIds: ["root", admin], members: 2 } : o,
+      o.id === NDI_ORG ? { ...o, memberIds: ["root", ...admins], members: 3 } : o,
     ),
     people: zero.people.map((p) =>
-      p.id === admin ? { ...p, platformRole: "admin" as const, hasAccount: true } : p,
+      (admins as readonly string[]).includes(p.id) ? { ...p, platformRole: "admin" as const, hasAccount: true } : p,
     ),
-    orgInvitations: [
-      {
-        id: "inv-kinzang",
-        kind: "A",
-        email: seed.people.find((p) => p.id === admin)?.email ?? "kinzang.dorji@bhutanndi.bt",
+    orgInvitations: admins.map((admin) => {
+      const person = seed.people.find((p) => p.id === admin);
+      return {
+        id: `inv-${admin}`,
+        kind: "A" as const,
+        email: person?.email ?? `${admin}@bhutanndi.bt`,
         orgId: null,
         role: null,
         legalName: null,
         legalIdentity: null,
         purpose: "Platform administrator",
         needsSecondApproval: false,
-        invitedBy: "root",
+        rootReason: "Bootstrap: the platform's first administrators",
+        rootCustodians: "Both custodians",
+        invitedBy: "root" as const,
         approvedBy: null,
         createdAt: invitedAt,
         sentAt: invitedAt,
-        expiresAt: day(29),
-        state: "ACCEPTED",
-        delivery: "delivered",
+        expiresAt: day(13),
+        state: "ACCEPTED" as const,
+        delivery: "delivered" as const,
         decidedAt: invitedAt,
-        acceptedName: seed.people.find((p) => p.id === admin)?.name ?? "Kinzang Dorji",
-      },
-    ],
+        acceptedName: person?.name ?? admin,
+      };
+    }),
     activeOrgId: NDI_ORG,
     harness: { ...zero.harness, persona: "root" },
   };

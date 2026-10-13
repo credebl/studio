@@ -47,7 +47,10 @@ import { useDemo } from "@/lib/demoStore";
  * Gate 2 question; the screen is built so adding it would be one more row.
  */
 export function ManualReviewsView() {
-  const { manualReviews, personById, decideManualReview } = useDemo();
+  const { manualReviews, personById, decideManualReview, currentPerson } = useDemo();
+  /* The root account does no routine work (FLOW-ONB-02 S9): it can read the
+     queue, and the controls say why they aren't its to use. */
+  const isRoot = currentPerson.platformRole === "root";
 
   const forced = useScreenState("SCR-MR-01", ["default", "loading", "empty", "error", "offline"]);
 
@@ -134,15 +137,16 @@ export function ManualReviewsView() {
 
                 <div className="flex flex-col gap-3 border-t border-subtle pt-4">
                   <p className="text-[13px] leading-[1.6] text-muted">
-                    Approving lets {m.legalName} receive its registration and hold credentials.
-                    Refusing tells the applicant why, and they can send it again.
+                    {isRoot
+                      ? "The root account doesn't decide reviews — a platform administrator does."
+                      : `Approving lets ${m.legalName} receive its registration and hold credentials. Refusing tells the applicant why, and they can send it again.`}
                   </p>
                   <div className="flex flex-wrap gap-2.5">
-                    <GradientButton onClick={() => setConfirming({ id: m.id, action: "approve" })} disabled={offline}>
+                    <GradientButton onClick={() => setConfirming({ id: m.id, action: "approve" })} disabled={offline || isRoot}>
                       <Icon name="check" size={15} strokeWidth={2.2} />
                       Approve
                     </GradientButton>
-                    <HairlineButton onClick={() => setConfirming({ id: m.id, action: "refuse" })} disabled={offline}>
+                    <HairlineButton onClick={() => setConfirming({ id: m.id, action: "refuse" })} disabled={offline || isRoot}>
                       Refuse
                     </HairlineButton>
                   </div>

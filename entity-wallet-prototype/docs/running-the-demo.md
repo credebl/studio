@@ -16,18 +16,21 @@ switches you to the right person when the story changes hands. **Next** and
 there** brings you back if you wander off, and the chevron minimises it.
 
 **This branch is Flow 1 — how people get onto the platform** — and the guide
-walks exactly that: five chapters, 12 steps, starting on the platform's day
+walks exactly that: five chapters, 14 steps, starting on the platform's day
 zero:
 
-1. **Root admin onboarding** — NDI's root administrator signs
-   in. The account and Bhutan NDI's organisation were made when the platform
-   was deployed, so there is no sign-up and nothing to onboard; root lands in
-   NDI's organisation with the whole Studio.
-2. **Platform admin onboarding** — root invites Kinzang Dorji by typing
-   the address `kinzang.dorji@bhutanndi.bt`. Kinzang opens the invitation and
-   sets up the account there — name, password and the password again to
-   confirm, no separate sign-up — and lands as a platform admin.
-   Until an admin exists, adding an organisation is closed, and says why.
+1. **Root admin onboarding** — the NDI root account signs in. It is NDI's
+   own account, held by two custodians together, not a person's, and made
+   when the platform was deployed — so there is no sign-up and nothing to
+   onboard (FLOW-ONB-02 v0.6, P6, S10).
+2. **Platform admin onboarding** — root invites Kinzang Dorji
+   (`kinzang.dorji@bhutanndi.bt`) and then Tshendu (`tshendu@bhutanndi.bt`),
+   each with a reason and the custodians present, which are logged. Each
+   opens the invitation — from the "Bhutan NDI root administrator" — and
+   sets up the account there. Two, because the root account approves
+   nothing: every second approval is a second named admin (S2). Once two are
+   active, root's invite form is replaced by the reason it can't add more
+   (S9, P8).
 3. **A new company signs up** — Dorji, Pelden Trading's director, creates a
    personal account. Just the person: it ends on an account that belongs to
    no organisation and says plainly that it can do nothing yet.
@@ -289,10 +292,17 @@ catalogue has not designed yet. It is still reachable from NDI administration
 2. Still as Kinzang, open **Approvals**: **Approve** is disabled with the
    reason in its place — *you issued this, so a different administrator must
    approve it*. Not enabled and then refused.
-3. Switch to **Root** and approve — root counts as the second
-   administrator (FLOW-ONB-02 S2), so the story needs no second platform
-   admin. The invitation is sent. The seeded Corporate Regulatory Authority
-   invitation shows the finished version.
+3. Switch to **Tshendu** and approve. The invitation is sent. The root
+   account can't: Approvals isn't in its menu, and opened by address it says
+   the root account approves nothing (E13). With only one administrator
+   active, proposing it is refused up front (E12).
+
+### Also built · An administrator invites another — as Kinzang, `/admin/team`
+
+After bootstrap, new administrators come from the administrators (Kind A).
+Kinzang's invitation waits in **Approvals** for Tshendu, like a designation,
+and lasts 14 days once sent. As root, the same page shows only the
+invitations root sent, and revoking one asks for a reason.
 
 ### Flow 2 · Two ways onto the platform
 
@@ -819,10 +829,10 @@ And three more for the Gate 2 flows:
 
 - **Root** — NDI's root administrator: the deployment's own account, named
   as a role rather than a person.
-- **Kinzang Dorji** — NDI's platform administrator, the only one. Sees the
-  Studio and **NDI administration**: organisations, invitations, approvals
-  and manual review. Designating a foundational issuer needs a second
-  administrator, and root is it.
+- **Kinzang Dorji** and **Tshendu** — NDI's two platform administrators.
+  They see the Studio and **NDI administration**: organisations,
+  invitations, approvals, platform admins and manual review, and each
+  approves what the other proposes. The root account never approves.
 - **Whoever joins Pelden by invitation** — each gets a record of their own
   and appears once they accept. A member of Pelden who can see it and act
   for nothing.

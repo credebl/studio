@@ -56,7 +56,7 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
       {
         shown: "Platform admins, access requests and their decisions",
         reality:
-          "Invitations, requests and approvals live in your browser. \"Only root can make an admin\" and \"only an admin can decide\" are checked by the demo store, which is not a boundary.",
+          "Invitations, requests and approvals live in your browser. \"The root account approves nothing\" and \"only an admin can decide\" are checked by the demo store, which is not a boundary.",
         needs: "Role checks and the audit of every decision enforced by the platform's services.",
       },
       {
@@ -108,18 +108,24 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
         needs: "Invitation service with expiry, revocation, single-use signed links and the acceptance-time re-checks run server-side.",
       },
       {
-        /* Not simulated so much as not specified: these two invitation
-           kinds exist only in the prototype. Listed here, as well as in the
-           PR, so nobody at the showcase takes them as the spec. */
-        shown: "Root inviting a platform admin, and NDI inviting an existing organisation to keep its own records",
+        /* Not simulated so much as not specified. Kind A was here too until
+           FLOW-ONB-02 v0.6 specified it; Kind W still isn't. Listed so nobody
+           at the showcase takes it as the spec. */
+        shown: "NDI inviting an existing organisation to keep its own records",
         reality:
-          "Two invitation kinds the prototype added. FLOW-ONB-02 specifies only member and agency invitations; platform admins are a deployment precondition there, and an existing organisation starts verification without being invited. Both reuse the agency invitation's 30-day expiry. Invitees set up their account on the invitation instead of through sign-up — also a departure from FLOW-ONB-02, whose version sends them through sign-up.",
-        needs: "A decision on whether these belong in FLOW-ONB-02 (or another flow), and on the set-up-from-the-link shortcut.",
+          "An invitation kind the prototype added. FLOW-ONB-02 specifies member, agency and administrator invitations; an existing organisation starts verification without being invited. It reuses the agency invitation's 30-day expiry. Invitees of it, and of administrator invitations, set up their account on the invitation instead of through sign-up — a departure from FLOW-ONB-02, whose version sends them through sign-up.",
+        needs: "A decision on whether this belongs in FLOW-ONB-02 (or another flow), and on the set-up-from-the-link shortcut.",
       },
       {
-        shown: "Two administrators designating a foundational issuer",
+        shown: "The root account, held by two custodians",
         reality:
-          "Dual control is enforced by the demo store, which also refuses and logs a self-approval — but the store is not a boundary.",
+          "One persona anyone can drive. The reason and the custodians typed in are kept in your browser, and \"every administrator is told\" is an entry in the activity feed — no alert goes anywhere, and there is no split credential.",
+        needs: "A role account whose credential and MFA are split between two named custodians, the S9 limits checked server-side, and the alerting and custody register behind them.",
+      },
+      {
+        shown: "Two administrators approving a designation or a new administrator",
+        reality:
+          "Dual control is enforced by the demo store, which also refuses and logs a self-approval or an approval by the root account — but the store is not a boundary.",
         needs: "Dual control enforced by the service, with the approver recorded in the audit trail.",
       },
     ],

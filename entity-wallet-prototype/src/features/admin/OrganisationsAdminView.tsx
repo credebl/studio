@@ -62,7 +62,9 @@ export function OrganisationsAdminView() {
   const target = confirming ? accessRequests.find((a) => a.id === confirming.id) : undefined;
   const orgName = (id: string) => organizations.find((o) => o.id === id)?.name ?? "An organisation";
   const offline = forced === "offline";
-  const admin = currentPerson.platformRole === "admin" || currentPerson.platformRole === "root";
+  /* Deciding requests is routine work, which the root account doesn't do
+     (FLOW-ONB-02 S9) — only named platform admins. */
+  const admin = currentPerson.platformRole === "admin";
 
   const close = () => {
     setConfirming(null);
