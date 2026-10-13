@@ -19,7 +19,7 @@ there** brings you back if you wander off, and the chevron minimises it.
 walks exactly that: five chapters, 12 steps, starting on the platform's day
 zero:
 
-1. **Root admin onboarding** — NDI's root administrator, Anand Acharya, signs
+1. **Root admin onboarding** — NDI's root administrator signs
    in. The account and Bhutan NDI's organisation were made when the platform
    was deployed, so there is no sign-up and nothing to onboard; root lands in
    NDI's organisation with the whole Studio.
@@ -218,7 +218,7 @@ switch person with **Driving as** and go to the route named in the heading.
 
 ### FLOW-ONB-02 · Root invites a platform admin — `/sign-in`
 
-Starts on the platform's day zero. Sign in as **Anand Acharya** (the dashed
+Starts on the platform's day zero. Sign in as **Root** (the dashed
 panel fills the address; any password), type an address on **Platform
 admins** and **Send invitation**, then open it as the invitee: they set up
 their account on the invitation itself — name, password and confirmation — and land as a
@@ -289,7 +289,7 @@ catalogue has not designed yet. It is still reachable from NDI administration
 2. Still as Kinzang, open **Approvals**: **Approve** is disabled with the
    reason in its place — *you issued this, so a different administrator must
    approve it*. Not enabled and then refused.
-3. Switch to **Anand Acharya** and approve — root counts as the second
+3. Switch to **Root** and approve — root counts as the second
    administrator (FLOW-ONB-02 S2), so the story needs no second platform
    admin. The invitation is sent. The seeded Corporate Regulatory Authority
    invitation shows the finished version.
@@ -817,7 +817,8 @@ Demo controls → **Driving as**. The four people the story is about:
 
 And three more for the Gate 2 flows:
 
-- **Anand Acharya** — NDI's root administrator.
+- **Root** — NDI's root administrator: the deployment's own account, named
+  as a role rather than a person.
 - **Kinzang Dorji** — NDI's platform administrator, the only one. Sees the
   Studio and **NDI administration**: organisations, invitations, approvals
   and manual review. Designating a foundational issuer needs a second

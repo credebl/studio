@@ -118,8 +118,10 @@ const FRESH: DemoState = dayZeroState(SEED);
  *  12 — NDI is Anand (root) and Kinzang (platform admin) only: Kinley Wangdi
  *       and the inherited Studio staff list are gone, so a version-11 save
  *       would still offer to drive as someone the story no longer has.
+ *  13 — Root is named "Root", not Anand Acharya. A version-12 save would
+ *       keep greeting root by the old name.
  */
-const SEED_VERSION = 12;
+const SEED_VERSION = 13;
 
 /**
  * Appends one audit row, carrying the hash chain forward.

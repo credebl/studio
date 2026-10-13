@@ -87,9 +87,9 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 1,
     title: "The root administrator signs in",
     happening:
-      "Before any business, NDI's root administrator, Anand Acharya, signs in. The account was made when the platform was deployed, so there is no sign-up and nothing to onboard.",
+      "Before any business, NDI's root administrator signs in. The account was made when the platform was deployed, so there is no sign-up and nothing to onboard.",
     doThis:
-      "Press **Anand Acharya** in the dashed panel (it fills in the address), type any password, then press **Sign in**.",
+      "Press **Root** in the dashed panel (it fills in the address), type any password, then press **Sign in**.",
     route: "/sign-in",
     match: "^/sign-in$",
   },

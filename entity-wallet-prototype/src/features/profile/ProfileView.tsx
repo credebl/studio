@@ -24,7 +24,7 @@ const TABS: TabItem[] = [
  * It used to be hard-coded to "Kezang Loday, kezang@bhutanndi.bt" — a
  * placeholder from the original Studio, and the name of the prototype's own
  * designer rather than anyone in the story — so whoever you were driving as,
- * Anand or Dorji or a member who had just joined, the profile said someone
+ * root or Dorji or a member who had just joined, the profile said someone
  * else. It now reads the person the console is being driven as.
  */
 export function ProfileView() {

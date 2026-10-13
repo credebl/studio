@@ -257,8 +257,8 @@ export type PersonaId =
 /** The drivable personas, in story order. One list, so the harness, the nav
  *  and the acceptance screen cannot disagree about who exists.
  *
- *  Two kinds arrived with Flow 1. NDI's administrators: Anand Acharya is
- *  root and Kinzang Dorji the platform admin — the two the story names, and
+ *  Two kinds arrived with Flow 1. NDI's administrators: Root, and Kinzang
+ *  Dorji the platform admin — the two the story names, and
  *  the only two it needs. A foundational-issuer designation takes two
  *  distinct administrators, and root counts as the second (FLOW-ONB-02 S2),
  *  so a second seeded admin — there used to be one, Kinley Wangdi — was a
@@ -1542,11 +1542,15 @@ export const SEED: DemoState = {
     },
     {
       /* NDI's root administrator. Seeded by the deployment with an account
-         already made, so never onboarded and never signed up: signs in. */
+         already made, so never onboarded and never signed up: signs in.
+         Named only as "Root", not as a person: root is the deployment's
+         own account, held by whoever NDI makes responsible for it, and
+         giving it a staff member's name read as though one person owned
+         the platform. */
       id: "root",
-      name: "Anand Acharya",
+      name: "Root",
       cid: "•••• •••• 1002",
-      email: "anand.acharya@bhutanndi.bt",
+      email: "root@bhutanndi.bt",
       title: "Root administrator · Bhutan NDI",
       cidVerified: true,
       platformRole: "root",
