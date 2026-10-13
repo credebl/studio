@@ -18,9 +18,20 @@ const TABS: TabItem[] = [
   { id: "sessions", label: "Sessions", icon: "shieldCheck" },
 ];
 
+/**
+ * The signed-in person's profile.
+ *
+ * It used to be hard-coded to "Kezang Loday, kezang@bhutanndi.bt" — a
+ * placeholder from the original Studio, and the name of the prototype's own
+ * designer rather than anyone in the story — so whoever you were driving as,
+ * Anand or Dorji or a member who had just joined, the profile said someone
+ * else. It now reads the person the console is being driven as.
+ */
 export function ProfileView() {
-  const { resetDemo } = useDemo();
+  const { resetDemo, currentPerson } = useDemo();
   const [tab, setTab] = useState("profile");
+  const [first, ...rest] = currentPerson.name.split(" ");
+  const last = rest.join(" ");
 
   return (
     <AppShell>
@@ -37,7 +48,7 @@ export function ProfileView() {
                   className="inline-flex h-16 w-16 flex-none items-center justify-center rounded-full border border-grid font-display text-[22px] font-semibold text-[var(--text-on-mint)]"
                   style={{ background: "var(--grad-mint)" }}
                 >
-                  K
+                  {currentPerson.name.charAt(0)}
                 </span>
                 <HairlineButton className="h-11 px-4 text-[13px]">
                   <Icon name="edit" size={15} strokeWidth={1.8} />
@@ -48,11 +59,11 @@ export function ProfileView() {
               <div className="grid gap-4 min-[641px]:grid-cols-2">
                 <label className={FIELD_BLOCK_CLASS}>
                   <span className={LABEL_CLASS}>First name</span>
-                  <input className={`${FIELD_CLASS} h-12`} defaultValue="Kezang" />
+                  <input key={`f-${currentPerson.id}`} className={`${FIELD_CLASS} h-12`} defaultValue={first} />
                 </label>
                 <label className={FIELD_BLOCK_CLASS}>
                   <span className={LABEL_CLASS}>Last name</span>
-                  <input className={`${FIELD_CLASS} h-12`} defaultValue="Loday" />
+                  <input key={`l-${currentPerson.id}`} className={`${FIELD_CLASS} h-12`} defaultValue={last} />
                 </label>
               </div>
 
@@ -63,7 +74,8 @@ export function ProfileView() {
                     than a field you save with the rest of the form. */}
                 <input
                   className={`${FIELD_CLASS} h-12 cursor-not-allowed opacity-70`}
-                  defaultValue="kezang@bhutanndi.bt"
+                  key={`e-${currentPerson.id}`}
+                  defaultValue={currentPerson.email}
                   readOnly
                 />
                 <span className="text-[12.5px] leading-[1.5] text-faint">

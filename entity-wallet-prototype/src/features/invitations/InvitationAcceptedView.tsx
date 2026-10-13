@@ -8,6 +8,7 @@ import { GradientButton } from "@/components/ui/GradientButton";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { Icon } from "@/components/ui/icons";
 import { SecureSignInScene } from "@/components/ui/scenes";
+import { shortOrgName } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 import { AuthCardHeader, AuthNotice } from "@/features/auth/AuthCard";
@@ -31,7 +32,7 @@ import { AuthCardHeader, AuthNotice } from "@/features/auth/AuthCard";
  */
 export function InvitationAcceptedView({ id }: { id: string }) {
   const router = useRouter();
-  const { orgInvitations, organizations, setPersona, setActiveOrg, startOrgOnboarding } = useDemo();
+  const { orgInvitations, organizations, people, setPersona, setActiveOrg, startOrgOnboarding } = useDemo();
 
   const forced = useScreenState("SCR-INV-05", ["live", "loading", "member", "agency", "business", "error", "offline"]);
 
@@ -45,11 +46,13 @@ export function InvitationAcceptedView({ id }: { id: string }) {
   const business = forced === "business" || (forced !== "agency" && kind === "O" && inv?.needsSecondApproval === false);
   const name = kind === "M" ? (org?.name ?? "Pelden Trading Pvt. Ltd.") : (inv?.legalName ?? "the organisation");
 
+  /* Whoever accepted: the record the acceptance made or reused for that
+     address (see joinOrganisation in the store). */
+  const member = inv ? people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase() && p.hasAccount !== false) : undefined;
+
   const goToOrg = () => {
+    if (member) setPersona(member.id);
     if (inv?.orgId) setActiveOrg(inv.orgId);
-    /* The persona the prototype uses for whoever last accepted a member
-       invitation — see PERSONAS in demoData. */
-    setPersona("invitee");
     router.push("/dashboard");
   };
 
@@ -86,8 +89,8 @@ export function InvitationAcceptedView({ id }: { id: string }) {
           <AuthCardHeader title={`You've joined ${name}`} />
           <div className="relative z-[4] flex flex-col gap-4">
             <p role="status" className="m-0 text-center text-[14px] leading-[1.6] text-muted">
-              You can now see {name}&rsquo;s information. You can&rsquo;t act for it yet — that&rsquo;s set
-              up separately if you need it.
+              You can now see {shortOrgName(name)}&rsquo;s information. You can&rsquo;t act for it yet —
+              that&rsquo;s set up separately if you need it.
             </p>
             {forced === "offline" ? (
               <AuthNotice tone="warning">You&rsquo;re offline — the console will open when you&rsquo;re back.</AuthNotice>

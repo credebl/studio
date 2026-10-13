@@ -10,12 +10,14 @@ import { GradientButton } from "@/components/ui/GradientButton";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { Icon } from "@/components/ui/icons";
 import { PasswordScene } from "@/components/ui/scenes";
+import { useReveal } from "@/components/ui/useReveal";
 import { useDemo } from "@/lib/demoStore";
 import { ROUND_TRIP_MS } from "@/lib/demoTiming";
 
 import { AuthCardHeader, AuthError, AuthNotice } from "@/features/auth/AuthCard";
 
 import { PASSWORD_RULES } from "./passwordPolicy";
+import { ConfirmPasswordField, PASSWORDS_DIFFER } from "./ConfirmPasswordField";
 
 /**
  * SCR-ONB-04 — Set your password. FLOW-ONB-01 step 6.
@@ -54,6 +56,7 @@ export function SetPasswordView() {
 
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [revealed, setRevealed] = useState(false);
   const [touched, setTouched] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,6 +76,11 @@ export function SetPasswordView() {
         ? "We couldn't finish setting up your account. Nothing you entered was lost — try again."
         : error;
 
+  /* The banner sits at the top of the card and the button at the bottom;
+     on a phone the two are a screen apart, so a refusal is brought up to
+     where the person is looking. */
+  const errorRef = useReveal<HTMLDivElement>(shownError);
+
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     if (!name.trim()) return setError("Enter your name.");
@@ -80,6 +88,7 @@ export function SetPasswordView() {
       setTouched(true);
       return setError(`Your password needs ${firstUnmet.label.toLowerCase()}.`);
     }
+    if (confirm !== password) return setError(PASSWORDS_DIFFER);
     setError(null);
     setBusy(true);
     window.setTimeout(() => {
@@ -121,7 +130,11 @@ export function SetPasswordView() {
               again.
             </AuthNotice>
           ) : null}
-          {shownError ? <AuthError message={shownError} onDismiss={() => setError(null)} /> : null}
+          {shownError ? (
+            <div ref={errorRef}>
+              <AuthError message={shownError} onDismiss={() => setError(null)} />
+            </div>
+          ) : null}
 
           {signup?.email ? (
             <span className="inline-flex items-center gap-2.5 self-center rounded-full border border-grid bg-[var(--ndi-mint-04)] px-4 py-2 text-[13px] text-body">
@@ -168,7 +181,10 @@ export function SetPasswordView() {
             </div>
           </label>
 
-          <ul id="password-rules" className="m-0 flex list-none flex-col gap-1.5 p-0" aria-live="polite">
+          {/* Pulled up to the field it describes: at the form's 18px rhythm
+              the rules read as a separate block rather than the password's
+              own notes. */}
+          <ul id="password-rules" className="m-0 -mt-1.5 flex list-none flex-col gap-1.5 p-0" aria-live="polite">
             {PASSWORD_RULES.map((rule, i) => {
               const met = results[i];
               const failing = touched && !met;
@@ -192,6 +208,15 @@ export function SetPasswordView() {
               );
             })}
           </ul>
+
+          <ConfirmPasswordField
+            id="signup-confirm"
+            password={password}
+            value={confirm}
+            onChange={setConfirm}
+            revealed={revealed}
+            disabled={loading}
+          />
 
           <GradientButton type="submit" block disabled={loading} className="mt-1">
             {loading ? "Creating your account…" : "Create account"}

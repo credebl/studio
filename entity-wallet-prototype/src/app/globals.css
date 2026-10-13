@@ -50,6 +50,28 @@
   --store-badge-ink: #ffffff;
   --store-badge-edge: rgba(255, 255, 255, 0.28);
 
+  /* ---- Credential cards ---------------------------------- */
+  /* One pastel pair per issuer family, so a wallet of cards reads the way a
+     real one does — the registration never looks like the insurance
+     certificate. Dark mode deepens them rather than inverting: a pastel card
+     on a dark page glares, and a black one stops looking like a card. */
+  --cred-ink: #eef3f2;
+  --cred-ink-muted: rgba(238, 243, 242, 0.72);
+  --cred-chip: rgba(12, 17, 27, 0.35);
+  --cred-edge: rgba(255, 255, 255, 0.1);
+  --cred-mint-from: #1f4a43;
+  --cred-mint-to: #2d3a4c;
+  --cred-sand-from: #4a4128;
+  --cred-sand-to: #3a3a44;
+  --cred-rose-from: #4d2e38;
+  --cred-rose-to: #2f3a4d;
+  --cred-sky-from: #24435a;
+  --cred-sky-to: #33344a;
+  --cred-lilac-from: #3d3356;
+  --cred-lilac-to: #2c3a4a;
+  --cred-slate-from: #34404d;
+  --cred-slate-to: #2a2f3d;
+
   /* ---- Semantic status ----------------------------------- */
   --ndi-success: #5ac994;
   --ndi-info: #4aa3ff;
@@ -237,6 +259,22 @@
   --surface-glass: rgba(29, 125, 87, 0.06);
   --surface-glass-strong: rgba(29, 125, 87, 0.12);
   --scan-card: #f6f7f7;
+  --cred-ink: #1b2433;
+  --cred-ink-muted: rgba(27, 36, 51, 0.68);
+  --cred-chip: rgba(255, 255, 255, 0.78);
+  --cred-edge: rgba(12, 17, 27, 0.06);
+  --cred-mint-from: #dcefe6;
+  --cred-mint-to: #eef0f2;
+  --cred-sand-from: #efe9d6;
+  --cred-sand-to: #eceef0;
+  --cred-rose-from: #f3dfe3;
+  --cred-rose-to: #e6eef3;
+  --cred-sky-from: #d9e9f2;
+  --cred-sky-to: #efeef3;
+  --cred-lilac-from: #e6e0f1;
+  --cred-lilac-to: #eef0f2;
+  --cred-slate-from: #e3e7ec;
+  --cred-slate-to: #f1f2f4;
   --store-badge-edge: transparent;
 
   --fill-panel: linear-gradient(

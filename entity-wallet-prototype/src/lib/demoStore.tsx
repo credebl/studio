@@ -14,8 +14,16 @@ import {
 import { verifyAuthority, type VerificationRequestInput } from "./avs";
 import { INVITATION_DAYS } from "./deployment";
 import {
+  NDI_ORG,
+  PELDEN,
+  PERSONAS,
   SEED,
+  dayZeroState,
   firstRunState,
+  platformReadyState,
+  inOrg,
+  isPlatformAdmin,
+  roleIn,
   type Attribute,
   type AuthorityKind,
   type BulkUpload,
@@ -34,7 +42,9 @@ import {
   type LegalBasis,
   type Member,
   type Organization,
+  type OrgInvitation,
   type Person,
+  type PersonId,
   type PersonaId,
   type Schema,
   type Scope,
@@ -45,6 +55,22 @@ import {
 } from "./demoData";
 
 const STORAGE_KEY = "ndi-studio-demo";
+
+/**
+ * What a browser that has never run the demo sees, and what Reset returns
+ * to: the platform's day zero — root's account and NDI's organisation, the
+ * organisations already on NDI, and nothing else.
+ *
+ * It used to be the seed itself, which is the story three months in:
+ * Pelden with its staff, controllers appointed, approvals waiting. Anyone
+ * opening the prototype without pressing Guided demo — the link sent round
+ * after a meeting, say — met a sign-in panel listing a dozen accounts and a
+ * dashboard with seven tasks open, and the onboarding the prototype exists
+ * to show had apparently already happened. The lived-in story is still the
+ * seed, and still one click away for the acts beyond onboarding
+ * (`restoreStoryState`); it is just no longer the front door.
+ */
+const FRESH: DemoState = dayZeroState(SEED);
 
 /**
  * Bump this whenever a change to the SEED would leave a saved demo showing
@@ -73,8 +99,27 @@ const STORAGE_KEY = "ndi-studio-demo";
  *       new screen into a state it does not have.
  *   6 — one organisation. A version-5 save would bring back the inherited
  *       Bhutan NDI and Royal University rows the seed no longer has.
+ *   7 — the activity feed is Pelden's own history, not the inherited
+ *       Studio issuer feed a version-6 save would keep showing.
+ *   8 — organisations carry capabilities and members, and the platform's
+ *       own people (root, platform admins, Bank of Bhutan's owner) exist. A
+ *       version-7 organisation has no capabilities, and every nav rule
+ *       reading them would treat Pelden as having no wallet.
+ *   9 — Bhutan NDI's own organisation, and root's account made by the
+ *       deployment. A version-8 save has neither, so root would sign in to
+ *       no organisation at all.
+ *  10 — NDI's staff renamed (Anand Acharya is root, Kinzang Dorji an admin)
+ *       and moved to @bhutanndi.bt, so a version-9 save would show the old
+ *       names beside the new guide copy.
+ *  11 — Pelden's first day has one member, members who accept get records
+ *       of their own, and activity entries carry their organisation. A
+ *       version-10 save taken on the first day still lists the seed's
+ *       colleagues in the controllership picker — the leak this fixes.
+ *  12 — NDI is Anand (root) and Kinzang (platform admin) only: Kinley Wangdi
+ *       and the inherited Studio staff list are gone, so a version-11 save
+ *       would still offer to drive as someone the story no longer has.
  */
-const SEED_VERSION = 6;
+const SEED_VERSION = 12;
 
 /**
  * Appends one audit row, carrying the hash chain forward.
@@ -250,6 +295,119 @@ const newDidId = (method: string): string => {
 };
 const rid = (prefix: string) => `${prefix}-${Math.random().toString(36).slice(2, 8)}`;
 
+/**
+ * FLOW-ONB-02 step 9 for a member invitation: the invitee joins the named
+ * organisation at the named role, and gains nothing else (Q4).
+ *
+ * WHO THE MEMBER IS
+ *
+ * Someone the story already knows by that address — Ugyen, Rinzin — keeps
+ * their record. Anyone else gets a record of their own, marked with the
+ * invitation that brought them so the harness can drive as them. The first
+ * version wrote every member into one shared "invitee" slot, so inviting a
+ * second colleague quietly replaced the first on the Members page.
+ *
+ * WHAT JOINING DOES NOT DO
+ *
+ * It confirms nothing about who they are. Nobody has asked the register, and
+ * nothing here should: identity is anchored when someone takes on authority
+ * to act, not when they join (FLOW-ONB-02 §7.3). So a person joining from no
+ * account is recorded as not confirmed, whatever the story's later acts say
+ * about them; someone who already had an account elsewhere keeps what that
+ * account says (AC-10 — one account, several organisations).
+ *
+ * The role goes on the organisation (`roles`), not on the person. Someone who
+ * already has an account keeps their name and their role everywhere else:
+ * the first version overwrote both, so inviting Bank of Bhutan's owner into
+ * Pelden as an admin also made them an admin of the bank.
+ */
+function joinOrganisation(s: DemoState, inv: OrgInvitation, name: string, personId: PersonId): DemoState {
+  const orgId = inv.orgId as string;
+  const role = inv.role ?? "Member";
+  const known = s.people.find((p) => p.id === personId);
+  /* An existing account is named as it already is, not as typed here. */
+  const shownName = known && known.hasAccount !== false ? known.name : name;
+  const people: Person[] = known
+    ? s.people.map((p) =>
+        p.id !== personId
+          ? p
+          : p.hasAccount === false
+            ? /* New to the platform: the story knows them, the platform does
+                 not yet — no confirmed identity, so no CID either (that only
+                 ever comes from their own wallet proof). */
+              { ...p, name, memberRole: role, hasAccount: true, cidVerified: false, cid: "—", joinedBy: inv.id }
+            : p,
+      )
+    : [
+        ...s.people,
+        {
+          id: personId,
+          name,
+          cid: "—",
+          email: inv.email,
+          title: role === "Admin" ? "Administrator · joined by invitation" : "Member · joined by invitation",
+          cidVerified: false,
+          memberRole: role,
+          hasAccount: true,
+          joinedBy: inv.id,
+        },
+      ];
+  return {
+    ...s,
+    people,
+    organizations: s.organizations.map((o) =>
+      o.id !== orgId
+        ? o
+        : {
+            ...o,
+            memberIds: o.memberIds.includes(personId) ? o.memberIds : [...o.memberIds, personId],
+            members: o.memberIds.includes(personId) ? o.members : o.members + 1,
+            roles: { ...o.roles, [personId]: role },
+          },
+    ),
+    orgInvitations: s.orgInvitations.map((i) =>
+      i.id === inv.id ? { ...i, state: "ACCEPTED" as const, decidedAt: today(), acceptedName: shownName } : i,
+    ),
+    /* The organisation's own history: its owner sees who joined, and when. */
+    activity: [
+      { id: rid("a"), text: `${shownName} joined as ${role === "Admin" ? "an admin" : "a member"}`, at: today(), orgId },
+      ...s.activity,
+    ].slice(0, 20),
+  };
+}
+
+/**
+ * The step-8 re-check every member acceptance runs, whichever screen it
+ * came from: the invitation is still live, and the person who sent it may
+ * still invite people to that organisation (S4). Null means it may go ahead.
+ */
+function memberInvitationRefusal(s: DemoState, inv: OrgInvitation | undefined): "E4" | "E5" | "E6" | "E7" | null {
+  if (!inv || inv.kind !== "M" || !inv.orgId) return "E5";
+  if (inv.state === "ACCEPTED") return "E7";
+  if (inv.state === "VOID") return "E6";
+  /* Expiry before the catch-all, so a lapsed invitation says it lapsed (E4)
+     rather than that it was withdrawn (E5). */
+  if (inv.state === "EXPIRED" || (inv.state === "PENDING" && inv.expiresAt !== null && inv.expiresAt < today())) return "E4";
+  /* Declined, revoked, refused, waiting on approval — none can be accepted. */
+  if (inv.state !== "PENDING") return "E5";
+  const role = roleIn(
+    s.organizations.find((o) => o.id === inv.orgId),
+    s.people.find((p) => p.id === inv.invitedBy),
+  );
+  return role === "Owner" || role === "Admin" ? null : "E6";
+}
+
+/** Records the outcome of a refused member acceptance: E6 voids it, E4 expires it. */
+function markRefused(s: DemoState, id: string, refusal: string): DemoState {
+  if (refusal !== "E6" && refusal !== "E4") return s;
+  return {
+    ...s,
+    orgInvitations: s.orgInvitations.map((i) =>
+      i.id === id ? { ...i, state: refusal === "E6" ? ("VOID" as const) : ("EXPIRED" as const) } : i,
+    ),
+  };
+}
+
 interface DemoActions {
   addSchema: (input: {
     name: string;
@@ -412,7 +570,12 @@ interface DemoActions {
    *  and adds a row with no invitation behind it. */
   inviteToOrganisation: (input: { email: string; role: "Member" | "Admin" }) =>
     | { ok: true; id: string }
-    | { ok: false; error: "E1" | "E3" };
+    /* E3 split in two, because the spec's copy differs: "{Name} is already a
+       member", or an invitation to that address is already waiting. `member`
+       is a name from this organisation only — nothing about accounts
+       elsewhere is disclosed (S8). */
+    | { ok: false; error: "E1" | "waiting" }
+    | { ok: false; error: "E3"; member: string };
   /** Kind O — a platform admin proposes an organisation that does not exist yet. */
   proposeOrganisation: (input: {
     email: string;
@@ -432,7 +595,17 @@ interface DemoActions {
   /** Steps 7–9 — accept, after re-checking the invitation is still good. */
   acceptInvitation: (id: string) =>
     | { ok: true }
-    | { ok: false; error: "E4" | "E5" | "E6" | "E7" };
+    | { ok: false; error: "E4" | "E5" | "E6" | "E7" | "no_account" | "wrong_person" };
+  /**
+   * A member invitation's invitee sets up their account from the link — name
+   * and password — which accepts it in the same step, after the same
+   * re-checks as `acceptInvitation`. The person the story already knows by
+   * that address keeps their record; anyone else gets one of their own.
+   */
+  setUpMember: (
+    invitationId: string,
+    name: string,
+  ) => { ok: true; personId: PersonId } | { ok: false; error: "E4" | "E5" | "E6" | "E7" | "invalid" | "has_account" };
   /** A2 — the invitee declines. */
   declineInvitation: (id: string) => void;
 
@@ -462,13 +635,52 @@ interface DemoActions {
   /** Leaves the first-run state for the story's lived-in one (acts 2–6). */
   restoreStoryState: () => void;
 
+  /* ---- The platform's own setup ----
+     Root invites platform admins; organisations ask for access and admins
+     decide. Every decision is the store's, standing in for the server —
+     screens render the answer, they do not make it. */
+
+  /** The Entity Wallet's day zero: before any admin, before any business. */
+  startDayZero: () => void;
+  /** Day zero with one platform admin set up — see platformReadyState. */
+  startPlatformReady: () => void;
+  /**
+   * Pelden Trading on the day it was registered, driven as Dorji — the start
+   * of the member-invitation walk, without walking the whole onboarding
+   * first to get there.
+   */
+  startFirstDay: () => void;
+  /**
+   * Sign in with an address. Resolves it to a person with an account and
+   * drives the console as them; a stand-in for the server's answer, so the
+   * screen only renders what comes back.
+   */
+  signIn: (email: string) => { ok: true; personId: PersonId | null } | { ok: false };
+  /** Root invites one of NDI's staff to administer the platform (kind A). */
+  /** Root invites someone, by address, to administer the platform. */
+  invitePlatformAdmin: (
+    email: string,
+  ) => { ok: true; id: string } | { ok: false; error: "not_root" | "already" | "invalid" };
+  /**
+   * The invitee of a platform-admin invitation sets up their account from the
+   * link — name and password — which accepts the invitation in the same step.
+   */
+  setUpPlatformAdmin: (
+    invitationId: string,
+    name: string,
+  ) => { ok: true; personId: PersonaId } | { ok: false; error: "invalid" };
+  /** An organisation's owner asks NDI for an Entity Wallet. */
+  applyForEntityWallet: (note: string) => string;
+  /** A platform admin decides a request. Approving a wallet sends kind W. */
+  decideAccessRequest: (id: string, approve: boolean, reason?: string) => void;
+
   /* ---- Demo harness ----
      Not product surface. These drive the persona switcher, the story runner
      and the state switcher, which are what make the demo runnable by someone
      who is not the person who built it. */
 
   /** Switch who the console is being driven as. */
-  setPersona: (persona: PersonaId) => void;
+  setPersona: (persona: PersonId) => void;
   /** Jump the story to an act. 0 means "not started". */
   setAct: (act: number) => void;
   setRunnerOpen: (open: boolean) => void;
@@ -476,8 +688,11 @@ interface DemoActions {
   setStateOverride: (screen: string, state: string | null) => void;
   /** The deployment's self-service sign-up setting, switched for the demo. */
   setSelfServiceSignup: (on: boolean) => void;
+  /** Move the guided demo to a step, or stop it with null. */
+  setGuideStep: (step: number | null) => void;
   clearStateOverrides: () => void;
 
+  /** Back to the platform's day zero (see FRESH), and the saved demo cleared. */
   resetDemo: () => void;
   /** False until the persisted state has been read, so lists can hold still. */
   hydrated: boolean;
@@ -505,7 +720,7 @@ const DemoContext = createContext<DemoContextValue | null>(null);
  * hydration mismatch.
  */
 export function DemoProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<DemoState>(SEED);
+  const [state, setState] = useState<DemoState>(FRESH);
   const [hydrated, setHydrated] = useState(false);
 
   /* The actions memo is deliberately state-free so its callbacks stay stable,
@@ -547,11 +762,15 @@ export function DemoProvider({ children }: { children: ReactNode }) {
     }
   }, [state, hydrated]);
 
+  /* Each entry belongs to the organisation it happened in — the one being
+     worked in, unless the caller names another. The feed on a dashboard is
+     that organisation's history, and without the tag root inviting an
+     administrator turned up in Pelden's "Recent activity". */
   const log = useCallback(
-    (text: string) =>
+    (text: string, orgId?: string) =>
       setState((s) => ({
         ...s,
-        activity: [{ id: rid("a"), text, at: today() }, ...s.activity].slice(0, 20),
+        activity: [{ id: rid("a"), text, at: today(), orgId: orgId ?? s.activeOrgId }, ...s.activity].slice(0, 20),
       })),
     [],
   );
@@ -678,6 +897,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           website,
           location,
           visibility,
+          capabilities: [],
+          memberIds: [],
         };
         /* A newly created organization becomes the one you are working in —
            anything else means creating it and then having to go and find it. */
@@ -1131,7 +1352,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           /* Every Pattern B credential traces back to a controllership
              relation. The owner's root authority is what these are issued
              out of, so that is the relation recorded on them. */
-          relationId: SEED.relations.find((r) => r.isRootAuthority)?.id ?? "rel-root",
+          relationId: SEED.relations.filter(inOrg(PELDEN)).find((r) => r.isRootAuthority)?.id ?? "rel-root",
           taskScopes: input.taskScopes,
           valueCap: input.valueCap,
           counterparties: input.counterparties,
@@ -1337,7 +1558,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
              person at a time, and a half-finished session for a different
              address is exactly what "change the address" throws away. The
              return path survives, because an invitee who corrects their
-             address is still on their way back to the invitation. */
+             address is still on their way back to the invitation. A
+             finished sign-up's return path is spent, though: carried over,
+             it sent the next person in this browser to someone else's
+             invitation. */
           signup: {
             email,
             stage: "check_email",
@@ -1345,7 +1569,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             linkUsed: false,
             name: "",
             memberships: [],
-            returnTo: s.signup?.returnTo ?? null,
+            returnTo: s.signup && s.signup.stage !== "done" ? s.signup.returnTo : null,
             createdAt: null,
           },
         })),
@@ -1422,23 +1646,32 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         const s0 = stateRef.current;
         const inviter = s0.people.find((p) => p.id === s0.harness.persona);
         /* E1 — the screen only offers the form to an owner or admin, but the
-           check is here too, because the screen is not the boundary. */
-        if (!inviter || (inviter.memberRole !== "Owner" && inviter.memberRole !== "Admin")) {
+           check is here too, because the screen is not the boundary. The
+           role is the one held in this organisation. */
+        const inviterRole = roleIn(s0.organizations.find((o) => o.id === s0.activeOrgId), inviter);
+        if (!inviter || (inviterRole !== "Owner" && inviterRole !== "Admin")) {
           return { ok: false, error: "E1" };
         }
         const address = email.trim().toLowerCase();
-        /* E3 — already a member, or already invited and not yet answered. A
-           second live invitation to the same address would leave two links
-           that each grant membership. */
-        const duplicate =
-          s0.people.some((p) => p.email.toLowerCase() === address && p.memberRole) ||
-          s0.orgInvitations.some(
-            (i) =>
-              i.kind === "M" &&
-              i.email.toLowerCase() === address &&
-              (i.state === "PENDING" || i.state === "PENDING_APPROVAL"),
-          );
-        if (duplicate) return { ok: false, error: "E3" };
+        /* E3 — already a member of *this* organisation, or already invited to
+           it and not yet answered. A second live invitation to the same
+           address would leave two links that each grant membership. Only
+           this organisation's membership counts: whether the address holds
+           an account anywhere else is never disclosed (S8), and a person may
+           belong to several organisations (AC-10). */
+        const org = s0.organizations.find((o) => o.id === s0.activeOrgId);
+        const member = s0.people.find(
+          (p) => p.email.toLowerCase() === address && Boolean(org?.memberIds.includes(p.id)) && p.hasAccount !== false,
+        );
+        if (member) return { ok: false, error: "E3", member: member.name };
+        const waiting = s0.orgInvitations.some(
+          (i) =>
+            i.kind === "M" &&
+            i.orgId === s0.activeOrgId &&
+            i.email.toLowerCase() === address &&
+            (i.state === "PENDING" || i.state === "PENDING_APPROVAL"),
+        );
+        if (waiting) return { ok: false, error: "waiting" };
         const id = rid("inv");
         setState((s) => ({
           ...s,
@@ -1571,8 +1804,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         if (!inv) return { ok: false, error: "E5" };
         /* Step 8 re-checks everything at acceptance, not only at issue — an
            invitation is not a bearer grant (S4). */
+        /* A member invitation runs the one re-check every member acceptance
+           shares, and acts on every answer it gives — not only E6, which let a
+           declined invitation be accepted once the screen was forced back
+           to its default face. */
+        if (inv.kind === "M") {
+          const refusal = memberInvitationRefusal(s0, inv);
+          if (refusal) {
+            setState((s) => markRefused(s, id, refusal));
+            return { ok: false, error: refusal };
+          }
+        }
         if (inv.state === "ACCEPTED") return { ok: false, error: "E7" };
-        if (inv.state === "REVOKED" || inv.state === "REFUSED" || inv.state === "PENDING_APPROVAL") {
+        if (
+          inv.state === "REVOKED" ||
+          inv.state === "REFUSED" ||
+          inv.state === "PENDING_APPROVAL" ||
+          inv.state === "DECLINED"
+        ) {
           return { ok: false, error: "E5" };
         }
         if (inv.state === "EXPIRED" || (inv.expiresAt !== null && inv.expiresAt < today())) {
@@ -1580,9 +1829,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         }
         const inviter = s0.people.find((p) => p.id === inv.invitedBy);
         const inviterStillMay =
-          inv.kind === "O"
-            ? Boolean(inviter)
-            : inviter?.memberRole === "Owner" || inviter?.memberRole === "Admin";
+          inv.kind === "A"
+            ? inviter?.platformRole === "root"
+            : inv.kind === "W"
+              ? isPlatformAdmin(inviter)
+              : inv.kind === "O"
+                ? Boolean(inviter)
+                : memberInvitationRefusal(s0, inv) !== "E6";
         if (!inviterStillMay || inv.state === "VOID") {
           setState((s) => ({
             ...s,
@@ -1590,46 +1843,110 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           }));
           return { ok: false, error: "E6" };
         }
-        const account = s0.signup;
-        const name = account?.name || "New member";
-        setState((s) => {
-          const next = {
+        /* The account being made in this browser counts only when it is the
+           invited address's — otherwise the owner's own sign-up, still in
+           the session, named the colleague who accepted. */
+        const account = s0.signup?.email.toLowerCase() === inv.email.toLowerCase() ? s0.signup : null;
+        const invitee = s0.people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase());
+        const name = account?.name || invitee?.name || "New member";
+        if (inv.kind === "A" || inv.kind === "W") {
+          setState((s) => ({
             ...s,
             orgInvitations: s.orgInvitations.map((i) =>
-              i.id === id
-                ? { ...i, state: "ACCEPTED" as const, decidedAt: today(), acceptedName: name }
-                : i,
+              i.id === id ? { ...i, state: "ACCEPTED" as const, decidedAt: today(), acceptedName: name } : i,
             ),
-          };
-          if (inv.kind !== "M" || !inv.orgId) return next;
-          /* Q4: a member at the named role, with no authority to act for the
-             entity. Their identity is not anchored — nothing has asked the
-             register about them — so act 2's person selector will offer
-             them and then refuse, which is the right answer. */
-          const person = {
-            id: "invitee",
-            name,
-            cid: "—",
-            email: inv.email,
-            title: inv.role === "Admin" ? "Administrator · joined by invitation" : "Member · joined by invitation",
-            cidVerified: false,
-            memberRole: inv.role ?? "Member",
-          };
+            /* A: the person becomes an administrator, and now has the account
+               they made on the way here. W: nothing yet — the wallet exists
+               only once the register has confirmed them (Flow 2). */
+            people:
+              inv.kind === "A"
+                ? s.people.map((p) =>
+                    p.email.toLowerCase() === inv.email.toLowerCase()
+                      ? { ...p, platformRole: "admin" as const, hasAccount: true }
+                      : p,
+                  )
+                : s.people,
+            /* An administrator joins NDI's own organisation, which is where
+               their console is. */
+            organizations:
+              inv.kind === "A" && invitee
+                ? s.organizations.map((o) =>
+                    o.id === NDI_ORG && !o.memberIds.includes(invitee.id)
+                      ? { ...o, memberIds: [...o.memberIds, invitee.id], members: o.members + 1 }
+                      : o,
+                  )
+                : s.organizations,
+          }));
+          log(`Invitation accepted by ${name}`);
+          return { ok: true };
+        }
+        if (inv.kind !== "M" || !inv.orgId) {
+          setState((s) => ({
+            ...s,
+            orgInvitations: s.orgInvitations.map((i) =>
+              i.id === id ? { ...i, state: "ACCEPTED" as const, decidedAt: today(), acceptedName: name } : i,
+            ),
+          }));
+          log(`Invitation accepted by ${name}`);
+          return { ok: true };
+        }
+        /* Accepting needs an account already held by the invited address,
+           and the person signed in as it (SCR-INV-04: "signed in as the
+           invited address"). Without these checks a forced face could
+           accept for an address with no account — making one with no name
+           and no password — or let whoever was signed in accept for someone
+           else. An address with no account sets one up instead (setUpMember). */
+        const hasAccount = Boolean(account) || Boolean(invitee && invitee.hasAccount !== false);
+        if (!hasAccount) return { ok: false, error: "no_account" };
+        const me = s0.people.find((p) => p.id === s0.harness.persona);
+        const signedInAsInvitee =
+          Boolean(account) || me?.email.toLowerCase() === inv.email.toLowerCase();
+        if (!signedInAsInvitee) return { ok: false, error: "wrong_person" };
+        /* Q4: a member at the named role, with no authority to act for the
+           entity — see joinOrganisation. */
+        const memberId = account && !invitee ? rid("person") : (invitee?.id ?? rid("person"));
+        const orgId = inv.orgId;
+        setState((s) => {
+          const joined = joinOrganisation(s, inv, name, memberId);
           return {
-            ...next,
-            people: [...next.people.filter((p) => p.id !== "invitee"), person],
-            signup: next.signup
+            ...joined,
+            signup: joined.signup
               ? {
-                  ...next.signup,
-                  memberships: next.signup.memberships.some((m) => m.orgId === inv.orgId)
-                    ? next.signup.memberships
-                    : [...next.signup.memberships, { orgId: inv.orgId, role: inv.role ?? "Member" }],
+                  ...joined.signup,
+                  memberships: joined.signup.memberships.some((m) => m.orgId === orgId)
+                    ? joined.signup.memberships
+                    : [...joined.signup.memberships, { orgId, role: inv.role ?? "Member" }],
                 }
-              : next.signup,
+              : joined.signup,
           };
         });
-        log(`Invitation accepted by ${name}`);
         return { ok: true };
+      },
+
+      setUpMember: (invitationId, nameIn) => {
+        const s0 = stateRef.current;
+        const inv = s0.orgInvitations.find((i) => i.id === invitationId);
+        const name = nameIn.trim();
+        if (!name) return { ok: false, error: "invalid" };
+        /* The same re-checks as any acceptance (step 8) — the screen showing
+           the form is not the boundary. */
+        const refusal = memberInvitationRefusal(s0, inv);
+        if (refusal || !inv) {
+          if (refusal) setState((s) => markRefused(s, invitationId, refusal));
+          return { ok: false, error: refusal ?? "E5" };
+        }
+        /* Setting up is only for an address with no account. One that has an
+           account — platform administrators always do — signs in and accepts
+           instead, so the two ways in cannot disagree about who may join. */
+        const known = s0.people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase());
+        if (known && known.hasAccount !== false) return { ok: false, error: "has_account" };
+        const personId = known?.id ?? rid("person");
+        setState((s) => ({
+          ...joinOrganisation(s, inv, name, personId),
+          activeOrgId: inv.orgId as string,
+          harness: { ...s.harness, persona: personId },
+        }));
+        return { ok: true, personId };
       },
 
       declineInvitation: (id) =>
@@ -1724,6 +2041,39 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         })),
 
       completeOrgOnboarding: () => {
+        const s0 = stateRef.current;
+        const inv = s0.orgInvitations.find((i) => i.id === s0.orgOnboarding?.invitationId);
+        if (inv?.kind === "W" && inv.orgId) {
+          /* An organisation already on NDI gains an Entity Wallet: the
+             holder capability, its registration in its own wallet, and the
+             person who accepted as its root authority. Its issuing and
+             verifying are untouched. */
+          const orgId = inv.orgId;
+          const personId = s0.people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase())?.id ?? "yeshey";
+          const seedCred = SEED.heldCredentials.find((c) => c.orgId === orgId && c.isFoundational);
+          const seedRel = SEED.relations.find((r) => r.orgId === orgId && r.isRootAuthority);
+          const now = today();
+          setState((s) => ({
+            ...s,
+            organizations: s.organizations.map((o) =>
+              o.id === orgId && !o.capabilities.includes("holder")
+                ? { ...o, capabilities: [...o.capabilities, "holder" as const] }
+                : o,
+            ),
+            heldCredentials: seedCred
+              ? [...s.heldCredentials.filter((c) => c.id !== seedCred.id), { ...seedCred, receivedAt: now }]
+              : s.heldCredentials,
+            relations: seedRel
+              ? [
+                  ...s.relations.filter((r) => r.id !== seedRel.id),
+                  { ...seedRel, personId, createdAt: now, acceptedAt: now, activatedAt: now, scope: { ...seedRel.scope, validFrom: now } },
+                ]
+              : s.relations,
+            orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, completed: true } : s.orgOnboarding,
+            activeOrgId: orgId,
+          }));
+          return;
+        }
         /* Lands on Pelden's first day, not on the story's three-months-in
            seed — see firstRunState. Nothing is logged to the activity feed
            for the same reason: nothing has been done in the console yet. */
@@ -1752,18 +2102,276 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             orgOnboarding: s.orgOnboarding,
             manualReviews: s.manualReviews,
             orgInvitations: [...s.orgInvitations.filter((i) => !seeded.has(i.id)), ...SEED.orgInvitations],
+            accessRequests: [
+              ...s.accessRequests.filter((a) => !SEED.accessRequests.some((x) => x.id === a.id)),
+              ...SEED.accessRequests,
+            ],
             harness: s.harness,
             firstRun: false,
           };
         }),
 
+      signIn: (email) => {
+        const s0 = stateRef.current;
+        const address = email.trim().toLowerCase();
+        const person = s0.people.find((p) => p.hasAccount !== false && p.email.toLowerCase() === address);
+        if (person && ((PERSONAS as string[]).includes(person.id) || person.joinedBy)) {
+          const id = person.id;
+          setState((s) => {
+            const home = s.organizations.find((o) => o.memberIds.includes(id));
+            return { ...s, activeOrgId: home?.id ?? s.activeOrgId, harness: { ...s.harness, persona: id } };
+          });
+          return { ok: true, personId: id };
+        }
+        /* An account made in this browser by sign-up, not yet acting as
+           anyone the story knows — its home is the welcome screen. */
+        if (s0.signup?.stage === "done" && s0.signup.email.toLowerCase() === address) {
+          return { ok: true, personId: null };
+        }
+        return { ok: false };
+      },
+
+      startDayZero: () => setState((s) => ({ ...dayZeroState(SEED), harness: { ...SEED.harness, persona: "yeshey", guideStep: s.harness.guideStep } })),
+
+      /* Day zero with Pelden registered on it — exactly what the onboarding
+         walk leaves behind, so walking the member invitations on their own
+         starts from the same first day the full walk reaches. */
+      startPlatformReady: () =>
+        setState((s) => ({
+          ...platformReadyState(SEED),
+          activeOrgId: NDI_ORG,
+          harness: { ...SEED.harness, persona: "root", guideStep: s.harness.guideStep },
+        })),
+
+      startFirstDay: () =>
+        setState((s) => ({
+          ...firstRunState(platformReadyState(SEED)),
+          activeOrgId: PELDEN,
+          harness: { ...SEED.harness, persona: "dorji", guideStep: s.harness.guideStep },
+        })),
+
+
+      invitePlatformAdmin: (emailIn) => {
+        const s0 = stateRef.current;
+        const me = s0.people.find((p) => p.id === s0.harness.persona);
+        /* Only root may make an administrator — refused here, not merely
+           hidden on the screen, because the screen is not the boundary. */
+        if (me?.platformRole !== "root") return { ok: false, error: "not_root" };
+        const email = emailIn.trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "invalid" };
+        const person = s0.people.find((p) => p.email.toLowerCase() === email);
+        if (
+          isPlatformAdmin(person) ||
+          s0.orgInvitations.some((i) => i.kind === "A" && i.email.toLowerCase() === email && i.state === "PENDING")
+        ) {
+          return { ok: false, error: "already" };
+        }
+        const id = rid("inv");
+        setState((s) => ({
+          ...s,
+          orgInvitations: [
+            {
+              id,
+              kind: "A",
+              email,
+              orgId: null,
+              role: null,
+              legalName: null,
+              legalIdentity: null,
+              purpose: "Platform administrator",
+              needsSecondApproval: false,
+              invitedBy: s.harness.persona,
+              approvedBy: null,
+              createdAt: today(),
+              sentAt: today(),
+              expiresAt: inDays(INVITATION_DAYS.O),
+              state: "PENDING",
+              delivery: "delivered",
+              decidedAt: null,
+              acceptedName: null,
+            },
+            ...s.orgInvitations,
+          ],
+        }));
+        log(`${email} invited as a platform administrator`);
+        return { ok: true, id };
+      },
+
+      setUpPlatformAdmin: (invitationId, nameIn) => {
+        const s0 = stateRef.current;
+        const inv = s0.orgInvitations.find((i) => i.id === invitationId);
+        const name = nameIn.trim();
+        const inviter = inv ? s0.people.find((p) => p.id === inv.invitedBy) : undefined;
+        /* The same re-checks as any acceptance: still pending, not expired,
+           and root still root. */
+        if (
+          !inv ||
+          inv.kind !== "A" ||
+          inv.state !== "PENDING" ||
+          (inv.expiresAt !== null && new Date(inv.expiresAt).getTime() < Date.now()) ||
+          inviter?.platformRole !== "root" ||
+          !name
+        ) {
+          return { ok: false, error: "invalid" };
+        }
+        /* Someone the story already knows (Kinzang) keeps their
+           record; anyone else becomes the "newadmin" persona. */
+        const known = s0.people.find(
+          (p) => p.email.toLowerCase() === inv.email.toLowerCase() && p.id !== "newadmin",
+        );
+        const personId = ((known?.id as PersonaId | undefined) ?? "newadmin") as PersonaId;
+        setState((s) => {
+          const people = known
+            ? s.people.map((p) =>
+                p.id === known.id ? { ...p, name, platformRole: "admin" as const, hasAccount: true } : p,
+              )
+            : [
+                ...s.people.filter((p) => p.id !== "newadmin"),
+                {
+                  id: "newadmin",
+                  name,
+                  cid: "—",
+                  email: inv.email,
+                  title: "Platform admin · Bhutan NDI",
+                  cidVerified: false,
+                  platformRole: "admin" as const,
+                  hasAccount: true,
+                },
+              ];
+          return {
+            ...s,
+            people,
+            orgInvitations: s.orgInvitations.map((i) =>
+              i.id === invitationId
+                ? { ...i, state: "ACCEPTED" as const, decidedAt: today(), acceptedName: name }
+                : i,
+            ),
+            /* Their console is NDI's own organisation. */
+            organizations: s.organizations.map((o) =>
+              o.id === NDI_ORG
+                ? {
+                    ...o,
+                    memberIds: [...o.memberIds.filter((m) => m !== personId), personId],
+                    members: o.memberIds.includes(personId) ? o.members : o.members + 1,
+                  }
+                : o,
+            ),
+            activeOrgId: NDI_ORG,
+            harness: { ...s.harness, persona: personId },
+          };
+        });
+        log(`${name} set up their account and became a platform administrator`);
+        return { ok: true, personId };
+      },
+
+      applyForEntityWallet: (note) => {
+        const id = rid("ar");
+        setState((s) => {
+          const me = s.people.find((p) => p.id === s.harness.persona);
+          return {
+            ...s,
+            accessRequests: [
+              {
+                id,
+                orgId: s.activeOrgId,
+                capability: "holder",
+                requestedBy: s.harness.persona,
+                requesterName: me?.name ?? "Unknown",
+                requesterEmail: me?.email ?? "",
+                note,
+                submittedAt: today(),
+                state: "PENDING",
+                decidedBy: null,
+                decidedAt: null,
+                reason: null,
+                invitationId: null,
+              },
+              ...s.accessRequests,
+            ],
+          };
+        });
+        return id;
+      },
+
+      decideAccessRequest: (id, approve, reason) =>
+        setState((s) => {
+          const req = s.accessRequests.find((a) => a.id === id);
+          const me = s.people.find((p) => p.id === s.harness.persona);
+          if (!req || req.state !== "PENDING" || !isPlatformAdmin(me)) return s;
+          const org = s.organizations.find((o) => o.id === req.orgId);
+          const decided = { decidedBy: s.harness.persona, decidedAt: today() };
+          if (!approve) {
+            return {
+              ...s,
+              accessRequests: s.accessRequests.map((a) =>
+                a.id === id ? { ...a, ...decided, state: "DECLINED" as const, reason: reason ?? null } : a,
+              ),
+            };
+          }
+          if (req.capability === "holder") {
+            /* Approving a wallet does not grant it. It invites the owner, who
+               still has to prove who they are and be confirmed by the
+               register — an admin's yes is not the trust decision either. */
+            const invId = rid("inv");
+            return {
+              ...s,
+              orgInvitations: [
+                {
+                  id: invId,
+                  kind: "W",
+                  email: req.requesterEmail,
+                  orgId: req.orgId,
+                  role: null,
+                  legalName: org?.legalName ?? org?.name ?? null,
+                  legalIdentity: null,
+                  purpose: "Entity Wallet for an organisation already issuing and verifying on NDI.",
+                  needsSecondApproval: false,
+                  invitedBy: s.harness.persona,
+                  approvedBy: null,
+                  createdAt: today(),
+                  sentAt: today(),
+                  expiresAt: inDays(INVITATION_DAYS.O),
+                  state: "PENDING",
+                  delivery: "delivered",
+                  decidedAt: null,
+                  acceptedName: null,
+                },
+                ...s.orgInvitations,
+              ],
+              accessRequests: s.accessRequests.map((a) =>
+                a.id === id ? { ...a, ...decided, state: "APPROVED" as const, invitationId: invId } : a,
+              ),
+            };
+          }
+          return {
+            ...s,
+            organizations: s.organizations.map((o) =>
+              o.id === req.orgId && !o.capabilities.includes(req.capability)
+                ? { ...o, capabilities: [...o.capabilities, req.capability] }
+                : o,
+            ),
+            accessRequests: s.accessRequests.map((a) =>
+              a.id === id ? { ...a, ...decided, state: "APPROVED" as const } : a,
+            ),
+          };
+        }),
+
       setPersona: (persona) =>
-        setState((s) => ({ ...s, harness: { ...s.harness, persona } })),
+        setState((s) => {
+          /* Driving as someone puts you in their organisation — Yeshey's
+             console is Bank of Bhutan's, never Pelden's. Administrators
+             belong to none, so the workspace stays where it was. */
+          const home = s.organizations.find((o) => o.memberIds.includes(persona));
+          return { ...s, activeOrgId: home?.id ?? s.activeOrgId, harness: { ...s.harness, persona } };
+        }),
 
       setAct: (act) => setState((s) => ({ ...s, harness: { ...s.harness, act } })),
 
       setRunnerOpen: (runnerOpen) =>
         setState((s) => ({ ...s, harness: { ...s.harness, runnerOpen } })),
+
+      setGuideStep: (guideStep) =>
+        setState((s) => ({ ...s, harness: { ...s.harness, guideStep } })),
 
       setSelfServiceSignup: (selfServiceSignup) =>
         setState((s) => ({ ...s, harness: { ...s.harness, selfServiceSignup } })),
@@ -1782,7 +2390,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         setState((s) => ({ ...s, harness: { ...s.harness, stateOverrides: {} } })),
 
       resetDemo: () => {
-        setState(SEED);
+        setState(FRESH);
         try {
           localStorage.removeItem(STORAGE_KEY);
         } catch {

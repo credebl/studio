@@ -9,7 +9,6 @@ import { useDemo } from "@/lib/demoStore";
 
 const ITEMS: { label: string; href: string; icon: IconName }[] = [
   { label: "Profile", href: "/profile", icon: "user" },
-  { label: "Developer settings", href: "/developers-setting", icon: "key" },
 ];
 
 /**

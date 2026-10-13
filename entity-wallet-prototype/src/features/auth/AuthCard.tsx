@@ -28,7 +28,7 @@ export function AuthCardHeader({
       {steps ? <AuthSteps current={steps[0]} total={steps[1]} /> : null}
 
       <div>
-        <h1 className="m-0 font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.025em] text-strong">
+        <h1 className="m-0 font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.025em] text-strong [text-wrap:balance]">
           {title}
         </h1>
         {subtitle ? (

@@ -81,14 +81,12 @@ export const ACTS: Act[] = [
 export const actByNumber = (n: number): Act | undefined => ACTS.find((a) => a.number === n);
 
 /**
- * The Gate 2 flows, as entry points beside the story rather than inside it.
+ * The Gate 2 flows, as jumps in the demo controls.
  *
- * The six acts are the story told to someone new to the idea; Gate 2 is a
+ * The guided demo is the story told to someone new to the idea; Gate 2 is a
  * review of Flows 1 and 2 against their specs, by people who already know
- * it and want to walk one flow end to end. Folding the flows into the acts
- * would make act 1 twenty screens long for the first audience, and putting
- * them nowhere would leave the second audience typing URLs. So they sit in
- * the harness as jumps, each with the persona that starts it.
+ * it and want to walk one flow end to end. So each flow is a jump, with the
+ * persona that starts it.
  *
  * `persona: null` is a flow that starts before anyone is signed in.
  *
@@ -102,25 +100,53 @@ export const actByNumber = (n: number): Act | undefined => ACTS.find((a) => a.nu
  * setting the entry needs, applied when it is chosen, so neither route can
  * be started in a deployment where it would not exist.
  */
+export type FlowGroup = "root" | "admin" | "company";
+
+/**
+ * The flows the demo controls offer — the onboardings the prototype is
+ * scoped to, in the order they have to happen.
+ *
+ * WHY ONLY THESE
+ *
+ * The controls used to carry a six-act story runner and jumps into every
+ * flow anyone had asked for: Bank of Bhutan's wallet, NDI inviting a
+ * business, manual review. This branch is Flow 1 — how people get an
+ * account: root, the platform admins root invites, and a company's director
+ * signing up — so the panel offers exactly those, and nobody has to work out
+ * which of a dozen buttons is under review. The other screens still exist;
+ * the controls no longer point at them.
+ *
+ * Registering the company is Flow 2, and inviting its colleagues needs the
+ * company to exist, so both arrive with the Flow 2 branch rather than here.
+ * Offering them now would put a flow under review before its own showcase.
+ */
+export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
+  { id: "root", code: "FLOW-ONB-02", title: "Root admin onboarding" },
+  { id: "admin", code: "FLOW-ONB-02", title: "Platform admin onboarding" },
+  { id: "company", code: "FLOW-ONB-01", title: "New company onboarding" },
+];
+
 export interface FlowEntry {
-  flow: 1 | 2;
+  group: FlowGroup;
   label: string;
   persona: PersonaId | null;
   route: string;
   selfService?: boolean;
+  /**
+   * Where it starts, so a jump never lands on whatever half-state the last
+   * demo left behind:
+   *
+   * - `dayZero` — the platform before any admin or business.
+   * - `platformReady` — one platform admin set up, no business yet: where a
+   *   company comes on.
+   * - `firstDay` — Pelden registered a moment ago, Dorji its only member.
+   * - `livedIn` — the story three months in, for the acts beyond onboarding.
+   */
+  start: "dayZero" | "platformReady" | "firstDay" | "livedIn";
 }
 
 export const FLOW_ENTRIES: FlowEntry[] = [
-  { flow: 1, label: "Create an account", persona: null, route: "/sign-up", selfService: true },
-  { flow: 1, label: "Invite a member", persona: "dorji", route: "/members/invite" },
-  { flow: 1, label: "Invite an agency", persona: "tshering", route: "/admin/invitations/new" },
-  { flow: 2, label: "Sign up and add it yourself", persona: "dorji", route: "/onboarding", selfService: true },
-  {
-    flow: 2,
-    label: "Invited by NDI to register",
-    persona: "tshering",
-    route: "/admin/invitations/new",
-    selfService: false,
-  },
-  { flow: 2, label: "Review a case at NDI", persona: "kinley", route: "/admin/reviews" },
+  { group: "root", label: "Root signs in", persona: null, route: "/sign-in", start: "dayZero" },
+  { group: "admin", label: "Root invites a platform admin", persona: "root", route: "/admin/team", start: "dayZero" },
+  { group: "company", label: "Create an account", persona: null, route: "/sign-up", selfService: true, start: "platformReady" },
 ];

@@ -1,18 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useScreenState } from "@/components/demo/screenState";
 import { AppShell } from "@/components/layout/AppShell";
 import { GradientButton } from "@/components/ui/GradientButton";
+import { HairlineButton } from "@/components/ui/HairlineButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Icon } from "@/components/ui/icons";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { useDemo } from "@/lib/demoStore";
-import type { LegalBasis } from "@/lib/demoData";
+import { PELDEN, isPlatformAdmin, type LegalBasis } from "@/lib/demoData";
 
 import { legalBasisHint, legalBasisLabel } from "./scopeModel";
 
@@ -36,7 +38,7 @@ const BASES: LegalBasis[] = ["entity_consent", "court_order", "governance_prescr
 
 export function CreateRelationView() {
   const router = useRouter();
-  const { people, relations, addRelation } = useDemo();
+  const { people, relations, organizations, addRelation, orgInvitations } = useDemo();
 
   const state = useScreenState("C2", ["draft", "person_not_verified", "missing_instrument"]);
 
@@ -51,7 +53,19 @@ export function CreateRelationView() {
   const spokenFor = new Set(
     relations.filter((r) => r.state !== "TERMINATED" && r.state !== "EXPIRED").map((r) => r.personId),
   );
-  const candidates = people.filter((p) => !spokenFor.has(p.id));
+  /* Only people connected to Pelden. NDI's administrators and other
+     organisations' staff are in the platform's people list too, and a
+     picker that offered the bank's head of digital as Pelden's controller
+     would be proposing something nobody should be able to ask for. */
+  const pelden = organizations.find((o) => o.id === PELDEN);
+  const candidates = people.filter(
+    (p) =>
+      !spokenFor.has(p.id) &&
+      !isPlatformAdmin(p) &&
+      p.hasAccount !== false &&
+      (pelden?.memberIds.includes(p.id) ?? true),
+  );
+  const waiting = orgInvitations.filter((i) => i.kind === "M" && i.orgId === PELDEN && i.state === "PENDING").length;
 
   const forceUnverified = state === "person_not_verified";
   const forceMissingInstrument = state === "missing_instrument";
@@ -72,9 +86,60 @@ export function CreateRelationView() {
     router.push(`/controllership/relations/${relation.id}/scope`);
   };
 
+  /* Nobody to appoint. On a first day that is everyone but the owner, who
+     already holds the root authority: authority goes to someone who is
+     already a member, so the way forward is an invitation, not a form with
+     an empty person list above a legal basis nobody can use yet. */
+  if (candidates.length === 0 && state === "draft") {
+    return (
+      <AppShell>
+        <div className="mx-auto flex w-full max-w-[760px] flex-col gap-5">
+          <PageHeader
+            crumbs={[
+              { label: "Controllership", href: "/controllership/relations" },
+              { label: "New relation" },
+            ]}
+            title="Establish a controllership"
+          />
+          <Panel>
+            <div className="relative z-[4] flex flex-col items-start gap-4">
+              <span
+                aria-hidden="true"
+                className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-grid"
+                style={{ background: "var(--ndi-mint-08)" }}
+              >
+                <Icon name="users" size={19} strokeWidth={1.8} className="text-accent" />
+              </span>
+              <div className="flex flex-col gap-1.5">
+                <h2 className="m-0 font-display text-[16px] font-semibold text-strong">Nobody to appoint yet</h2>
+                <p className="m-0 max-w-[60ch] text-[13.5px] leading-[1.6] text-muted">
+                  Authority to act for Pelden Trading goes to someone who is already a member of it.
+                  {waiting > 0
+                    ? ` ${waiting === 1 ? "One invitation is" : `${waiting} invitations are`} still waiting to be accepted — once a colleague joins, they appear here.`
+                    : " Invite a colleague first — once they've joined, they appear here."}
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                <Link href={waiting > 0 ? "/members" : "/members/invite"}>
+                  <GradientButton>
+                    <Icon name="users" size={15} strokeWidth={2} />
+                    {waiting > 0 ? "See invitations waiting" : "Invite someone"}
+                  </GradientButton>
+                </Link>
+                <Link href="/controllership/relations">
+                  <HairlineButton>Back to relations</HairlineButton>
+                </Link>
+              </div>
+            </div>
+          </Panel>
+        </div>
+      </AppShell>
+    );
+  }
+
   return (
     <AppShell>
-      <div className="flex flex-col gap-5">
+      <div className="mx-auto flex w-full max-w-[760px] flex-col gap-5">
         <PageHeader
           crumbs={[
             { label: "Controllership", href: "/controllership/relations" },
@@ -83,8 +148,11 @@ export function CreateRelationView() {
           title="Establish a controllership"
         />
 
+        {/* The column is the form's own width. It used to be a full-width
+            panel with a 640px form inside, which left half the panel empty
+            beside every field at desktop widths. */}
         <Panel>
-          <div className="relative z-[4] flex max-w-[640px] flex-col gap-6">
+          <div className="relative z-[4] flex flex-col gap-6">
             <p className="text-[13.5px] leading-[1.65] text-muted">
               A controllership lets a person act for Pelden Trading — never as
               it. It stands on a legal basis, is evidenced by a signed
@@ -145,9 +213,9 @@ export function CreateRelationView() {
                 >
                   <Icon name="info" size={13} strokeWidth={2} className="mt-[3px] flex-none" />
                   <span>
-                    This person&rsquo;s identity has not been confirmed against the
-                    register, so they cannot be granted authority yet. They need
-                    to complete identity verification first.
+                    {selected?.joinedBy
+                      ? `${selected?.name ?? "This person"} joined by invitation, so the register hasn't confirmed who they are — joining never asks. They prove it with their own Bhutan NDI Wallet when they're appointed, which is the next flow and not part of this prototype yet.`
+                      : "This person's identity has not been confirmed against the register, so they cannot be granted authority yet. They need to complete identity verification first."}
                   </span>
                 </p>
               ) : null}

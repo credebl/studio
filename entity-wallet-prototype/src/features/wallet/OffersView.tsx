@@ -9,6 +9,7 @@ import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { inOrg, shortOrgName } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 /**
@@ -23,10 +24,11 @@ import { useDemo } from "@/lib/demoStore";
  * becomes a chore.
  */
 export function OffersView() {
-  const { offers } = useDemo();
+  const { offers, activeOrgId, organizations } = useDemo();
+  const orgName = organizations.find((o) => o.id === activeOrgId)?.name.replace(/ Pvt\. Ltd\.$/, "") ?? "the organisation";
 
   const variant = useScreenState("B4-list", ["populated", "empty"]);
-  const rows = variant === "empty" ? [] : offers;
+  const rows = variant === "empty" ? [] : offers.filter(inOrg(activeOrgId));
 
   const open = rows.filter((o) => o.state === "pending" || o.state === "parked");
 
@@ -47,7 +49,7 @@ export function OffersView() {
         />
 
         <p className="max-w-[68ch] text-[13.5px] leading-[1.65] text-muted">
-          Credentials other organisations have offered to Pelden Trading.
+          Credentials other organisations have offered to {shortOrgName(orgName)}.
           What each one contains is read from the offer itself, not from
           anything anyone typed here.
         </p>

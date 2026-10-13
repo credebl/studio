@@ -32,12 +32,15 @@ export function PendingInvitations({
   readOnly = false,
   offline = false,
   emptyAction,
+  compactEmpty = false,
 }: {
   rows: OrgInvitation[];
   kind: "M" | "O";
   readOnly?: boolean;
   offline?: boolean;
   emptyAction?: React.ReactNode;
+  /** A one-line empty state, for a page that already offers the action. */
+  compactEmpty?: boolean;
 }) {
   const router = useRouter();
   const { resendInvitation, withdrawInvitation, personById } = useDemo();
@@ -67,6 +70,7 @@ export function PendingInvitations({
               ? "When you invite someone into the organisation, they appear here until they accept."
               : "Invitations to organisations being brought onto the platform appear here until they are accepted.",
           action: emptyAction,
+          compact: compactEmpty,
         }}
       >
         {rows.length > 0

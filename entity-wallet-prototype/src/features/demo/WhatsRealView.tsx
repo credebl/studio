@@ -48,6 +48,23 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
         needs: "The existing NDI wallet proof-request flow, wired to this console.",
       },
       {
+        shown: "The root administrator signing straight in to NDI's organisation",
+        reality:
+          "Root's account and Bhutan NDI's organisation are fixtures in the demo data. Signing in only matches the address to a person — any password works, and nothing is checked.",
+        needs: "Root and NDI's organisation seeded by the deployment itself, with a hardware-backed second factor on root's account.",
+      },
+      {
+        shown: "Platform admins, access requests and their decisions",
+        reality:
+          "Invitations, requests and approvals live in your browser. \"Only root can make an admin\" and \"only an admin can decide\" are checked by the demo store, which is not a boundary.",
+        needs: "Role checks and the audit of every decision enforced by the platform's services.",
+      },
+      {
+        shown: "Issuer logos on credential cards",
+        reality: "Initials in a seal. No real agency or bank logo is used.",
+        needs: "Issuer display metadata, including logos, from the trust registry.",
+      },
+      {
         shown: "Self-service sign-up switched on or off",
         reality:
           "A demo control, so both ways onto the platform can be shown. In the product it is a deployment setting nobody using the console can change.",
@@ -87,8 +104,8 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
       {
         shown: "An invitation delivered, bouncing, or accepted",
         reality:
-          "No invitation is sent; the bounce is a seeded fixture, and \"open as the invitee\" stands in for the email. Acceptance re-checks are store logic, not a server.",
-        needs: "Invitation service with expiry, revocation and the acceptance-time re-checks run server-side.",
+          "No invitation is sent; \"open the invitation as …\" stands in for the email, and the bounce in the story three months on is a seeded fixture. Setting up an account from the link keeps only the name — the link is trusted to prove the address because a real one would be single-use and signed. Acceptance re-checks are store logic, not a server.",
+        needs: "Invitation service with expiry, revocation, single-use signed links and the acceptance-time re-checks run server-side.",
       },
       {
         shown: "Two administrators designating a foundational issuer",

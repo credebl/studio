@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useScreenState } from "@/components/demo/screenState";
@@ -10,14 +11,16 @@ import { HairlineButton } from "@/components/ui/HairlineButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { SimulatedAction, SimulatedStep } from "@/components/ui/SimulatedStep";
+import { useReveal } from "@/components/ui/useReveal";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { Icon } from "@/components/ui/icons";
 import { INVITATION_DAYS } from "@/lib/deployment";
-import { PLATFORM_ADMINS } from "@/lib/demoData";
+import { isPlatformAdmin, roleIn, shortOrgName } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 import { LOCAL_MS } from "@/lib/demoTiming";
 
-type Sent = { kind: "sent" | "queued"; email: string };
+type Sent = { kind: "sent" | "queued"; email: string; id?: string };
 
 /**
  * SCR-INV-01 — Invite someone. FLOW-ONB-02 step 1, for both kinds.
@@ -45,7 +48,8 @@ type Sent = { kind: "sent" | "queued"; email: string };
  * disabled with the reason rather than hidden.
  */
 export function InviteView({ kind }: { kind: "M" | "O" }) {
-  const { inviteToOrganisation, proposeOrganisation, organizations, activeOrgId, currentPerson, harness, people } =
+  const router = useRouter();
+  const { inviteToOrganisation, proposeOrganisation, organizations, activeOrgId, currentPerson, harness } =
     useDemo();
 
   const forced = useScreenState(`SCR-INV-01-${kind}`, [
@@ -70,26 +74,33 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
   const selfService = harness.selfServiceSignup;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /* Errors about the address sit under the address (E3, a malformed one) —
+     "the specific reason, at the field where it applies" (SCR-INV-01). A
+     banner at the top of the form sent the eye away from the one field that
+     needed changing. Errors about the organisation or the inviter stay at
+     the top: no field fixes them. */
+  const [emailError, setEmailError] = useState<string | null>(null);
+  /* E3's recovery action is "View members" (UX-EW-01 §3.5). */
+  const [offerMembers, setOfferMembers] = useState(false);
   const [sent, setSent] = useState<Sent | null>(null);
 
-  const permitted =
-    kind === "M"
-      ? currentPerson.memberRole === "Owner" || currentPerson.memberRole === "Admin"
-      : PLATFORM_ADMINS.includes(harness.persona);
+  const myRole = roleIn(org, currentPerson);
+  const permitted = kind === "M" ? myRole === "Owner" || myRole === "Admin" : isPlatformAdmin(currentPerson);
 
   const back = kind === "M" ? "/members" : "/admin/invitations";
   const loading = busy || forced === "loading";
 
-  const shownError =
-    forced === "org_unavailable"
-      ? "That organisation isn't available."
-      : forced === "duplicate"
-        ? `Ugyen Phuntsho is already a member of ${orgName}.`
-        : error;
+  const shownError = forced === "org_unavailable" ? "That organisation isn't available." : error;
+  const shownEmailError =
+    forced === "duplicate" ? `Ugyen Phuntsho is already a member of ${shortOrgName(orgName)}.` : emailError;
   const shownSent: Sent | null =
     forced === "sent"
       ? { kind: kind === "O" ? "queued" : "sent", email: email || "sangay.choden@peldentrading.bt" }
       : sent;
+  /* The confirmation replaces the form, so the button that was pressed is
+     gone: focus moves to what took its place, and on a phone — where Send
+     sits far down the form — the page comes back up to it. */
+  const sentRef = useReveal<HTMLDivElement>(shownSent?.email, { focus: true });
 
   if (forced === "no_permission" || !permitted) {
     /* E1. The invite action is not offered to anyone who cannot use it
@@ -102,7 +113,7 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
           <Panel>
             <p className="relative z-[4] text-[13.5px] leading-[1.6] text-muted">
               {kind === "M"
-                ? `You don't have permission to invite people to ${orgName}. Ask its owner.`
+                ? `You don't have permission to invite people to ${shortOrgName(orgName)}. Ask its owner.`
                 : "Only NDI platform administrators can bring an organisation onto the platform."}
             </p>
           </Panel>
@@ -117,25 +128,39 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
 
   const send = () => {
     if (!valid) {
-      setError(kind === "M" ? "Enter the address to send the invitation to." : "Enter the address, and the organisation's name and legal identity.");
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        setEmailError(
+          email.trim()
+            ? `Enter a full email address, like ${kind === "M" ? "name@peldentrading.bt" : "registrar@csoa.gov.bt"}.`
+            : "Enter the address to send the invitation to.",
+        );
+        setError(null);
+      } else {
+        setEmailError(null);
+        setError("Enter the organisation's name and legal identity.");
+      }
       return;
     }
     setError(null);
+    setEmailError(null);
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
       if (kind === "M") {
         const result = inviteToOrganisation({ email, role });
         if (!result.ok) {
-          const who = people.find((p) => p.email.toLowerCase() === email.trim().toLowerCase());
-          setError(
-            result.error === "E3"
-              ? `${who?.name ?? email.trim()} is already a member of ${orgName}, or already has an invitation waiting.`
-              : `You don't have permission to invite people to ${orgName}.`,
-          );
+          if (result.error === "E3") {
+            setEmailError(`${result.member} is already a member of ${shortOrgName(orgName)}.`);
+            setOfferMembers(true);
+          } else if (result.error === "waiting") {
+            setEmailError(`An invitation to ${email.trim()} is already waiting. You can resend or revoke it from Members.`);
+            setOfferMembers(true);
+          } else {
+            setError(`You don't have permission to invite people to ${shortOrgName(orgName)}.`);
+          }
           return;
         }
-        setSent({ kind: "sent", email: email.trim() });
+        setSent({ kind: "sent", email: email.trim(), id: result.id });
       } else {
         const needsSecondApproval = purpose === "foundational";
         proposeOrganisation({
@@ -164,7 +189,7 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
 
         {shownSent ? (
           <Panel>
-            <div className="relative z-[4] flex flex-col gap-3" role="status">
+            <div ref={sentRef} tabIndex={-1} className="relative z-[4] flex flex-col gap-3 outline-none" role="status">
               <p className="flex items-center gap-2 font-display text-[15px] font-semibold text-strong">
                 <Icon name="check" size={16} strokeWidth={2.4} className="text-accent" />
                 {shownSent.kind === "queued"
@@ -191,6 +216,20 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
                   </Link>
                 ) : null}
               </div>
+              {/* What the invitee would do from their inbox — the demo's way on
+                  to the other side of the invitation. */}
+              {kind === "M" && shownSent.id ? (
+                <SimulatedStep
+                  standsFor="the invitation email"
+                  action={
+                    <SimulatedAction onClick={() => router.push(`/invitation/${shownSent.id}`)}>
+                      Open the invitation as {shownSent.email}
+                    </SimulatedAction>
+                  }
+                >
+                  No email is sent in this prototype. Opening it is what they would do from their inbox.
+                </SimulatedStep>
+              ) : null}
             </div>
           </Panel>
         ) : (
@@ -209,17 +248,48 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
                   </p>
                 ) : null}
 
-                <label className={FIELD_BLOCK_CLASS}>
-                  <span className={LABEL_CLASS}>Their email address</span>
+                <div className={FIELD_BLOCK_CLASS}>
+                  <label htmlFor="invite-email" className={LABEL_CLASS}>
+                    Their email address
+                  </label>
                   <input
+                    id="invite-email"
                     className={`${FIELD_CLASS} h-12`}
                     type="email"
+                    autoComplete="off"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailError(null);
+                      setOfferMembers(false);
+                    }}
                     placeholder={kind === "M" ? "sangay.choden@peldentrading.bt" : "registrar@csoa.gov.bt"}
                     disabled={loading}
+                    aria-invalid={shownEmailError ? true : undefined}
+                    aria-describedby={shownEmailError ? "invite-email-error" : undefined}
                   />
-                </label>
+                  {shownEmailError ? (
+                    <p
+                      id="invite-email-error"
+                      role="alert"
+                      className="m-0 flex items-start gap-2 text-[12.5px] leading-[1.5]"
+                      style={{ color: "var(--text-danger)" }}
+                    >
+                      <Icon name="shieldAlert" size={13} strokeWidth={2} className="mt-[3px] flex-none" />
+                      <span>
+                        {shownEmailError}
+                        {offerMembers || forced === "duplicate" ? (
+                          <>
+                            {" "}
+                            <Link href="/members" className="ndi-plainlink font-medium text-accent">
+                              View members
+                            </Link>
+                          </>
+                        ) : null}
+                      </span>
+                    </p>
+                  ) : null}
+                </div>
 
                 {kind === "M" ? (
                   <div className={FIELD_BLOCK_CLASS}>
@@ -290,19 +360,11 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
                           type="radio"
                           name="purpose"
                           checked={purpose === "business"}
-                          onChange={() => {
-                            setPurpose("business");
-                            /* The invited route in the demo is Pelden's, so
-                               an empty form starts with it — the presenter
-                               is not typing a company on stage. The address
-                               is one no account holds yet, so the invitee
-                               goes through account creation (A1). */
-                            if (!email && !legalName && !legalIdentity) {
-                              setEmail("director@peldentrading.bt");
-                              setLegalName("Pelden Trading Pvt. Ltd.");
-                              setLegalIdentity("Private limited company, CRA-2019-04477");
-                            }
-                          }}
+                          /* No longer fills the form with Pelden's details
+                             when chosen: a form that arrives already holding
+                             a company reads as the platform knowing it, and
+                             the placeholders show the shape of an answer. */
+                          onChange={() => setPurpose("business")}
                           disabled={selfService}
                           className="mt-1"
                         />

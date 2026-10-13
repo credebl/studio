@@ -1,9 +1,11 @@
-import type {
-  AuthorityChainLink,
-  ConstraintCheck,
-  DelegatedAuthority,
-  DemoState,
-  VerificationDecision,
+import {
+  PELDEN,
+  inOrg,
+  type AuthorityChainLink,
+  type ConstraintCheck,
+  type DelegatedAuthority,
+  type DemoState,
+  type VerificationDecision,
 } from "./demoData";
 
 /**
@@ -47,7 +49,7 @@ function walkChain(state: DemoState, authority: DelegatedAuthority): AuthorityCh
   const entity =
     state.organizations.find((o) => o.id === state.activeOrgId)?.name ?? "The entity";
 
-  const foundational = state.heldCredentials.find((c) => c.isFoundational);
+  const foundational = state.heldCredentials.filter(inOrg(PELDEN)).find((c) => c.isFoundational);
   if (foundational) {
     links.push({
       id: foundational.id,

@@ -9,6 +9,7 @@ import { DataTable } from "@/components/ui/DataTable";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { inOrg } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 /**
@@ -22,10 +23,11 @@ import { useDemo } from "@/lib/demoStore";
  * blur.
  */
 export function VerificationRequestsView() {
-  const { verificationRequests } = useDemo();
+  const { verificationRequests, activeOrgId, organizations } = useDemo();
+  const orgName = organizations.find((o) => o.id === activeOrgId)?.name.replace(/ Pvt\. Ltd\.$/, "") ?? "the organisation";
 
   const variant = useScreenState("B5-list", ["populated", "empty"]);
-  const rows = variant === "empty" ? [] : verificationRequests;
+  const rows = variant === "empty" ? [] : verificationRequests.filter(inOrg(activeOrgId));
 
   const open = rows.filter((r) => r.state === "ready" || r.state === "parked");
 
@@ -43,7 +45,7 @@ export function VerificationRequestsView() {
         />
 
         <p className="max-w-[68ch] text-[13.5px] leading-[1.65] text-muted">
-          Relying parties asking Pelden Trading to prove something about
+          Relying parties asking {orgName} to prove something about
           itself. These arrive here rather than on anyone&rsquo;s phone — the
           entity has no device, so a controller answers on its behalf.
         </p>

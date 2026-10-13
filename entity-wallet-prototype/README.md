@@ -65,13 +65,16 @@ holding delegated authority; counterparties are Bank of Bhutan and BNSW.
 Act 5 is the centre of the demo: a PASS beside a FAIL-with-a-reason on the same
 chain explains delegated authority better than any diagram.
 
-Beside the story, the demo carries the two flows up for Gate 2 — **Flow 1**
-(create an account, invite a member, invite an agency under dual control) and
-**Flow 2** (add an organisation, by either of its two routes — signing up
-and adding it yourself, or being invited by NDI to register it when
-self-service sign-up is off — with NDI manual review when the register
-can't match). Demo controls
-→ **Walk a flow** starts each one as the right person.
+The prototype is delivered flow by flow, and this branch is Flow 1 — how
+people get onto the platform: NDI's root administrator signing in, root
+inviting a platform admin who sets up from the link, and a company's
+director signing up for an account of their own. Demo controls → **Walk a
+flow** starts each one as the right person, from the state it needs.
+
+**New to it? Press Guided demo** (bottom-left of any screen): it walks those
+three onboardings on screen and tells you what to press at each step. It
+stops on the director's empty account, because that is where Flow 1 ends;
+registering the company is Flow 2's branch.
 
 **Presenting it? Read [`docs/running-the-demo.md`](docs/running-the-demo.md)** —
 what is built, the act-by-act script, the Gate 2 flow walks, and what to say
@@ -121,9 +124,13 @@ trust argument.
 ### Navigation
 
 The sidebar is hard-coded in `src/components/layout/Sidebar.tsx` (there is no
-`constants/data.ts` here). The entity-wallet groups — Wallet, Approvals,
-Controllership, Delegated authority, Appeals — sit directly under Dashboard,
-above the existing issuer/verifier items.
+`constants/data.ts` here). It carries the Entity Wallet and nothing else —
+Dashboard, Wallet, Approvals, Members, Controllership, Delegated authority,
+Appeals, and NDI administration for the platform's administrators. The
+inherited Studio issuer/verifier items (Users, Connections, Credentials,
+Schemas, Trust, Ecosystems, Billing, invitations, developer settings) are no
+longer in the nav; their routes still exist but nothing in the demo links to
+them.
 
 Which rows exist depends on who the demo is being driven as: they are
 **absent** for a persona who may not use them, never disabled. A Controller

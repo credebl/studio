@@ -22,8 +22,7 @@ import { useDemo } from "@/lib/demoStore";
  * should share a Save button with a description field.
  */
 export function OrgProfileView() {
-  const { organizations, activeOrgId, updateOrganization, members, schemas, credentials } =
-    useDemo();
+  const { organizations, activeOrgId, updateOrganization, schemas, credentials } = useDemo();
   const org = organizations.find((o) => o.id === activeOrgId) ?? organizations[0];
 
   const [name, setName] = useState("");
@@ -93,7 +92,7 @@ export function OrgProfileView() {
 
         <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(240px,1fr))]">
           {[
-            { label: "Members", n: members.length, icon: "users" as const },
+            { label: "Members", n: org?.memberIds.length ?? 0, icon: "users" as const },
             { label: "Schemas", n: schemas.length, icon: "layers" as const },
             { label: "Credentials issued", n: credentials.length, icon: "issue" as const },
           ].map((s) => (

@@ -6,6 +6,7 @@ import { Countdown } from "@/components/ui/Countdown";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Icon, type IconName } from "@/components/ui/icons";
+import { inOrg, shortOrgName } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 import { describeRelation } from "@/features/controllership/scopeModel";
@@ -47,11 +48,17 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
     parkedOperations,
     currentPerson,
     personById,
+    activeOrgId,
+    organizations,
   } = useDemo();
 
   const persona = harness.persona;
+  /* Only this organisation's wallet: Bank of Bhutan's dashboard never
+     shows what is waiting in Pelden's. */
+  const here = inOrg(activeOrgId);
+  const orgName = organizations.find((o) => o.id === activeOrgId)?.name ?? "the organisation";
 
-  const relation = relations.find((r) => r.personId === persona && r.state === "ACTIVE");
+  const relation = relations.filter(here).find((r) => r.personId === persona && r.state === "ACTIVE");
 
   const canDecide = Boolean(
     relation?.scope.grants.some((g) => g.operation === "approval:decide"),
@@ -61,7 +68,7 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
 
   /* Somebody else is blocked. First, always. */
   if (canDecide && !allClear) {
-    for (const operation of parkedOperations.filter((p) => p.state === "parked")) {
+    for (const operation of parkedOperations.filter(here).filter((p) => p.state === "parked")) {
       tasks.push({
         key: operation.id,
         icon: "userCheck",
@@ -77,7 +84,7 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
   /* A relying party is waiting. */
   for (const request of allClear
     ? []
-    : verificationRequests.filter((v) => v.state === "ready")) {
+    : verificationRequests.filter(here).filter((v) => v.state === "ready")) {
     tasks.push({
       key: request.id,
       icon: "verify",
@@ -92,7 +99,7 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
   }
 
   /* Nobody is waiting on these. */
-  for (const offer of allClear ? [] : offers.filter((o) => o.state === "pending")) {
+  for (const offer of allClear ? [] : offers.filter(here).filter((o) => o.state === "pending")) {
     tasks.push({
       key: offer.id,
       icon: "download",
@@ -185,9 +192,14 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
           <h2 className="font-display text-[15px] font-semibold text-strong">
             What you may do
           </h2>
-          <p className="text-[12.5px] leading-[1.5] text-faint">
-            Acting for Pelden Trading. Never as it.
-          </p>
+          {/* Said only to someone who does act for it — to a member with no
+              authority, "acting for, never as" describes something they
+              cannot do. */}
+          {relation ? (
+            <p className="text-[12.5px] leading-[1.5] text-faint">
+              Acting for {shortOrgName(orgName)}. Never as it.
+            </p>
+          ) : null}
         </div>
 
         {relation ? (
@@ -217,9 +229,25 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
             </div>
           </>
         ) : (
-          <p className="relative z-[4] mt-3 text-[13px] leading-[1.6] text-muted">
-            You hold no authority for this entity through the console.
-          </p>
+          /* Someone with no authority is most often a member who has just
+             joined. The same two sentences the invitation used — what it
+             lets them do, and what it does not — so the console agrees with
+             what they accepted (UXD-04). */
+          <ul className="relative z-[4] m-0 mt-3 flex list-none flex-col gap-2 p-0">
+            <li className="flex items-start gap-2">
+              <Icon name="check" size={12} strokeWidth={2.6} className="mt-[5px] flex-none text-accent" />
+              <span className="text-[12.5px] leading-[1.55] text-muted">
+                See {shortOrgName(orgName)}&rsquo;s information.
+              </span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Icon name="close" size={12} strokeWidth={2.6} className="mt-[5px] flex-none" style={{ color: "var(--text-faint)" }} />
+              <span className="text-[12.5px] leading-[1.55] text-muted">
+                Nothing on its behalf yet. If that&rsquo;s needed, the owner sets it up and you&rsquo;ll be
+                asked to accept it.
+              </span>
+            </li>
+          </ul>
         )}
       </Panel>
     </div>

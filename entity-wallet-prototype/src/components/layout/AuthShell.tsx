@@ -26,11 +26,15 @@ export function AuthShell({ children, title, lead, scene }: AuthShellProps) {
 
       {/* The header is attached rather than floating, so the body needs no
           clearance padding — only its own breathing room. */}
-      <main className="mx-auto flex w-full max-w-[1200px] flex-1 items-center px-5 py-14 min-[641px]:px-8 min-[901px]:py-20">
-        <div className="grid w-full items-center gap-12 min-[901px]:grid-cols-[1.05fr_1fr] min-[901px]:gap-20">
+      <main className="mx-auto flex w-full max-w-[1200px] flex-1 items-center px-5 py-14 min-[641px]:px-8 min-[901px]:py-14">
+        {/* Top-aligned, with the rail held in place while a long card scrolls.
+            Centred, a tall card — an invitation's summary above its set-up
+            form — pushed the rail's headline down to the fold at laptop
+            height, where the demo's floating controls sat on top of it. */}
+        <div className="grid w-full items-center gap-12 min-[901px]:grid-cols-[1.05fr_1fr] min-[901px]:items-start min-[901px]:gap-20">
           {/* Left rail — hidden on phones, where the form is the whole job. */}
-          <section className="hidden min-[901px]:block">
-            <div className="mb-10 max-w-[440px]">{scene}</div>
+          <section className="hidden min-[901px]:sticky min-[901px]:top-10 min-[901px]:block">
+            <div className="mb-8 max-w-[380px]">{scene}</div>
             <Eyebrow>— Bhutan NDI</Eyebrow>
             <h1 className="mt-4 max-w-[460px] font-display text-[clamp(30px,3.4vw,42px)] font-semibold leading-[1.08] tracking-[-0.03em] text-strong [text-wrap:balance]">
               {title}

@@ -14,7 +14,7 @@ interface TopBarProps {
 
 export function TopBar({ onToggleNav, navOpen }: TopBarProps) {
   return (
-    <header className="fixed inset-x-0 top-0 z-[60] h-16 bg-[var(--chrome-fill)] backdrop-blur-[20px] backdrop-saturate-[140%]">
+    <header data-topbar="1" className="fixed inset-x-0 top-0 z-[60] h-16 bg-[var(--chrome-fill)] backdrop-blur-[20px] backdrop-saturate-[140%]">
       {/* The hairlines are drawn rather than set as a border-b, so the rule
           under the bar starts where the sidebar ends. A rule running the whole
           width cut the logo off from the nav column beneath it and made the

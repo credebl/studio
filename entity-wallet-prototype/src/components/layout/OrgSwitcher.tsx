@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icons";
-import { PLATFORM_ADMINS } from "@/lib/demoData";
+import { isPlatformAdmin } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 /**
@@ -15,12 +15,15 @@ import { useDemo } from "@/lib/demoStore";
  * stuck under.
  */
 export function OrgSwitcher() {
-  const { organizations, activeOrgId, harness } = useDemo();
+  const { organizations, activeOrgId, harness, currentPerson } = useDemo();
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
-  const isAdmin = PLATFORM_ADMINS.includes(harness.persona);
+  const isAdmin = isPlatformAdmin(currentPerson);
 
-  const active = organizations.find((o) => o.id === activeOrgId) ?? organizations[0];
+  /* Only the organisations this person belongs to — Yeshey never sees
+     Pelden, Dorji never sees the bank. */
+  const mine = organizations.filter((o) => o.memberIds.includes(harness.persona));
+  const active = mine.find((o) => o.id === activeOrgId) ?? mine[0] ?? organizations.find((o) => o.id === activeOrgId);
 
   useEffect(() => {
     if (!open) return;
@@ -36,15 +39,15 @@ export function OrgSwitcher() {
     };
   }, [open]);
 
-  /* NDI's administrators act for the platform administration organisation
-     and nothing else, so there is nothing to switch to. The organisation
-     being acted in is still named — "never implied by context alone"
-     (UX-EW-01 §3.4) — it just is not a menu. */
+  /* NDI's administrators act for Bhutan NDI's own organisation and nothing
+     else, so there is nothing to switch to. The organisation being acted in
+     is still named — "never implied by context alone" (UX-EW-01 §3.4) — it
+     just is not a menu. The shield marks it as the platform's own. */
   if (isAdmin) {
     return (
       <span className="inline-flex h-10 max-w-[260px] items-center gap-2.5 rounded-[10px] border border-grid bg-[rgb(var(--tint)/0.03)] px-3.5 font-display text-[13px] font-medium text-body">
         <Icon name="shieldCheck" size={15} strokeWidth={1.7} className="flex-none text-accent" />
-        <span className="hidden truncate min-[561px]:inline">Bhutan NDI · platform administration</span>
+        <span className="hidden truncate min-[561px]:inline">{active?.name ?? "Bhutan NDI"}</span>
       </span>
     );
   }
@@ -56,7 +59,7 @@ export function OrgSwitcher() {
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-haspopup="menu"
-        className="ndi-hairline-btn inline-flex h-10 max-w-[220px] items-center gap-2.5 rounded-[10px] border border-grid bg-[rgb(var(--tint)/0.03)] px-3.5 font-display text-[13px] font-medium text-body"
+        className="ndi-hairline-btn inline-flex h-10 max-w-[260px] items-center gap-2.5 rounded-[10px] border border-grid bg-[rgb(var(--tint)/0.03)] px-3.5 font-display text-[13px] font-medium text-body"
       >
         <Icon name="building" size={15} strokeWidth={1.7} className="flex-none text-accent" />
         <span className="hidden truncate min-[561px]:inline">
