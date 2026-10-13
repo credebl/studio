@@ -108,6 +108,15 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
         needs: "Invitation service with expiry, revocation, single-use signed links and the acceptance-time re-checks run server-side.",
       },
       {
+        /* Not simulated so much as not specified: these two invitation
+           kinds exist only in the prototype. Listed here, as well as in the
+           PR, so nobody at the showcase takes them as the spec. */
+        shown: "Root inviting a platform admin, and NDI inviting an existing organisation to keep its own records",
+        reality:
+          "Two invitation kinds the prototype added. FLOW-ONB-02 specifies only member and agency invitations; platform admins are a deployment precondition there, and an existing organisation starts verification without being invited. Both reuse the agency invitation's 30-day expiry. Invitees set up their account on the invitation instead of through sign-up — also a departure from FLOW-ONB-02, whose version sends them through sign-up.",
+        needs: "A decision on whether these belong in FLOW-ONB-02 (or another flow), and on the set-up-from-the-link shortcut.",
+      },
+      {
         shown: "Two administrators designating a foundational issuer",
         reality:
           "Dual control is enforced by the demo store, which also refuses and logs a self-approval — but the store is not a boundary.",

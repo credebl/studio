@@ -668,7 +668,7 @@ interface DemoActions {
   setUpPlatformAdmin: (
     invitationId: string,
     name: string,
-  ) => { ok: true; personId: PersonaId } | { ok: false; error: "invalid" };
+  ) => { ok: true; personId: PersonaId } | { ok: false; error: "E4" | "E5" | "E6" | "E7" | "invalid" | "has_account" };
   /** An organisation's owner asks NDI for an Entity Wallet. */
   applyForEntityWallet: (note: string) => string;
   /** A platform admin decides a request. Approving a wallet sends kind W. */
@@ -1850,6 +1850,17 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         const invitee = s0.people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase());
         const name = account?.name || invitee?.name || "New member";
         if (inv.kind === "A" || inv.kind === "W") {
+          /* SCR-INV-04 asks for the person to be signed in as the invited
+             address, whatever kind of invitation it is. Only member
+             invitations checked it, so an administrator's or an
+             organisation's invitation opened while driving as someone else
+             — root, Dorji — could be accepted in the invitee's name, and the
+             screen then switched the session to them. */
+          const hasAccount = Boolean(account) || Boolean(invitee && invitee.hasAccount !== false);
+          if (!hasAccount) return { ok: false, error: "no_account" };
+          const me = s0.people.find((p) => p.id === s0.harness.persona);
+          const signedInAsInvitee = Boolean(account) || me?.email.toLowerCase() === inv.email.toLowerCase();
+          if (!signedInAsInvitee) return { ok: false, error: "wrong_person" };
           setState((s) => ({
             ...s,
             orgInvitations: s.orgInvitations.map((i) =>
@@ -2202,23 +2213,34 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         const inv = s0.orgInvitations.find((i) => i.id === invitationId);
         const name = nameIn.trim();
         const inviter = inv ? s0.people.find((p) => p.id === inv.invitedBy) : undefined;
-        /* The same re-checks as any acceptance: still pending, not expired,
-           and root still root. */
-        if (
-          !inv ||
-          inv.kind !== "A" ||
-          inv.state !== "PENDING" ||
-          (inv.expiresAt !== null && new Date(inv.expiresAt).getTime() < Date.now()) ||
-          inviter?.platformRole !== "root" ||
-          !name
-        ) {
-          return { ok: false, error: "invalid" };
+        /* The same re-checks as any acceptance, each with its own answer so
+           the screen can say which one it was (UX-EW-01 §3.5): still
+           pending, not expired, and root still root.
+           The expiry is compared as a date, the way member and Entity
+           Wallet invitations compare it. `new Date("YYYY-MM-DD")` is
+           midnight at the start of that day, so the old comparison refused
+           an admin invitation on its last day while the others still took
+           theirs. */
+        if (!inv || inv.kind !== "A") return { ok: false, error: "E5" };
+        if (inv.state === "ACCEPTED") return { ok: false, error: "E7" };
+        if (inv.state === "EXPIRED" || (inv.expiresAt !== null && inv.expiresAt < today())) {
+          return { ok: false, error: "E4" };
         }
+        if (inv.state !== "PENDING") return { ok: false, error: "E5" };
+        if (inviter?.platformRole !== "root") return { ok: false, error: "E6" };
+        if (!name) return { ok: false, error: "invalid" };
         /* Someone the story already knows (Kinzang) keeps their
            record; anyone else becomes the "newadmin" persona. */
         const known = s0.people.find(
           (p) => p.email.toLowerCase() === inv.email.toLowerCase() && p.id !== "newadmin",
         );
+        /* An address that already has an account never gets a second set-up.
+           SCR-INV-04 requires the person to be signed in as the invited
+           address; setting up here would let whoever opened the link rename
+           that account and make it an administrator without signing in as
+           it. They sign in and accept instead, as a member invitation does
+           (setUpMember's has_account). */
+        if (known && known.hasAccount !== false) return { ok: false, error: "has_account" };
         const personId = ((known?.id as PersonaId | undefined) ?? "newadmin") as PersonaId;
         setState((s) => {
           const people = known

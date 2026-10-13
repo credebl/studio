@@ -60,6 +60,8 @@ export function AccountSetupForm({
   busyLabel,
   onDecline,
   idPrefix,
+  intro,
+  forcedPasswordError,
 }: {
   /** The invited address, shown so the person can see whose account this is. */
   email: string;
@@ -74,6 +76,14 @@ export function AccountSetupForm({
   onDecline?: () => void;
   /** Keeps ids unique if two forms ever share a page. */
   idPrefix: string;
+  /**
+   * The line under the address. Defaults to the invitation's ("this link
+   * came to your address"); sign-up passes null, because there the address
+   * was confirmed by the email round trip and the line would be untrue.
+   */
+  intro?: React.ReactNode | null;
+  /** A password-rule miss to show at the field — the state switcher's E8. */
+  forcedPasswordError?: string | null;
 }) {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -120,10 +130,12 @@ export function AccountSetupForm({
         <Icon name="check" size={14} strokeWidth={2.2} className="text-accent" />
         <span className="break-words">{email}</span>
       </span>
-      <p className="m-0 -mt-1 text-center text-[13px] leading-[1.6] text-muted">
-        Set up your account to accept. This link came to your address, so there&rsquo;s nothing
-        else to confirm.
-      </p>
+      {intro === undefined ? (
+        <p className="m-0 -mt-1 text-center text-[13px] leading-[1.6] text-muted">
+          Set up your account to accept. This link came to your address, so there&rsquo;s nothing
+          else to confirm.
+        </p>
+      ) : intro}
 
       <div className={FIELD_BLOCK_CLASS}>
         <label htmlFor={`${idPrefix}-name`} className={LABEL_CLASS}>
@@ -164,8 +176,8 @@ export function AccountSetupForm({
             }}
             onBlur={() => setTouched(true)}
             disabled={busy}
-            aria-invalid={passwordError ? true : undefined}
-            aria-describedby={`${idPrefix}-password-rules${passwordError ? ` ${idPrefix}-password-error` : ""}`}
+            aria-invalid={passwordError || forcedPasswordError ? true : undefined}
+            aria-describedby={`${idPrefix}-password-rules${passwordError || forcedPasswordError ? ` ${idPrefix}-password-error` : ""}`}
             className={`${FIELD_CLASS} h-12 pr-[48px]`}
           />
           <button
@@ -194,7 +206,9 @@ export function AccountSetupForm({
             );
           })}
         </ul>
-        {passwordError ? <FieldError id={`${idPrefix}-password-error`} message={passwordError} /> : null}
+        {passwordError || forcedPasswordError ? (
+          <FieldError id={`${idPrefix}-password-error`} message={(passwordError ?? forcedPasswordError) as string} />
+        ) : null}
       </div>
 
       <ConfirmPasswordField

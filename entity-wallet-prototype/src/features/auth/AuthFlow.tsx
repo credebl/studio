@@ -57,7 +57,15 @@ export function AuthFlow({ start = "login" }: { start?: AuthStep } = {}) {
         initialEmail={email}
         onSubmit={(value) => {
           const result = signIn(value);
-          if (!result.ok) return "There's no account with that address. Check it, or create an account.";
+          /* The same words whether the address has no account or the
+             password is wrong. "There's no account with that address" made
+             this page a way to test which addresses are registered — what
+             FLOW-ONB-01 S3 and UX-EW-01 §2.4 rule out ("any indication of
+             whether an email address is already registered"), and what
+             sign-up already avoids with identical E1/E7 wording (UXD-02).
+             Any password works in this demo, so only an unknown address
+             reaches this line; the words still have to fit either cause. */
+          if (!result.ok) return "That email and password don't match an account. Check them and try again, or reset your password.";
           router.push(result.personId ? "/dashboard" : "/welcome");
         }}
         onForgotPassword={() => router.push("/reset-password")}
