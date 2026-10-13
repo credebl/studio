@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Icon } from "@/components/ui/icons";
-import { isPlatformAdmin } from "@/lib/demoData";
+import { NDI_ORG, isPlatformAdmin } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 /**
@@ -42,11 +42,17 @@ export function OrgSwitcher() {
   /* NDI's administrators act for Bhutan NDI's own organisation and nothing
      else, so there is nothing to switch to. The organisation being acted in
      is still named — "never implied by context alone" (UX-EW-01 §3.4) — it
-     just is not a menu. The shield marks it as the platform's own. */
+     just is not a menu. Bhutan NDI's own mark sits beside its name, so the
+     platform's organisation reads as NDI's at a glance rather than as one
+     more business. The mark is decorative next to the name, hence alt="". */
   if (isAdmin) {
     return (
       <span className="inline-flex h-10 max-w-[260px] items-center gap-2.5 rounded-[10px] border border-grid bg-[rgb(var(--tint)/0.03)] px-3.5 font-display text-[13px] font-medium text-body">
-        <Icon name="shieldCheck" size={15} strokeWidth={1.7} className="flex-none text-accent" />
+        {(active?.id ?? NDI_ORG) === NDI_ORG ? (
+          <img src="/media/logos/ndi-org-mark.png" alt="" width={20} height={20} className="h-5 w-5 flex-none rounded-full" />
+        ) : (
+          <Icon name="shieldCheck" size={15} strokeWidth={1.7} className="flex-none text-accent" />
+        )}
         <span className="hidden truncate min-[561px]:inline">{active?.name ?? "Bhutan NDI"}</span>
       </span>
     );
