@@ -176,7 +176,9 @@ function PlatformInvitationView({ id }: { id: string }) {
     window.setTimeout(() => {
       setBusy(false);
       const r = setUpPlatformAdmin(id, name);
-      if (r.ok) return router.push("/dashboard");
+      /* SCR-INV-05: confirmation that they are now a platform admin, and
+         the way into the admin console — not straight to the dashboard. */
+      if (r.ok) return router.push(`/invitation/${id}/accepted`);
       if (r.error === "invalid") return setFormError("Enter your name.");
       setResult(faceFor(r.error));
     }, ROUND_TRIP_MS);
@@ -201,7 +203,7 @@ function PlatformInvitationView({ id }: { id: string }) {
       }
       if (invitee) setPersona(invitee.id as Parameters<typeof setPersona>[0]);
       if (admin) {
-        router.push("/admin/organisations");
+        router.push(`/invitation/${id}/accepted`);
       } else {
         startOrgOnboarding("company", id);
         router.push("/onboarding/prove");

@@ -45,7 +45,6 @@ import {
   type OrgInvitation,
   type Person,
   type PersonId,
-  type PersonaId,
   type Schema,
   type Scope,
   type ScopeFilter,
@@ -307,18 +306,18 @@ const activeAdmins = (s: DemoState) => s.people.filter((p) => p.platformRole ===
 
 /**
  * FLOW-ONB-02 P8 — whether the root account may issue another administrator
- * invitation, and if not, why. Root brings admins on only while fewer than
- * two are active, and only as many as it takes to reach two (S9). The same
- * answer decides whether SCR-INV-01 offers root the form at all, so the
+ * invitation: only while fewer than two named admins are active (S9). The
+ * same answer decides whether SCR-INV-01 offers root the form at all, so the
  * screen never offers something the store would then refuse.
+ *
+ * There used to be a cap on pending invitations too — no more than it takes
+ * to reach two. The spec dropped it on 14 Oct: the step-8 re-check already
+ * stops a third admin, because a root-issued invitation accepted once two
+ * are active is void (E6, AC-16), and a cap only made a mistyped address
+ * harder to replace.
  */
-function rootInviteBlock(s: DemoState): "two_active" | "enough_pending" | null {
-  const active = activeAdmins(s).length;
-  if (active >= 2) return "two_active";
-  const pending = s.orgInvitations.filter(
-    (i) => i.kind === "A" && i.invitedBy === "root" && i.state === "PENDING" && !(i.expiresAt && i.expiresAt < today()),
-  ).length;
-  return active + pending >= 2 ? "enough_pending" : null;
+function rootInviteBlock(s: DemoState): "two_active" | null {
+  return activeAdmins(s).length >= 2 ? "two_active" : null;
 }
 
 /**
@@ -609,7 +608,7 @@ interface DemoActions {
     legalIdentity: string;
     purpose: string;
     needsSecondApproval: boolean;
-  }) => { ok: true; id: string } | { ok: false; error: "E12" };
+  }) => { ok: true; id: string } | { ok: false; error: "E1" | "E12" };
   /**
    * Step 2 — a second administrator approves. Refuses self-approval (E11),
    * and the root account, which approves nothing (E13).
@@ -692,9 +691,9 @@ interface DemoActions {
    * Kind A — someone is invited to administer the platform. A platform
    * admin's invitation waits for a second, distinct admin (P3, S2), and is
    * refused while fewer than two are active (E12). The root account's is
-   * sent straight away, but only under S9 — fewer than two active, no more
-   * than it takes to reach two, with a reason and the custodians named —
-   * and is otherwise refused (E14).
+   * sent straight away, but only under S9 — fewer than two active, with the
+   * custodians named, and a reason if one is given — and is otherwise
+   * refused (E14).
    */
   invitePlatformAdmin: (
     email: string,
@@ -703,7 +702,7 @@ interface DemoActions {
     | { ok: true; id: string; queued: boolean }
     | { ok: false; error: "E1" | "E3" | "E12" | "E14" | "invalid" };
   /** P7 and P8, as the server would answer them — for SCR-INV-01 to render. */
-  adminStatus: () => { active: number; rootBlock: "two_active" | "enough_pending" | null };
+  adminStatus: () => { active: number; rootBlock: "two_active" | null };
   /**
    * The invitee of a platform-admin invitation sets up their account from the
    * link — name and password — which accepts the invitation in the same step.
@@ -711,7 +710,7 @@ interface DemoActions {
   setUpPlatformAdmin: (
     invitationId: string,
     name: string,
-  ) => { ok: true; personId: PersonaId } | { ok: false; error: "E4" | "E5" | "E6" | "E7" | "invalid" | "has_account" };
+  ) => { ok: true; personId: PersonId } | { ok: false; error: "E4" | "E5" | "E6" | "E7" | "invalid" | "has_account" };
   /** An organisation's owner asks NDI for an Entity Wallet. */
   applyForEntityWallet: (note: string) => string;
   /** A platform admin decides a request. Approving a wallet sends kind W. */
@@ -1747,6 +1746,14 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       },
 
       proposeOrganisation: ({ email, legalName, legalIdentity, purpose, needsSecondApproval }) => {
+        /* P2, S9: a named platform admin. The root account issues no member
+           or agency invitation — refused here as well as hidden on the
+           screen, because the screen isn't the boundary (as E13, E14). */
+        const proposer = stateRef.current.people.find((p) => p.id === stateRef.current.harness.persona);
+        if (proposer?.platformRole !== "admin") {
+          if (proposer?.platformRole === "root") log("Control failure — the root account tried to invite an organisation", NDI_ORG);
+          return { ok: false, error: "E1" };
+        }
         /* P7, E12: a second approval needs a second named admin to give it.
            Refused up front rather than left waiting for nobody. */
         if (needsSecondApproval && activeAdmins(stateRef.current).length < 2) {
@@ -1844,11 +1851,15 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       withdrawInvitation: (id, rootReason) => {
         const s0 = stateRef.current;
         /* The root account may revoke only what it issued, and each use is
-           logged with its reason (S9). */
+           logged as a root-account use, with the reason when one is given
+           (S9; the reason is optional since 14 Oct). */
         if (s0.people.find((p) => p.id === s0.harness.persona)?.platformRole === "root") {
           const inv = s0.orgInvitations.find((i) => i.id === id);
-          if (!inv || inv.invitedBy !== "root" || !rootReason?.trim()) return;
-          log(`Root account used — revoked the invitation to ${inv.email}. Reason: ${rootReason.trim()}`, NDI_ORG);
+          if (!inv || inv.invitedBy !== "root") return;
+          log(
+            `Root account used — revoked the invitation to ${inv.email}${rootReason?.trim() ? `. Reason: ${rootReason.trim()}` : ""}`,
+            NDI_ORG,
+          );
         }
         setState((s) => ({
           ...s,
@@ -1858,13 +1869,22 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         }));
       },
 
-      resendInvitation: (id) =>
+      resendInvitation: (id) => {
+        const s0 = stateRef.current;
+        /* The root account may resend only what it issued, logged as a
+           root-account use like every other (S9). */
+        if (s0.people.find((p) => p.id === s0.harness.persona)?.platformRole === "root") {
+          const inv = s0.orgInvitations.find((i) => i.id === id);
+          if (!inv || inv.invitedBy !== "root") return;
+          log(`Root account used — resent the invitation to ${inv.email}`, NDI_ORG);
+        }
         setState((s) => ({
           ...s,
           orgInvitations: s.orgInvitations.map((i) =>
             i.id === id ? { ...i, delivery: "delivered", sentAt: today() } : i,
           ),
-        })),
+        }));
+      },
 
       acceptInvitation: (id) => {
         const s0 = stateRef.current;
@@ -2260,9 +2280,10 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           return { ok: false, error: "E3" };
         }
         if (asRoot) {
-          /* P8, E14: only under S9, and only with a reason and the
-             custodians named. Refused, logged and alerted otherwise. */
-          if (rootInviteBlock(s0) || !root?.reason.trim() || !root.custodians.trim()) {
+          /* P8, E14: only under S9, and only with the custodians named —
+             the reason is optional (revised 14 Oct). Refused, logged and
+             alerted otherwise. */
+          if (rootInviteBlock(s0) || !root?.custodians.trim()) {
             log("Control failure — the root account tried to add an administrator outside its emergency rule", NDI_ORG);
             return { ok: false, error: "E14" };
           }
@@ -2287,7 +2308,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
               /* S2: every Kind A needs a second named admin — except the
                  root account's, which S9 checks and logs instead. */
               needsSecondApproval: !asRoot,
-              rootReason: asRoot ? root!.reason.trim() : null,
+              rootReason: asRoot ? root!.reason.trim() || null : null,
               rootCustodians: asRoot ? root!.custodians.trim() : null,
               invitedBy: s.harness.persona,
               approvedBy: null,
@@ -2304,7 +2325,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         }));
         log(
           asRoot
-            ? `Root account used — invited ${email} as a platform administrator. Reason: ${root!.reason.trim()}. Custodians: ${root!.custodians.trim()}`
+            ? `Root account used — invited ${email} as a platform administrator. Custodians: ${root!.custodians.trim()}${root!.reason.trim() ? `. Reason: ${root!.reason.trim()}` : ""}`
             : `${email} proposed as a platform administrator — awaiting a second administrator`,
           NDI_ORG,
         );
@@ -2346,11 +2367,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           return { ok: false, error: "E6" };
         }
         if (!name) return { ok: false, error: "invalid" };
-        /* Someone the story already knows (Kinzang) keeps their
-           record; anyone else becomes the "newadmin" persona. */
-        const known = s0.people.find(
-          (p) => p.email.toLowerCase() === inv.email.toLowerCase() && p.id !== "newadmin",
-        );
+        /* Someone the story already knows (Kinzang, Tshendu) keeps their
+           record; anyone else gets a record of their own. They all used to
+           share one "newadmin" slot, so a second new admin replaced the
+           first, who could then no longer sign in — and now that admins
+           invite admins, a demo does invite more than one. The same fix
+           setUpMember has. */
+        const known = s0.people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase());
         /* An address that already has an account never gets a second set-up.
            SCR-INV-04 requires the person to be signed in as the invited
            address; setting up here would let whoever opened the link rename
@@ -2358,16 +2381,18 @@ export function DemoProvider({ children }: { children: ReactNode }) {
            it. They sign in and accept instead, as a member invitation does
            (setUpMember's has_account). */
         if (known && known.hasAccount !== false) return { ok: false, error: "has_account" };
-        const personId = ((known?.id as PersonaId | undefined) ?? "newadmin") as PersonaId;
+        const personId: PersonId = known?.id ?? rid("person");
         setState((s) => {
           const people = known
             ? s.people.map((p) =>
                 p.id === known.id ? { ...p, name, platformRole: "admin" as const, hasAccount: true } : p,
               )
             : [
-                ...s.people.filter((p) => p.id !== "newadmin"),
+                ...s.people,
                 {
-                  id: "newadmin",
+                  id: personId,
+                  /* Listed by the persona switcher, like an invited member. */
+                  joinedBy: invitationId,
                   name,
                   cid: "—",
                   email: inv.email,

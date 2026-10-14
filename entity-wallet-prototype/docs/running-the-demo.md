@@ -25,9 +25,10 @@ zero:
    onboard (FLOW-ONB-02 v0.6, P6, S10).
 2. **Platform admin onboarding** — root invites Kinzang Dorji
    (`kinzang.dorji@bhutanndi.bt`) and then Tshendu (`tshendu@bhutanndi.bt`),
-   each with a reason and the custodians present, which are logged. Each
-   opens the invitation — from the "Bhutan NDI root administrator" — and
-   sets up the account there. Two, because the root account approves
+   each with the custodians present (required) and a reason (optional), which
+   are logged. Each opens the invitation — from the "Bhutan NDI root
+   administrator" — sets up the account there, and lands on a confirmation
+   that they're now a platform admin. Two, because the root account approves
    nothing: every second approval is a second named admin (S2). Once two are
    active, root's invite form is replaced by the reason it can't add more
    (S9, P8).
@@ -302,7 +303,10 @@ catalogue has not designed yet. It is still reachable from NDI administration
 After bootstrap, new administrators come from the administrators (Kind A).
 Kinzang's invitation waits in **Approvals** for Tshendu, like a designation,
 and lasts 14 days once sent. As root, the same page shows only the
-invitations root sent, and revoking one asks for a reason.
+invitations root sent, and may resend or revoke them; each is logged as a
+root-account use, with a reason if one is given. Root can keep inviting until
+two admins are active; an invitation it sent that's accepted after that is
+void (E6).
 
 ### Flow 2 · Two ways onto the platform
 

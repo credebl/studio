@@ -111,9 +111,9 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 2,
     title: "Invite the first platform admin",
     happening:
-      "Root types the address the invitation goes to — nobody is an admin until NDI decides to trust them. Using the root account is logged with a reason and the custodians present, and every administrator is told.",
+      "Root types the address the invitation goes to — nobody is an admin until NDI decides to trust them. Using the root account is logged with the custodians present, and every administrator is told.",
     doThis:
-      "Type **kinzang.dorji@bhutanndi.bt**, a reason such as **Bringing on the first administrators**, the custodians present such as **Karma and Sonam**, press **Send invitation**, then **Open the invitation as kinzang.dorji@bhutanndi.bt** (dashed — it stands in for the invitee's inbox).",
+      "Type **kinzang.dorji@bhutanndi.bt**, the custodians present such as **Karma and Sonam**, and optionally a reason such as **Bringing on the first administrators**, then press **Send invitation**, then **Open the invitation as kinzang.dorji@bhutanndi.bt** (dashed — it stands in for the invitee's inbox).",
     route: "/admin/team",
     persona: "root",
   },
@@ -123,7 +123,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     happening:
       "The invitation is the onboarding. It's from the Bhutan NDI root administrator — the account, not a person — and says what it gives and what it doesn't: Kinzang can't approve anything Kinzang proposes. The account is set up right here; the link already proves the address.",
     doThis:
-      "Enter **Kinzang Dorji**, a password such as **Thimphu-Chorten-2026**, the same password again to confirm, then press **Set up account and accept**.",
+      "Enter **Kinzang Dorji**, a password such as **Thimphu-Chorten-2026**, the same password again to confirm, then press **Set up account and accept**. Then press **Next**.",
     match: "^/invitation/[^/]+$",
   },
   {
@@ -132,7 +132,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     happening:
       "One administrator isn't enough: anything that needs approving needs a second named one, and the root account won't be it. So root invites one more — and after that, root's form is gone.",
     doThis:
-      "Type **tshendu@bhutanndi.bt**, the same reason and custodians, press **Send invitation**, then **Open the invitation as tshendu@bhutanndi.bt**.",
+      "Type **tshendu@bhutanndi.bt** and the same custodians, press **Send invitation**, then **Open the invitation as tshendu@bhutanndi.bt**.",
     say: "The root account is break-glass. Once two people run the platform, it can't add anyone else.",
     route: "/admin/team",
     persona: "root",
@@ -142,7 +142,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     title: "Tshendu sets up the account",
     happening: "The same invitation Kinzang had, from the same root account.",
     doThis:
-      "Enter **Tshendu**, a password such as **Thimphu-Chorten-2026**, the same password again, then press **Set up account and accept**.",
+      "Enter **Tshendu**, a password such as **Thimphu-Chorten-2026**, the same password again, then press **Set up account and accept**. On the confirmation, press **Go to the admin console**.",
     match: "^/invitation/[^/]+$",
   },
   {

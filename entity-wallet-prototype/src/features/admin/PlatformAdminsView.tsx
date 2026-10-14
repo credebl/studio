@@ -38,21 +38,21 @@ import { LOCAL_MS } from "@/lib/demoTiming";
  * split custody, used only to bring on the first two administrators and to
  * restore them if fewer than two are active (S9). So:
  *
- * - Root sees the form only while P8 allows another invitation, and is told
- *   why when it doesn't — instead of a form that would be refused (E14 stays
- *   the store's backstop). Root's form asks for a reason and the custodians
- *   present, because the platform can't tell which custodian acted (S10).
+ * - Root sees the form only while fewer than two admins are active (P8), and
+ *   is told why once two are — instead of a form that would be refused (E14
+ *   stays the store's backstop). Root's form requires the custodians
+ *   present, because the platform can't tell which custodian acted (S10);
+ *   a reason is optional and helps the admins who are told understand why.
  * - After that, administrators invite each other, and every such invitation
  *   waits for a second, distinct administrator (S2) — refused outright while
  *   there is nobody to give it (E12).
- * - Root sees only the invitations it issued, and revoking one needs a
- *   reason, logged like every other use.
+ * - Root sees only the invitations it issued, and may resend or revoke them,
+ *   each logged as a root-account use.
  */
 type Face =
   | "live"
   | "root"
   | "root_two_active"
-  | "root_enough_pending"
   | "admin"
   | "no_second_admin"
   | "refused"
@@ -61,12 +61,12 @@ type Face =
 
 export function PlatformAdminsView() {
   const router = useRouter();
-  const { people, orgInvitations, currentPerson, invitePlatformAdmin, withdrawInvitation, personById, adminStatus } = useDemo();
+  const { people, orgInvitations, currentPerson, invitePlatformAdmin, withdrawInvitation, resendInvitation, personById, adminStatus } =
+    useDemo();
   const forced = useScreenState("SCR-INV-01-admin", [
     "live",
     "root",
     "root_two_active",
-    "root_enough_pending",
     "admin",
     "no_second_admin",
     "refused",
@@ -81,6 +81,7 @@ export function PlatformAdminsView() {
   const [sent, setSent] = useState<{ id: string; email: string; queued: boolean } | null>(null);
   const [revoking, setRevoking] = useState<string | null>(null);
   const [revokeReason, setRevokeReason] = useState("");
+  const [resent, setResent] = useState<string | null>(null);
   /* The confirmation, and the way on to the invitee's side, sit under the
      form — below the fold at laptop height once the list has rows — so the
      page brings them up when they appear. */
@@ -91,14 +92,12 @@ export function PlatformAdminsView() {
   const natural: Face = isRoot
     ? status.rootBlock === "two_active"
       ? "root_two_active"
-      : status.rootBlock === "enough_pending"
-        ? "root_enough_pending"
-        : "root"
+      : "root"
     : status.active < 2
       ? "no_second_admin"
       : "admin";
   const face: Face = forced === "live" ? natural : forced;
-  const rootFace = face === "root" || face === "root_two_active" || face === "root_enough_pending" || (face === "refused" && isRoot);
+  const rootFace = face === "root" || face === "root_two_active" || (face === "refused" && isRoot);
 
   const root = people.find((p) => p.platformRole === "root");
   const admins = people.filter((p) => p.platformRole === "admin" && p.hasAccount !== false);
@@ -108,14 +107,13 @@ export function PlatformAdminsView() {
   );
 
   const E12 = "There's no other administrator to approve this. Ask the root account custodians to restore one.";
-  const E14 =
-    "The root account can add administrators only while fewer than two are active, only as many as are needed to reach two, and only with a reason and the custodians named.";
+  const E14 = "The root account can add administrators only while fewer than two are active, and only with the custodians named.";
 
   const send = (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    if (face === "root" && (!reason.trim() || !custodians.trim())) {
-      setError({ field: "form", text: "Give a reason and name the custodians present." });
+    if (face === "root" && !custodians.trim()) {
+      setError({ field: "form", text: "Name the custodians present." });
       return;
     }
     setBusy(true);
@@ -172,8 +170,8 @@ export function PlatformAdminsView() {
         {rootFace ? (
           <p className="m-0 flex items-start gap-2.5 rounded-[12px] border border-grid px-4 py-3 text-[13px] leading-[1.6] text-body" style={{ background: "rgb(var(--tint) / 0.04)" }}>
             <Icon name="key" size={15} strokeWidth={2} className="mt-[3px] flex-none" style={{ color: "var(--ndi-warning)" }} />
-            You&rsquo;re using the NDI root account. Give a reason and name the custodians present — this is
-            logged and every administrator is told.
+            You&rsquo;re using the NDI root account. Name the custodians present — this is logged and every
+            administrator is told. A reason helps them understand why.
           </p>
         ) : null}
         <label className={FIELD_BLOCK_CLASS}>
@@ -197,7 +195,7 @@ export function PlatformAdminsView() {
         {rootFace ? (
           <div className="grid gap-4 min-[761px]:grid-cols-2">
             <label className={FIELD_BLOCK_CLASS}>
-              <span className={LABEL_CLASS}>Reason</span>
+              <span className={LABEL_CLASS}>Reason (optional)</span>
               <input
                 name="rootReason"
                 value={reason}
@@ -272,8 +270,6 @@ export function PlatformAdminsView() {
 
         {face === "loading" ? null : face === "root_two_active" ? (
           notice("Two administrators are active, so the root account can't add more. Ask an administrator to invite them.")
-        ) : face === "root_enough_pending" ? (
-          notice("You've already invited enough administrators to reach two. Revoke one of those invitations if it's no longer needed.")
         ) : face === "no_second_admin" ? (
           <>
             {form}
@@ -340,15 +336,34 @@ export function PlatformAdminsView() {
                     {inv.state === "PENDING" ? (
                       <SimulatedLink onClick={() => router.push(`/invitation/${inv.id}`)}>Open as the invitee</SimulatedLink>
                     ) : null}
+                    {/* SCR-INV-03: resend and revoke. Root only on what it sent
+                        (the list above is already only those); either way
+                        the store checks again. Resending a sent invitation
+                        only — one waiting for approval hasn't gone out. */}
+                    {inv.state === "PENDING" ? (
+                      <HairlineButton
+                        onClick={() => {
+                          resendInvitation(inv.id);
+                          setResent(inv.email);
+                        }}
+                      >
+                        Resend
+                      </HairlineButton>
+                    ) : null}
                     {isRoot ? (
                       <HairlineButton onClick={() => setRevoking(inv.id)}>Revoke</HairlineButton>
-                    ) : inv.invitedBy === currentPerson.id ? (
+                    ) : (
                       <HairlineButton onClick={() => withdrawInvitation(inv.id)}>Revoke</HairlineButton>
-                    ) : null}
+                    )}
                   </Row>
                 ))}
               </ul>
             </Panel>
+            {resent ? (
+              <p role="status" className="m-0 text-[13px] text-muted">
+                Sent again to {resent}. The link they already have still works.
+              </p>
+            ) : null}
             {admins.length === 0 && pending.length === 0 ? (
               <p className="m-0 text-[13px] leading-[1.6] text-muted">
                 No platform admins yet{rootFace ? " — invite the first two above." : "."}
@@ -365,17 +380,16 @@ export function PlatformAdminsView() {
           }}
           tone="danger"
           title="Revoke this invitation?"
-          lead="It stops working straight away. Using the root account to revoke it is logged with your reason, and every administrator is told."
+          lead="It stops working straight away. Using the root account to revoke it is logged, and every administrator is told. A reason helps them understand why."
           confirmLabel="Revoke"
-          confirmDisabled={!revokeReason.trim()}
           onConfirm={() => {
-            if (revoking) withdrawInvitation(revoking, revokeReason);
+            if (revoking) withdrawInvitation(revoking, revokeReason.trim() || undefined);
             setRevoking(null);
             setRevokeReason("");
           }}
         >
           <label className={FIELD_BLOCK_CLASS}>
-            <span className={LABEL_CLASS}>Reason</span>
+            <span className={LABEL_CLASS}>Reason (optional)</span>
             <input value={revokeReason} onChange={(e) => setRevokeReason(e.target.value)} className={`${FIELD_CLASS} h-11`} />
           </label>
         </Dialog>

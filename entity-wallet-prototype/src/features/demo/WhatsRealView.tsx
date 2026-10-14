@@ -119,7 +119,7 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
       {
         shown: "The root account, held by two custodians",
         reality:
-          "One persona anyone can drive. The reason and the custodians typed in are kept in your browser, and \"every administrator is told\" is an entry in the activity feed — no alert goes anywhere, and there is no split credential.",
+          "One persona anyone can drive. The custodians and any reason typed in are kept in your browser, and \"every administrator is told\" is an entry in the activity feed — no alert goes anywhere, and there is no split credential.",
         needs: "A role account whose credential and MFA are split between two named custodians, the S9 limits checked server-side, and the alerting and custody register behind them.",
       },
       {

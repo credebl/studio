@@ -249,11 +249,7 @@ export type PersonaId =
   | "yeshey"
   | "root"
   | "tshering"
-  | "tshendu"
-  /* Whoever root last invited as an admin by an address the story does not
-     already know. Like "invitee", not a named character: the person is
-     whoever root typed, and exists only once they have set up. */
-  | "newadmin";
+  | "tshendu";
 
 /** The drivable personas, in story order. One list, so the harness, the nav
  *  and the acceptance screen cannot disagree about who exists.
@@ -267,7 +263,8 @@ export type PersonaId =
  *  character, because the person is whoever the owner typed into the invite
  *  form, and their record only exists once they have accepted. The harness
  *  shows a persona only while its person exists, so the invitee appears the
- *  moment there is one. */
+ *  moment there is one. An administrator invited at an unknown address is
+ *  the same: a record of their own, listed once they have set up. */
 export const PERSONAS: PersonaId[] = [
   "dorji",
   "rinzin",
@@ -278,7 +275,6 @@ export const PERSONAS: PersonaId[] = [
   "root",
   "tshering",
   "tshendu",
-  "newadmin",
 ];
 
 /** NDI's own administrators — not members of any business on the platform. */

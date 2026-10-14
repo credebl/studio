@@ -8,7 +8,7 @@ import { GradientButton } from "@/components/ui/GradientButton";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { Icon } from "@/components/ui/icons";
 import { SecureSignInScene } from "@/components/ui/scenes";
-import { shortOrgName } from "@/lib/demoData";
+import { NDI_ORG, shortOrgName } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 import { AuthCardHeader, AuthNotice } from "@/features/auth/AuthCard";
@@ -25,6 +25,9 @@ import { AuthCardHeader, AuthNotice } from "@/features/auth/AuthCard";
  *   organisations must be able to tell which one they have just joined.
  * - A business invited to register (self-service sign-up off) goes straight
  *   into Flow 2 with the organisation already named by the invitation.
+ * - A platform admin (Kind A) is told they now administer the platform, and
+ *   goes to the admin console — Bhutan NDI's own organisation — from here,
+ *   not straight from the invitation (UX-EW-01 SCR-INV-05).
  * - An agency official lands on a task, with the steps ahead, because
  *   accepting is where their work starts rather than ends. Those steps are
  *   Flow 5, which this prototype has not built yet; the screen says so
@@ -34,12 +37,18 @@ export function InvitationAcceptedView({ id }: { id: string }) {
   const router = useRouter();
   const { orgInvitations, organizations, people, setPersona, setActiveOrg, startOrgOnboarding } = useDemo();
 
-  const forced = useScreenState("SCR-INV-05", ["live", "loading", "member", "agency", "business", "error", "offline"]);
+  const forced = useScreenState("SCR-INV-05", ["live", "loading", "member", "admin", "agency", "business", "error", "offline"]);
 
   const inv = orgInvitations.find((i) => i.id === id);
   const org = inv?.orgId ? organizations.find((o) => o.id === inv.orgId) : null;
   const kind =
-    forced === "member" ? "M" : forced === "agency" || forced === "business" ? "O" : (inv?.kind ?? "M");
+    forced === "member"
+      ? "M"
+      : forced === "admin"
+        ? "A"
+        : forced === "agency" || forced === "business"
+          ? "O"
+          : (inv?.kind ?? "M");
   /* An ordinary business invited to register — the route every business
      takes while self-service sign-up is off. Unlike an agency it has
      somewhere to go now: Flow 2, with the organisation already named. */
@@ -64,7 +73,11 @@ export function InvitationAcceptedView({ id }: { id: string }) {
           You&rsquo;re <span className="ndi-wave-text">in</span>
         </>
       }
-      lead="Membership lets you see the organisation. Authority to act for it, if you need it, is set up separately and you'll be asked to accept it."
+      lead={
+        kind === "A"
+          ? "You administer the platform with the other administrators. Anything one of you proposes, another approves."
+          : "Membership lets you see the organisation. Authority to act for it, if you need it, is set up separately and you'll be asked to accept it."
+      }
     >
       {forced === "loading" ? (
         <>
@@ -81,6 +94,31 @@ export function InvitationAcceptedView({ id }: { id: string }) {
             </AuthNotice>
             <GradientButton block onClick={() => router.push(`/invitation/${id}`)}>
               Try again
+            </GradientButton>
+          </div>
+        </>
+      ) : kind === "A" ? (
+        <>
+          <AuthCardHeader title="You're now a platform admin" />
+          <div className="relative z-[4] flex flex-col gap-4">
+            <p role="status" className="m-0 text-center text-[14px] leading-[1.6] text-muted">
+              You can administer the Bhutan NDI platform, including approving what other administrators
+              propose. You can&rsquo;t approve anything you propose yourself.
+            </p>
+            {forced === "offline" ? (
+              <AuthNotice tone="warning">You&rsquo;re offline — the console will open when you&rsquo;re back.</AuthNotice>
+            ) : null}
+            <GradientButton
+              block
+              disabled={forced === "offline"}
+              onClick={() => {
+                if (member) setPersona(member.id);
+                setActiveOrg(NDI_ORG);
+                router.push("/dashboard");
+              }}
+            >
+              Go to the admin console
+              <Icon name="arrowRight" size={16} strokeWidth={2} />
             </GradientButton>
           </div>
         </>

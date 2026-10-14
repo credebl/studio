@@ -44,16 +44,29 @@ export function OrgSwitcher() {
      is still named — "never implied by context alone" (UX-EW-01 §3.4) — it
      just is not a menu. Bhutan NDI's own mark sits beside its name, so the
      platform's organisation reads as NDI's at a glance rather than as one
-     more business. The mark is decorative next to the name, hence alt="". */
+     more business. Below 561px the name is hidden to save room, so there the
+     mark has to name the organisation itself — for screen readers too —
+     rather than be decorative: the organisation is always named (§3.4). */
   if (isAdmin) {
     return (
       <span className="inline-flex h-10 max-w-[260px] items-center gap-2.5 rounded-[10px] border border-grid bg-[rgb(var(--tint)/0.03)] px-3.5 font-display text-[13px] font-medium text-body">
         {(active?.id ?? NDI_ORG) === NDI_ORG ? (
-          <img src="/media/logos/ndi-org-mark.png" alt="" width={20} height={20} className="h-5 w-5 flex-none rounded-full" />
+          <img
+            src="/media/logos/ndi-org-mark.png"
+            alt={active?.name ?? "Bhutan NDI"}
+            title={active?.name ?? "Bhutan NDI"}
+            width={20}
+            height={20}
+            className="h-5 w-5 flex-none rounded-full"
+          />
         ) : (
           <Icon name="shieldCheck" size={15} strokeWidth={1.7} className="flex-none text-accent" />
         )}
-        <span className="hidden truncate min-[561px]:inline">{active?.name ?? "Bhutan NDI"}</span>
+        {/* Hidden from screen readers where it shows, so the name isn't read
+            twice: the mark's alt already says it. */}
+        <span aria-hidden="true" className="hidden truncate min-[561px]:inline">
+          {active?.name ?? "Bhutan NDI"}
+        </span>
       </span>
     );
   }
