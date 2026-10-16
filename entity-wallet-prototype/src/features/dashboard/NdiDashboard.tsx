@@ -115,8 +115,9 @@ export function NdiDashboard({ name }: { name: string }) {
               />
             </div>
             <p className="m-0 text-[13px] leading-[1.6] text-muted">
-              {onPlatform.length} on the platform. Requests to issue, verify or hold an Entity Wallet
-              are decided by a platform admin.
+              {onPlatform.length} on the platform. Requests to issue or verify are decided by a
+              platform admin. Whether an organisation is verified is its authority&rsquo;s decision,
+              not NDI&rsquo;s.
             </p>
             <Link href="/admin/organisations" className="ndi-plainlink text-[12.5px] font-medium text-accent">
               Open organisations

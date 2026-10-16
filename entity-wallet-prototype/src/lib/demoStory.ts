@@ -100,7 +100,7 @@ export const actByNumber = (n: number): Act | undefined => ACTS.find((a) => a.nu
  * setting the entry needs, applied when it is chosen, so neither route can
  * be started in a deployment where it would not exist.
  */
-export type FlowGroup = "root" | "admin" | "company";
+export type FlowGroup = "root" | "admin" | "company" | "members";
 
 /**
  * The flows the demo controls offer — the onboardings the prototype is
@@ -110,20 +110,21 @@ export type FlowGroup = "root" | "admin" | "company";
  *
  * The controls used to carry a six-act story runner and jumps into every
  * flow anyone had asked for: Bank of Bhutan's wallet, NDI inviting a
- * business, manual review. This branch is Flow 1 — how people get an
- * account: root, the platform admins root invites, and a company's director
- * signing up — so the panel offers exactly those, and nobody has to work out
- * which of a dozen buttons is under review. The other screens still exist;
- * the controls no longer point at them.
+ * business, manual review. The current focus is onboarding — root, platform
+ * admins, a new company, and the people that company then brings on — so
+ * the panel offers exactly those, and nobody has to work out which of a
+ * dozen buttons is under review. The other screens still exist; the
+ * controls no longer point at them.
  *
- * Registering the company is Flow 2, and inviting its colleagues needs the
- * company to exist, so both arrive with the Flow 2 branch rather than here.
- * Offering them now would put a flow under review before its own showcase.
+ * Member onboarding came back once the first day stopped listing the seed's
+ * colleagues: with Pelden starting as one person, how everyone else joins is
+ * a question the demo has to answer on screen.
  */
 export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "root", code: "FLOW-ONB-02", title: "Root admin onboarding" },
   { id: "admin", code: "FLOW-ONB-02", title: "Platform admin onboarding" },
-  { id: "company", code: "FLOW-ONB-01", title: "New company onboarding" },
+  { id: "company", code: "FLOW-ONB-01 · Flow 2", title: "New company onboarding" },
+  { id: "members", code: "FLOW-ONB-02 · Kind M", title: "Member onboarding" },
 ];
 
 export interface FlowEntry {
@@ -149,4 +150,13 @@ export const FLOW_ENTRIES: FlowEntry[] = [
   { group: "root", label: "Root signs in", persona: null, route: "/sign-in", start: "dayZero" },
   { group: "admin", label: "Root invites a platform admin", persona: "root", route: "/admin/team", start: "dayZero" },
   { group: "company", label: "Create an account", persona: null, route: "/sign-up", selfService: true, start: "platformReady" },
+  {
+    group: "company",
+    label: "Register the company",
+    persona: "dorji",
+    route: "/onboarding",
+    selfService: true,
+    start: "platformReady",
+  },
+  { group: "members", label: "Invite a member", persona: "dorji", route: "/members", start: "firstDay" },
 ];

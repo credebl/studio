@@ -8,7 +8,9 @@ import { AccountShell } from "@/components/layout/AccountShell";
 import { GradientButton } from "@/components/ui/GradientButton";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { Panel } from "@/components/ui/Panel";
+import { StatusPill } from "@/components/ui/StatusPill";
 import { Icon } from "@/components/ui/icons";
+import { kindOf } from "@/features/onboarding/orgKinds";
 import { useDemo } from "@/lib/demoStore";
 
 /** Where Flow 2 — adding an organisation — begins. */
@@ -32,15 +34,25 @@ export const ADD_ORGANISATION_ROUTE = "/onboarding";
  * list — and a list of one renders as a list, not as a special case, so the
  * person who adds a second business next month finds the same screen with
  * one more row. "Add another organisation" is always there, never buried.
+ *
+ * AN APPLICATION IN FLIGHT IS NOT AN EMPTY ACCOUNT
+ *
+ * No organisation exists until the authority decides (EW-FLOW2-SD/D10). So
+ * someone who closes SCR-ORG-04 mid-wait would come back to "there's nothing
+ * here yet" and start again — a second application for the same
+ * registration. While a verification is in flight this screen shows it
+ * instead of the empty state: the registration as submitted, the authority
+ * checking it, and the way back to where it is.
  */
 export function WelcomeView() {
   const router = useRouter();
-  const { signup, organizations, setPersona, setActiveOrg, hydrated } = useDemo();
+  const { signup, organizations, orgOnboarding, cancelOrgOnboarding, setPersona, setActiveOrg, hydrated } = useDemo();
 
   const forced = useScreenState("SCR-ONB-05", [
     "live",
     "loading",
     "empty",
+    "in_progress",
     "populated",
     "error",
     "offline",
@@ -56,6 +68,10 @@ export function WelcomeView() {
      deployment made it — so they sign in and land in NDI's organisation
      (see ROOT_ADMIN). This screen is only ever for someone who has just
      signed up and belongs to nothing, or to the organisations listed. */
+  const inFlight =
+    orgOnboarding && ["proof_requested", "checking", "setting_up"].includes(orgOnboarding.stage) && !orgOnboarding.existingOrgId
+      ? orgOnboarding
+      : null;
   const state =
     forced !== "live"
       ? forced
@@ -64,8 +80,15 @@ export function WelcomeView() {
         : !account
           ? "no_account"
           : rows.length === 0
-            ? "empty"
+            ? inFlight
+              ? "in_progress"
+              : "empty"
             : "populated";
+  const flightKind = kindOf(inFlight?.kind);
+  const flightId = inFlight?.identifier ?? "CRA-2019-04477";
+  /* Answering the wallet request is the person's to finish; after that the
+     wait is the authority's, and its screen picks up where it is. */
+  const progressRoute = inFlight?.stage === "proof_requested" ? "/onboarding/prove" : "/onboarding/verifying?resumed=1";
 
   /* The populated face needs a row to show even when forced from an empty
      account, or the state switcher would review an empty list. */
@@ -127,6 +150,41 @@ export function WelcomeView() {
               <Link href="/sign-in">
                 <HairlineButton>Sign out</HairlineButton>
               </Link>
+            </div>
+          </div>
+        </Panel>
+      ) : null}
+
+      {state === "in_progress" ? (
+        <Panel>
+          <div className="relative z-[4] flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <h1 className="font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-strong">
+                Your organisation is being verified
+              </h1>
+              <p className="max-w-[56ch] text-[14.5px] leading-[1.65] text-body">
+                We&rsquo;re verifying <span className="font-mono">{flightId}</span> with the{" "}
+                {flightKind.authority}. It becomes an organisation on your account once they confirm it.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 rounded-[12px] border border-grid px-4 py-3">
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <span className="font-mono text-[13.5px] text-strong">{flightId}</span>
+                <span className="text-[12.5px] text-faint">Checked by the {flightKind.authority}</span>
+              </span>
+              <StatusPill
+                status="processing"
+                label={inFlight?.stage === "proof_requested" ? "Waiting for your wallet" : inFlight?.stage === "setting_up" ? "Approved — setting up" : "Being checked"}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <GradientButton onClick={() => router.push(progressRoute)}>
+                Check progress
+                <Icon name="arrowRight" size={14} strokeWidth={2} />
+              </GradientButton>
+              <HairlineButton onClick={() => cancelOrgOnboarding()} disabled={forced !== "live"}>
+                Cancel
+              </HairlineButton>
             </div>
           </div>
         </Panel>

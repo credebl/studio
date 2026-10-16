@@ -49,25 +49,28 @@ export interface GuideStep {
 }
 
 /**
- * WHY THE GUIDE STOPS AT AN EMPTY ACCOUNT
+ * WHY THE GUIDE STOPS WHEN PELDEN'S FIRST COLLEAGUE JOINS
  *
- * The prototype is delivered flow by flow, and this branch is Flow 1: how a
- * person gets onto the platform. NDI's root administrator, the platform
- * admins root invites, and a company's director creating an account of their
- * own. It ends on that account holding nothing, because that is where Flow 1
- * ends (FLOW-ONB-01 Q3) — the account is a shell until someone claims to act
- * for an organisation, and that claim is Flow 2's.
+ * The prototype is scoped to onboarding: NDI's root administrator, the
+ * platform admins root invites, a new company getting an Entity Wallet, and
+ * the people that company brings on. The guide used to run on for six more
+ * chapters — Bank of Bhutan's wallet, appointing a controller, presenting,
+ * authority in a phone, revocation, appeals — which walk flows the catalogue
+ * has not designed yet, and made a forty-step demo of an onboarding review.
+ * Those screens still exist; the guide no longer walks them.
  *
- * Stopping there is the point rather than a gap. The screen that says "this
- * account can't do anything yet" is the one UX-EW-01 most wants tested
- * (UC-04), and a guide that hurried on to registering the company would walk
- * the room straight past it.
+ * Member onboarding is here because the first day is now genuinely empty.
+ * When it still listed the seed's colleagues, the room's first question on
+ * seeing them was "how did these people get here?" — and the answer, an
+ * invitation Dorji sends and they accept, is an onboarding in its own right.
  */
 export const GUIDE_CHAPTERS: GuideChapter[] = [
   { title: "Before you start", shows: "What the demo is, and how to drive it" },
   { title: "Root admin onboarding", shows: "NDI's root administrator signs in to a ready organisation" },
   { title: "Platform admin onboarding", shows: "Root invites an admin by email; they set up from the link" },
   { title: "A new company signs up", shows: "A person signs up — nothing about any company yet" },
+  { title: "Verify the organisation", shows: "The authority that registered it, not NDI, confirms the company" },
+  { title: "Pelden brings on its people", shows: "The owner invites a colleague; they join from the link" },
   { title: "Where to go next", shows: "The other routes, and what's simulated" },
 ];
 
@@ -77,7 +80,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 0,
     title: "Onboarding onto the Entity Wallet",
     happening:
-      "Three onboardings, in the order they have to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, and Pelden Trading's director signs up for an account of their own. Nothing is real: the dashed \"Prototype\" panels stand in for an inbox.",
+      "Four onboardings, in the order they have to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner brings on a colleague. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
     doThis:
       "Press **Next**. The guide takes you to each screen and tells you what to press; you do the clicking. **Minimise** tucks this card away when it's in the way.",
   },
@@ -191,19 +194,128 @@ export const GUIDE_STEPS: GuideStep[] = [
   {
     chapter: 3,
     title: "An account with no organisation",
-    happening:
-      "Dorji has an account, but it belongs to no organisation yet — and the screen says so rather than showing an empty console. Adding the organisation is the next flow, entity onboarding, where a government register confirms the company.",
-    doThis: "Press **Next**.",
-    say: "An account on its own can do nothing. That's deliberate: what matters is checked when someone claims to act for a company.",
+    happening: "Dorji has an account, but it belongs to no organisation yet.",
+    doThis: "Press **Add your organisation**.",
     route: "/welcome",
   },
 
-  /* ---- 4 · Where to go next ---- */
+  /* ---- 4 · Verify the organisation ---- */
   {
     chapter: 4,
+    title: "What kind of organisation",
+    happening:
+      "Each type names the authority that registered it, which is who checks it: a registered company, a sole proprietorship or a partnership.",
+    doThis: "Leave **Registered company** selected and press **Continue**.",
+    route: "/onboarding",
+    match: "^/onboarding$",
+  },
+  {
+    chapter: 4,
+    title: "Its registration number",
+    happening:
+      "The one thing Dorji types. The format is shown before the field, and the button names the authority that will be asked — the same name Dorji's wallet will show.",
+    doThis:
+      "Type **CRA-2019-04477** (or press it in the dashed prototype panel), then press **Verify with Corporate Regulatory Authority**.",
+    route: "/onboarding/details",
+  },
+  {
+    chapter: 4,
+    title: "The authority asks who Dorji is",
+    happening:
+      "The request comes from the Corporate Regulatory Authority, not from NDI. Only Dorji's identity is shared — nothing about the company, and NDI keeps nothing from it.",
+    doThis: "Press **Simulate the scan** (the code doesn't really scan). Once it's answered, the next step opens by itself.",
+    route: "/onboarding/prove",
+  },
+  {
+    chapter: 4,
+    title: "The authority decides",
+    happening:
+      "The CRA checks its own records — NDI never sees them — and decides. Then Pelden's wallet is set up and its registration added. The page could be closed: Dorji's account would show where it's up to.",
+    doThis: "Wait — the next screen opens by itself when it's done.",
+    say: "This is the moment the platform admits it can't decide who a company is. The authority does.",
+    route: "/onboarding/verifying",
+  },
+  {
+    chapter: 4,
+    title: "Pelden is verified",
+    happening:
+      "Pelden holds its registration — added automatically, nobody accepted anything. The next step offered is its tax identity, and the screen says plainly what Pelden can't do: issue credentials or verify anyone.",
+    doThis: "Press **Go to Pelden Trading**.",
+    route: "/onboarding/foundational",
+  },
+  {
+    chapter: 4,
+    title: "Pelden's first day",
+    happening:
+      "A brand-new organisation: it holds its registration and Dorji's authority to act for it, and nothing else. No tasks, no history — so what it suggests first is its tax identity. Inviting colleagues is there too, further down.",
+    doThis: "Have a look around, then press **Next**.",
+    say: "Nothing has happened here yet, and the console doesn't pretend otherwise.",
+    route: "/dashboard",
+    persona: "dorji",
+  },
+
+  /* ---- 5 · Pelden brings on its people ---- */
+  {
+    chapter: 5,
+    title: "Only Dorji, so far",
+    happening:
+      "Pelden's members: Dorji alone. Everyone else joins the way a colleague joins any organisation here — Dorji invites them by email, and they accept. Being a member lets someone see the organisation; acting for it is a separate grant.",
+    doThis: "Press **Invite someone**.",
+    route: "/members",
+    persona: "dorji",
+  },
+  {
+    chapter: 5,
+    title: "Invite a colleague",
+    happening:
+      "The invitation names an address and a role, and says before it's sent what it gives and what it doesn't: they'll see Pelden, but can't act for it.",
+    doThis:
+      "Type **ugyen.phuntsho@peldentrading.bt**, leave **Member** selected and press **Send invitation**. Then press **Open the invitation as ugyen.phuntsho@peldentrading.bt** (dashed — it stands in for Ugyen's inbox).",
+    say: "Letting someone in and letting them act for the company are two different things, and the screen says so before anything is sent.",
+    route: "/members/invite",
+  },
+  {
+    chapter: 5,
+    title: "Ugyen sets up an account",
+    happening:
+      "The invitation names who sent it, to what, and what it doesn't include. Ugyen has no account yet, so it's set up right here: the link already proves the address, so there's no separate sign-up.",
+    doThis:
+      "Enter **Ugyen Phuntsho**, a password such as **Thimphu-Chorten-2026**, the same password again, then press **Set up account and accept**.",
+    match: "^/invitation/[^/]+$",
+  },
+  {
+    chapter: 5,
+    title: "Ugyen has joined",
+    happening:
+      "The confirmation names the organisation joined — a person can belong to several — and repeats that membership isn't authority.",
+    doThis: "Press **Go to Pelden Trading Pvt. Ltd.**",
+    match: "^/invitation/[^/]+/accepted$",
+  },
+  {
+    chapter: 5,
+    title: "Pelden, as a member sees it",
+    happening:
+      "Ugyen can see Pelden but holds no authority for it, and the console says so in the same words the invitation used. No members page, no controllership: those are the owner's.",
+    doThis: "Press **Next** to go back to Dorji.",
+    route: "/dashboard",
+    /* No persona: accepting already drives the console as whoever joined. */
+  },
+  {
+    chapter: 5,
+    title: "Dorji sees who joined",
+    happening:
+      "Ugyen is a member now: identity not yet confirmed — joining never asks the register — and no authority to act. Giving Ugyen authority is the next flow, controller appointment, where Ugyen proves who they are with their own NDI Wallet.",
+    doThis: "Press **Next**.",
+    route: "/members",
+    persona: "dorji",
+  },
+
+  /* ---- 6 · Where to go next ---- */
+  {
+    chapter: 6,
     title: "That's onboarding",
     happening:
-      "The platform went from its root administrator to a first platform admin, and Pelden Trading's director went from an email address to an account that can sign in — and, so far, do nothing else.",
+      "The platform went from its root administrator to a first platform admin; Pelden Trading went from one person signing up to a company holding its own registration; and its first colleague joined by invitation.",
     doThis:
       "To run any part again, use **Demo controls → Walk a flow**. The **Prototype · data simulated** chip lists what's simulated.",
   },

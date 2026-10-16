@@ -206,7 +206,7 @@ function PlatformInvitationView({ id }: { id: string }) {
         router.push(`/invitation/${id}/accepted`);
       } else {
         startOrgOnboarding("company", id);
-        router.push("/onboarding/prove");
+        router.push("/onboarding/details");
       }
     }, ROUND_TRIP_MS);
   };

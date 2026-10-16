@@ -146,9 +146,9 @@ export function InvitationAcceptedView({ id }: { id: string }) {
           <div className="relative z-[4] flex flex-col gap-4">
             <ol className="m-0 flex list-none flex-col gap-2.5 p-0">
               {[
-                ["Prove who you are", "From your own NDI Wallet — the register is asked about the person, never about a typed name."],
-                ["The register confirms you represent it", `The invitation names ${name}; the register still has to confirm it. NDI inviting you doesn't make you its representative.`],
-                ["Receive its registration", "The organisation accepts its registration into its own wallet, and you become its owner."],
+                ["Enter its registration number", "The one thing you type. The authority that registered it is asked about it."],
+                ["Answer the authority's request", `From your own NDI wallet. The invitation names ${name}, but the authority decides whether you represent it — NDI inviting you doesn't.`],
+                ["It's verified", "Its registration is added to its wallet automatically, and you become its owner."],
               ].map(([title, body], i) => (
                 <li key={title} className="flex items-start gap-3 rounded-[12px] border border-grid px-3.5 py-3">
                   <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full border border-grid font-mono text-[11px] text-muted">
@@ -166,7 +166,7 @@ export function InvitationAcceptedView({ id }: { id: string }) {
               disabled={forced === "offline"}
               onClick={() => {
                 startOrgOnboarding("company", inv?.id);
-                router.push("/onboarding/prove");
+                router.push("/onboarding/details");
               }}
             >
               Register the organisation

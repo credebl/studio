@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Icon } from "@/components/ui/icons";
+import { inOrg } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 import { formatDate } from "./scopeModel";
@@ -18,34 +19,33 @@ import { formatDate } from "./scopeModel";
 /**
  * C7 — the entity's own identity and trust posture, in one place.
  *
- * Three different things are easy to conflate here and the screen keeps them
+ * Two different things are easy to conflate here and the screen keeps them
  * apart, because they fail independently and mean different things:
  *
  *  - The **foundational credential** is whether the entity can prove who it
  *    is. If it lapses, everything the entity holds or has delegated stops
  *    verifying, because every chain runs through it.
- *  - **Trust registry accreditation** is whether anyone else trusts the
- *    entity's DID. Without it the entity can still hold and present, and
- *    relying parties may decline what it presents.
  *  - **Operator certification** is an organisational prerequisite. It gates
  *    going live rather than any screen, so it is surfaced as status and
  *    nothing on this page depends on it.
  *
  * Collapsing them into one "verified" badge would let an organisation believe
  * it was fine when the thing that had lapsed was the one that mattered.
+ *
+ * There is no trust-registry row: an entity is not listed on the trust registry.
  */
 export function EntityProfileView() {
   const { organizations, activeOrgId, heldCredentials, relations, delegatedAuthorities } =
     useDemo();
 
   const screenState = useScreenState("C7", [
-    "verified_accredited",
+    "verified",
     "certification_pending",
     "foundational_expired",
   ]);
 
   const org = organizations.find((o) => o.id === activeOrgId);
-  const foundational = heldCredentials.find((c) => c.isFoundational);
+  const foundational = heldCredentials.filter(inOrg(activeOrgId)).find((c) => c.isFoundational);
 
   const foundationalExpired = screenState === "foundational_expired";
   const certificationPending = screenState === "certification_pending";
@@ -102,14 +102,18 @@ export function EntityProfileView() {
                     ? "expired"
                     : certificationPending
                       ? "pending"
-                      : "verified"
+                      : foundational
+                        ? "verified"
+                        : "unverified"
                 }
                 label={
                   foundationalExpired
                     ? "Cannot prove itself"
                     : certificationPending
                       ? "Certification pending"
-                      : "Verified and accredited"
+                      : foundational
+                        ? "Verified"
+                        : "Not verified"
                 }
               />
             }
@@ -149,14 +153,14 @@ export function EntityProfileView() {
           </Panel>
         ) : null}
 
-        {/* ---- The three things that can fail independently ---- */}
+        {/* ---- The two things that can fail independently ---- */}
         <Panel>
           <div className="relative z-[4] flex flex-col gap-1">
             <h2 className="font-display text-[15px] font-semibold text-strong">
               Trust posture
             </h2>
             <p className="text-[12.5px] leading-[1.5] text-faint">
-              Three separate things. They fail independently and they mean
+              Two separate things. They fail independently and they mean
               different things.
             </p>
           </div>
@@ -179,14 +183,6 @@ export function EntityProfileView() {
                   <HairlineButton className="h-9 px-3 text-[12.5px]">View it</HairlineButton>
                 </Link>
               }
-            />
-
-            <PostureRow
-              icon="link"
-              title="Trust registry accreditation"
-              body="Whether other organisations trust this entity's DID. Without it the entity can still hold and present credentials, but a relying party may decline them."
-              status="active"
-              statusLabel="Accredited as issuer and verifier"
             />
 
             <PostureRow

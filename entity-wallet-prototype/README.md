@@ -65,16 +65,19 @@ holding delegated authority; counterparties are Bank of Bhutan and BNSW.
 Act 5 is the centre of the demo: a PASS beside a FAIL-with-a-reason on the same
 chain explains delegated authority better than any diagram.
 
-The prototype is delivered flow by flow, and this branch is Flow 1 — how
-people get onto the platform: NDI's root administrator signing in, root
-inviting a platform admin who sets up from the link, and a company's
-director signing up for an account of their own. Demo controls → **Walk a
-flow** starts each one as the right person, from the state it needs.
+The prototype's current focus is onboarding: NDI's root administrator
+signing in, root inviting the platform's two admins, who set up from the link, a new
+company signing up and getting its Entity Wallet, and that company's owner
+inviting a colleague who joins from the link. Demo controls → **Walk a flow**
+starts each one as the right person, from the state it needs.
 
-**New to it? Press Guided demo** (bottom-left of any screen): it walks those
-three onboardings on screen and tells you what to press at each step. It
-stops on the director's empty account, because that is where Flow 1 ends;
-registering the company is Flow 2's branch.
+**New to it? Press Guided demo** (bottom-left of any screen): it walks the
+four onboardings on screen and tells you what to press at each step —
+NDI's root administrator signing in, the two platform admins setting up
+from their invitations, Pelden Trading signing up and receiving its
+registration, and Pelden's first colleague joining. The company's first day
+is genuinely empty: nobody but its owner is a member until someone is
+invited.
 
 **Presenting it? Read [`docs/running-the-demo.md`](docs/running-the-demo.md)** —
 what is built, the act-by-act script, the Gate 2 flow walks, and what to say

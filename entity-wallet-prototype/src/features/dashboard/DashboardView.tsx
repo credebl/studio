@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 
 import { useScreenState } from "@/components/demo/screenState";
 import { AppShell } from "@/components/layout/AppShell";
@@ -9,6 +10,7 @@ import { HairlineButton } from "@/components/ui/HairlineButton";
 import { Panel } from "@/components/ui/Panel";
 import { WaveBanner } from "@/components/ui/WaveBanner";
 import { Icon } from "@/components/ui/icons";
+import { NextCredentialAction } from "@/features/onboarding/NextCredentialAction";
 import { NeedsAttention } from "@/features/wallet/NeedsAttention";
 
 import { NdiDashboard } from "./NdiDashboard";
@@ -28,7 +30,7 @@ import { useDemo } from "@/lib/demoStore";
  * owner — what has happened.
  */
 export function DashboardView({ firstName }: { firstName?: string } = {}) {
-  const { organizations, activeOrgId, accessRequests, activity, currentPerson, harness, firstRun, people, relations, orgInvitations } =
+  const { organizations, activeOrgId, activity, currentPerson, harness, firstRun, people, relations, orgInvitations } =
     useDemo();
 
   /* The suspended face is a §9 global rather than a fixture state: a
@@ -67,17 +69,12 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
     );
   }
 
-  /* An organisation on NDI without an Entity Wallet — Bank of Bhutan
-     before it asks. Its dashboard is about what it already does, with the
-     way to a wallet beside it rather than a wallet it does not have. */
+  /* An organisation on NDI its authority has not confirmed — Bank of
+     Bhutan before its owner verifies it. Its dashboard is about what it
+     already does, with the way to verify it beside that (FLOW-ORG-01 A1).
+     It used to offer to ask NDI for a wallet; verifying is the owner's to
+     do directly, and NDI decides nothing about it. */
   if (!holder) {
-    const request = accessRequests.find((a) => a.orgId === activeOrgId && a.capability === "holder");
-    const walletStatus =
-      request?.state === "PENDING"
-        ? { status: "requested", label: "Requested — waiting for NDI" }
-        : request?.state === "APPROVED"
-          ? { status: "invited", label: "Approved — invitation sent" }
-          : { status: "not_set_up", label: "Not set up" };
     return (
       <AppShell>
         <div className="flex flex-col gap-5">
@@ -92,8 +89,8 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
             action={
               <Link href="/entity-wallet">
                 <GradientButton>
-                  <Icon name="wallet" size={16} strokeWidth={2} />
-                  {request ? "See the Entity Wallet request" : "Get an Entity Wallet"}
+                  <Icon name="shieldCheck" size={16} strokeWidth={2} />
+                  Verify {orgName}
                 </GradientButton>
               </Link>
             }
@@ -125,13 +122,13 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
             <Panel>
               <div className="relative z-[4] flex flex-col gap-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 className="m-0 font-display text-[15px] font-semibold text-strong">Entity Wallet</h2>
-                  <StatusPill status={walletStatus.status} label={walletStatus.label} />
+                  <h2 className="m-0 font-display text-[15px] font-semibold text-strong">Verification</h2>
+                  <StatusPill status="unverified" label="Not verified" />
                 </div>
                 <p className="m-0 text-[13px] leading-[1.6] text-muted">
-                  A wallet of {orgName}&rsquo;s own, holding the credentials issued to it — its
-                  registration, its licences — with named people acting for it. Asked for from NDI;
-                  what it issues and verifies stays as it is.
+                  {orgName} hasn&rsquo;t been verified yet. Verify it to start using it: the authority
+                  that registered it confirms who represents it, and it gets a wallet of its own
+                  holding its registration. What it issues and verifies stays as it is.
                 </p>
               </div>
             </Panel>
@@ -172,13 +169,12 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
                   See what it holds
                 </GradientButton>
               </Link>
-            ) : isOwner && firstRun && colleagues.length === 0 ? (
-              <Link href="/members/invite">
-                <GradientButton>
-                  <Icon name="users" size={16} strokeWidth={2} />
-                  Invite your colleagues
-                </GradientButton>
-              </Link>
+            ) : isOwner && firstRun ? (
+              /* The first day leads with the next credential, not with
+                 inviting people or appointing anyone (UXD-14): it is what
+                 the owner most likely came for. Inviting is offered below,
+                 and appointing is available but not prompted. */
+              <NextCredentialAction orgName={shortOrgName(orgName)} />
             ) : isOwner ? (
               <Link href="/controllership/relations/new">
                 <GradientButton>
@@ -283,17 +279,35 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
 }
 
 /**
- * The three things a new organisation's owner does next, in the order the
- * product expects them. Shown only on the first day, and only to the owner —
- * nobody else can act for the organisation yet.
+ * What a new organisation's owner can do next. Shown only on the first day,
+ * and only to the owner.
  *
- * Inviting comes first. It used to be second, under "Appoint someone to act
- * for it" — which on a first day opened a picker with nobody in it, because
- * authority can only be granted to someone who is already a member. The
- * order on the card is now the order the product can actually do them in.
+ * THE ORDER IS THE USER'S, NOT THE CATALOGUE'S
+ *
+ * The next credential leads (UXD-14): for a company, its tax identity,
+ * applied for with the registration it just received. Seeing that
+ * registration comes second. Inviting colleagues is third and stays
+ * available — it is how anyone else joins — but it is not what the first
+ * day is for. Appointing someone to act (FLOW-DEL-01) used to be a step
+ * here; it is available, not prompted, and the proprietor who *is* the
+ * representative has nobody to appoint.
  */
 function FirstSteps({ colleagues, invitationsWaiting }: { colleagues: number; invitationsWaiting: number }) {
-  const steps: { icon: "userCheck" | "users" | "credentials"; title: string; body: string; href: string; cta: string }[] = [
+  const steps: { icon: "users" | "credentials"; title: string; body: string; href: string | null; cta: string }[] = [
+    {
+      icon: "credentials",
+      title: "Get its tax identity (TPN)",
+      body: "From the Department of Revenue & Customs, applied for with the registration it now holds.",
+      href: null,
+      cta: "Get the TPN",
+    },
+    {
+      icon: "credentials",
+      title: "See its registration",
+      body: "Added to its wallet automatically when it was verified.",
+      href: "/wallet/credentials",
+      cta: "Open held credentials",
+    },
     {
       icon: "users",
       title: "Invite your colleagues",
@@ -306,28 +320,15 @@ function FirstSteps({ colleagues, invitationsWaiting }: { colleagues: number; in
       href: colleagues > 0 || invitationsWaiting > 0 ? "/members" : "/members/invite",
       cta: colleagues > 0 || invitationsWaiting > 0 ? "See members" : "Invite a member",
     },
-    {
-      icon: "userCheck",
-      title: "Appoint someone to act for it",
-      body: "Once a colleague has joined, give them scoped authority — what they may do, for whom, and until when. They have to accept it.",
-      href: "/controllership/relations/new",
-      cta: "Grant authority",
-    },
-    {
-      icon: "credentials",
-      title: "See its registration",
-      body: "The credential it just accepted — the root every later authority traces back to.",
-      href: "/wallet/credentials",
-      cta: "Open held credentials",
-    },
   ];
+  const [tpnNote, setTpnNote] = useState(false);
   return (
     <Panel>
       <div className="relative z-[4] flex flex-col gap-4">
         <h2 className="m-0 font-display text-[15px] font-semibold text-strong">Start here</h2>
         <ol className="m-0 grid list-none gap-3 p-0 grid-cols-[repeat(auto-fit,minmax(240px,1fr))]">
           {steps.map((step, i) => (
-            <li key={step.href} className="flex flex-col gap-2 rounded-[12px] border border-grid px-4 py-3.5">
+            <li key={step.title} className="flex flex-col gap-2 rounded-[12px] border border-grid px-4 py-3.5">
               <span className="flex items-center gap-2.5">
                 <span className="flex h-6 w-6 flex-none items-center justify-center rounded-full border border-grid font-mono text-[11px] text-muted">
                   {i + 1}
@@ -335,10 +336,24 @@ function FirstSteps({ colleagues, invitationsWaiting }: { colleagues: number; in
                 <span className="font-display text-[13.5px] font-medium text-body">{step.title}</span>
               </span>
               <span className="text-[12.5px] leading-[1.55] text-faint">{step.body}</span>
-              <Link href={step.href} className="ndi-plainlink mt-auto inline-flex items-center gap-1.5 text-[12.5px] font-medium text-accent">
-                {step.cta}
-                <Icon name="arrowRight" size={13} strokeWidth={2} />
-              </Link>
+              {step.href ? (
+                <Link href={step.href} className="ndi-plainlink mt-auto inline-flex items-center gap-1.5 text-[12.5px] font-medium text-accent">
+                  {step.cta}
+                  <Icon name="arrowRight" size={13} strokeWidth={2} />
+                </Link>
+              ) : (
+                <span className="mt-auto flex flex-col gap-1">
+                  <button type="button" onClick={() => setTpnNote(true)} className="ndi-plainlink inline-flex items-center gap-1.5 self-start text-[12.5px] font-medium text-accent">
+                    {step.cta}
+                    <Icon name="arrowRight" size={13} strokeWidth={2} />
+                  </button>
+                  {tpnNote ? (
+                    <span role="status" className="text-[12px] leading-[1.5] text-faint">
+                      Prototype — requesting a credential isn&rsquo;t built here yet.
+                    </span>
+                  ) : null}
+                </span>
+              )}
             </li>
           ))}
         </ol>

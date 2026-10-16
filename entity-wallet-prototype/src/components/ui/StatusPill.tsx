@@ -53,6 +53,11 @@ const STATUS_TONE: Record<string, Tone> = {
   /* Platform access: what an organisation may do, and a request for more. */
   inactive: "neutral",
   not_set_up: "neutral",
+  /* Flow 2: an organisation on the platform its authority has not
+     confirmed, and a type whose authority is not connected. Neither is a
+     failure, so neither is drawn as one. */
+  unverified: "neutral",
+  not_supported: "neutral",
   pending_acceptance: "pending",
   pending_registration: "pending",
   /* Reversible stop, then the final one. Suspension is a warning because it

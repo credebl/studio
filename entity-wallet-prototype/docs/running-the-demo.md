@@ -15,9 +15,8 @@ switches you to the right person when the story changes hands. **Next** and
 **Back** move between steps (and take you to the right screen), **Take me
 there** brings you back if you wander off, and the chevron minimises it.
 
-**This branch is Flow 1 — how people get onto the platform** — and the guide
-walks exactly that: five chapters, 14 steps, starting on the platform's day
-zero:
+**The prototype's focus is onboarding**, and the guide walks exactly that —
+seven chapters, 26 steps, starting on the platform's day zero:
 
 1. **Root admin onboarding** — the NDI root account signs in. It is NDI's
    own account, held by two custodians together, not a person's, and made
@@ -31,19 +30,45 @@ zero:
    that they're now a platform admin. Two, because the root account approves
    nothing: every second approval is a second named admin (S2). Once two are
    active, root's invite form is replaced by the reason it can't add more
-   (S9, P8).
-3. **A new company signs up** — Dorji, Pelden Trading's director, creates a
-   personal account. Just the person: it ends on an account that belongs to
-   no organisation and says plainly that it can do nothing yet.
-4. **Where to go next.**
+   (S9, P8). Until an admin exists no authority is connected, so no
+   organisation can be verified yet — and the screen says that, naming the
+   authorities.
+3. **A new company signs up** — Dorji creates a personal account first. Just
+   the person; the company comes next.
+4. **Verify the organisation** — Dorji picks the type, types Pelden's
+   registration number, and answers the Corporate Regulatory Authority's
+   identity request from their own NDI wallet. The CRA checks its own records
+   and confirms; Pelden's wallet is set up and its registration added
+   automatically. It ends on Pelden's first day: nothing but its
+   registration and Dorji's authority — **no other members, no history** —
+   and the dashboard's first suggestion is its tax identity (TPN).
+5. **Pelden brings on its people** — Dorji invites Ugyen Phuntsho
+   (`ugyen.phuntsho@peldentrading.bt`) as a member. The invitation says,
+   before it is sent, what it gives (seeing Pelden) and what it does not
+   (acting for it). Ugyen opens it, sets up an account from the link — the
+   same way the platform admins did — and lands in Pelden's console as a
+   member with no authority. Back as Dorji, the Members page lists Ugyen:
+   identity not yet confirmed, authority none.
+6. **Where to go next.**
 
-The guide stops at the empty account because that is where Flow 1 ends
-(FLOW-ONB-01 Q3). Registering the company is Flow 2, and inviting Pelden's
-colleagues needs Pelden to exist, so both arrive with the
-`prototype/flow-02-entity-onboarding` branch. **Add your organisation** on the
-empty account still leads somewhere — the earlier version of the register
-screens — but the guide and the demo controls do not walk it here, and the
-Flow 2 walkthroughs further down describe the Flow 2 branch.
+The guide stops there. Giving a member authority to act — controller
+appointment, where the member proves who they are with their own wallet — is
+the next flow and is not designed yet; the relation screen says so for a
+member who joined by invitation. The screens for what comes after onboarding
+— presenting, authority credentials, revocation, appeals, and Bank of
+Bhutan being verified — still exist and are described further down, but
+the guide and the demo controls no longer walk them.
+
+### The first day is really empty
+
+Registering Pelden lands on a first day, not on the story's three-months-in
+seed. Only Dorji is a member; nobody else from Pelden's side of the story has
+an account yet, so the persona switcher and the sign-in panel do not offer
+them, the Members page lists Dorji alone, and **Controllership → New
+relation** says there is nobody to appoint yet and offers to invite someone.
+Everyone else arrives the way the member chapter shows: an invitation Dorji
+sends and they accept. The activity feed is Pelden's own — it shows who joined
+and when, and nothing from NDI's side of the platform.
 
 ---
 
@@ -61,7 +86,7 @@ Two things to do in the room before you say anything:
    That panel is your remote: the guided demo, the four onboarding flows
    (root admin, platform admin, new company, member), who you are signed in
    as, and reset. Each flow starts from the state it needs — day zero, the
-   platform with one admin, or Pelden's first day — never from whatever the
+   platform with its two admins, or Pelden's first day — never from whatever the
    last person left. Each screen's states are folded under **For reviewers**.
 2. **Press Reset demo** if anyone has touched it before you. The demo persists
    to browser storage, so it remembers whatever the last person did. Reset —
@@ -123,81 +148,78 @@ act that establishes the product is not self-certifying.
 
 ### 1 · What kind of organisation — `/onboarding`
 
-Each kind names *which register* confirms it. Civil society organisations are
-marked **Reviewed by NDI**: no register can answer for them yet, so a person
-at NDI checks instead.
+Each type — registered company, sole proprietorship, partnership — names
+*the authority that registered it*, which is who checks it.
 
-> "Which register can vouch for you depends on what kind of thing you are.
-> That is a governance input still being decided, so it is a property of the
-> kind rather than hard-coded. And notice what we don't ask: no name, no
-> registration number. You don't claim a company here by knowing its number."
+> "The authority decides, not NDI. You can read that off this list before
+> you've typed anything."
 
-Leave **Private or public limited company** selected and press **Continue to
-prove who you are**.
+Leave **Registered company** selected and press **Continue**.
 
-### 2 · Prove who you are — `/onboarding/prove`
+### 2 · Its registration number — `/onboarding/details`
 
-The scan card is the NDI integration page people already know from other
-services — the framed code with the NDI mark, the two steps, the store badges
-and the support line. There is no "open wallet" link and no cloud wallet: this
-is a desk portal, so the only hand-off is a scan. The code does not scan (it
-says so under it), so press **Simulate the scan** in the dashed prototype
-panel. Point at **What you will share** first: the person's name and
-citizenship number, and nothing about any organisation.
+One field. The format is stated before it, and a wrong shape is corrected
+inline before anything is sent. The button names the authority — **Verify
+with Corporate Regulatory Authority** — because it is the last thing read
+before a request arrives on Dorji's phone, and the two must agree.
 
-> "Only the person, not yet the company. Who Dorji is comes from his own
-> wallet — never from a field someone typed."
+Type `CRA-2019-04477` or press it in the dashed prototype panel, which lists
+numbers for the other outcomes too:
 
-If someone asks *"what if his accountant signed up for him?"*, go back and
-press **Show what happens if someone else's wallet answers**. The proof comes
-back for a different person and nothing is registered. That is where proxy
-sign-up is caught.
+| Number | What it shows |
+|---|---|
+| `CRA-2019-04477` | Pelden Trading — the CRA's records show Dorji: verified |
+| `CRA-2015-03310` | Norbu Construction — the records don't show Dorji: not verified |
+| `CRA-2008-00731` | Gangri Exports — deregistered: worded exactly as the one above |
+| `CRA-2023-11802` | Druk Valley Hardware — already verified here: refused, without saying why |
+| `CRA-1997-00112` | Bank of Bhutan — confirms Yeshey, its owner (Kind E, below) |
 
-### 3 · The register lists, Dorji chooses — `/onboarding/choose`
+### 3 · The authority asks who Dorji is — `/onboarding/prove`
 
-The lookup starts on its own. **This is the one wait in the demo that is not
-compressed.** Let it run.
+The scan card is the NDI integration page people already know. The request
+is **the Corporate Regulatory Authority's**, named the way Dorji's wallet will
+show it. Point at what is shared — name and citizenship ID number — and what
+is not: nothing about the organisation. NDI keeps nothing from the proof.
+Press **Simulate the scan** in the dashed panel.
 
-> "Every other wait here is about two seconds. This one is not, deliberately.
-> This is the moment the platform admits it cannot assert a company's
-> identity by itself, and asks the Corporate Regulatory Authority which
-> companies it lists Dorji against. If that resolved instantly, the most
-> important architectural fact about the whole product would slide straight
-> past you."
+Every way it can end is walkable or in the state switcher: **I don't have the
+NDI wallet**, **Show what happens if you decline in the wallet**, and **Show
+what happens if someone else's wallet answers** — that last one is where
+proxy sign-up is caught, before the authority is asked anything.
 
-Two organisations come back. Point at the second:
+### 4 · The authority decides — `/onboarding/verifying`
 
-> "Druk Valley Hardware is already on the platform — another director added
-> it. So it can't be chosen. Registering a company twice is exactly the defect
-> we're designing out; the way in for a second director is an invitation from
-> the first."
+Two named steps: *the Corporate Regulatory Authority is checking its
+records*, then *setting up your organisation's wallet* (stated in minutes; the
+prototype compresses them).
 
-Leave **Pelden Trading** chosen and press **Add Pelden Trading Pvt. Ltd.**
-Two named stages follow: the register confirms the pair Dorji chose, and the
-organisation's wallet is set up with keys nobody is given a copy of.
+> "This is the moment the platform admits it can't decide who a company is.
+> We ask the authority; it checks its own records, which NDI never sees; and
+> the answer is its decision."
 
-**If asked "what if the register doesn't have you?"** — see the manual review
-walk below. It is a review, not a dead end.
+The page can be closed — **Close this page** goes to Dorji's account, which
+shows the application in progress with **Check progress** and **Cancel**.
+Coming back picks up where it is, never from the beginning. **Show what
+happens if the Corporate Regulatory Authority can't be reached** gives E8,
+which says nothing is wrong with the application; **Show what happens if
+setting up stalls** gives E9, which leads with the approval.
 
-### 4 · The milestone — `/onboarding/foundational`
+With `CRA-2015-03310` instead, it ends on **Not verified**: the authority's
+records don't show Dorji, the decision is theirs, and the primary action is
+how to correct it *with the authority*. NDI offers no override and no review.
 
-Point at **Why this one is different**:
+### 5 · Pelden is verified — `/onboarding/foundational`
 
-> "Accepting a credential normally needs an authority saying you may. Nobody
-> has one yet — the company came into existence thirty seconds ago. So this
-> one acceptance happens under a bootstrap authority made for exactly this,
-> and nothing else can be accepted under it."
+Nothing to accept: the registration was added to Pelden's wallet
+automatically. The next step offered is **Get its tax identity (TPN)** — the
+next credential in the chain (the prototype says that flow isn't built yet),
+with **View the credential** beside it. The summary says what Pelden can do
+*and what it can't*: hold and present credentials, not issue or verify them.
 
-Press **Accept the registration**.
-
-> "*Pelden Trading is verified.* And this credential is the thing act five
-> walks back up to. Remember it."
-
-**Go to the console** lands on Pelden's first day: *Welcome, Dorji*, a
-**Start here** panel, nothing waiting, no activity. It holds its registration
-and Dorji's root authority and nothing else — the organisation existed thirty
-seconds ago, so the console says so. The audit trail has exactly two rows:
-the registration and the acceptance.
+**Go to Pelden Trading** lands on Pelden's first day:
+*Welcome, Dorji*, a **Start here** panel led by the TPN, nothing waiting, no
+activity. Inviting colleagues is offered third; appointing someone to act is
+available but not prompted.
 
 > "Nothing has happened here yet, and the console doesn't pretend otherwise."
 
@@ -210,14 +232,13 @@ the onboarding flows are kept.
 
 ## The Gate 2 walkthroughs — Flows 1 and 2
 
-For the Gate 2 review. On this branch Demo controls → **Walk a flow** offers
-the three Flow 1 onboardings — **Root signs in**, **Root invites a platform
-admin** and **Create an account** — each on its first screen as the right
-person, from a known starting state: the root and admin flows on day zero,
-the company flow on the platform with one admin (Kinzang) and no business.
-**Register the company** and **Invite a member** arrive with the Flow 2
-branch; their walkthroughs below are kept so the document does not have to
-be rewritten when it lands. The other walkthroughs below are still built but not in the controls:
+For the Gate 2 review. Demo controls → **Walk a flow** offers the four
+onboardings in focus — **Root signs in**, **Root invites a platform admin**,
+**Create an account**, **Register the company** and **Invite a member** —
+each on its first screen as the right person, from a known starting state:
+the root and admin flows on day zero, the company flows on the platform with
+its two admins (Kinzang and Tshendu) and no business, and the member flow on Pelden's first
+day. The other walkthroughs below are still built but not in the controls:
 switch person with **Driving as** and go to the route named in the heading.
 
 ### FLOW-ONB-02 · Root invites a platform admin — `/sign-in`
@@ -232,7 +253,7 @@ platform admin.
 
 1. Enter an email address. Point at the warning that the
    account must belong to the person who will prove their identity later —
-   sign-up cannot tell a director from their accountant, and step 2 of Flow 2
+   sign-up cannot tell a director from their accountant, and the identity step of Flow 2
    is where that is enforced.
 2. **Check your email.** No email is sent. The dashed **Prototype** panel says
    so, and **Open the link from the email** stands in for the inbox. Resend
@@ -315,8 +336,8 @@ Which one applies is a deployment setting — self-service sign-up on or off
 invited route below is kept for reference. Both routes end in the same check: the
 register confirms the person represents the organisation.
 
-**Sign up and add it yourself** (self-service on) is act 1 above: the register
-lists the organisations it has against the person, and they choose one.
+**Sign up and add it yourself** (self-service on) is act 1 above: the person
+types the registration number and the authority confirms them, or doesn't.
 
 **NDI invites a business** (self-service off), as Kinzang:
 
@@ -329,42 +350,43 @@ lists the organisations it has against the person, and they choose one.
 3. **Create an account** — allowed even with self-service off, because the
    invitation opened that door. Finish sign-up and you are brought back;
    **Accept**.
-4. **Register the organisation** → prove who you are → the register is asked
-   the narrower question: *does it list this person against the organisation
-   the invitation names?* No list to choose from. Then the registration, and
-   back to the account's organisations with Pelden on it.
+4. **Register the organisation** → its registration number → the authority's
+   identity request → the authority decides, exactly as on the self-service
+   route. The invitation names Pelden but isn't the confirmation; if the
+   authority's name differs from the invitation's, the verified screen says
+   so rather than swapping it silently.
 
-If the register does not list them for the named organisation, it falls to
-manual review exactly as the self-service route does.
+If the authority does not confirm them, it ends on **Not verified**, exactly
+as the self-service route does.
 
 With self-service off, the public **Create an account** page shows its
 switched-off state — try it to show the open door is shut.
 
-### Flow 2 · When the register can't match — manual review
+### Flow 2 · An organisation already on the platform — Kind E
 
-1. **Walk a flow → Register the company**. Prove who you are, and while the
-   register is being asked, press **Show what happens if the register lists
-   nothing**.
-2. **Ask NDI to review it.** The form starts empty — type
-   `Pelden Trading Pvt. Ltd.` and `CRA-2019-04477` — attach any file (only
-   the file name is kept) and **Send for review**. The applicant gets a
-   reference, sees what the register said, and is told plainly that the
-   organisation holds nothing until it is approved.
-3. As **Kinzang** (the platform admin this walk starts with), open
-   `/admin/reviews`. The register's answer sits at the top of every case, and
-   the applicant's identity is marked as proved from their wallet. **Refuse**
-   cannot be confirmed without a reason, because the applicant is shown it.
-4. Approve Pelden's case, then open `/onboarding/review` again: approved, by
-   Kinzang, by name. **Receive its registration** continues to the milestone —
-   offered by NDI after its review rather than by the register, which never
-   confirmed the pair.
+Bank of Bhutan issues and verifies on NDI but has never been verified as a
+holder. Start from day zero (**Walk a flow → Root signs in** resets to it,
+then drive as **Yeshey Choden** with **Driving as**) — but an authority is
+only connected once a platform admin exists, so walk the platform-admin flow
+first, or the first screen says nothing can be verified yet.
 
-For a **refusal**, refuse with a reason instead: the applicant sees it and
-**Send it again with more** reopens the form with what they sent before.
+1. As Yeshey, Bank of Bhutan's dashboard says it hasn't been verified yet.
+   **Verify Bank of Bhutan** (or **Verify organisation** in the sidebar).
+2. The same screens as a new company: the type, `CRA-1997-00112`, the CRA's
+   identity request, the wait. Nobody at NDI approves anything — there is no
+   request to NDI.
+3. **Bank of Bhutan Ltd.** is verified — and because the CRA's name differs
+   from the one on the platform, the verified screen says so. Its issuing and
+   verifying carry on throughout, and the screen says that instead of the
+   negative clause.
 
-For a **civil society organisation**, pick that kind on the first screen:
-there is no register to ask, so the flow goes straight from the proof to the
-review form.
+### Flow 2 · Before any authority is connected
+
+From day zero, before the platform-admin flow, open `/onboarding`. The first
+screen says organisations can't be verified yet because no authority is
+connected. **Tell us you're waiting** asks for nothing about the
+organisation, and once pressed says nothing is pending — no application, no
+queue.
 
 ---
 
@@ -798,13 +820,17 @@ Worth showing:
 | `/wallet/offers/...` | **out_of_scope**, **requires_approval** | Both refusal shapes on any offer |
 | `/approvals/...` | **stale**, **expired**, **rejected** | The outcomes nobody demos |
 | `/controllership/audit` | **filtered_empty** | A filter finding nothing, trail still intact |
-| `/onboarding/prove` | **name_mismatch**, **expired** | Someone else's wallet answering, and a lapsed proof request |
-| `/onboarding/choose` | **none_found**, **register_unavailable**, **review_form** | The register listing nothing, being down, and the review form |
-| `/onboarding/review` | **under_review**, **approved**, **refused** | Every stage of a manual review |
+| `/onboarding` | **none_supported**, **no_permission** | No authority connected yet; Kind E by someone who isn't the owner |
+| `/onboarding/details` | **invalid_format**, **loading**, **already_claimed** | The shape check, and E3 saying nothing about why |
+| `/onboarding/prove` | **same_device**, **declined**, **expired**, **credential_rejected**, **no_wallet**, **name_mismatch** | Every way the authority's identity request can end |
+| `/onboarding/verifying` | **unreachable**, **setup_failed**, **issuing_failed**, **resumed** | Not decided vs approved-but-not-finished, and coming back |
+| `/onboarding/not-verified` | **not_a_representative**, **not_recognised** | E6 and E7, worded alike on purpose |
+| `/onboarding/not-supported` | **interest_recorded** | Nothing pending, said in so many words |
+| `/welcome` | **in_progress** | An application in flight, instead of the empty account |
 | `/sign-up/check-email` | **delivery_failed** | The verification email bouncing |
 | `/invitation/...` | **expired**, **revoked**, **void**, **wrong_person** | Every way an invitation can fail to be accepted |
 | `/admin/approvals` | **self_issued** | Dual control: approve disabled, with the reason |
-| `/onboarding/foundational` | **issuance_failed** | Confirmed, but the credential did not issue |
+| `/onboarding/foundational` | **name_differs** | The authority's name shown, with the difference stated |
 | `/controllership/entity` | **foundational_expired** | What lapses when the root lapses |
 | `/appeals` | **under_review**, **upheld**, **rejected** | Every stage of an appeal |
 | `/kitchen-sink` | — | Every component, both themes. Not part of the story |
@@ -835,8 +861,9 @@ And three more for the Gate 2 flows:
   as a role rather than a person.
 - **Kinzang Dorji** and **Tshendu** — NDI's two platform administrators.
   They see the Studio and **NDI administration**: organisations,
-  invitations, approvals, platform admins and manual review, and each
-  approves what the other proposes. The root account never approves.
+  invitations, approvals and platform admins, and each approves what the
+  other proposes. The root account never approves. There is no manual
+  review: whether an organisation is verified is its authority's decision.
 - **Whoever joins Pelden by invitation** — each gets a record of their own
   and appears once they accept. A member of Pelden who can see it and act
   for nothing.

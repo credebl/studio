@@ -10,22 +10,23 @@ import { Stepper } from "@/components/ui/Stepper";
  *
  * There is no sidebar and no organisation switcher, because at this point
  * there is no organisation — the whole purpose of these screens is to bring
- * one into existence. Showing the workspace chrome around them would promise
- * a tenant that does not exist yet, and would make the register confirmation
- * look like a setting rather than the gate it is.
+ * one into existence, and none exists until the authority has decided
+ * (EW-FLOW2-SD/D10). Showing the workspace chrome around them would promise
+ * a tenant that does not exist yet.
  *
- * Proving who you are comes before choosing the organisation: the register
- * is asked which organisations it lists *you* against, and you pick from
- * that list, rather than typing a registration number and then being
- * checked against it (list-then-select, decided 24 Sep 2026).
+ * The steps are FLOW-ORG-01's order: the type, the one identifier, the
+ * authority's identity request answered from the person's wallet, and the
+ * wait while the authority decides. The identifier comes before the proof
+ * because the authority is asked about one pair — this person, this
+ * registration — and the request it raises names what it is asking about.
  */
 /* Short on purpose: four steps share a 900px column, and longer labels
    ellipsised at every width — a stepper you cannot read is decoration. */
 export const ONBOARDING_STEPS = [
-  { label: "Kind" },
+  { label: "Type" },
+  { label: "Registration" },
   { label: "Your identity" },
-  { label: "The organisation" },
-  { label: "Its registration" },
+  { label: "Verifying" },
 ];
 
 export function OnboardingShell({
@@ -40,7 +41,7 @@ export function OnboardingShell({
       <header className="border-b border-subtle">
         <div className="mx-auto flex w-full max-w-[900px] items-center justify-between gap-4 px-4 py-4 min-[641px]:px-6">
           <Lockup className="block h-7 w-auto" />
-          <span className="text-[12px] text-faint">Registering an organisation</span>
+          <span className="text-[12px] text-faint">Verifying an organisation</span>
         </div>
       </header>
 

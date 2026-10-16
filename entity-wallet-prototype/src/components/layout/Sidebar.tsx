@@ -99,15 +99,15 @@ const PRIMARY: NavItem[] = [
       /* Never offered to the root account, which approves nothing
          (FLOW-ONB-02 S2, E13; UX-EW-01 SCR-INV-02). */
       { label: "Approvals", href: "/admin/approvals", icon: "userCheck", notForRoot: true },
-      { label: "Manual review", href: "/admin/reviews", icon: "fileText" },
     ],
   },
   /* Administrators invite each other (Kind A, FLOW-ONB-02 v0.6); the root
      account brings on the first two and restores them in an emergency. */
   { label: "Platform admins", icon: "users", href: "/admin/team", platform: "admin" },
 
-  /* For an organisation already on NDI without a wallet: the way to ask. */
-  { label: "Entity Wallet", icon: "wallet", href: "/entity-wallet", personas: ORG_OWNERS, needs: "no-holder" },
+  /* For an organisation already on NDI that its authority has not yet
+     confirmed: the way to verify it (FLOW-ORG-01 Kind E). */
+  { label: "Verify organisation", icon: "shieldCheck", href: "/entity-wallet", personas: ORG_OWNERS, needs: "no-holder" },
 
   /* ---- Entity wallet ---------------------------------------------------
      The entity-wallet groups sit directly under Dashboard, above the

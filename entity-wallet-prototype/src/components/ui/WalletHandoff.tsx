@@ -26,13 +26,15 @@ import { Icon } from "./icons";
  * own QR". Recognition is a security property at this moment: a hand-off that
  * looks unfamiliar is one people either abandon or learn to approve blindly.
  *
- * WHAT WAS TAKEN OUT
+ * THE SCAN, AND THE ONE PLACE A LINK REPLACES IT
  *
- * The console is a web portal used at a desk, so the hand-off is a scan and
- * nothing else. The earlier "open mobile wallet" deep link assumed the page
- * was on the phone holding the wallet, which in this portal it never is, and
- * the cloud-wallet link is out of scope for this release. Two buttons that
- * lead nowhere a desk user can go were worse than none.
+ * The console is a web portal mostly used at a desk, so the hand-off is a
+ * scan. An "open mobile wallet" link used to sit under every code and was
+ * taken out: at a desk it leads nowhere. It comes back in one form only,
+ * `sameDevice`, which swaps the code for the link instead of adding it —
+ * SCR-ORG-03 has a same-device state, because someone verifying their
+ * organisation from their phone cannot scan the phone they are holding.
+ * The cloud-wallet link stays out of scope for this release.
  *
  * WHAT IT ALWAYS SAYS
  *
@@ -91,6 +93,8 @@ export function WalletHandoff({
   onCancel,
   onSkip,
   onSimulateScan,
+  notSharing,
+  sameDevice = false,
 }: {
   /** What the code encodes. Only has to be distinctive, not resolvable. */
   value: string;
@@ -111,8 +115,17 @@ export function WalletHandoff({
    * product — see SimulatedStep.
    */
   onSimulateScan?: () => void;
+  /** What the request does not ask for, where saying so matters (SCR-ORG-03). */
+  notSharing?: string[];
+  /** Opened on the phone that holds the wallet: a link instead of a code. */
+  sameDevice?: boolean;
 }) {
-  const copy = STATUS_COPY[status];
+  /* On the phone itself there is nothing to scan: the wait is for the
+     person to open the wallet, and the card's button is the stand-in. */
+  const copy =
+    sameDevice && status === "awaiting_scan"
+      ? { label: "Waiting for you to open the wallet", detail: "Open Bhutan NDI Wallet on this phone and answer the request there." }
+      : STATUS_COPY[status];
   const settled = status === "confirmed" || status === "expired" || status === "failed";
   const bad = status === "expired" || status === "failed";
 
@@ -123,7 +136,11 @@ export function WalletHandoff({
             comes first: the page says what the scan is for before the code
             asks anyone to scan it. */}
         <div className="order-2 @min-[720px]:order-1">
-          <ScanCard value={settled ? null : value} dimmed={settled} />
+          {sameDevice ? (
+            <OpenWalletCard closed={settled} onOpen={onSimulateScan} />
+          ) : (
+            <ScanCard value={settled ? null : value} dimmed={settled} />
+          )}
         </div>
 
         {/* ---- What is happening, and what it costs you ---- */}
@@ -143,6 +160,19 @@ export function WalletHandoff({
                 </li>
               ))}
             </ul>
+            {notSharing?.length ? (
+              <>
+                <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Not shared</p>
+                <ul className="mt-2 flex flex-col gap-1.5">
+                  {notSharing.map((item) => (
+                    <li key={item} className="flex items-start gap-2 text-[13px] leading-[1.5] text-muted">
+                      <Icon name="close" size={13} strokeWidth={2} className="mt-[4px] flex-none text-faint" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
             <p className="mt-2.5 text-[12px] leading-[1.5] text-faint">
               Your wallet proves who you are. It never receives the organisation&rsquo;s keys or
               credentials.
@@ -189,14 +219,14 @@ export function WalletHandoff({
             </div>
           </div>
 
-          {onSimulateScan && status === "awaiting_scan" ? (
+          {onSimulateScan && status === "awaiting_scan" && !sameDevice ? (
             <div
               className="flex flex-col gap-2.5 rounded-[12px] border border-dashed px-3.5 py-3"
               style={{ borderColor: "var(--border-strong)", background: "rgb(var(--tint) / 0.03)" }}
             >
               <p className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
                 <span aria-hidden="true" className="h-1.5 w-1.5 flex-none rounded-full" style={{ background: "var(--ndi-warning)" }} />
-                Prototype · stands in for scanning with your phone
+                Prototype · stands in for {sameDevice ? "answering in the wallet app" : "scanning with your phone"}
               </p>
               <div>
                 <button
@@ -205,7 +235,7 @@ export function WalletHandoff({
                   className="ndi-hairline-btn inline-flex h-10 items-center gap-2 rounded-[10px] px-3.5 font-display text-[13px] font-medium"
                 >
                   <Icon name="scan" size={14} strokeWidth={2} />
-                  Simulate the scan
+                  {sameDevice ? "Simulate answering" : "Simulate the scan"}
                 </button>
               </div>
             </div>
@@ -239,6 +269,40 @@ export function WalletHandoff({
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * The same-device face: the wallet is on this phone, so the card opens it
+ * rather than showing a code to scan. Opening it is the scan's stand-in —
+ * the app cannot be launched from a prototype — so it goes through the same
+ * simulate handler and says so.
+ */
+function OpenWalletCard({ closed, onOpen }: { closed: boolean; onOpen?: () => void }) {
+  return (
+    <section
+      aria-label="Open Bhutan NDI Wallet"
+      className="flex flex-col items-center gap-4 rounded-[28px] px-5 py-7 text-center @min-[720px]:px-6"
+      style={{ background: "var(--scan-card)" }}
+    >
+      <p className="font-display text-[16.5px] font-semibold text-strong">
+        Open <span className="text-accent">Bhutan NDI</span> Wallet
+      </p>
+      <p className="max-w-[30ch] text-[13px] leading-[1.55] text-muted">
+        The request is waiting in the wallet app on this phone.
+      </p>
+      <button
+        type="button"
+        onClick={onOpen}
+        disabled={closed || !onOpen}
+        className="inline-flex h-11 items-center gap-2 rounded-full border-2 px-6 font-display text-[13.5px] font-medium text-accent disabled:opacity-40"
+        style={{ borderColor: "var(--ndi-mint)" }}
+      >
+        <Icon name="wallet" size={15} strokeWidth={2} />
+        Open the wallet
+      </button>
+      <p className="text-[11.5px] leading-[1.4] text-faint">Prototype — opening it answers the request</p>
+    </section>
   );
 }
 

@@ -49,6 +49,7 @@ import {
   type Scope,
   type ScopeFilter,
   type OrgKind,
+  REGISTER_RECORDS,
   type Verification,
   type VerificationDecision,
 } from "./demoData";
@@ -120,8 +121,11 @@ const FRESH: DemoState = dayZeroState(SEED);
  *  13 — Root is named "Root", not Anand Acharya, and approves nothing;
  *       Tshendu joins Kinzang as the second platform admin (FLOW-ONB-02
  *       v0.6). A version-12 save keeps the old name and one admin.
+ *  14 — Flow 2 follows FLOW-ORG-01: one identifier, the authority decides,
+ *       no manual review and no wallet requests to NDI. A version-13 save
+ *       carries an onboarding with no stage and review cases nothing reads.
  */
-const SEED_VERSION = 13;
+const SEED_VERSION = 14;
 
 /**
  * Appends one audit row, carrying the hash chain forward.
@@ -268,6 +272,17 @@ function applyPresentation(
 
 /** Today, as the seed writes dates. Anything created in a demo is dated now. */
 const today = () => new Date().toISOString().slice(0, 10);
+/**
+ * FLOW-ORG-01 P3 as the server would answer it: which entity types have a
+ * connected authority (Flow 2 solution design §2.2). On day zero nobody has
+ * designated any authority yet, so nothing is connected — the one condition
+ * the demo has for it.
+ */
+const ROUTED_KINDS: OrgKind[] = ["company", "sole_proprietorship", "partnership"];
+function connectedKinds(s: DemoState): OrgKind[] {
+  return s.people.some((p) => p.platformRole === "admin" && p.hasAccount !== false) ? ROUTED_KINDS : [];
+}
+
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
 
 /**
@@ -640,28 +655,38 @@ interface DemoActions {
   /** A2 — the invitee declines. */
   declineInvitation: (id: string) => void;
 
-  /* ---- Organisation onboarding (Flow 2) ----
-     Opt in, prove who you are, pick from what the register lists, receive
-     the registration. The register's answers are fixtures; what the person
-     chose and proved is state. */
+  /* ---- Organisation onboarding (Flow 2, FLOW-ORG-01) ----
+     Choose the type, type the identifier, answer the authority's identity
+     request, wait while it decides. The authority's answers come from
+     REGISTER_RECORDS, read only here: the store stands in for the authority
+     and the Entity-Wallet Service, and the screens render what it returns. */
 
-  /** Step 1 — the person opts in and says what kind of organisation. Starts afresh. */
-  startOrgOnboarding: (kind: OrgKind, invitationId?: string) => void;
-  /** Step 2 — the wallet proof was answered. The name comes from the credential. */
-  recordIdentityProof: (name: string) => void;
-  /** Step 3 — the person picked one of the organisations the register listed. */
-  selectOrganisation: (ref: string) => void;
-  /** No match — ask NDI to review instead. Returns the case id. */
-  submitManualReview: (input: {
-    legalName: string;
-    registrationNumber: string;
-    evidence: string[];
-    note: string;
-    registerAnswer: string;
-  }) => string;
-  /** A platform admin decides a case. A refusal needs a reason. */
-  decideManualReview: (id: string, approve: boolean, reason?: string) => void;
-  /** Steps 5–6 — registration accepted, holder capability switched on. */
+  /**
+   * SCR-ORG-01 — begins, or begins again, with the type chosen. An
+   * invitation or an existing organisation (Kind E) that started this is
+   * carried through.
+   */
+  startOrgOnboarding: (kind: OrgKind, invitationId?: string | null, existingOrgId?: string | null) => void;
+  /**
+   * SCR-ORG-02 — steps 1–4. Creates the verification record and asks the
+   * authority to raise its identity request. E3 when the registration is
+   * already verified on the platform; the screen says nothing about why.
+   */
+  submitIdentifier: (identifier: string) => { ok: true } | { ok: false; error: "E3" | "E1" };
+  /** SCR-ORG-03 — steps 5–6. The proof came back; the name is the credential's. */
+  recordIdentityProof: (name: string, personId: PersonId) => void;
+  /**
+   * SCR-ORG-04 — steps 7–8. The authority checks its own records and
+   * decides. Its answer is the store's to give and the screen's to show.
+   */
+  checkWithAuthority: () => "approved" | "not_confirmed";
+  /** SCR-ORG-04's "notify me when it's done". */
+  setVerificationNotify: (on: boolean) => void;
+  /** SCR-ONB-05's "cancel" — the record is withdrawn, nothing was created. */
+  cancelOrgOnboarding: () => void;
+  /** SCR-ORG-06 — tell us you're waiting. Keeps the type and an address only. */
+  recordOrgInterest: (kind: OrgKind, email: string) => void;
+  /** Steps 9–11 — the organisation is set up, its registration accepted automatically. */
   completeOrgOnboarding: () => void;
   /** Leaves the first-run state for the story's lived-in one (acts 2–6). */
   restoreStoryState: () => void;
@@ -711,9 +736,12 @@ interface DemoActions {
     invitationId: string,
     name: string,
   ) => { ok: true; personId: PersonId } | { ok: false; error: "E4" | "E5" | "E6" | "E7" | "invalid" | "has_account" };
-  /** An organisation's owner asks NDI for an Entity Wallet. */
-  applyForEntityWallet: (note: string) => string;
-  /** A platform admin decides a request. Approving a wallet sends kind W. */
+  /**
+   * A platform admin decides a request to issue or verify. There is no
+   * request for a wallet: an organisation already on the platform verifies
+   * itself with its authority (FLOW-ORG-01 Kind E), and NDI decides nothing
+   * about it.
+   */
   decideAccessRequest: (id: string, approve: boolean, reason?: string) => void;
 
   /* ---- Demo harness ----
@@ -746,6 +774,14 @@ interface DemoDerived {
   currentPerson: Person;
   /** Resolves an id to a person for dual attribution. Never fails. */
   personById: (id: string) => Person;
+  /**
+   * The entity types whose authority is connected — FLOW-ORG-01 P3, which
+   * the server derives and the screen only renders. Empty on day zero:
+   * until NDI has a platform administrator nobody has designated any
+   * authority (that designation is FLOW-ORG-02's, and the demo folds it into
+   * the platform being opened).
+   */
+  connectedKinds: OrgKind[];
 }
 
 type DemoContextValue = DemoState & DemoActions & DemoDerived;
@@ -2061,104 +2097,108 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           ),
         })),
 
-      startOrgOnboarding: (kind, invitationId) =>
+      startOrgOnboarding: (kind, invitationId, existingOrgId) =>
         setState((s) => ({
           ...s,
           orgOnboarding: {
             kind,
+            identifier: null,
+            stage: "started",
             provedName: null,
-            selectedRef: null,
-            reviewId: null,
-            completed: false,
+            provedPersonId: null,
+            authoritativeName: null,
+            notify: false,
             invitationId: invitationId ?? null,
+            existingOrgId: existingOrgId ?? null,
           },
         })),
 
-      recordIdentityProof: (name) =>
-        setState((s) => ({
-          ...s,
-          orgOnboarding: {
-            ...(s.orgOnboarding ?? {
-              kind: "company",
-              selectedRef: null,
-              reviewId: null,
-              completed: false,
-              invitationId: null,
-            }),
-            provedName: name,
-          },
-        })),
-
-      selectOrganisation: (ref) =>
-        setState((s) => (s.orgOnboarding ? { ...s, orgOnboarding: { ...s.orgOnboarding, selectedRef: ref } } : s)),
-
-      submitManualReview: ({ legalName, registrationNumber, evidence, note, registerAnswer }) => {
-        const id = rid("mr");
-        setState((s) => {
-          /* Continues the seeded numbering: two cases on file, so the next is 0143. */
-          const n = 141 + s.manualReviews.length;
-          return {
-            ...s,
-            manualReviews: [
-              {
-                id,
-                reference: `MR-${new Date().getFullYear()}-0${n}`,
-                kind: s.orgOnboarding?.kind ?? "company",
-                legalName,
-                registrationNumber,
-                applicantName: s.orgOnboarding?.provedName ?? "Unknown applicant",
-                /* The wallet in this prototype always answers as Dorji — the
-                   proof is a fixture — so the masked CID is his. */
-                applicantCid: "•••• •••• 4821",
-                registerAnswer,
-                evidence,
-                note,
-                submittedAt: today(),
-                state: "UNDER_REVIEW",
-                reviewerId: null,
-                decidedAt: null,
-                reason: null,
-              },
-              ...s.manualReviews,
-            ],
-            orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, reviewId: id } : s.orgOnboarding,
-          };
-        });
-        log(`Manual review requested for ${legalName}`);
-        return id;
+      submitIdentifier: (identifier) => {
+        const s0 = stateRef.current;
+        const ob = s0.orgOnboarding;
+        if (!ob) return { ok: false, error: "E3" };
+        /* P3 is checked again here, not only on SCR-ORG-01: a type that
+           was connected when the page loaded may not be by the time the
+           form is sent, and the server is what decides. */
+        if (!connectedKinds(s0).includes(ob.kind)) return { ok: false, error: "E1" };
+        const id = identifier.trim().toUpperCase();
+        /* E3 — already verified here. Recorded for support, refused with a
+           message that does not say whether the registration exists. */
+        if (REGISTER_RECORDS.some((r) => r.identifier === id && r.verifiedOnPlatform)) {
+          return { ok: false, error: "E3" };
+        }
+        setState((s) =>
+          s.orgOnboarding ? { ...s, orgOnboarding: { ...s.orgOnboarding, identifier: id, stage: "proof_requested" } } : s,
+        );
+        return { ok: true };
       },
 
-      decideManualReview: (id, approve, reason) =>
-        setState((s) => {
-          /* A named platform admin decides — never the root account, which
-             does no routine work (FLOW-ONB-02 S9). */
-          if (s.people.find((p) => p.id === s.harness.persona)?.platformRole !== "admin") return s;
-          return {
+      recordIdentityProof: (name, personId) =>
+        setState((s) =>
+          s.orgOnboarding
+            ? { ...s, orgOnboarding: { ...s.orgOnboarding, provedName: name, provedPersonId: personId, stage: "checking" } }
+            : s,
+        ),
+
+      checkWithAuthority: () => {
+        const ob = stateRef.current.orgOnboarding;
+        /* The authority's own question, asked of its own records: is this
+           person a representative of the entity with this identifier? An
+           unknown identifier, a deregistered entity and a person who is not
+           a representative all come back as one answer — the authority may
+           tell them apart, the platform keeps nothing that could (S6). */
+        const record = REGISTER_RECORDS.find((r) => r.identifier === ob?.identifier && r.kind === ob?.kind);
+        const approved = Boolean(
+          ob?.provedPersonId && record && record.active && record.representatives.includes(ob.provedPersonId),
+        );
+        setState((s) =>
+          s.orgOnboarding
+            ? {
+                ...s,
+                orgOnboarding: {
+                  ...s.orgOnboarding,
+                  stage: approved ? "setting_up" : "not_confirmed",
+                  authoritativeName: approved ? (record?.legalName ?? null) : null,
+                },
+              }
+            : s,
+        );
+        if (!approved) log("An organisation verification was not confirmed by the authority");
+        return approved ? "approved" : "not_confirmed";
+      },
+
+      setVerificationNotify: (on) =>
+        setState((s) => (s.orgOnboarding ? { ...s, orgOnboarding: { ...s.orgOnboarding, notify: on } } : s)),
+
+      cancelOrgOnboarding: () => setState((s) => ({ ...s, orgOnboarding: null })),
+
+      recordOrgInterest: (kind, email) =>
+        setState((s) => ({
           ...s,
-          manualReviews: s.manualReviews.map((m) =>
-            m.id === id
-              ? {
-                  ...m,
-                  state: approve ? "APPROVED" : "REFUSED",
-                  reviewerId: s.harness.persona,
-                  decidedAt: today(),
-                  reason: approve ? null : (reason ?? null),
-                }
-              : m,
-          ),
-          };
-        }),
+          orgInterests: [
+            ...s.orgInterests.filter((i) => !(i.kind === kind && i.email === email)),
+            { kind, email, recordedAt: today() },
+          ],
+        })),
 
       completeOrgOnboarding: () => {
         const s0 = stateRef.current;
-        const inv = s0.orgInvitations.find((i) => i.id === s0.orgOnboarding?.invitationId);
-        if (inv?.kind === "W" && inv.orgId) {
-          /* An organisation already on NDI gains an Entity Wallet: the
-             holder capability, its registration in its own wallet, and the
-             person who accepted as its root authority. Its issuing and
-             verifying are untouched. */
-          const orgId = inv.orgId;
-          const personId = s0.people.find((p) => p.email.toLowerCase() === inv.email.toLowerCase())?.id ?? "yeshey";
+        const ob = s0.orgOnboarding;
+        if (!ob || ob.stage !== "setting_up") return;
+        const inv = s0.orgInvitations.find((i) => i.id === ob.invitationId);
+        const existingId = ob.existingOrgId ?? (inv?.kind === "W" ? inv.orgId : null);
+        if (existingId) {
+          /* Kind E: the organisation already exists — Bank of Bhutan, which
+             issues and verifies — and step 9 provisions it rather than
+             creating another. It gains the holder capability and its
+             registration in its own wallet; the person the authority
+             confirmed becomes its root authority. Its issuing and verifying
+             are untouched throughout. */
+          const orgId = existingId;
+          const personId =
+            ob.provedPersonId ??
+            s0.people.find((p) => p.email.toLowerCase() === inv?.email.toLowerCase())?.id ??
+            "yeshey";
           const seedCred = SEED.heldCredentials.find((c) => c.orgId === orgId && c.isFoundational);
           const seedRel = SEED.relations.find((r) => r.orgId === orgId && r.isRootAuthority);
           const now = today();
@@ -2178,7 +2218,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
                   { ...seedRel, personId, createdAt: now, acceptedAt: now, activatedAt: now, scope: { ...seedRel.scope, validFrom: now } },
                 ]
               : s.relations,
-            orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, completed: true } : s.orgOnboarding,
+            orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, stage: "verified" } : s.orgOnboarding,
             activeOrgId: orgId,
           }));
           return;
@@ -2188,7 +2228,7 @@ export function DemoProvider({ children }: { children: ReactNode }) {
            for the same reason: nothing has been done in the console yet. */
         setState((s) => ({
           ...firstRunState(s),
-          orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, completed: true } : s.orgOnboarding,
+          orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, stage: "verified" } : s.orgOnboarding,
           /* The account that did this now belongs to the organisation, as its
              owner — the first row of SCR-ONB-05's list. */
           signup:
@@ -2203,13 +2243,14 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           if (!s.firstRun) return s;
           /* Everything the first-run state emptied comes back from the seed.
              What the presenter did in the onboarding flows is kept: the
-             account, the review cases, and any invitation they sent. */
+             account, anyone waiting on an authority, and any invitation
+             they sent. */
           const seeded = new Set(SEED.orgInvitations.map((i) => i.id));
           return {
             ...SEED,
             signup: s.signup,
             orgOnboarding: s.orgOnboarding,
-            manualReviews: s.manualReviews,
+            orgInterests: s.orgInterests,
             orgInvitations: [...s.orgInvitations.filter((i) => !seeded.has(i.id)), ...SEED.orgInvitations],
             accessRequests: [
               ...s.accessRequests.filter((a) => !SEED.accessRequests.some((x) => x.id === a.id)),
@@ -2428,83 +2469,18 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         return { ok: true, personId };
       },
 
-      applyForEntityWallet: (note) => {
-        const id = rid("ar");
-        setState((s) => {
-          const me = s.people.find((p) => p.id === s.harness.persona);
-          return {
-            ...s,
-            accessRequests: [
-              {
-                id,
-                orgId: s.activeOrgId,
-                capability: "holder",
-                requestedBy: s.harness.persona,
-                requesterName: me?.name ?? "Unknown",
-                requesterEmail: me?.email ?? "",
-                note,
-                submittedAt: today(),
-                state: "PENDING",
-                decidedBy: null,
-                decidedAt: null,
-                reason: null,
-                invitationId: null,
-              },
-              ...s.accessRequests,
-            ],
-          };
-        });
-        return id;
-      },
-
       decideAccessRequest: (id, approve, reason) =>
         setState((s) => {
           const req = s.accessRequests.find((a) => a.id === id);
           const me = s.people.find((p) => p.id === s.harness.persona);
           /* A named platform admin — never the root account (S9). */
           if (!req || req.state !== "PENDING" || me?.platformRole !== "admin") return s;
-          const org = s.organizations.find((o) => o.id === req.orgId);
           const decided = { decidedBy: s.harness.persona, decidedAt: today() };
           if (!approve) {
             return {
               ...s,
               accessRequests: s.accessRequests.map((a) =>
                 a.id === id ? { ...a, ...decided, state: "DECLINED" as const, reason: reason ?? null } : a,
-              ),
-            };
-          }
-          if (req.capability === "holder") {
-            /* Approving a wallet does not grant it. It invites the owner, who
-               still has to prove who they are and be confirmed by the
-               register — an admin's yes is not the trust decision either. */
-            const invId = rid("inv");
-            return {
-              ...s,
-              orgInvitations: [
-                {
-                  id: invId,
-                  kind: "W",
-                  email: req.requesterEmail,
-                  orgId: req.orgId,
-                  role: null,
-                  legalName: org?.legalName ?? org?.name ?? null,
-                  legalIdentity: null,
-                  purpose: "Entity Wallet for an organisation already issuing and verifying on NDI.",
-                  needsSecondApproval: false,
-                  invitedBy: s.harness.persona,
-                  approvedBy: null,
-                  createdAt: today(),
-                  sentAt: today(),
-                  expiresAt: inDays(INVITATION_DAYS.O),
-                  state: "PENDING",
-                  delivery: "delivered",
-                  decidedAt: null,
-                  acceptedName: null,
-                },
-                ...s.orgInvitations,
-              ],
-              accessRequests: s.accessRequests.map((a) =>
-                a.id === id ? { ...a, ...decided, state: "APPROVED" as const, invitationId: invId } : a,
               ),
             };
           }
@@ -2586,8 +2562,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         title: "No longer on record",
         cidVerified: false,
       };
-    return { currentPerson: find(state.harness.persona), personById: find };
-  }, [state.people, state.harness.persona]);
+    return { currentPerson: find(state.harness.persona), personById: find, connectedKinds: connectedKinds(state) };
+  }, [state]);
 
   const value = useMemo<DemoContextValue>(
     () => ({ ...state, ...actions, ...derived }),

@@ -71,18 +71,22 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
         needs: "The FLOW-ONB-01 P3 setting, read at request time and enforced by the server.",
       },
       {
-        shown: "The Corporate Regulatory Authority listing the organisations a person represents",
+        shown: "The Corporate Regulatory Authority confirming a representative",
         reality:
-          "Two fixed rows and a four-second delay. No register is queried; the same two organisations come back for anyone, and \"lists nothing\" is a button rather than an answer.",
+          "A handful of fixed records and a four-second delay. No register is queried: typing one of the listed registration numbers decides the answer, and \"can't be reached\" or \"setting up stalls\" are buttons rather than faults.",
         needs:
-          "A list-by-person query per register — which not every register offers today — and a governance decision about which register confirms which kind of organisation.",
+          "Each authority's issuer agent raising the identity request and answering from its own register, and the authority designations (which type, which authority) from FLOW-ORG-02.",
       },
       {
-        shown: "An NDI reviewer approving an organisation the register could not match",
+        shown: "Setting up the organisation's wallet \"in a few minutes\"",
         reality:
-          "A queue in your browser. Uploaded files are reduced to their names and never leave the page; the reviewer is whichever administrator you are driving as.",
-        needs:
-          "A case store with document storage, a reviewer role and procedure, and a decision on who issues the registration after a review.",
+          "A couple of seconds, and nothing is created: the registration added automatically is a fixture. Closing the page and coming back works because the stage is kept in your browser.",
+        needs: "Agent and wallet provisioning, the brokered credential offer with automatic acceptance, and completion that survives the page closing.",
+      },
+      {
+        shown: "\"Tell us you're waiting\" and \"email me when it's done\"",
+        reality: "Recorded in your browser. Nobody is emailed.",
+        needs: "An interest store keeping the type and an address only, and a notification service.",
       },
     ],
   },

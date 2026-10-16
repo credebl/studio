@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { useScreenState } from "@/components/demo/screenState";
@@ -12,18 +11,17 @@ import { GradientButton } from "@/components/ui/GradientButton";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
-import { SimulatedLink } from "@/components/ui/SimulatedStep";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { Icon } from "@/components/ui/icons";
 import { formatDate } from "@/features/controllership/scopeModel";
-import { NDI_ORG, shortOrgName, type AccessRequest, type OrgCapability } from "@/lib/demoData";
+import { NDI_ORG, type AccessRequest, type OrgCapability } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
 const CAPABILITY_LABEL: Record<OrgCapability, string> = {
   issuer: "Issue credentials",
   verifier: "Verify credentials",
-  holder: "Entity Wallet",
+  holder: "Holds its own credentials",
 };
 
 /**
@@ -32,25 +30,26 @@ const CAPABILITY_LABEL: Record<OrgCapability, string> = {
  *
  * THREE GRANTS, ONE PLACE
  *
- * Issuing, verifying and holding (the Entity Wallet) are separate, and an
- * organisation can have any mix: Bank of Bhutan issues and verifies and asks
- * for a wallet; Pelden holds and does neither of the others. Showing all
- * three side by side, per organisation, is what lets an administrator see
- * that asking for a wallet adds to what a bank does rather than replacing it.
+ * Issuing, verifying and holding are separate, and an organisation can have
+ * any mix: Bank of Bhutan issues and verifies, and holds once its owner has
+ * verified it; Pelden holds and does neither of the others. Showing all
+ * three side by side, per organisation, shows that verifying adds to what a
+ * bank does rather than replacing it.
  *
- * APPROVING A WALLET SENDS AN INVITATION, NOT A WALLET
+ * HOLDING IS NOT NDI'S TO GRANT
  *
- * An Entity Wallet rests on the register confirming who represents the
- * organisation. So approving the request invites the person who asked; they
- * still prove who they are and the register still answers. Issuing and
- * verifying are granted directly — the platform's existing product, where
- * NDI's approval is the decision.
+ * Issuing and verifying are granted here — the platform's existing
+ * product, where NDI's approval is the decision. Holding is not: an
+ * organisation holds once the authority that registered it confirms its
+ * representative (FLOW-ORG-01). The queue used to take requests for a
+ * wallet too, and approving one sent an invitation; there is no such
+ * request in the specification, so an administrator only sees whether each
+ * organisation is verified, never a decision about it.
  *
- * A decline needs a reason the organisation is shown, as in manual review.
+ * A decline needs a reason the organisation is shown.
  */
 export function OrganisationsAdminView() {
-  const router = useRouter();
-  const { organizations, accessRequests, orgInvitations, personById, currentPerson, decideAccessRequest } = useDemo();
+  const { organizations, accessRequests, personById, currentPerson, decideAccessRequest } = useDemo();
   const forced = useScreenState("SCR-ADM-02", ["default", "loading", "empty", "offline"]);
 
   const [confirming, setConfirming] = useState<{ id: string; approve: boolean } | null>(null);
@@ -71,22 +70,14 @@ export function OrganisationsAdminView() {
     setReason("");
   };
 
-  const walletState = (orgId: string) => {
-    const org = organizations.find((o) => o.id === orgId);
-    if (org?.capabilities.includes("holder")) return { status: "active", label: "Active" };
-    const req = accessRequests.find((a) => a.orgId === orgId && a.capability === "holder" && a.state !== "DECLINED");
-    if (req?.state === "APPROVED") return { status: "invited", label: "Owner invited" };
-    if (req?.state === "PENDING") return { status: "requested", label: "Requested" };
-    return { status: "not_set_up", label: "Not set up" };
-  };
-
   return (
     <AppShell>
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5">
         <PageHeader crumbs={[{ label: "NDI administration" }, { label: "Organisations" }]} title="Organisations" />
         <p className="max-w-[70ch] text-[13.5px] leading-[1.65] text-muted">
-          What each organisation may do on the platform — issue, verify, and hold an Entity Wallet —
-          and what it has asked for. Your decision is recorded with your name.
+          What each organisation may do on the platform, and what it has asked for. Issuing and
+          verifying are yours to decide, recorded with your name. Whether an organisation is
+          verified is its authority&rsquo;s decision.
         </p>
 
         {done ? (
@@ -112,7 +103,7 @@ export function OrganisationsAdminView() {
               <EmptyState
                 icon="building"
                 title="No requests waiting"
-                message="When an organisation asks for an Entity Wallet, or to issue or verify, it waits here."
+                message="When an organisation asks to issue or verify, it waits here."
               />
             </Panel>
           ) : (
@@ -136,7 +127,6 @@ export function OrganisationsAdminView() {
             <ul className="relative z-[4] m-0 flex list-none flex-col p-0">
               {/* NDI's own organisation runs the platform; it is not on it. */}
               {organizations.filter((o) => o.id !== NDI_ORG).map((o, i) => {
-                const wallet = walletState(o.id);
                 return (
                   <li key={o.id} className={`flex flex-col gap-2.5 px-5 py-4 min-[761px]:flex-row min-[761px]:items-center min-[761px]:justify-between ${i > 0 ? "border-t border-subtle" : ""}`}>
                     <span className="flex min-w-0 flex-col gap-0.5">
@@ -146,7 +136,10 @@ export function OrganisationsAdminView() {
                     <span className="flex flex-wrap items-center gap-1.5">
                       <StatusPill status={o.capabilities.includes("issuer") ? "active" : "inactive"} label={o.capabilities.includes("issuer") ? "Issues" : "Doesn't issue"} />
                       <StatusPill status={o.capabilities.includes("verifier") ? "active" : "inactive"} label={o.capabilities.includes("verifier") ? "Verifies" : "Doesn't verify"} />
-                      <StatusPill status={wallet.status} label={`Entity Wallet: ${wallet.label.toLowerCase()}`} />
+                      <StatusPill
+                        status={o.capabilities.includes("holder") ? "verified" : "unverified"}
+                        label={o.capabilities.includes("holder") ? "Verified" : "Not verified"}
+                      />
                     </span>
                   </li>
                 );
@@ -161,7 +154,6 @@ export function OrganisationsAdminView() {
               Decided
             </h2>
             {decided.map((req) => {
-              const inv = req.invitationId ? orgInvitations.find((x) => x.id === req.invitationId) : undefined;
               return (
                 <div key={req.id} className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-grid px-4 py-3">
                   <span className="flex min-w-0 flex-col gap-0.5">
@@ -172,16 +164,12 @@ export function OrganisationsAdminView() {
                       {req.decidedBy ? personById(req.decidedBy).name : "—"}
                       {req.decidedAt ? `, ${formatDate(req.decidedAt)}` : ""}
                       {req.reason ? ` · ${req.reason}` : ""}
-                      {inv ? ` · invitation to ${inv.email}${inv.state === "ACCEPTED" ? ", accepted" : ""}` : ""}
                     </span>
                   </span>
                   <span className="flex flex-wrap items-center gap-2.5">
-                    {inv && inv.state === "PENDING" ? (
-                      <SimulatedLink onClick={() => router.push(`/invitation/${inv.id}`)}>Open as the invitee</SimulatedLink>
-                    ) : null}
                     <StatusPill
                       status={req.state === "APPROVED" ? "approved" : "declined"}
-                      label={req.state === "APPROVED" ? (req.capability === "holder" ? "Owner invited" : "Granted") : "Declined"}
+                      label={req.state === "APPROVED" ? "Granted" : "Declined"}
                     />
                   </span>
                 </div>
@@ -193,34 +181,14 @@ export function OrganisationsAdminView() {
         <Dialog
           open={confirming?.approve === true}
           onClose={close}
-          title={
-            target?.capability === "holder"
-              ? `Invite ${target.requesterName} to set up ${orgName(target.orgId)}'s Entity Wallet?`
-              : `Let ${target ? orgName(target.orgId) : "this organisation"} ${target?.capability === "verifier" ? "verify" : "issue"} credentials?`
-          }
-          lead={
-            target?.capability === "holder"
-              ? "An invitation goes to the person who asked. The wallet exists only once the register confirms they represent the organisation."
-              : "This takes effect now. It is recorded with your name."
-          }
-          consequences={
-            target?.capability === "holder"
-              ? [
-                  `The invitation goes to ${target.requesterEmail} and lasts 30 days`,
-                  "What the organisation issues and verifies is unchanged",
-                  "The decision is recorded with your name",
-                ]
-              : ["The decision is recorded with your name, and the organisation sees it"]
-          }
-          confirmLabel={target?.capability === "holder" ? "Send the invitation" : "Grant it"}
+          title={`Let ${target ? orgName(target.orgId) : "this organisation"} ${target?.capability === "verifier" ? "verify" : "issue"} credentials?`}
+          lead="This takes effect now. It is recorded with your name."
+          consequences={["The decision is recorded with your name, and the organisation sees it"]}
+          confirmLabel="Grant it"
           onConfirm={() => {
             if (!target) return;
             decideAccessRequest(target.id, true);
-            setDone(
-              target.capability === "holder"
-                ? `Invitation sent to ${target.requesterName} at ${orgName(target.orgId)}.`
-                : `${orgName(target.orgId)} can now ${target.capability === "verifier" ? "verify" : "issue"} credentials.`,
-            );
+            setDone(`${orgName(target.orgId)} can now ${target.capability === "verifier" ? "verify" : "issue"} credentials.`);
             close();
           }}
         />
@@ -246,7 +214,7 @@ export function OrganisationsAdminView() {
               rows={3}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              placeholder="For example: we need the board resolution naming who will own the wallet."
+              placeholder="For example: we need to see the schemas you plan to verify against first."
             />
             <span className="text-[12.5px] leading-[1.5] text-faint">Required — a decline needs a reason they can act on.</span>
           </label>
@@ -279,7 +247,7 @@ function RequestCard({
         </div>
         <DetailList
           items={[
-            { label: "Asked for", value: req.capability === "holder" ? "An Entity Wallet — to hold its own credentials" : CAPABILITY_LABEL[req.capability] },
+            { label: "Asked for", value: CAPABILITY_LABEL[req.capability] },
             { label: "Asked by", value: `${req.requesterName} · ${req.requesterEmail}` },
             { label: "Why", value: req.note || "—" },
             { label: "Sent", value: formatDate(req.submittedAt) },
@@ -287,14 +255,13 @@ function RequestCard({
         />
         <div className="flex flex-col gap-3 border-t border-subtle pt-4">
           <p className="text-[13px] leading-[1.6] text-muted">
-            {req.capability === "holder"
-              ? `Approving invites ${req.requesterName} to set it up. The register still has to confirm they represent ${shortOrgName(orgName)}.`
-              : `Approving lets ${orgName} ${req.capability === "verifier" ? "verify credentials people present to it" : "issue credentials"} from now on.`}
+            Approving lets {orgName} {req.capability === "verifier" ? "verify credentials people present to it" : "issue credentials"} from
+            now on.
           </p>
           <div className="flex flex-wrap gap-2.5">
             <GradientButton onClick={() => onDecide(true)} disabled={disabled}>
               <Icon name="check" size={15} strokeWidth={2.2} />
-              {req.capability === "holder" ? "Approve and invite" : "Approve"}
+              Approve
             </GradientButton>
             <HairlineButton onClick={() => onDecide(false)} disabled={disabled}>
               Decline

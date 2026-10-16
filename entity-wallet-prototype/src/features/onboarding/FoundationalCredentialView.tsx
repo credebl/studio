@@ -1,168 +1,120 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 
 import { useScreenState } from "@/components/demo/screenState";
-import { GradientButton } from "@/components/ui/GradientButton";
+import { CredentialCard } from "@/components/ui/CredentialCard";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
+import { formatDate } from "@/features/controllership/scopeModel";
 import { Icon } from "@/components/ui/icons";
-import { REGISTER_LISTINGS } from "@/lib/demoData";
-import { ROUND_TRIP_MS } from "@/lib/demoTiming";
+import { PELDEN, inOrg } from "@/lib/demoData";
 import { useDemo } from "@/lib/demoStore";
 
+import { NextCredentialAction } from "./NextCredentialAction";
 import { OnboardingShell } from "./OnboardingShell";
 import { kindOf } from "./orgKinds";
 
 /**
- * A4 — accept the entity's foundational credential. The milestone.
+ * SCR-ORG-07 — Organisation verified. FLOW-ORG-01 step 12.
  *
- * WHY THIS IS ITS OWN SCREEN RATHER THAN A STEP IN A SETUP WIZARD
+ * NOTHING TO ACCEPT
  *
- * This is the root every later credential and every delegated authority
- * chains back to. When Act 5 shows a verification walking four links up to
- * the company's registration, this is the link at the top. A screen that
- * treated it as one more provisioning step would leave the audience with no
- * idea why the chain has a bottom, so it is marked as an arrival: the entity
- * is now verified, and here is what that means.
+ * The registration is accepted into the organisation's wallet automatically
+ * at step 10 — agent to agent, scoped to the offer from the designated
+ * authority. This screen used to ask the person to "accept the
+ * registration": a user action the specification never had, and one that
+ * made the most important credential in the chain look optional. It now
+ * shows what the organisation already holds.
  *
- * The bootstrap scope is named rather than implied. This one acceptance
- * happens under a scope created for exactly this purpose, which is the only
- * way to accept a credential before any controllership exists — a chicken and
- * egg the design resolves explicitly, and the screen should not pretend it
- * was not there.
+ * THE NEXT CREDENTIAL, NOT THE NEXT ADMINISTRATIVE TASK
  *
- * TWO WAYS IN, ONE MILESTONE
+ * The primary action is the next link in the chain — for a company, its
+ * tax identity, which is applied for with this registration (UXD-14). It is
+ * what shows the wallet works. Inviting colleagues and appointing someone
+ * are administration offered before the organisation has done anything
+ * with what it just received, and the largest group of users is the
+ * proprietor who *is* the representative. Requesting a credential is
+ * FLOW-CRD-01, not built here; the button says so rather than leading
+ * nowhere silently.
  *
- * The person arrives either having chosen an organisation the register
- * listed, or with a manual review NDI approved. Whoever issues the
- * credential in the second case is still open for Gate 2 — the register
- * never confirmed the pair — so the prototype names NDI as the issuer after
- * a review rather than implying the register vouched for something it did
- * not. An arrival with neither is sent back: the credential is the reward
- * for a confirmation, and a screen reached by URL must not hand it out.
+ * WHAT IT CAN DO, AND WHAT IT CAN'T
+ *
+ * "Verified" alone reads as "approved for everything". So the summary
+ * carries the negative clause (UXD-04): it can hold and present
+ * credentials; it can't issue them or verify anyone else's.
+ *
+ * WHAT IS LEFT FOR FLOW 3
+ *
+ * Giving someone authority to act and seeing who can act are this screen's
+ * conditional secondary actions in the specification, as is the
+ * not-yet-accepted state. They belong to FLOW-DEL-01/02 and come with that
+ * flow. "Ask NDI" to verify or issue (FLOW-ACC-02) likewise waits for Flow 4.
+ *
+ * NAME DIFFERS
+ *
+ * The organisation takes the name the authority returned. Where that
+ * differs from the name the person knew it by — the invitation's, or the
+ * organisation's name on the platform — the difference is stated rather
+ * than substituted silently.
  */
 export function FoundationalCredentialView() {
   const router = useRouter();
-  const { heldCredentials, orgOnboarding, manualReviews, signup, hydrated, completeOrgOnboarding, setActiveOrg, setPersona } =
+  const { heldCredentials, orgOnboarding, orgInvitations, organizations, hydrated, setActiveOrg, setPersona } =
     useDemo();
+  const forced = useScreenState("SCR-ORG-07", ["live", "default", "name_differs"]);
 
-  const screenState = useScreenState("A4", [
-    "offer_ready",
-    "issuing",
-    "verified",
-    "issuance_failed",
-  ]);
-
-  const [stage, setStage] = useState<"offer" | "issuing" | "done">("offer");
-
-  const foundational = heldCredentials.find((c) => c.isFoundational);
-
-  const listing = REGISTER_LISTINGS.find((l) => l.ref === orgOnboarding?.selectedRef);
-  const review = manualReviews.find((m) => m.id === orgOnboarding?.reviewId && m.state === "APPROVED");
   const kind = kindOf(orgOnboarding?.kind);
-  const legalName = listing?.legalName ?? review?.legalName ?? "Pelden Trading Pvt. Ltd.";
-  const shortName = legalName.replace(/ Pvt\. Ltd\.$/, "");
-  const issuer = review ? "Bhutan NDI" : (kind.register ?? "Bhutan NDI");
-  const confirmed = Boolean(listing || review || orgOnboarding?.completed);
+  const invitation = orgInvitations.find((i) => i.id === orgOnboarding?.invitationId);
+  const existingId = orgOnboarding?.existingOrgId ?? (invitation?.kind === "W" ? invitation.orgId : null);
+  const existing = existingId ? organizations.find((o) => o.id === existingId) : undefined;
+  const orgId = existing?.id ?? PELDEN;
 
-  const shown =
-    screenState === "issuing"
-      ? "issuing"
-      : screenState === "verified"
-        ? "done"
-        : screenState === "issuance_failed"
-          ? "failed"
-          : stage;
+  const legalName = orgOnboarding?.authoritativeName ?? "Pelden Trading Pvt. Ltd.";
+  const shortName = legalName.replace(/ (Pvt\. )?Ltd\.$/, "");
+  const knownAs = existing?.name ?? invitation?.legalName ?? null;
+  const nameDiffers =
+    forced === "name_differs" || (forced === "live" && Boolean(knownAs) && knownAs !== legalName);
+  const shownKnownAs = knownAs && knownAs !== legalName ? knownAs : "Pelden Trading";
 
-  const accept = () => {
-    setStage("issuing");
-    setTimeout(() => {
-      completeOrgOnboarding();
-      setStage("done");
-    }, ROUND_TRIP_MS);
+  const foundational = heldCredentials.filter(inOrg(orgId)).find((c) => c.isFoundational);
+  const attributes = foundational?.attributes ?? [
+    { name: "registered_name", value: legalName },
+    { name: "registration_number", value: orgOnboarding?.identifier ?? "CRA-2019-04477" },
+    { name: "entity_type", value: kind.label },
+    { name: "status", value: "Active" },
+  ];
+  const company = kind.value === "company";
+
+  const open = (path: string) => {
+    setActiveOrg(orgId);
+    if (!existing) setPersona("dorji");
+    router.push(path);
   };
 
-  /* An account that came through sign-up goes back to its list of
-     organisations, which now has this one on it (SCR-ONB-05). Run without
-     one, the story's console is the natural next room. */
-  const accountDone = signup?.stage === "done";
-  const goOn = () => {
-    if (accountDone) {
-      router.push("/welcome");
-      return;
-    }
-    setActiveOrg("org-pelden");
-    setPersona("dorji");
-    router.push("/dashboard");
-  };
-
-  if (hydrated && !confirmed && screenState === "offer_ready") {
+  if (!hydrated) {
     return (
-      <OnboardingShell current={3}>
-        <Panel>
-          <div className="relative z-[4] flex flex-col gap-3">
-            <p className="font-display text-[15px] font-semibold text-strong">Choose your organisation first</p>
-            <p className="max-w-[62ch] text-[13px] leading-[1.6] text-muted">
-              The registration is offered once the register — or a reviewer at NDI — has confirmed
-              you represent the organisation.
-            </p>
-            <div>
-              <HairlineButton onClick={() => router.push("/onboarding")}>Start adding an organisation</HairlineButton>
-            </div>
-          </div>
-        </Panel>
+      <OnboardingShell current={4}>
+        <div aria-hidden="true" className="h-96 animate-pulse rounded-[16px] border border-grid" />
       </OnboardingShell>
     );
   }
 
-  if (shown === "done") {
+  /* Reached by URL with nothing verified. The credential is the authority's
+     to give, and a screen reached by address must not appear to hand it out. */
+  if (forced === "live" && orgOnboarding?.stage !== "verified") {
     return (
-      <OnboardingShell current={3}>
+      <OnboardingShell current={0}>
         <Panel>
-          <div className="relative z-[4] flex flex-col items-center gap-4 py-6 text-center">
-            <span
-              aria-hidden="true"
-              className="flex h-14 w-14 items-center justify-center rounded-full border"
-              style={{
-                borderColor: "var(--ndi-mint-40)",
-                background: "var(--ndi-mint-12)",
-                boxShadow: "var(--glow-sm)",
-              }}
-            >
-              <Icon name="shieldCheck" size={26} strokeWidth={1.9} className="text-accent" />
-            </span>
-
-            <div className="flex flex-col gap-2">
-              <h1 className="font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.025em] text-strong">
-                {shortName} is <span className="ndi-wave-text">verified</span>
-              </h1>
-              <p className="mx-auto max-w-[54ch] text-[13.5px] leading-[1.65] text-muted">
-                The organisation now holds its registration as a credential in
-                its own wallet. It can prove things about itself, hold
-                credentials others issue to it, and grant scoped authority to
-                the people who act for it.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-2.5">
-              <GradientButton onClick={goOn}>
-                {accountDone ? "Back to your organisations" : "Go to the console"}
-                <Icon name="arrowRight" size={15} strokeWidth={2} />
-              </GradientButton>
-              <HairlineButton onClick={() => router.push("/controllership/relations/new")}>
-                Grant someone authority
-              </HairlineButton>
-            </div>
-
-            <p className="mx-auto max-w-[56ch] text-[12.5px] leading-[1.55] text-faint">
-              You hold the root authority for this organisation. Everything you
-              delegate from here traces back to the credential you just
-              accepted — if it ever lapsed, nothing beneath it would verify
-              anywhere.
+          <div className="relative z-[4] flex flex-col gap-3">
+            <p className="font-display text-[15px] font-semibold text-strong">No organisation has been verified yet</p>
+            <p className="max-w-[62ch] text-[13px] leading-[1.6] text-muted">
+              An organisation is verified once the authority that registered it confirms you represent it.
             </p>
+            <div>
+              <HairlineButton onClick={() => router.push("/onboarding")}>Verify an organisation</HairlineButton>
+            </div>
           </div>
         </Panel>
       </OnboardingShell>
@@ -170,121 +122,154 @@ export function FoundationalCredentialView() {
   }
 
   return (
-    <OnboardingShell current={3}>
+    <OnboardingShell current={4}>
       <div className="flex flex-col gap-2">
         <h1 className="font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.025em] text-strong">
-          Accept the organisation&rsquo;s registration
+          {shortName} is <span className="ndi-wave-text">verified</span>
         </h1>
         <p className="max-w-[64ch] text-[13.5px] leading-[1.65] text-muted">
-          {issuer} is offering {shortName} a credential for its own registration. This is the
-          root of everything that follows.
+          The {kind.authority} confirmed you represent it, and its registration is now in the
+          organisation&rsquo;s own wallet — added automatically, with nothing for you to accept.
         </p>
       </div>
 
-      {shown === "failed" ? (
-        <Panel>
-          <div className="relative z-[4] flex items-start gap-3">
-            <Icon
-              name="close"
-              size={18}
-              strokeWidth={2.2}
-              className="mt-0.5 flex-none"
-              style={{ color: "var(--ndi-danger)" }}
-            />
-            <div className="flex flex-col gap-2">
-              <p className="font-display text-[14.5px] font-semibold text-strong">
-                The credential could not be issued
-              </p>
-              <p className="max-w-[62ch] text-[13px] leading-[1.6] text-muted">
-                {review ? "NDI approved the review" : "The register confirmed you"}, but issuing the credential itself
-                failed. The organisation exists and you hold its root
-                authority — it simply cannot prove anything about itself until
-                this is issued, so nothing else will work yet.
-              </p>
-              <div className="mt-1">
-                <HairlineButton onClick={() => setStage("offer")}>
-                  <Icon name="refresh" size={14} strokeWidth={2} />
-                  Try again
-                </HairlineButton>
-              </div>
-            </div>
-          </div>
-        </Panel>
+      {nameDiffers ? (
+        <p role="status" className="m-0 flex items-start gap-2.5 rounded-[12px] border border-grid px-4 py-3 text-[13px] leading-[1.6] text-body" style={{ background: "rgb(var(--tint) / 0.04)" }}>
+          <Icon name="info" size={15} strokeWidth={2} className="mt-[3px] flex-none text-faint" />
+          <span>
+            The {kind.authority} has it registered as <span className="font-medium">{legalName}</span>, not{" "}
+            {shownKnownAs}. That&rsquo;s the name it&rsquo;s known by here.
+          </span>
+        </p>
       ) : null}
 
+      {/* The next step leads, above the sheet: it is what this screen is for. */}
       <Panel>
-        <div className="relative z-[4] flex flex-col gap-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="flex flex-col gap-1">
-              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                Offered by
+        <div className="relative z-[4] flex flex-col gap-3">
+          <h2 className="m-0 font-display text-[15px] font-semibold text-strong">Next</h2>
+          {company ? (
+            <>
+              <p className="m-0 max-w-[62ch] text-[13.5px] leading-[1.6] text-body">
+                Get {shortName}&rsquo;s tax identity (TPN) from the Department of Revenue &amp; Customs.
+                It&rsquo;s applied for with the registration it now holds.
               </p>
-              <p className="font-display text-[14.5px] font-semibold text-strong">
-                {issuer}
+              <div className="flex flex-wrap items-start gap-2.5">
+                <NextCredentialAction orgName={shortName} />
+                <HairlineButton onClick={() => open("/wallet/credentials")}>View the credential</HairlineButton>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="m-0 max-w-[62ch] text-[13.5px] leading-[1.6] text-body">
+                {shortName} can now hold the credentials issued to it and present them when it&rsquo;s
+                asked to prove something about itself.
               </p>
-              <p className="text-[12.5px] text-faint">
-                {review ? `Following its review, ${review.reference}` : "The register that just confirmed you"}
-              </p>
-            </div>
-            <StatusPill status="verified" label="On the trust registry" />
-          </div>
+              <div>
+                <HairlineButton onClick={() => open("/wallet/credentials")}>View the credential</HairlineButton>
+              </div>
+            </>
+          )}
+        </div>
+      </Panel>
 
-          <div className="rounded-[12px] border border-grid px-3.5 py-3">
-            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-              Business Registration
-            </p>
-            <dl className="mt-2.5 m-0 grid gap-x-6 gap-y-2 min-[641px]:grid-cols-2">
-              {(
-                (!review && foundational?.attributes) || [
-                  { name: "registered_name", value: legalName },
-                  { name: "registration_number", value: review?.registrationNumber ?? "CRA-2019-04477" },
-                  { name: "entity_type", value: listing?.entityType ?? kind.label },
-                  { name: "status", value: "Active" },
-                ]
-              ).map((attribute) => (
-                <div key={attribute.name} className="flex flex-col gap-0.5">
-                  <dt className="text-[12px] text-faint">
-                    {attribute.name.replace(/_/g, " ")}
-                  </dt>
-                  <dd className="m-0 text-[13px] text-body">{attribute.value}</dd>
+      {/* One sheet, laid out the way a wallet shows a credential it holds:
+          the card and the facts about the credential on the left, what it
+          certifies about the organisation on the right. */}
+      <Panel padded={false}>
+        <div className="relative z-[4] grid min-[761px]:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
+          <div className="flex flex-col gap-4 border-b border-subtle p-5 min-[641px]:p-6 min-[761px]:border-b-0 min-[761px]:border-r">
+            <CredentialCard type="Business Registration" issuer={kind.authority} status="active" />
+            <dl className="m-0 flex flex-col">
+              {[
+                { label: "Issued by", value: kind.authority },
+                { label: "Held by", value: `${shortName}’s wallet` },
+                { label: "Added", value: "Automatically, when it was verified" },
+                { label: "Valid until", value: "Doesn’t expire" },
+              ].map((row, i) => (
+                <div key={row.label} className={`flex items-baseline justify-between gap-4 py-2 ${i > 0 ? "border-t border-subtle" : ""}`}>
+                  <dt className="flex-none text-[12.5px] text-faint">{row.label}</dt>
+                  <dd className="m-0 min-w-0 text-right text-[13px] text-body">{row.value}</dd>
                 </div>
               ))}
             </dl>
           </div>
 
-          <div className="flex flex-col gap-2 rounded-[12px] border border-grid px-3.5 py-3">
-            <p className="font-display text-[13px] font-medium text-body">
-              Why this one is different
-            </p>
-            <p className="max-w-[62ch] text-[12.5px] leading-[1.55] text-muted">
-              Accepting a credential normally needs an authority that says you
-              may. Nobody has one yet — the organisation has only just come
-              into existence. So this single acceptance happens under a
-              bootstrap authority created for exactly this purpose, and
-              nothing else can be accepted under it.
-            </p>
-          </div>
+          <div className="flex min-w-0 flex-col gap-5 p-5 min-[641px]:p-6">
+            <div>
+              <h2 className="m-0 font-display text-[15px] font-semibold text-strong">What it certifies</h2>
+              <dl className="m-0 mt-2 flex flex-col">
+                {attributes.map((attribute, i) => (
+                  <div
+                    key={attribute.name}
+                    className={`grid gap-0.5 py-3 min-[521px]:grid-cols-[minmax(0,170px)_minmax(0,1fr)] min-[521px]:items-baseline min-[521px]:gap-5 ${
+                      i > 0 ? "border-t border-subtle" : ""
+                    }`}
+                  >
+                    <dt className="text-[12.5px] text-faint">{attributeLabel(attribute.name)}</dt>
+                    <dd className="m-0 min-w-0 break-words text-[14px] font-medium text-strong">
+                      <AttributeValue name={attribute.name} value={attribute.value} />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
 
-          {shown === "issuing" ? (
-            <div className="flex items-center gap-2.5 rounded-[12px] border border-grid px-3.5 py-3">
-              <Icon name="refresh" size={15} strokeWidth={2} className="animate-spin text-accent" />
-              <p className="text-[13px] text-body">
-                Issuing the credential to the organisation&rsquo;s wallet…
+            <div className="flex flex-col gap-2 border-t border-subtle pt-4">
+              <h2 className="m-0 font-display text-[15px] font-semibold text-strong">What {shortName} can do now</h2>
+              <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
+                <Icon name="check" size={14} strokeWidth={2.4} className="mt-[5px] flex-none text-accent" />
+                Receive credentials issued to it, and present them when asked.
+              </p>
+              <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
+                <Icon name="close" size={14} strokeWidth={2.4} className="mt-[5px] flex-none" style={{ color: "var(--text-faint)" }} />
+                {existing?.capabilities.some((c) => c === "issuer" || c === "verifier")
+                  ? "Its issuing and verifying carry on exactly as before — verifying it changed neither."
+                  : "It can't issue credentials to others or verify anyone else's."}
               </p>
             </div>
-          ) : (
-            <div className="flex flex-wrap items-center gap-3">
-              <GradientButton onClick={accept}>
-                <Icon name="check" size={15} strokeWidth={2.2} />
-                Accept the registration
-              </GradientButton>
-              <span className="max-w-[42ch] text-[12.5px] leading-[1.5] text-faint">
-                Recorded as the organisation accepting it, carried out by you.
-              </span>
-            </div>
-          )}
+          </div>
         </div>
       </Panel>
+
+      <div className="flex flex-wrap items-center gap-2.5">
+        {/* Straight to the organisation's dashboard, which is where the
+            specification sends this screen. It used to go back to the
+            account's list of organisations (SCR-ONB-05) — a list of one,
+            where the person had to choose the organisation they had just
+            verified. The list is still there at the next sign-in. */}
+        <HairlineButton onClick={() => open("/dashboard")}>
+          {`Go to ${existing?.name ?? shortName}`}
+          <Icon name="arrowRight" size={14} strokeWidth={2} />
+        </HairlineButton>
+        {existing ? null : (
+          <button type="button" onClick={() => router.push("/onboarding")} className="ndi-plainlink text-[12.5px] font-medium text-muted">
+            Add another organisation
+          </button>
+        )}
+      </div>
     </OnboardingShell>
   );
+}
+
+/* The payload's own attribute names are snake case — right for the wire,
+   wrong on a document. */
+function attributeLabel(name: string): string {
+  /* "Entity" is not a word the person is shown (UX-EW-01 §2.4). */
+  if (name === "entity_type") return "Type of organisation";
+  const words = name.replace(/_/g, " ");
+  return words.charAt(0).toUpperCase() + words.slice(1);
+}
+
+/* Dates arrive as ISO strings and are written the way the rest of the
+   console writes them; the registration number is set in mono because it is
+   an identifier people read out and compare character by character; and the
+   register's status goes through StatusPill, because a status is never told
+   by the word alone in this console either. */
+function AttributeValue({ name, value }: { name: string; value: string }) {
+  if (name === "status") {
+    return <StatusPill status={value.toLowerCase() === "active" ? "active" : "pending"} label={value} />;
+  }
+  if (/^\d{4}-\d{2}-\d{2}/.test(value)) return <>{formatDate(value)}</>;
+  if (name === "registration_number") return <span className="font-mono text-[13.5px] tabular-nums">{value}</span>;
+  return <>{value}</>;
 }

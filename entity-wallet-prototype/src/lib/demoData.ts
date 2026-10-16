@@ -849,116 +849,185 @@ export interface OrgInvitation {
 /* Onboarding — Flow 2 (organisation onboarding, holder)               */
 /* ================================================================== */
 
-/** Which register can vouch for you depends on what kind of thing you are. */
-export type OrgKind = "company" | "licensed" | "cso";
+/**
+ * The entity types FLOW-ORG-01 routes by (Flow 2 solution design §2.2).
+ * Which register verifies each one, and whether it is connected yet, is in
+ * `features/onboarding/orgKinds.ts`; this is only the set of names.
+ */
+export type OrgKind = "company" | "sole_proprietorship" | "partnership";
 
 /**
- * Flow 2 in progress — one organisation being added by one representative.
+ * Where a verification record is (FLOW-ORG-01 §4 steps 3–11).
  *
- * LIST, THEN SELECT
+ * `started` is the person on SCR-ORG-01/02 with nothing submitted. The
+ * record exists from `proof_requested` (step 3 creates it, step 4 asks for
+ * the proof), and from then until the authority decides it is the *only*
+ * thing that exists: no organisation is created before step 9
+ * (EW-FLOW2-SD/D10). That is why SCR-ONB-05 has to carry it while it is in
+ * flight — there is nothing else on the account to come back to.
  *
- * The representative proves who they are first, and the register returns
- * the organisations it lists them against, to pick from (GovTech
- * requirements §6.1, item 1b — decided 24 Sep 2026). Nobody types a
- * registration number to claim a company: the person's identity comes from
- * the wallet proof, never from a field, and the organisation is a selection
- * — an opaque reference the register handed back — not an identifier someone
- * could guess. `selectedRef` holds that reference and nothing more.
+ * `not_confirmed` covers both E6 and E7 on purpose. The authority's answer
+ * is one of the two, but the record keeps no distinction the person could
+ * be shown, so the store has nothing to leak (FLOW-ORG-01 S6).
+ */
+export type VerificationStage =
+  | "started"
+  | "proof_requested"
+  | "checking"
+  | "setting_up"
+  | "verified"
+  | "not_confirmed";
+
+/**
+ * Flow 2 in progress — one organisation being verified by one person.
+ *
+ * ONE IDENTIFIER, TYPED; ONE IDENTITY, PROVED
+ *
+ * The person types the registration identifier and nothing else (FLOW-ORG-01
+ * step 1) — no name, no evidence. Who they are is never typed: it comes
+ * from the proof the authority asks their wallet for. The authority then
+ * answers one question about that pair, "is this person a representative of
+ * the entity with this identifier?", and the platform renders the answer.
+ *
+ * This replaced a list-then-select model in which the register returned
+ * every organisation it listed against the person to pick from. The spec
+ * never had it — it would have NDI receive a list of who represents what,
+ * which §7.3 says NDI never receives — and it is gone.
  */
 export interface OrgOnboarding {
   kind: OrgKind;
+  /** The one thing typed: the registration identifier, as entered. */
+  identifier: string | null;
+  stage: VerificationStage;
   /** The name the citizen credential gave when the proof was answered. */
   provedName: string | null;
-  /** The register's opaque reference for the organisation chosen. */
-  selectedRef: string | null;
-  /** Set when the register listed nothing and the person asked NDI to review. */
-  reviewId: string | null;
-  /** Registration accepted, holder capability on (Flow 2 step 6). */
-  completed: boolean;
+  /** Who the wallet answered as — what the register is asked about. */
+  provedPersonId: PersonId | null;
+  /** The name the authority returned at step 8, which the organisation takes. */
+  authoritativeName: string | null;
+  /** "Notify me when it's done" on SCR-ORG-04. */
+  notify: boolean;
   /**
-   * Set when the organisation was named by an NDI invitation (FLOW-ONB-02
-   * Kind O) rather than chosen from the register's list. The register is
-   * then asked to confirm that one pair — the person, and the organisation
-   * the invitation names — instead of listing.
+   * Set when an NDI invitation started this (FLOW-ONB-02 Kind O, or the
+   * Kind W departure). The invitation names an organisation; it is not the
+   * trust decision, so the identifier is still typed and the authority
+   * still asked.
    */
   invitationId: string | null;
+  /**
+   * Kind E (FLOW-ORG-01 A1): the organisation already exists on the
+   * platform, unverified. The record points at it, and step 9 provisions it
+   * rather than creating a new one.
+   */
+  existingOrgId: string | null;
 }
 
 /**
- * Flow 2's fallback when the register cannot match — decided 24 Sep 2026:
- * manual review, not a dead end (Flow catalogue, Flow 1 edge cases).
+ * The registers' own records — what the authority checks its answer
+ * against. A fixture, read only by the store standing in for the
+ * authority: no screen reads it, because NDI never sees a register's
+ * contents (FLOW-ORG-01 §7.3). The screens see a decision and nothing else.
  *
- * HOLDER is "automatic where a register answers; otherwise NDI review"
- * (Flow 1 design §8). So a case carries what the register actually said —
- * the reason it is here at all — beside what the person claims and the
- * evidence they gave, and the reviewer's decision is recorded with their
- * name. Until it is approved the organisation stays an ordinary one: it can
- * hold nothing.
- */
-/**
- * What the register returns for an authenticated representative: the
- * organisations it lists them against. A fixture — no register is queried.
+ * Each row is here for an outcome a presenter can reach by typing its
+ * number on SCR-ORG-02:
  *
- * Two rows, because a list of one does not show that this is a choice, and
- * because the second row is the case worth seeing: an organisation already on
- * the platform, registered by another director. Registering it again would be
- * re-onboarding, which the Flow 1 design calls a defect wherever it appears —
- * the way in for a second director is an invitation from the first.
+ *   Pelden Trading      — Dorji is a representative: verified.
+ *   Druk Valley         — already verified on the platform: E3.
+ *   Norbu Construction  — Dorji is not a representative: E6.
+ *   Gangri Exports      — deregistered: E7, worded exactly as E6.
+ *   Bank of Bhutan      — Yeshey is a representative: Kind E.
+ *   Yangchen Handicrafts — a trade licence, so E6 names the other
+ *                          authority (only Pelden can be created here).
  */
-export interface RegisterListing {
-  /** Opaque — the register's reference, not a registration number. */
-  ref: string;
+export interface RegisterRecord {
+  kind: OrgKind;
+  identifier: string;
   legalName: string;
-  registrationNumber: string;
   entityType: string;
-  /** What the register says this person is to the organisation. */
-  capacity: string;
-  /** Already registered on the platform by someone else. */
-  onPlatform: boolean;
-  /** Only reached through an invitation naming it, never listed by person. */
-  invitedOnly?: boolean;
+  /** Who the register records as able to represent it. Never sent to NDI. */
+  representatives: PersonId[];
+  /** Deregistered or struck off — the register no longer recognises it. */
+  active: boolean;
+  /** Already verified on the platform by someone else (E3). */
+  verifiedOnPlatform?: boolean;
 }
 
-export const REGISTER_LISTINGS: RegisterListing[] = [
+export const REGISTER_RECORDS: RegisterRecord[] = [
   {
-    ref: "cra:rep:7f3a91c2",
+    kind: "company",
+    identifier: "CRA-2019-04477",
     legalName: "Pelden Trading Pvt. Ltd.",
-    registrationNumber: "CRA-2019-04477",
     entityType: "Private limited company",
-    capacity: "Director",
-    onPlatform: false,
+    representatives: ["dorji"],
+    active: true,
   },
   {
-    ref: "cra:rep:1c90e44b",
+    kind: "company",
+    identifier: "CRA-2023-11802",
     legalName: "Druk Valley Hardware Pvt. Ltd.",
-    registrationNumber: "CRA-2023-11802",
     entityType: "Private limited company",
-    capacity: "Director",
-    onPlatform: true,
+    representatives: ["dorji"],
+    active: true,
+    verifiedOnPlatform: true,
   },
   {
-    /* Found only by name, from an invitation that names it — it is not
-       among what the register lists against Dorji. */
-    ref: "cra:rep:5b21de07",
+    kind: "company",
+    identifier: "CRA-2015-03310",
+    legalName: "Norbu Construction Pvt. Ltd.",
+    entityType: "Private limited company",
+    representatives: [],
+    active: true,
+  },
+  {
+    kind: "company",
+    identifier: "CRA-2008-00731",
+    legalName: "Gangri Exports Pvt. Ltd.",
+    entityType: "Private limited company",
+    representatives: ["dorji"],
+    active: false,
+  },
+  {
+    kind: "company",
+    identifier: "CRA-1997-00112",
     legalName: "Bank of Bhutan Ltd.",
-    registrationNumber: "CRA-1997-00112",
     entityType: "Public limited company",
-    capacity: "Chief executive's delegate",
-    onPlatform: false,
-    invitedOnly: true,
+    representatives: ["yeshey"],
+    active: true,
+  },
+  {
+    kind: "sole_proprietorship",
+    identifier: "BL-PARO-2011-0387",
+    legalName: "Yangchen Handicrafts",
+    entityType: "Sole proprietorship",
+    representatives: [],
+    active: true,
   },
 ];
 
 /**
- * An organisation asking NDI for more access — an Entity Wallet, or the
- * right to issue or verify. Reviewed by a platform admin, whose decision is
+ * Someone who chose a type no authority verifies yet and asked to be told
+ * when one does (SCR-ORG-06). The type and an address, and nothing else:
+ * the registration identifier is deliberately never collected for it
+ * (FLOW-ORG-01 S9), and nothing about it is an application.
+ */
+export interface OrgInterest {
+  kind: OrgKind;
+  email: string;
+  recordedAt: string;
+}
+
+/**
+ * An organisation asking NDI for the right to issue or verify. Never to
+ * hold: holding follows from the organisation's authority confirming it
+ * (FLOW-ORG-01), so there is nothing for NDI to approve. Reviewed by a
+ * platform admin, whose decision is
  * recorded with their name (rule 9: the decision is the server's; here, a
  * fixture or an admin's click, never the requester's screen deciding).
  */
 export interface AccessRequest {
   id: string;
   orgId: string;
-  capability: OrgCapability;
+  capability: Exclude<OrgCapability, "holder">;
   requestedBy: PersonId;
   /** Printed as-is: the requester may be nobody the demo can be driven as. */
   requesterName: string;
@@ -968,32 +1037,6 @@ export interface AccessRequest {
   state: "PENDING" | "APPROVED" | "DECLINED";
   decidedBy: PersonId | null;
   decidedAt: string | null;
-  reason: string | null;
-  /** For an Entity Wallet: the invitation approving it sent. */
-  invitationId: string | null;
-}
-
-export type ReviewState = "UNDER_REVIEW" | "APPROVED" | "REFUSED";
-
-export interface ManualReview {
-  id: string;
-  /** What the applicant is given to quote. */
-  reference: string;
-  kind: OrgKind;
-  legalName: string;
-  registrationNumber: string;
-  applicantName: string;
-  /** Masked. Proved from the applicant's wallet before they got this far. */
-  applicantCid: string;
-  /** What the register returned — why an automatic decision was not possible. */
-  registerAnswer: string;
-  evidence: string[];
-  note: string;
-  submittedAt: string;
-  state: ReviewState;
-  reviewerId: PersonId | null;
-  decidedAt: string | null;
-  /** Required on refusal, so the applicant is told why. */
   reason: string | null;
 }
 
@@ -1073,7 +1116,8 @@ export interface DemoState {
   signup: SignupSession | null;
   orgInvitations: OrgInvitation[];
   orgOnboarding: OrgOnboarding | null;
-  manualReviews: ManualReview[];
+  /** SCR-ORG-06 — people waiting for an authority to connect. Not applications. */
+  orgInterests: OrgInterest[];
   accessRequests: AccessRequest[];
   /**
    * True from the moment onboarding completes until the story jumps past
@@ -1299,8 +1343,9 @@ export const SEED: DemoState = {
       /* Already on NDI as an issuer and verifier long before the Entity
          Wallet existed — it issues account credentials and checks proofs at
          the counter. Three months into the story it also holds an Entity
-         Wallet, which it asked NDI for and was invited to (the second way
-         onto the Entity Wallet). Each organisation appears only in its own
+         Wallet: its owner verified it with the Corporate Regulatory
+         Authority, the way any organisation already on the platform is
+         verified (FLOW-ORG-01 Kind E) — nobody at NDI approved it. Each organisation appears only in its own
          people's switcher, so Pelden's never shows it. */
       id: "org-bob",
       name: "Bank of Bhutan",
@@ -2495,22 +2540,6 @@ export const SEED: DemoState = {
 
   accessRequests: [
     {
-      /* History: how Bank of Bhutan came to have an Entity Wallet. */
-      id: "ar-bob-wallet",
-      orgId: "org-bob",
-      capability: "holder",
-      requestedBy: "yeshey",
-      requesterName: "Yeshey Choden",
-      requesterEmail: "yeshey.choden@bob.bt",
-      note: "We'd like the bank to hold its own registration and licences, and to present them to correspondents.",
-      submittedAt: day(-74),
-      state: "APPROVED",
-      decidedBy: "tshering",
-      decidedAt: day(-73),
-      reason: null,
-      invitationId: "inv-bob-wallet",
-    },
-    {
       id: "ar-tashicell-verify",
       orgId: "org-tashicell",
       capability: "verifier",
@@ -2523,50 +2552,10 @@ export const SEED: DemoState = {
       decidedBy: null,
       decidedAt: null,
       reason: null,
-      invitationId: null,
     },
   ],
 
-  manualReviews: [
-    {
-      /* A licensed business whose licence the register could not find —
-         BLMIS records for older licences are not all digitised. Waiting in
-         the queue so the reviewer's screen opens with a real decision on
-         it, rather than on an empty state. */
-      id: "mr-yangchen",
-      reference: "MR-2026-0142",
-      kind: "licensed",
-      legalName: "Yangchen Handicrafts",
-      registrationNumber: "BL-PARO-2011-0387",
-      applicantName: "Yangchen Tshomo",
-      applicantCid: "•••• •••• 5190",
-      registerAnswer: "The Ministry of Industry, Commerce & Employment found no licence under that number.",
-      evidence: ["trade-licence-2011-scan.pdf", "renewal-receipt-2025.pdf"],
-      note: "Licence issued in Paro in 2011 on paper and renewed every year since. The renewal receipt carries the same number.",
-      submittedAt: day(-1),
-      state: "UNDER_REVIEW",
-      reviewerId: null,
-      decidedAt: null,
-      reason: null,
-    },
-    {
-      id: "mr-karma",
-      reference: "MR-2026-0119",
-      kind: "company",
-      legalName: "Karma Tours & Treks Pvt. Ltd.",
-      registrationNumber: "CRA-2024-02291",
-      applicantName: "Karma Lhamo",
-      applicantCid: "•••• •••• 7726",
-      registerAnswer: "The Corporate Regulatory Authority listed no companies for this person.",
-      evidence: ["certificate-of-incorporation.pdf", "board-resolution-appointing-director.pdf"],
-      note: "Appointed director in August; the register had not been updated when I applied.",
-      submittedAt: day(-19),
-      state: "APPROVED",
-      reviewerId: "tshering",
-      decidedAt: day(-17),
-      reason: null,
-    },
-  ],
+  orgInterests: [],
 
   orgInvitations: [
     {
@@ -2870,7 +2859,7 @@ export function dayZeroState(seed: DemoState): DemoState {
     signup: null,
     orgInvitations: [],
     orgOnboarding: null,
-    manualReviews: [],
+    orgInterests: [],
     /* Nothing waiting. It used to hold one request so the new admin's queue
        was not only the one the story was about to send — but a request
        sitting in a queue on a platform nobody administers yet read as
@@ -2886,8 +2875,8 @@ export function dayZeroState(seed: DemoState): DemoState {
  * Day zero, one chapter on: root has invited Kinzang Dorji and Tshendu, and
  * both have set up as platform admins. The state the guided demo reaches
  * when the platform-admin chapter ends — so a company's onboarding walked on
- * its own starts on the same platform the guide reaches, with no business
- * on it yet.
+ * its own starts on the same platform the guide reaches — authorities
+ * connected, administrators in place — and no business on it yet.
  *
  * TWO, BECAUSE THE ROOT ACCOUNT APPROVES NOTHING
  *
