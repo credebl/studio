@@ -17,7 +17,7 @@ import { Switch } from "@/components/ui/Switch";
 import { Icon } from "@/components/ui/icons";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { useDemo } from "@/lib/demoStore";
-import type { AuthorityKind } from "@/lib/demoData";
+import { isPlatformAdmin, type AuthorityKind } from "@/lib/demoData";
 
 import { TASK_SCOPES, formatNu, taskScopeLabel } from "./constraints";
 
@@ -98,7 +98,10 @@ export function IssueAuthorityView() {
   const [issuedId, setIssuedId] = useState<string | null>(null);
 
   const recipient = personById(recipientId);
-  const candidates = people.filter((p) => p.cidVerified);
+  /* People on the platform with a confirmed identity — never NDI's own
+     administrators, who act for no business, and never someone who has no
+     account yet (on a first day that is almost everyone in the story). */
+  const candidates = people.filter((p) => p.cidVerified && p.hasAccount !== false && !isPlatformAdmin(p));
 
   /* A capability hangs off a role the same person already holds. Offering
      roles belonging to somebody else would build a chain that breaks the

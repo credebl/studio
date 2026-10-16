@@ -17,7 +17,7 @@ import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Switch } from "@/components/ui/Switch";
 import { useDemo } from "@/lib/demoStore";
-import type { ApprovalPolicy } from "@/lib/demoData";
+import { PELDEN, inOrg, type ApprovalPolicy } from "@/lib/demoData";
 
 /**
  * Every primitive on one page, in whatever states it has.
@@ -64,7 +64,7 @@ export function KitchenSinkView() {
   const [dangerOpen, setDangerOpen] = useState(false);
 
   const rinzin = relations.find((r) => r.id === "rel-rinzin");
-  const root = relations.find((r) => r.isRootAuthority);
+  const root = relations.filter(inOrg(PELDEN)).find((r) => r.isRootAuthority);
   const pass = decisions.find((d) => d.outcome === "PASS");
   const fail = decisions.find((d) => d.outcome === "FAIL");
   const auditRow = auditEntries.find((e) => e.approvedById);

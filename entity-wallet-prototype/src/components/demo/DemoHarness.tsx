@@ -6,14 +6,15 @@ import { useState } from "react";
 
 import { Icon } from "@/components/ui/icons";
 import { useDemo } from "@/lib/demoStore";
-import { ACTS, FLOW_ENTRIES, actByNumber } from "@/lib/demoStory";
+import { FLOW_ENTRIES, FLOW_GROUPS, type FlowEntry } from "@/lib/demoStory";
 import { PERSONAS } from "@/lib/demoData";
 
+import { GuideCard } from "./GuideCard";
 import { useScreenRegistry } from "./screenState";
 
 /**
- * The demo harness: the marker, the persona switcher, the story runner, the
- * state switcher and reset, in one bar.
+ * The demo harness: the marker, the guided demo, the spec'd flows, the
+ * persona switcher, the state switcher and reset, in one bar.
  *
  * Deliberately not part of the product chrome. It sits in its own fixed bar
  * rather than in the top bar or the sidebar, because the audience for this
@@ -31,14 +32,28 @@ export function DemoHarness() {
     harness,
     people,
     setPersona,
-    setAct,
     setStateOverride,
     clearStateOverrides,
     resetDemo,
     restoreStoryState,
     setSelfServiceSignup,
+    setGuideStep,
+    startDayZero,
+    startPlatformReady,
+    startFirstDay,
     hydrated,
   } = useDemo();
+
+  /* The guided demo always starts from the platform's day zero: it begins
+     before any business, with root setting NDI up, and a demo someone else
+     half-ran would contradict the first thing it says. */
+  const startGuide = () => {
+    resetDemo();
+    startDayZero();
+    setGuideStep(0);
+    setOpen(false);
+  };
+  const guiding = (harness.guideStep ?? null) !== null;
   const { registered } = useScreenRegistry();
   const [open, setOpen] = useState(false);
 
@@ -59,23 +74,30 @@ export function DemoHarness() {
 
   /** In story order, from the one list of who is drivable. The id is kept
    *  alongside so the switcher passes a PersonaId rather than a bare string. */
-  const personas = PERSONAS.flatMap((id) => {
-    const person = people.find((p) => p.id === id);
-    return person ? [{ id, person }] : [];
-  });
+  const personas = [
+    ...PERSONAS.flatMap((id) => {
+      const person = people.find((p) => p.id === id);
+      /* Nobody without an account can be driven as: on the platform's day
+         zero that is almost everyone, and they appear as they sign up. */
+      return person && person.hasAccount !== false ? [{ id: person.id, person }] : [];
+    }),
+    /* Then whoever joined by an invitation at an address the story does not
+       know — each has a record of their own, and appears once they accept. */
+    ...people
+      .filter((p) => p.joinedBy && p.hasAccount !== false && !(PERSONAS as string[]).includes(p.id))
+      .map((person) => ({ id: person.id, person })),
+  ];
 
-  const act = actByNumber(harness.act);
-
-  const goToAct = (n: number) => {
-    const target = actByNumber(n);
-    if (!target) return;
-    /* Acts 2–6 are Pelden three months in. Arriving from a freshly onboarded
-       Pelden, the story skips ahead to that — it never builds act 2 on top
-       of a first-day organisation that has no Rinzin and no history. */
-    if (n >= 2) restoreStoryState();
-    setAct(n);
-    setPersona(target.persona);
-    router.push(target.route);
+  const walk = (f: FlowEntry) => {
+    resetDemo();
+    if (f.start === "dayZero") startDayZero();
+    else if (f.start === "platformReady") startPlatformReady();
+    else if (f.start === "firstDay") startFirstDay();
+    else restoreStoryState();
+    if (f.persona) setPersona(f.persona);
+    if (f.selfService !== undefined) setSelfServiceSignup(f.selfService);
+    setOpen(false);
+    router.push(f.route);
   };
 
   /* The marker renders on the server along with everything else, and is not
@@ -98,120 +120,52 @@ export function DemoHarness() {
        rule keys off the shell's own presence in the document rather than a
        list of routes that would rot. */
     <div className="ndi-demo-harness pointer-events-none fixed inset-x-0 bottom-0 z-[70] flex flex-col items-start gap-2 p-3 min-[641px]:p-4">
+      <GuideCard />
       {open && hydrated ? (
-        <div className="pointer-events-auto w-full max-w-[560px] rounded-2xl border border-grid bg-[var(--chrome-fill-strong)] p-3.5 shadow-[var(--shadow-card)] backdrop-blur-[20px] backdrop-saturate-[140%]">
-          {/* ---- Story runner ---- */}
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="font-display text-[12px] font-semibold uppercase tracking-[0.08em] text-faint">
-              Story
-            </p>
-            {act ? (
-              <p className="font-display text-[12px] font-medium text-muted">
-                Act {act.number} of {ACTS.length}
+        <div className="pointer-events-auto max-h-[calc(100dvh-80px)] w-full max-w-[560px] overflow-y-auto rounded-2xl border border-grid bg-[var(--chrome-fill-strong)] p-3.5 shadow-[var(--shadow-card)] backdrop-blur-[20px] backdrop-saturate-[140%]">
+          {/* ---- Guided demo ---- */}
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-grid px-3.5 py-3" style={{ background: "var(--ndi-mint-08)" }}>
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <p className="font-display text-[13.5px] font-semibold text-body">New to the demo?</p>
+              <p className="text-[12.5px] leading-[1.5] text-muted">
+                The guided demo walks the whole story and tells you what to press.
               </p>
-            ) : (
-              <p className="font-display text-[12px] font-medium text-faint">Not started</p>
-            )}
-          </div>
-
-          <p className="mt-1.5 font-display text-[14px] font-semibold leading-[1.35] text-body">
-            {act ? act.title : "Six acts, one entity"}
-          </p>
-          <p className="mt-1 text-[12.5px] leading-[1.5] text-muted">
-            {act
-              ? act.learns
-              : "Start the story to be put on the right screen as the right person."}
-          </p>
-
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={() => goToAct(Math.max(1, harness.act - 1))}
-              disabled={harness.act <= 1}
-              className="ndi-hairline-btn inline-flex h-9 items-center gap-1.5 rounded-[10px] px-3 font-display text-[13px] font-medium disabled:opacity-40"
-            >
-              <Icon name="arrowLeft" size={14} strokeWidth={2} />
-              Back
-            </button>
-            <button
-              type="button"
-              onClick={() => goToAct(harness.act === 0 ? 1 : Math.min(ACTS.length, harness.act + 1))}
-              disabled={harness.act >= ACTS.length}
-              className="ndi-hairline-btn inline-flex h-9 items-center gap-1.5 rounded-[10px] px-3 font-display text-[13px] font-medium disabled:opacity-40"
-            >
-              {harness.act === 0 ? "Start" : "Next"}
-              <Icon name="arrowRight" size={14} strokeWidth={2} />
-            </button>
-
-            {/* Direct jumps, because a demo never runs in a straight line the
-                second time — somebody always asks to see act 5 again. */}
-            <div className="ml-auto flex items-center gap-1">
-              {ACTS.map((a) => (
-                <button
-                  key={a.number}
-                  type="button"
-                  onClick={() => goToAct(a.number)}
-                  aria-label={`Act ${a.number}: ${a.title}`}
-                  aria-current={a.number === harness.act ? "step" : undefined}
-                  className="ndi-navrow h-7 w-7 rounded-[8px] font-display text-[12px] font-semibold"
-                  data-active={a.number === harness.act ? "1" : "0"}
-                >
-                  {a.number}
-                </button>
-              ))}
             </div>
+            <button
+              type="button"
+              onClick={startGuide}
+              className="inline-flex h-9 flex-none items-center gap-1.5 rounded-[10px] px-3.5 font-display text-[13px] font-semibold"
+              style={{ background: "var(--grad-mint)", color: "var(--text-on-mint)" }}
+            >
+              {guiding ? "Restart the guide" : "Start the guide"}
+            </button>
           </div>
 
-          {/* ---- Gate 2 flows ---- */}
-          <div className="my-3 h-px bg-[var(--border-subtle)]" />
+          {/* ---- The spec'd flows ---- */}
           <p className="font-display text-[12px] font-semibold uppercase tracking-[0.08em] text-faint">
             Walk a flow
           </p>
-          <div className="mt-2 flex flex-col gap-2">
-            {([1, 2] as const).map((flow) => (
-              <div key={flow} className="flex flex-wrap items-center gap-1.5">
-                <span className="w-[52px] flex-none font-mono text-[10.5px] uppercase tracking-[0.12em] text-faint">
-                  Flow {flow}
-                </span>
-                {FLOW_ENTRIES.filter((f) => f.flow === flow).map((f) => (
-                  <button
-                    key={f.route}
-                    type="button"
-                    onClick={() => {
-                      if (f.persona) setPersona(f.persona);
-                      if (f.selfService !== undefined) setSelfServiceSignup(f.selfService);
-                      setOpen(false);
-                      router.push(f.route);
-                    }}
-                    className="ndi-navrow rounded-[9px] px-2.5 py-1.5 font-display text-[12.5px] font-medium"
-                    data-active="0"
-                  >
-                    {f.label}
-                  </button>
-                ))}
+          <div className="mt-2 flex flex-col gap-3">
+            {FLOW_GROUPS.map((g) => (
+              <div key={g.id} className="flex flex-col gap-1.5">
+                <p className="flex flex-wrap items-baseline gap-x-2 text-[12.5px]">
+                  <span className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-faint">{g.code}</span>
+                  <span className="font-display font-medium text-muted">{g.title}</span>
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {FLOW_ENTRIES.filter((f) => f.group === g.id).map((f) => (
+                    <button
+                      key={f.label}
+                      type="button"
+                      onClick={() => walk(f)}
+                      className="ndi-hairline-btn rounded-[9px] border border-grid px-2.5 py-1.5 font-display text-[12.5px] font-medium"
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             ))}
-          </div>
-
-          {/* ---- Deployment ---- */}
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-            <p id="self-service-label" className="text-[12.5px] leading-[1.5] text-muted">
-              Deployment: self-service sign-up is{" "}
-              <strong className="font-medium text-body">{harness.selfServiceSignup ? "on" : "off"}</strong>
-              {harness.selfServiceSignup
-                ? " — businesses sign up themselves."
-                : " — NDI invites each business."}
-            </p>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={harness.selfServiceSignup}
-              aria-labelledby="self-service-label"
-              onClick={() => setSelfServiceSignup(!harness.selfServiceSignup)}
-              className="ndi-hairline-btn inline-flex h-8 items-center rounded-full px-3 font-display text-[12px] font-medium"
-            >
-              Switch {harness.selfServiceSignup ? "off" : "on"}
-            </button>
           </div>
 
           {/* ---- Persona ---- */}
@@ -228,34 +182,63 @@ export function DemoHarness() {
                     type="button"
                     onClick={() => setPersona(id)}
                     aria-pressed={harness.persona === id}
-                    className="ndi-navrow flex flex-col items-start rounded-[10px] px-2.5 py-1.5 text-left"
+                    /* Names only, with the role on hover: eight two-line
+                       cards took more room than the rest of the panel. */
+                    title={person.title}
+                    className="ndi-navrow rounded-[9px] px-2.5 py-1.5 font-display text-[12.5px] font-medium"
                     data-active={harness.persona === id ? "1" : "0"}
                   >
-                    <span className="font-display text-[13px] font-medium">{person.name}</span>
-                    <span className="text-[11.5px] leading-tight text-faint">{person.title}</span>
+                    {person.name}
                   </button>
                 ))}
               </div>
             </>
           ) : null}
 
-          {/* ---- State switcher ---- */}
+          {/* ---- State switcher ----
+              Folded away: it is a reviewer's tool for checking every state a
+              screen declares (the rule that a state nobody can reach is not
+              built), not something a demo audience needs to see. */}
           <div className="my-3 h-px bg-[var(--border-subtle)]" />
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="font-display text-[12px] font-semibold uppercase tracking-[0.08em] text-faint">
-              This screen&rsquo;s states
-            </p>
+          <details className="group">
+            <summary className="flex cursor-pointer list-none items-baseline justify-between gap-3 font-display text-[12px] font-semibold uppercase tracking-[0.08em] text-faint">
+              <span className="inline-flex items-center gap-1.5">
+                <Icon name="chevronRight" size={12} strokeWidth={2.2} className="transition-transform duration-200 group-open:rotate-90" />
+                For reviewers · this screen&rsquo;s states
+              </span>
+              {Object.keys(harness.stateOverrides).length > 0 ? (
+                <span className="font-display text-[11px] font-medium normal-case tracking-normal text-accent">
+                  {Object.keys(harness.stateOverrides).length} pinned
+                </span>
+              ) : null}
+            </summary>
             {Object.keys(harness.stateOverrides).length > 0 ? (
               <button
                 type="button"
                 onClick={clearStateOverrides}
-                className="ndi-plainlink font-display text-[12px] font-medium text-muted"
+                className="ndi-plainlink mt-2 font-display text-[12px] font-medium text-muted"
               >
                 Clear all
               </button>
             ) : null}
-          </div>
-
+          {/* The acts beyond onboarding need the story three months on —
+              appointed controllers, parked approvals, an authority to revoke.
+              Out of the prototype's focus, so not a flow above; kept here so
+              those screens can still be reviewed. */}
+          <button
+            type="button"
+            onClick={() => {
+              resetDemo();
+              restoreStoryState();
+              setPersona("dorji");
+              setOpen(false);
+              router.push("/dashboard");
+            }}
+            className="ndi-plainlink mt-2 flex items-center gap-1.5 font-display text-[12px] font-medium text-muted"
+          >
+            Beyond onboarding: open the story three months on
+            <Icon name="arrowRight" size={12} strokeWidth={2} />
+          </button>
           {registered ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {registered.states.map((s, i) => {
@@ -282,6 +265,7 @@ export function DemoHarness() {
               This screen has not declared any states yet.
             </p>
           )}
+          </details>
 
           {/* ---- Reset ---- */}
           <div className="my-3 h-px bg-[var(--border-subtle)]" />
@@ -292,8 +276,10 @@ export function DemoHarness() {
             <button
               type="button"
               onClick={() => {
+                /* Day zero starts where the story does: root signing in. */
                 resetDemo();
-                router.push("/dashboard");
+                setOpen(false);
+                router.push("/sign-in");
               }}
               className="ndi-hairline-btn inline-flex h-9 flex-none items-center gap-1.5 rounded-[10px] px-3 font-display text-[13px] font-medium"
             >
@@ -305,7 +291,10 @@ export function DemoHarness() {
       ) : null}
 
       {/* ---- The marker, and the way in ---- */}
-      <div className="pointer-events-auto flex items-center gap-2">
+      {/* Each control keeps its label on one line; on a phone the row wraps
+          rather than squeezing "Prototype · data simulated" into two broken
+          lines beside two squeezed buttons. */}
+      <div className="pointer-events-auto flex flex-wrap items-center gap-2 whitespace-nowrap">
         {/* A link, not a label. The marker's whole job is to stop somebody
             concluding that the register integration exists, and "prototype"
             on its own does not tell them which parts are simulated — the
@@ -325,6 +314,23 @@ export function DemoHarness() {
           </span>
           <Icon name="arrowRight" size={11} strokeWidth={2.2} className="flex-none opacity-60" />
         </Link>
+
+        {/* The way in for someone who has never seen the demo: one obvious
+            button, beside the controls rather than inside them. Hidden
+            while the guide runs — its own card is the control then. */}
+        {hydrated && !guiding ? (
+          <button
+            type="button"
+            onClick={startGuide}
+            className="inline-flex h-8 items-center gap-1.5 rounded-full px-3.5 font-display text-[12px] font-semibold"
+            style={{ background: "var(--grad-mint)", color: "var(--text-on-mint)" }}
+          >
+            <svg aria-hidden="true" viewBox="0 0 10 10" className="h-2.5 w-2.5" style={{ fill: "currentColor" }}>
+              <path d="M2 1l7 4-7 4z" />
+            </svg>
+            Guided demo
+          </button>
+        ) : null}
 
         <button
           type="button"

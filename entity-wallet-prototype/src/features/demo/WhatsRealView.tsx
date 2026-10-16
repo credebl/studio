@@ -48,6 +48,23 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
         needs: "The existing NDI wallet proof-request flow, wired to this console.",
       },
       {
+        shown: "The root administrator signing straight in to NDI's organisation",
+        reality:
+          "Root's account and Bhutan NDI's organisation are fixtures in the demo data. Signing in only matches the address to a person — any password works, and nothing is checked.",
+        needs: "Root and NDI's organisation seeded by the deployment itself, with a hardware-backed second factor on root's account.",
+      },
+      {
+        shown: "Platform admins, access requests and their decisions",
+        reality:
+          "Invitations, requests and approvals live in your browser. \"The root account approves nothing\" and \"only an admin can decide\" are checked by the demo store, which is not a boundary.",
+        needs: "Role checks and the audit of every decision enforced by the platform's services.",
+      },
+      {
+        shown: "Issuer logos on credential cards",
+        reality: "Initials in a seal. No real agency or bank logo is used.",
+        needs: "Issuer display metadata, including logos, from the trust registry.",
+      },
+      {
         shown: "Self-service sign-up switched on or off",
         reality:
           "A demo control, so both ways onto the platform can be shown. In the product it is a deployment setting nobody using the console can change.",
@@ -87,13 +104,28 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
       {
         shown: "An invitation delivered, bouncing, or accepted",
         reality:
-          "No invitation is sent; the bounce is a seeded fixture, and \"open as the invitee\" stands in for the email. Acceptance re-checks are store logic, not a server.",
-        needs: "Invitation service with expiry, revocation and the acceptance-time re-checks run server-side.",
+          "No invitation is sent; \"open the invitation as …\" stands in for the email, and the bounce in the story three months on is a seeded fixture. Setting up an account from the link keeps only the name — the link is trusted to prove the address because a real one would be single-use and signed. Acceptance re-checks are store logic, not a server.",
+        needs: "Invitation service with expiry, revocation, single-use signed links and the acceptance-time re-checks run server-side.",
       },
       {
-        shown: "Two administrators designating a foundational issuer",
+        /* Not simulated so much as not specified. Kind A was here too until
+           FLOW-ONB-02 v0.6 specified it; Kind W still isn't. Listed so nobody
+           at the showcase takes it as the spec. */
+        shown: "NDI inviting an existing organisation to keep its own records",
         reality:
-          "Dual control is enforced by the demo store, which also refuses and logs a self-approval — but the store is not a boundary.",
+          "An invitation kind the prototype added. FLOW-ONB-02 specifies member, agency and administrator invitations; an existing organisation starts verification without being invited. It reuses the agency invitation's 30-day expiry. Invitees of it, and of administrator invitations, set up their account on the invitation instead of through sign-up — a departure from FLOW-ONB-02, whose version sends them through sign-up.",
+        needs: "A decision on whether this belongs in FLOW-ONB-02 (or another flow), and on the set-up-from-the-link shortcut.",
+      },
+      {
+        shown: "The root account, held by two custodians",
+        reality:
+          "One persona anyone can drive. The custodians and any reason typed in are kept in your browser, and \"every administrator is told\" is an entry in the activity feed — no alert goes anywhere, and there is no split credential.",
+        needs: "A role account whose credential and MFA are split between two named custodians, the S9 limits checked server-side, and the alerting and custody register behind them.",
+      },
+      {
+        shown: "Two administrators approving a designation or a new administrator",
+        reality:
+          "Dual control is enforced by the demo store, which also refuses and logs a self-approval or an approval by the root account — but the store is not a boundary.",
         needs: "Dual control enforced by the service, with the approver recorded in the audit trail.",
       },
     ],

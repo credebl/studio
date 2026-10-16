@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { EmptyState } from "./EmptyState";
-import type { IconName } from "./icons";
+import { Icon, type IconName } from "./icons";
 
 interface DataTableProps {
   columns: string[];
@@ -12,6 +12,13 @@ interface DataTableProps {
     title: string;
     message: string;
     action?: ReactNode;
+    /**
+     * One line instead of the centred illustration. For a secondary list
+     * on a page that already offers the action — the invitations under
+     * Members — where the full empty state was a 300px block repeating the
+     * page's own "Invite someone" button under a table with nothing in it.
+     */
+    compact?: boolean;
   };
 }
 
@@ -42,7 +49,15 @@ export function DataTable({ columns, children, empty }: DataTableProps) {
         </table>
       </div>
 
-      {!children && empty ? (
+      {!children && empty?.compact ? (
+        <div className="relative z-[4] flex flex-wrap items-center gap-x-3 gap-y-2 px-5 py-4">
+          <Icon name={empty.icon} size={16} strokeWidth={1.8} className="flex-none text-accent" />
+          <p className="m-0 min-w-0 flex-1 text-[13px] leading-[1.55] text-muted">
+            <span className="font-medium text-body">{empty.title}.</span> {empty.message}
+          </p>
+          {empty.action}
+        </div>
+      ) : !children && empty ? (
         <EmptyState
           icon={empty.icon}
           title={empty.title}

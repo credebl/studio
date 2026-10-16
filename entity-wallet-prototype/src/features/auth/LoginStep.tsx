@@ -10,7 +10,8 @@ import { AuthCardHeader, AuthError, AuthFooterLink } from "./AuthCard";
 
 interface LoginStepProps {
   initialEmail?: string;
-  onSubmit: (email: string) => void;
+  /** Returns an error to show when the address has no account. */
+  onSubmit: (email: string) => string | void;
   onForgotPassword: () => void;
   onCreateAccount: (email: string) => void;
 }
@@ -38,8 +39,7 @@ export function LoginStep({
     event.preventDefault();
     if (!email.includes("@")) return setError("Enter the email address you sign in with.");
     if (!password) return setError("Enter your password.");
-    setError("");
-    onSubmit(email);
+    setError(onSubmit(email) ?? "");
   };
 
   return (

@@ -61,3 +61,14 @@ export const WALLET_HANDOFF_MS = 2200;
  * offering to skip.
  */
 export const SKIP_AFTER_MS = 900;
+
+/**
+ * How long a success message stays up before the flow moves on by itself.
+ *
+ * Long enough to read one line — "You've proved you are …" — and short enough
+ * that nobody reaches for a button. The alternative, a Continue button under
+ * a confirmation, asked people to acknowledge something they had just done,
+ * and in the room it was the click everyone forgot. A "Continue now" stays
+ * for anyone who does not want to wait, and for keyboard users.
+ */
+export const AUTO_ADVANCE_MS = 2200;

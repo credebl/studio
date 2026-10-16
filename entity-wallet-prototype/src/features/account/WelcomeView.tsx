@@ -52,6 +52,10 @@ export function WelcomeView() {
     .map((m) => ({ ...m, org: organizations.find((o) => o.id === m.orgId) }))
     .filter((r) => r.org);
 
+  /* Root is not here. NDI's root administrator never makes an account — the
+     deployment made it — so they sign in and land in NDI's organisation
+     (see ROOT_ADMIN). This screen is only ever for someone who has just
+     signed up and belongs to nothing, or to the organisations listed. */
   const state =
     forced !== "live"
       ? forced

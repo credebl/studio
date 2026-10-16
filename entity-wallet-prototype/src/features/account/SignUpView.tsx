@@ -94,7 +94,11 @@ export function SignUpView() {
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);
-      const taken = people.some((p) => p.email.toLowerCase() === address.toLowerCase());
+      /* Only accounts that exist count: on the platform's day zero NDI's own
+         staff are known to the story but have not signed up yet. */
+      const taken = people.some(
+        (p) => p.hasAccount !== false && p.email.toLowerCase() === address.toLowerCase(),
+      );
       if (taken) {
         /* FLOW-ONB-01 A1: someone arriving from an invitation who already
            has an account is sent to sign in. That is not a disclosure — the

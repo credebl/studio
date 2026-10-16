@@ -50,6 +50,9 @@ const STATUS_TONE: Record<string, Tone> = {
 
   /* Relations on their way to being real. Not yet authority. */
   draft: "neutral",
+  /* Platform access: what an organisation may do, and a request for more. */
+  inactive: "neutral",
+  not_set_up: "neutral",
   pending_acceptance: "pending",
   pending_registration: "pending",
   /* Reversible stop, then the final one. Suspension is a warning because it

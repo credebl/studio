@@ -860,3 +860,22 @@ select option {
     padding-left: 264px;
   }
 }
+
+/* The guided demo's card claims its own space instead of floating over the
+   page (GuideCard). Wide screens give up a right-hand column; narrower ones
+   give up the bottom of the viewport, matching the card's max height. */
+@media (min-width: 1100px) {
+  html[data-guide="open"] body {
+    padding-right: 412px;
+  }
+  /* Fixed chrome ignores body padding, so the top bar is inset by hand —
+     otherwise the rail sits over the organisation switcher and avatar. */
+  html[data-guide="open"] [data-topbar] {
+    right: 412px;
+  }
+}
+@media (max-width: 1099px) {
+  html[data-guide="open"] body {
+    padding-bottom: calc(46dvh + 68px);
+  }
+}

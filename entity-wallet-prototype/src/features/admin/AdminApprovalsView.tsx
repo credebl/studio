@@ -37,9 +37,17 @@ import { useDemo } from "@/lib/demoStore";
  * proposal is withdrawing it, and that is the one action left. The store
  * refuses self-approval regardless and records the attempt as a control
  * failure, because the screen is not the boundary.
+ *
+ * ADMINISTRATORS, AND NEVER THE ROOT ACCOUNT
+ *
+ * FLOW-ONB-02 v0.6 brought administrator invitations (Kind A) here too:
+ * making someone a platform admin is a platform-wide power, so it takes a
+ * second admin like a designation does (S2). And the root account approves
+ * nothing — the nav doesn't offer it this page, and reached by address it
+ * says so instead of showing controls the store would refuse (E13).
  */
 export function AdminApprovalsView() {
-  const { orgInvitations, harness, personById, approveInvitation, refuseInvitation, withdrawInvitation } = useDemo();
+  const { orgInvitations, harness, personById, currentPerson, approveInvitation, refuseInvitation, withdrawInvitation } = useDemo();
 
   const forced = useScreenState("SCR-INV-02", [
     "default",
@@ -56,14 +64,35 @@ export function AdminApprovalsView() {
   const waiting = forced === "empty" ? [] : orgInvitations.filter((i) => i.state === "PENDING_APPROVAL");
   const target = confirming ? orgInvitations.find((i) => i.id === confirming.id) : null;
   const offline = forced === "offline";
+  const isRoot = currentPerson.platformRole === "root";
+  /* What each item grants, named as the approver should read it. */
+  const what = (i: { kind: string; legalName: string | null; email: string }) =>
+    i.kind === "A" ? i.email : i.legalName ?? "this designation";
+
+  if (isRoot) {
+    return (
+      <AppShell>
+        <div className="mx-auto flex w-full max-w-[900px] flex-col gap-5">
+          <PageHeader crumbs={[{ label: "NDI administration" }, { label: "Approvals" }]} title="Approvals" />
+          <Panel>
+            <p role="status" className="relative z-[4] m-0 max-w-[62ch] text-[14px] leading-[1.6] text-body">
+              The root account doesn&rsquo;t approve anything. Every approval is made by a second named
+              platform administrator.
+            </p>
+          </Panel>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
       <div className="mx-auto flex w-full max-w-[900px] flex-col gap-5">
         <PageHeader crumbs={[{ label: "NDI administration" }, { label: "Approvals" }]} title="Approvals" />
         <p className="max-w-[68ch] text-[13.5px] leading-[1.65] text-muted">
-          Designations another administrator has proposed. Each one needs a second person, so that
-          no single account can bring a root of trust onto the platform.
+          Designations and new administrators another administrator has proposed. Each one needs a
+          second person, so that no single account can bring a root of trust onto the platform or make
+          someone an administrator.
         </p>
 
         {done ? (
@@ -91,7 +120,7 @@ export function AdminApprovalsView() {
             <EmptyState
               icon="userCheck"
               title="Nothing awaiting approval"
-              message="When another administrator proposes bringing a foundational issuer onto the platform, it waits here for a second signature."
+              message="Nothing is waiting for your approval."
             />
           </Panel>
         ) : (
@@ -102,19 +131,29 @@ export function AdminApprovalsView() {
                 <div className="relative z-[4] flex flex-col gap-4">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="flex flex-col gap-1">
-                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">Designation proposed</p>
-                      <p className="font-display text-[17px] font-semibold text-strong">{inv.legalName}</p>
+                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+                        {inv.kind === "A" ? "Platform admin proposed" : "Designation proposed"}
+                      </p>
+                      <p className="font-display text-[17px] font-semibold text-strong">{what(inv)}</p>
                     </div>
                     <StatusPill status="pending_approval" label="Awaiting a second administrator" />
                   </div>
 
                   <DetailList
-                    items={[
-                      { label: "Legal identity", value: inv.legalIdentity ?? "—" },
-                      { label: "Brought on for", value: inv.purpose ?? "—" },
-                      { label: "Invitation to", value: inv.email },
-                      { label: "Proposed by", value: `${personById(inv.invitedBy).name}, ${formatDate(inv.createdAt)}` },
-                    ]}
+                    items={
+                      inv.kind === "A"
+                        ? [
+                            { label: "Person", value: inv.email },
+                            { label: "Role", value: "Platform admin" },
+                            { label: "Proposed by", value: `${personById(inv.invitedBy).name}, ${formatDate(inv.createdAt)}` },
+                          ]
+                        : [
+                            { label: "Legal identity", value: inv.legalIdentity ?? "—" },
+                            { label: "Brought on for", value: inv.purpose ?? "—" },
+                            { label: "Invitation to", value: inv.email },
+                            { label: "Proposed by", value: `${personById(inv.invitedBy).name}, ${formatDate(inv.createdAt)}` },
+                          ]
+                    }
                   />
 
                   {selfIssued ? (
@@ -134,7 +173,7 @@ export function AdminApprovalsView() {
                         </HairlineButton>
                       </div>
                       <span id={`why-${inv.id}`} className="sr-only">
-                        Approve is unavailable because you proposed this designation.
+                        Approve is unavailable because you proposed this.
                       </span>
                     </div>
                   ) : (
@@ -168,12 +207,18 @@ export function AdminApprovalsView() {
         <Dialog
           open={confirming?.action === "approve"}
           onClose={() => setConfirming(null)}
-          title={`Approve ${target?.legalName ?? "this designation"}?`}
-          lead="This organisation will be able to issue credentials that everyone on the platform trusts."
+          title={`Approve ${target ? what(target) : "this"}?`}
+          lead={
+            target?.kind === "A"
+              ? `${target.email} will be able to administer the platform, including approving what other administrators propose.`
+              : "This organisation will be able to issue credentials that everyone on the platform trusts."
+          }
           consequences={[
-            `The invitation goes to ${target?.email ?? "the named official"} now`,
+            `The invitation goes to ${target?.email ?? "the named person"} now`,
             "It is recorded with your name as the second administrator — permanently",
-            "The organisation still issues nothing until its designation is activated",
+            target?.kind === "A"
+              ? "They become an administrator only once they accept"
+              : "The organisation still issues nothing until its designation is activated",
           ]}
           confirmLabel="Approve and send"
           onConfirm={() => {
@@ -187,7 +232,7 @@ export function AdminApprovalsView() {
           open={confirming?.action === "refuse"}
           onClose={() => setConfirming(null)}
           tone="danger"
-          title={`Refuse ${target?.legalName ?? "this designation"}?`}
+          title={`Refuse ${target ? what(target) : "this"}?`}
           lead="The invitation is never sent. If it should go ahead later, it has to be proposed again — and approved again."
           confirmLabel="Refuse"
           onConfirm={() => {

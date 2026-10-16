@@ -11,6 +11,7 @@ import { DetailLayout } from "@/components/ui/DetailLayout";
 import { GradientButton } from "@/components/ui/GradientButton";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { CredentialCard } from "@/components/ui/CredentialCard";
 import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Icon } from "@/components/ui/icons";
@@ -146,7 +147,12 @@ export function OfferDetailView({ offerId }: { offerId: string }) {
             actions={<StatusPill status={state} />}
           />
         }
-        side={issuer}
+        side={
+          <div className="flex flex-col gap-4">
+            <CredentialCard type={offer.type} issuer={offer.issuer} status="offered" />
+            {issuer}
+          </div>
+        }
       >
         {/* ---- The server's answer, first ---- */}
         {refused ? (

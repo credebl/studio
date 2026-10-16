@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 import { AppShell } from "@/components/layout/AppShell";
@@ -8,13 +9,11 @@ import { GradientButton } from "@/components/ui/GradientButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { SearchField } from "@/components/ui/SearchField";
-import { Select } from "@/components/ui/Select";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Tabs, type TabItem } from "@/components/ui/Tabs";
 import { Toolbar, ToolbarCount } from "@/components/ui/Toolbar";
-import { FIELD_CLASS } from "@/components/ui/formStyles";
 import { Icon } from "@/components/ui/icons";
-import type { Member } from "@/lib/demoData";
+import { formatDate } from "@/features/controllership/scopeModel";
 import { useDemo } from "@/lib/demoStore";
 
 const TABS: TabItem[] = [
@@ -22,75 +21,66 @@ const TABS: TabItem[] = [
   { id: "invitations", label: "Invitations", icon: "mail" },
 ];
 
-const ROLES: Member["role"][] = ["Admin", "Issuer", "Verifier", "Member"];
-
 /**
- * Members of the current organization, split by whether they have joined yet.
- * The two tabs are the same people at different stages, so they share a table
- * shape and differ only in which rows they hold.
+ * The Studio's users of Bhutan NDI's own organisation — the people the story
+ * has put there, read from the store.
+ *
+ * WHY NOT THE STUDIO'S OWN LIST
+ *
+ * This page used to list a fixture inherited from the original Studio: four
+ * NDI staff, the first of them the prototype's own designer, none of whom
+ * the story knows. On a platform whose root administrator signs in for the
+ * first time, a list of colleagues already invited, issuing and verifying
+ * contradicted everything the dashboard beside it said. Now it lists who
+ * actually belongs to NDI's organisation — root from the deployment, and the
+ * platform admins root has invited as they accept — and the invitations
+ * still waiting.
+ *
+ * Inviting happens on Platform admins, where root decides whom to trust; a
+ * second invite form here would make NDI staff by another route, with roles
+ * ("Issuer", "Verifier") the platform's administration does not have.
  */
 export function UsersView() {
-  const { members, inviteMember, removeMember } = useDemo();
+  const { people, organizations, activeOrgId, orgInvitations, currentPerson, personById } = useDemo();
   const [tab, setTab] = useState("users");
   const [query, setQuery] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState<Member["role"]>("Issuer");
 
+  const org = organizations.find((o) => o.id === activeOrgId);
   const q = query.trim().toLowerCase();
-  const wanted = tab === "users" ? "active" : "invited";
-  const rows = members.filter(
-    (m) =>
-      m.status === wanted &&
-      (!q || m.name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q)),
-  );
+  const matches = (name: string, email: string) =>
+    !q || name.toLowerCase().includes(q) || email.toLowerCase().includes(q);
 
-  const invite = () => {
-    if (!email.includes("@")) return;
-    inviteMember({ email: email.trim(), role });
-    setEmail("");
-    setTab("invitations");
-  };
+  /* When each admin joined: the day their invitation was accepted. Root's
+     account came with the deployment. */
+  const joinedOn = (email: string) =>
+    orgInvitations.find((i) => i.kind === "A" && i.state === "ACCEPTED" && i.email.toLowerCase() === email.toLowerCase())
+      ?.decidedAt ?? null;
+
+  const users = people
+    .filter((p) => p.hasAccount !== false && org?.memberIds.includes(p.id) && matches(p.name, p.email))
+    .sort((a, b) => (a.platformRole === "root" ? -1 : b.platformRole === "root" ? 1 : 0));
+  const invited = orgInvitations.filter(
+    (i) => i.kind === "A" && i.state === "PENDING" && matches(i.email, i.email),
+  );
+  const isRoot = currentPerson.platformRole === "root";
 
   return (
     <AppShell>
       <div className="flex flex-col gap-5">
         <PageHeader
-          crumbs={[{ label: "Organizations", href: "/organizations" }, { label: "Users" }]}
+          crumbs={[{ label: org?.name ?? "Bhutan NDI" }, { label: "Users" }]}
           title="Users"
+          actions={
+            isRoot ? (
+              <Link href="/admin/team">
+                <GradientButton>
+                  <Icon name="send" size={15} strokeWidth={2} />
+                  Invite a platform admin
+                </GradientButton>
+              </Link>
+            ) : undefined
+          }
         />
-
-        <Panel>
-          <div className="relative z-[4] flex flex-wrap items-end gap-2.5">
-            <label className="flex min-w-[220px] flex-1 flex-col gap-[7px]">
-              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                Invite by email
-              </span>
-              <input
-                type="email"
-                className={`${FIELD_CLASS} h-11`}
-                placeholder="name@organization.bt"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && invite()}
-              />
-            </label>
-            <label className="flex flex-col gap-[7px]">
-              <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
-                Role
-              </span>
-              <Select
-                label="Role"
-                value={role}
-                onChange={(v) => setRole(v as Member["role"])}
-                options={ROLES.map((r) => ({ value: r, label: r }))}
-              />
-            </label>
-            <GradientButton className="h-11" onClick={invite}>
-              Send invite
-              <Icon name="send" size={15} strokeWidth={2} />
-            </GradientButton>
-          </div>
-        </Panel>
 
         <Tabs tabs={TABS} active={tab} onChange={setTab} label="Users and invitations" />
 
@@ -98,58 +88,66 @@ export function UsersView() {
           <Toolbar
             left={
               <ToolbarCount>
-                {rows.length} {tab === "users" ? "members" : "pending invitations"}
+                {tab === "users" ? `${users.length} ${users.length === 1 ? "user" : "users"}` : `${invited.length} pending`}
               </ToolbarCount>
             }
             right={
               <SearchField
                 className="w-full min-[561px]:w-[280px]"
-                placeholder={tab === "users" ? "Search members" : "Search invitations"}
+                placeholder={tab === "users" ? "Search users" : "Search invitations"}
                 value={query}
                 onChange={setQuery}
               />
             }
           />
-          <DataTable
-            columns={["Name", "Email", "Role", "Status", tab === "users" ? "Joined" : "Invited", ""]}
-            empty={{
-              icon: tab === "users" ? "users" : "mail",
-              title: tab === "users" ? "No members yet" : "No pending invitations",
-              message:
-                tab === "users"
-                  ? "Members belong to an organization. Invite the people who will issue and verify alongside you."
-                  : "Invitations you send appear here until they are accepted.",
-            }}
-          >
-            {rows.length
-              ? rows.map((m) => (
-                  <tr key={m.id}>
-                    <td className="text-strong capitalize">{m.name}</td>
-                    <td className="text-muted">{m.email}</td>
-                    <td>{m.role}</td>
-                    <td>
-                      <StatusPill status={m.status} />
-                    </td>
-                    <td className="text-muted">{m.joinedAt}</td>
-                    <td>
-                      {/* The owner is the only account that cannot be removed;
-                          an organization with no owner has no one to fix it. */}
-                      {m.role === "Owner" ? (
-                        <span className="text-[12.5px] text-faint">Owner</span>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => removeMember(m.id)}
-                          className="ndi-plainlink whitespace-nowrap text-[12.5px] text-muted"
-                        >
-                          {m.status === "invited" ? "Revoke" : "Remove"}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))
-              : undefined}
-          </DataTable>
+          {tab === "users" ? (
+            <DataTable
+              columns={["Name", "Email", "Role", "Status", "Joined"]}
+              empty={{ icon: "users", title: "No users match", message: "Try a different name or address." }}
+            >
+              {users.length
+                ? users.map((p) => (
+                    <tr key={p.id}>
+                      <td className="text-strong">{p.name}</td>
+                      <td className="text-muted">{p.email}</td>
+                      <td>{p.platformRole === "root" ? "Root administrator" : "Platform admin"}</td>
+                      <td>
+                        <StatusPill status="active" />
+                      </td>
+                      <td className="whitespace-nowrap text-muted">
+                        {p.platformRole === "root"
+                          ? "With the deployment"
+                          : joinedOn(p.email)
+                            ? formatDate(joinedOn(p.email) as string)
+                            : "—"}
+                      </td>
+                    </tr>
+                  ))
+                : undefined}
+            </DataTable>
+          ) : (
+            <DataTable
+              columns={["Email", "Invited by", "Status", "Expires"]}
+              empty={{
+                icon: "mail",
+                title: "No invitations waiting",
+                message: "Platform admins root invites appear here until they set up their account.",
+              }}
+            >
+              {invited.length
+                ? invited.map((i) => (
+                    <tr key={i.id}>
+                      <td className="text-strong">{i.email}</td>
+                      <td className="text-muted">{personById(i.invitedBy).name}</td>
+                      <td>
+                        <StatusPill status="invited" />
+                      </td>
+                      <td className="whitespace-nowrap text-muted">{i.expiresAt ? formatDate(i.expiresAt) : "—"}</td>
+                    </tr>
+                  ))
+                : undefined}
+            </DataTable>
+          )}
         </Panel>
       </div>
     </AppShell>

@@ -32,7 +32,6 @@ export function DeleteOrganizationView() {
     credentials,
     verifications,
     connections,
-    members,
     deleteOrganization,
   } = demo;
 
@@ -71,7 +70,7 @@ export function DeleteOrganizationView() {
     { label: "Issued credentials", n: credentials.length, icon: "issue" },
     { label: "Verification records", n: verifications.length, icon: "verify" },
     { label: "Connections", n: connections.length, icon: "connections" },
-    { label: "Members", n: members.filter((m) => m.role !== "Owner").length, icon: "users" },
+    { label: "Members", n: Math.max(0, (org?.memberIds.length ?? 1) - 1), icon: "users" },
   ] as const;
 
   const confirmed = typed.trim() === org.name;
