@@ -128,10 +128,10 @@ export function ScopeBuilderView({ relationId }: { relationId: string }) {
         <div className="flex flex-col gap-5">
           <PageHeader
             crumbs={[
-              { label: "Controllership", href: "/controllership/relations" },
+              { label: "People who can act", href: "/people-who-can-act" },
               { label: "Not found" },
             ]}
-            title="Relation not found"
+            title="Appointment not found"
           />
           <Panel>
             <p className="relative z-[4] text-[13.5px] text-muted">
@@ -245,7 +245,7 @@ export function ScopeBuilderView({ relationId }: { relationId: string }) {
       <div className="flex flex-col gap-5">
         <PageHeader
           crumbs={[
-            { label: "Controllership", href: "/controllership/relations" },
+            { label: "People who can act", href: "/people-who-can-act" },
             { label: person.name },
             { label: "Scope" },
           ]}
@@ -286,7 +286,7 @@ export function ScopeBuilderView({ relationId }: { relationId: string }) {
           </Panel>
         ) : null}
 
-        <div className="grid gap-5 min-[1201px]:grid-cols-[minmax(0,1fr)_400px]">
+        <div className="grid gap-5 @min-[880px]/page:grid-cols-[minmax(0,1fr)_400px]">
           {/* ---- The form ---- */}
           <div className="flex flex-col gap-5">
             <Panel>
@@ -405,7 +405,7 @@ export function ScopeBuilderView({ relationId }: { relationId: string }) {
           </div>
 
           {/* ---- The preview, always on ---- */}
-          <div className="flex flex-col gap-4 min-[1201px]:sticky min-[1201px]:top-20 min-[1201px]:self-start">
+          <div className="flex flex-col gap-4 @min-[880px]/page:sticky @min-[880px]/page:top-20 @min-[880px]/page:self-start">
             <Panel>
               <div className="relative z-[4] flex flex-col gap-1">
                 <h2 className="font-display text-[15px] font-semibold text-strong">

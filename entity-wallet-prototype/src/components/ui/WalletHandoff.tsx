@@ -95,6 +95,7 @@ export function WalletHandoff({
   onSimulateScan,
   notSharing,
   sameDevice = false,
+  onResend,
 }: {
   /** What the code encodes. Only has to be distinctive, not resolvable. */
   value: string;
@@ -119,6 +120,8 @@ export function WalletHandoff({
   notSharing?: string[];
   /** Opened on the phone that holds the wallet: a link instead of a code. */
   sameDevice?: boolean;
+  /** "Send again" while waiting — the request is re-sent, the code stays (SCR-DEL-04). */
+  onResend?: () => void;
 }) {
   /* On the phone itself there is nothing to scan: the wait is for the
      person to open the wallet, and the card's button is the stand-in. */
@@ -242,7 +245,7 @@ export function WalletHandoff({
           ) : null}
 
           {/* ---- Ways out ---- */}
-          {(onRetry && bad) || (onCancel && !settled) || (onSkip && !settled) ? (
+          {(onRetry && bad) || (onCancel && !settled) || (onSkip && !settled) || (onResend && !settled) ? (
             <div className="flex flex-wrap items-center gap-2.5">
               {onRetry && bad ? (
                 <button
@@ -252,6 +255,11 @@ export function WalletHandoff({
                 >
                   <Icon name="refresh" size={13} strokeWidth={2} />
                   Try again
+                </button>
+              ) : null}
+              {onResend && !settled ? (
+                <button type="button" onClick={onResend} className="ndi-plainlink text-[12.5px] font-medium text-muted">
+                  Send again
                 </button>
               ) : null}
               {onCancel && !settled ? (

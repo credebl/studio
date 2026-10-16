@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { RelationsView } from "@/features/controllership/RelationsView";
+import { PeopleWhoCanActView } from "@/features/appointment/PeopleWhoCanActView";
 
-export const metadata: Metadata = { title: "Controllerships — NDI Studio" };
+export const metadata: Metadata = { title: "People who can act — NDI Studio" };
 
-export default function RelationsPage() {
-  return <RelationsView />;
+export default function Page() {
+  return <PeopleWhoCanActView />;
 }

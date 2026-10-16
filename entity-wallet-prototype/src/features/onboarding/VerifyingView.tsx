@@ -45,8 +45,8 @@ import { kindOf } from "./orgKinds";
  * The screen waits and then asks the store, standing in for the authority,
  * what it decided. It never works the answer out itself.
  *
- * Success goes to the organisation's verified screen. In FLOW-DEL-02 it goes
- * first to accepting responsibility (SCR-DEL-01); that is Flow 3's screen.
+ * Success goes first to accepting responsibility (SCR-DEL-01, FLOW-DEL-02),
+ * and from there to the organisation's verified screen.
  */
 type Face = "checking" | "setting_up" | "unreachable" | "setup_failed" | "issuing_failed";
 
@@ -97,7 +97,9 @@ export function VerifyingView() {
       timers.current.push(
         setTimeout(() => {
           completeOrgOnboarding();
-          router.push("/onboarding/foundational");
+          /* Verified, but not yet usable: the representative accepts
+             responsibility first (FLOW-DEL-02, SCR-DEL-01). */
+          router.push("/onboarding/responsibility?fresh=1");
         }, ROUND_TRIP_MS * 2),
       );
     }

@@ -147,12 +147,16 @@ const PRIMARY: NavItem[] = [
      apart. */
   { label: "Members", icon: "users", href: "/members", personas: OWNER, members: "managers" },
   {
-    label: "Controllership",
+    /* Named as the specification names it (UX-EW-01 §2.4): never
+       "controllership" or "relations", which are the model's words, not the
+       owner's. */
+    label: "Who can act",
     icon: "lockRounded",
     personas: OWNER,
     children: [
-      { label: "Relations", href: "/controllership/relations", icon: "link" },
-      { label: "Entity", href: "/controllership/entity", icon: "building" },
+      { label: "People who can act", href: "/people-who-can-act", icon: "userCheck" },
+      { label: "Organisation", href: "/organisation", icon: "building" },
+      { label: "Organisation record", href: "/controllership/entity", icon: "fileText" },
       { label: "Audit", href: "/controllership/audit", icon: "fileText" },
     ],
   },

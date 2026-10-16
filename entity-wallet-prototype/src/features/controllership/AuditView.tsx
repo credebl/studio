@@ -60,7 +60,7 @@ export function AuditView() {
     <AppShell>
       <div className="flex flex-col gap-5">
         <PageHeader
-          crumbs={[{ label: "Controllership" }, { label: "Audit" }]}
+          crumbs={[{ label: "Who can act" }, { label: "Audit" }]}
           title="The record"
           actions={
             <StatusPill status="verified" label={`Chain intact · ${auditEntries.length} entries`} />
@@ -172,7 +172,7 @@ export function AuditView() {
                       <Row label="Scope matched" value={`Version ${entry.scopeVersion}`} />
                     ) : null}
                     {entry.relationId ? (
-                      <Row label="Under relation" value={entry.relationId} mono />
+                      <Row label="Under authority" value={entry.relationId} mono />
                     ) : null}
                     {entry.relyingPartyDid ? (
                       <Row label="Relying party" value={entry.relyingPartyDid} mono />

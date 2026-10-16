@@ -11,6 +11,7 @@ import { Panel } from "@/components/ui/Panel";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Icon } from "@/components/ui/icons";
 import { roleIn, type OrgInvitation } from "@/lib/demoData";
+import { presetOf } from "@/features/appointment/presets";
 import { useDemo } from "@/lib/demoStore";
 
 import { PendingInvitations } from "./PendingInvitations";
@@ -34,7 +35,7 @@ import { PendingInvitations } from "./PendingInvitations";
  * will refuse to grant them authority until it has.
  */
 export function MembersView() {
-  const { people, relations, orgInvitations, organizations, activeOrgId, currentPerson } = useDemo();
+  const { people, relations, orgInvitations, organizations, activeOrgId, currentPerson, delegatedAuthorities } = useDemo();
 
   const forced = useScreenState("SCR-INV-03", ["default", "loading", "empty", "delivery_failed", "offline", "read_only"]);
 
@@ -77,10 +78,22 @@ export function MembersView() {
   const pending =
     forced === "empty" ? [] : forced === "delivery_failed" && !live.some((i) => i.delivery === "failed") ? [bounced, ...live] : live;
 
+  /* Membership and authority side by side: what each person may do for the
+     organisation, by whichever route it was granted — a controllership they
+     accepted, or a role or capability in their own wallet — and an
+     appointment still waiting on them, so the owner can see it is not yet in
+     force. */
   const authorityOf = (personId: string) => {
     const r = relations.find((rel) => rel.personId === personId && rel.state === "ACTIVE");
-    if (!r) return null;
-    return r.isRootAuthority ? "Root authority" : "Controller";
+    if (r) return r.isRootAuthority ? "Representative" : `Can act · ${presetOf(r.preset)?.label ?? "set individually"}`;
+    const held = delegatedAuthorities.filter(
+      (a) => a.recipientId === personId && a.status === "ACTIVE" && a.acceptance === "accepted",
+    );
+    if (held.length) return `Role in their wallet · ${held.map((a) => a.title).join(", ")}`;
+    const waiting =
+      relations.some((rel) => rel.personId === personId && rel.state === "PENDING_ACCEPTANCE") ||
+      delegatedAuthorities.some((a) => a.recipientId === personId && a.status === "ACTIVE" && a.acceptance === "sent");
+    return waiting ? "Appointed — waiting for them to accept" : null;
   };
 
   const inviteButton = canInvite ? (
@@ -99,7 +112,7 @@ export function MembersView() {
 
         <p className="max-w-[70ch] text-[13.5px] leading-[1.65] text-muted">
           Everyone who can sign in and see this organisation. Being a member does not let anyone
-          act for it — that is a separate authority, granted and accepted under Controllership.
+          act for it — that is given separately, and accepted by the person, under People who can act.
         </p>
 
         <Panel padded={false}>
@@ -130,7 +143,10 @@ export function MembersView() {
                     </td>
                     <td>
                       {authority ? (
-                        <Link href="/controllership/relations" className="ndi-plainlink text-body">
+                        <Link
+                          href={authority.startsWith("Role in") ? "/delegated-authority" : "/people-who-can-act"}
+                          className="ndi-plainlink text-body"
+                        >
                           {authority}
                         </Link>
                       ) : (

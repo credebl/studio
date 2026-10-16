@@ -16,7 +16,7 @@ switches you to the right person when the story changes hands. **Next** and
 there** brings you back if you wander off, and the chevron minimises it.
 
 **The prototype's focus is onboarding**, and the guide walks exactly that —
-seven chapters, 26 steps, starting on the platform's day zero:
+nine chapters, 37 steps, starting on the platform's day zero:
 
 1. **Root admin onboarding** — the NDI root account signs in. It is NDI's
    own account, held by two custodians together, not a person's, and made
@@ -49,13 +49,30 @@ seven chapters, 26 steps, starting on the platform's day zero:
    same way the platform admins did — and lands in Pelden's console as a
    member with no authority. Back as Dorji, the Members page lists Ugyen:
    identity not yet confirmed, authority none.
-6. **Where to go next.**
+6. **Give someone authority to act** (FLOW-DEL-01) — Dorji chooses Ugyen and
+   one of four choices (**Receive credentials**), each saying what it allows
+   and what it doesn't, and confirms they're authorised to make the
+   appointment; citing a document is optional and folded away. Ugyen reviews
+   who appointed them and what they can and can't do, then **one approval in
+   their NDI wallet** both confirms who they are and accepts.
+7. **A role in a wallet — Flow 8, ahead of spec** — Dorji invites Pema Choden, the
+   clearing agent at Druk Sharpa Freight (`pema.choden@druksharpa.bt`); Pema
+   sets up from the link. Then Dorji issues Pema a **role** — *Customs
+   clearing agent*, customs declarations only, Nu. 500,000 per transaction,
+   Bhutan National Single Window only, for a year — into Pema's own wallet.
+   **Accept it as Pema** (dashed, stands in for Pema's phone) is both Pema's
+   consent and the proof of who Pema is. Members then shows three people,
+   three authorities: Dorji the representative, Ugyen able to receive
+   credentials, Pema with a role in their own wallet. The screen is marked
+   **Flow 8 · ahead of spec**.
+8. **Where to go next.**
 
-The guide stops there. Giving a member authority to act — controller
-appointment, where the member proves who they are with their own wallet — is
-the next flow and is not designed yet; the relation screen says so for a
-member who joined by invitation. The screens for what comes after onboarding
-— presenting, authority credentials, revocation, appeals, and Bank of
+Both appointments follow the same rule: **invite first, appoint second**, and
+identity is confirmed **at the appointment, not at the invitation**
+(FLOW-ONB-02 §7.3). Giving authority follows FLOW-DEL-01; the role in a
+wallet is Flow 8, which has no specification yet, so it follows Story B5 and
+is marked as ahead of spec wherever it appears. The screens for what comes after onboarding — receiving and
+presenting, approvals, verification, revocation, appeals, and Bank of
 Bhutan being verified — still exist and are described further down, but
 the guide and the demo controls no longer walk them.
 
@@ -64,8 +81,8 @@ the guide and the demo controls no longer walk them.
 Registering Pelden lands on a first day, not on the story's three-months-in
 seed. Only Dorji is a member; nobody else from Pelden's side of the story has
 an account yet, so the persona switcher and the sign-in panel do not offer
-them, the Members page lists Dorji alone, and **Controllership → New
-relation** says there is nobody to appoint yet and offers to invite someone.
+them, the Members page lists Dorji alone, and **Give someone authority**
+says there is nobody to choose yet and offers to invite someone.
 Everyone else arrives the way the member chapter shows: an invitation Dorji
 sends and they accept. The activity feed is Pelden's own — it shows who joined
 and when, and nothing from NDI's side of the platform.
@@ -83,10 +100,11 @@ Two things to do in the room before you say anything:
 
 1. **Open the demo controls** — bottom-left of the window, the small
    `Prototype · data simulated` chip with a **Demo controls** button beside it.
-   That panel is your remote: the guided demo, the four onboarding flows
-   (root admin, platform admin, new company, member), who you are signed in
-   as, and reset. Each flow starts from the state it needs — day zero, the
-   platform with its two admins, or Pelden's first day — never from whatever the
+   That panel is your remote: the guided demo, the onboarding flows (root
+   admin, platform admin, new company, member, controller and delegate
+   appointment), who you are signed in as, and reset. Each flow starts from
+   the state it needs — day zero, the platform with its two admins, Pelden's
+   first day, or the first day with Ugyen and Pema joined — never from whatever the
    last person left. Each screen's states are folded under **For reviewers**.
 2. **Press Reset demo** if anyone has touched it before you. The demo persists
    to browser storage, so it remembers whatever the last person did. Reset —
@@ -208,9 +226,19 @@ With `CRA-2015-03310` instead, it ends on **Not verified**: the authority's
 records don't show Dorji, the decision is theirs, and the primary action is
 how to correct it *with the authority*. NDI offers no override and no review.
 
-### 5 · Pelden is verified — `/onboarding/foundational`
+### 5 · Dorji accepts responsibility — `/onboarding/responsibility`
 
-Nothing to accept: the registration was added to Pelden's wallet
+Verified isn't usable yet (FLOW-DEL-02, SCR-DEL-01). The screen says what
+acting for Pelden means: what Dorji can and can't do, Dorji's
+responsibilities as things to do, that every action is recorded against
+Dorji's name, and that NDI holds Pelden's keys. No scan — Dorji proved who
+they are to the CRA a minute ago. Coming back later asks for the wallet
+first (state **returning**). **Decline** leaves Pelden verified but unusable,
+and says how to reopen it. Press **Accept responsibility**.
+
+### 6 · Pelden is verified — `/onboarding/foundational`
+
+The registration itself needed no accepting: it was added to Pelden's wallet
 automatically. The next step offered is **Get its tax identity (TPN)** — the
 next credential in the chain (the prototype says that flow isn't built yet),
 with **View the credential** beside it. The summary says what Pelden can do
@@ -232,13 +260,15 @@ the onboarding flows are kept.
 
 ## The Gate 2 walkthroughs — Flows 1 and 2
 
-For the Gate 2 review. Demo controls → **Walk a flow** offers the four
+For the Gate 2 review. Demo controls → **Walk a flow** offers the
 onboardings in focus — **Root signs in**, **Root invites a platform admin**,
-**Create an account**, **Register the company** and **Invite a member** —
-each on its first screen as the right person, from a known starting state:
-the root and admin flows on day zero, the company flows on the platform with
-its two admins (Kinzang and Tshendu) and no business, and the member flow on Pelden's first
-day. The other walkthroughs below are still built but not in the controls:
+**Create an account**, **Register the company**, **Invite a member**,
+**Give someone authority** and **A role in a wallet (Flow 8, ahead of spec)** — each on its first
+screen as the right person, from a known starting state: the root and admin
+flows on day zero, the company flows on the platform with its two admins
+(Kinzang and Tshendu) and no business, the member flow on Pelden's first day, and the
+two appointments on the first day with Ugyen and Pema already joined and
+holding no authority. The other walkthroughs below are still built but not in the controls:
 switch person with **Driving as** and go to the route named in the heading.
 
 ### FLOW-ONB-02 · Root invites a platform admin — `/sign-in`
@@ -285,14 +315,13 @@ its only member.
    it. The spec's version is kept as the **no_account** state for comparison.
 4. **You've joined Pelden Trading** names the organisation — a person can
    belong to several — and **Go to Pelden Trading Pvt. Ltd.** opens its console as the
-   new member: a dashboard and a wallet, no Members, no Controllership, and
+   new member: a dashboard and a wallet, no Members, no Who can act, and
    *What you may do* says they can see its information and nothing on its
    behalf yet.
 5. Back as Dorji, **Members** lists them — identity *not yet confirmed*
    (joining never asks the register), authority *none — membership only* —
-   and the dashboard's activity shows who joined. **Controllership → New
-   relation** now offers them, and says why they cannot be appointed yet:
-   confirming who they are is part of controller appointment, the next flow.
+   and the dashboard's activity shows who joined. **Give someone authority**
+   now offers them; confirming who they are happens when they accept.
 
 Invite a second colleague at an address the story does not know and they get
 a record of their own — the persona switcher and the sign-in panel list them
@@ -422,127 +451,65 @@ passes.** The chain is whole because the link was restored.
 
 ---
 
-## The Act 2 walkthrough
+## The Act 2 walkthrough — giving someone authority to act (Flow 3)
 
-Roughly six minutes. The story: Pelden Trading gives its new warehouse
-manager a narrow, specific authority, and he has to accept it before it means
-anything.
+**Walk a flow → Give someone authority**, as Dorji, on Pelden's first day
+with Ugyen and Pema joined. About five minutes. It follows FLOW-DEL-01 and
+UX-EW-01 SCR-DEL-02 to 05.
 
-### 1 · Set up
+### 1 · Choose what they can do — `/people-who-can-act/give`
 
-Demo controls → act button **2**. That puts you on
-`/controllership/relations/new` as **Dorji Wangchuk**, a director of the company.
+Choose **Ugyen Phuntsho**. Then one of **four choices** — Receive
+credentials, Share credentials with named organisations, Approve others'
+actions, Everything — each with what it allows *and what it doesn't*.
+There is no list of permissions to tick, and no custom option.
 
-> "Dorji runs Pelden Trading, a trading company that imports and wholesales.
-> He has just hired a warehouse manager, Ugyen, who needs to be able to accept
-> credentials on the company's behalf. Not to *be* the company — to act for
-> it."
+> "Dorji can say exactly what Ugyen can do, in one sentence. That's the
+> test: if you can't restate what you granted, you didn't really grant it."
 
-### 2 · Establish the controllership — `/controllership/relations/new`
+Worth showing:
 
-Pick **Ugyen Phuntsho**, the warehouse manager — he holds nothing yet, which
-is why he is the one to watch an authority being built for. Choose **Entity
-consent**. Attach any file (the filename is all that is kept) and type a
-reference like `PT/BR/2026/014`.
+- **Share** asks which organisations. With none named, **Give authority**
+  stays unavailable (E12). With approval on and nobody else able to
+  approve, it says before you submit that Dorji will be asked each time (A1).
+- **Everything** says what it still doesn't give: giving others authority,
+  and taking the credentials off the platform.
+- The **statement** is required: Dorji confirms they're authorised to make
+  this appointment. **Cite the document behind this** is optional and folded
+  away — the file stays on the device, and only a fingerprint would be kept.
+- Someone who can already act is shown but can't be chosen (E3). Driven as
+  Ugyen, the page says only Dorji can give authority (E1).
 
-> Rinzin is not in this list, deliberately: she already holds a controllership,
-> and a second one for the same person would leave two answers to "what may she
-> do". Hers is seeded active so act 3 can be shown on its own.
+Leave **Receive credentials**, tick the statement, **Give authority**.
 
-Two things worth pointing at here:
+### 2 · Waiting — `/people-who-can-act`
 
-- **Tenzin Norbu is in the list but cannot be chosen.** His identity has not
-  been confirmed against the register.
-  > "You cannot grant authority to someone whose identity nobody has
-  > established. That is not a form validation — it is the foundation the
-  > whole model sits on."
-- **The instrument.** Only a fingerprint and a reference are stored.
-  > "The signed board resolution stays in the company's own records. The
-  > platform keeps proof it existed, not the document."
+Dorji first, as the representative; Ugyen *waiting to accept*, with the date
+it lapses. **Open it as Ugyen Phuntsho** (dashed) stands in for Ugyen's
+notification.
 
-Press **Continue to scope**.
+### 3 · Ugyen reviews — `/appointments/…`
 
-### 3 · The scope builder — the screen that matters most
+Who is appointing them — Dorji, by name — that Dorji confirmed they may,
+what Ugyen will and **won't** be able to do, and Ugyen's responsibilities as
+things to do. It says before they press anything that accepting needs their
+NDI wallet. **Decline** ends it, and Dorji's list then says *Ugyen declined*
+with **Appoint again**.
 
-This is the one to slow down on. Everything is off. Say so:
+### 4 · One approval is the acceptance — `/appointments/…/confirm`
 
-> "Nothing is granted until it is checked. He starts with no authority at all."
+The request comes from **Bhutan NDI Verification** (a stand-in name; the
+real one is set when that organisation is created), and the screen names it
+as the wallet would. Approving confirms it's Ugyen *and* records the
+acceptance — nothing to press afterwards, whoever the appointee is. Declined
+(E6), someone else's wallet (E7 — deliberately says nothing about why) and
+no wallet (E11) are walkable.
 
-Now build the grant, narrating as the right-hand panel rewrites itself:
+> "Dorji couldn't accept on Ugyen's behalf. An acceptance someone else makes
+> isn't worth recording."
 
-1. Check **Accept offers** → choose **Only these** → pick **Bonded Warehouse
-   Authorisation** and **Warehouse Safety Certificate**. Leave approval on
-   **Automatic**.
-2. Check **Present proofs** → **Only these** credential types → **Business
-   Registration**. Then relying parties → **Only these** → **Bank of Bhutan**
-   and **Bhutan National Single Window**. Leave approval on **One approver**.
-3. Set an end date about a year out.
-
-**The point of the screen is the right-hand panel.** Read one of its sentences
-out loud:
-
-> "Ugyen Phuntsho may present proofs using Business Registration credentials
-> to Bank of Bhutan and Bhutan National Single Window only, until 31 Dec 2027.
-> Every presentation needs one approver."
-
-> "That sentence is the product. Everything else here is a way of writing it.
-> If a director cannot check that sentence in five seconds, we have failed —
-> and no amount of good table design fixes it."
-
-**If you want the "worth a second look" warnings to appear**, widen something:
-set Present proofs to **Any relying party**, or tick **No end date**. The panel
-starts advising against it. Then undo it.
-
-> "It advises. It does not block. Deciding what is permissible is the server's
-> job, and a UI that pretended otherwise would be teaching the wrong thing
-> about where authority actually lives."
-
-Press **Send for acceptance**.
-
-### 4 · The hand-off — acceptance
-
-You will land on a panel saying it has gone to Ugyen. Click **Open what Ugyen
-will see** (the button carries whoever you picked).
-
-**You will see a notice saying you are still signed in as Dorji, and that only
-Ugyen can accept.** Do not skip past this — it is the moment the story turns:
-
-> "Dorji cannot accept on Ugyen's behalf. If an owner could, the acceptance record
-> would be worth nothing, and that record is the whole point."
-
-Click **Continue as Ugyen**. Everything on the page switches to the second
-person.
-
-Now walk the acceptance screen top to bottom:
-
-- **The authority is first, and in full.** Before any duty, before any button.
-  > "He is not agreeing to terms. He is reading exactly what he is being given,
-  > in the same sentences Dorji just wrote."
-- **Where it comes from** — the legal basis and the instrument.
-- **What he takes on** — five duties, in plain words. No statute numbers
-  anywhere.
-  > "These are duties in law. The Act is why they are there, but a person
-  > deciding whether to take on a responsibility needs to know what it is, not
-  > which section it came from."
-- **Decline is the same size as accept.**
-  > "If declining were a grey link, the acceptance would not mean anything."
-
-Press **Accept these duties**.
-
-### 5 · Close the loop — `/wallet/authority`
-
-Click **See what I may do**.
-
-> "This is Ugyen's own view. Same sentences. And notice what is not here —
-> there is no edit button, not even a disabled one. He can see his authority
-> and he can ask for it to be changed. He can never change it himself."
-
-Scroll to **What I have done**.
-
-> "Every action recorded against him is recorded against the company too.
-> Never one without the other."
-
-That is Act 2. Stop there.
+It lands on **Pelden Trading Pvt. Ltd.** as Ugyen sees it: what Ugyen can
+do, and what they can't, and nothing more.
 
 ---
 
@@ -811,8 +778,12 @@ Worth showing:
 | `/wallet/authority` | **suspended**, **expired** | A dead end with a reason, not a broken screen |
 | `/wallet/authority` | **no_authority** | What Pema, who holds no controllership, sees |
 | `/controllership/relations/.../scope` | **over_broad** | The advisory warnings, without having to build a bad scope |
-| `/controllership/relations/.../accept` | **declined** | The outcome nobody demos |
-| `/controllership/relations/new` | **person_not_verified** | Why an unconfirmed person is blocked |
+| `/onboarding/responsibility` | **returning**, **not_representative**, **could_not_finish**, **not_confirmed**, **offline** | SCR-DEL-01: the wallet step-up in a later session, and every refusal |
+| `/people-who-can-act/give` | **no_one_to_choose**, **already_has_authority**, **approval_falls_to_you**, **nothing_to_share_with**, **not_representative**, **offline** | SCR-DEL-02's E1, E2, E3, E12 and A1 |
+| `/appointments/...` | **expired**, **declined**, **no_longer_valid**, **offline** | SCR-DEL-03's E4, E5, E8/E9 |
+| `/appointments/.../confirm` | **same_device**, **declined**, **could_not_confirm**, **no_wallet** | SCR-DEL-04's E6, E7, E11 |
+| `/people-who-can-act` | **only_you**, **pending**, **accepted**, **declined**, **expired** | SCR-DEL-05, including a verified name that differs from the account |
+| `/onboarding/foundational` | **not_yet_accepted**, **declined**, **sole_proprietorship** | Verified but not usable yet; no delegation for a proprietor |
 | `/verifier/bnsw` | **pass**, **fail**, **service_unreachable** | All three outcomes, no setup needed |
 | `/delegated-authority/.../revoke` | **suspended**, **revoked** | Reversible vs final |
 | `/delegated-authority` | **empty** | First-run, before anything is delegated |

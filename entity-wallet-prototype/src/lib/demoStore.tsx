@@ -13,6 +13,7 @@ import {
 
 import { verifyAuthority, type VerificationRequestInput } from "./avs";
 import { INVITATION_DAYS } from "./deployment";
+import { scopeFor } from "@/features/appointment/presets";
 import {
   NDI_ORG,
   PELDEN,
@@ -49,6 +50,9 @@ import {
   type Scope,
   type ScopeFilter,
   type OrgKind,
+  type AppointmentDocument,
+  type PresetId,
+  standsNow,
   REGISTER_RECORDS,
   type Verification,
   type VerificationDecision,
@@ -336,6 +340,18 @@ function rootInviteBlock(s: DemoState): "two_active" | null {
 }
 
 /**
+ * A person once their own wallet has proved who they are: confirmed, with the
+ * masked citizenship number the proof returned. For someone the story knows
+ * that is the number it already has for them; anyone else gets a fixture.
+ */
+function anchored(p: Person): Person {
+  if (p.cidVerified) return p;
+  const known = SEED.people.find((x) => x.id === p.id && x.cid !== "—");
+  const cid = known?.cid ?? `•••• •••• ${String(1000 + Math.floor(Math.random() * 9000))}`;
+  return { ...p, cidVerified: true, cid };
+}
+
+/**
  * FLOW-ONB-02 step 9 for a member invitation: the invitee joins the named
  * organisation at the named role, and gains nothing else (Q4).
  *
@@ -507,7 +523,45 @@ interface DemoActions {
   updateRelationScope: (id: string, scope: Scope) => void;
   sendRelationForAcceptance: (id: string) => void;
   /** The Controller's own acceptance. Only this makes a relation ACTIVE. */
+  /**
+   * The proposed controller's wallet proof, answered as they accept — where
+   * identity is anchored for anyone who joined by invitation (FLOW-ONB-02
+   * §7.3: "at appointment, not here"). The register's answer is a fixture.
+   */
+  confirmIdentity: (personId: string) => void;
+  /** Refused (left unchanged) until the controller's identity is confirmed. */
   acceptRelation: (id: string) => void;
+
+  /* ---- Flow 3 (FLOW-DEL-02, FLOW-DEL-01) ----
+     The representative accepts responsibility; then gives a member
+     authority from one of four presets; the member accepts with one wallet
+     approval. Every refusal is decided here, not on the screen. */
+
+  /**
+   * SCR-DEL-01 — the representative accepts responsibility for the
+   * organisation the authority just confirmed them for. E3 for anyone else.
+   */
+  acceptResponsibility: (orgId: string) => { ok: true } | { ok: false; error: "E3" | "E4" };
+  /** SCR-DEL-01's decline (DEL-02/E2). Nothing moves; it can be reopened. */
+  declineResponsibility: (orgId: string) => void;
+  /** SCR-DEL-02 — give a member authority. Returns the appointment's id. */
+  appoint: (input: {
+    personId: PersonId;
+    preset: PresetId;
+    shareWith: string[];
+    shareNeedsApproval: boolean;
+    validUntil: string | null;
+    document: AppointmentDocument | null;
+  }) => { ok: true; id: string } | { ok: false; error: "E1" | "E3" | "E12" };
+  /**
+   * SCR-DEL-04 — the appointee's one wallet approval, which both confirms
+   * who they are and records their acceptance (EW-FLOW3-SD/D7). `answeredAs`
+   * is who the wallet proved; anyone but the appointee is E7, and the
+   * reason is not given.
+   */
+  acceptAppointment: (id: string, answeredAs: PersonId) => { ok: true } | { ok: false; error: "E4" | "E7" | "E8" };
+  /** SCR-DEL-03's decline (DEL-01/E5). */
+  declineAppointment: (id: string) => void;
   declineRelation: (id: string, reason: string) => void;
 
   /* ---- The holder's daily loop (Pattern A) ----
@@ -706,6 +760,12 @@ interface DemoActions {
    * first to get there.
    */
   startFirstDay: () => void;
+  /**
+   * Pelden's first day after its people have joined: Ugyen and Pema have
+   * accepted their invitations and hold no authority — where the controller
+   * and delegate appointments start when walked on their own.
+   */
+  startTeamReady: () => void;
   /**
    * Sign in with an address. Resolves it to a person with an account and
    * drives the console as them; a stand-in for the server's answer, so the
@@ -1203,13 +1263,24 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           ),
         })),
 
+      confirmIdentity: (personId) =>
+        setState((s) => ({ ...s, people: s.people.map((p) => (p.id === personId ? anchored(p) : p)) })),
+
       acceptRelation: (id) =>
         setState((s) => {
           const relation = s.relations.find((r) => r.id === id);
           if (!relation) return s;
           const person = s.people.find((p) => p.id === relation.personId);
+          /* Nobody acts for the entity without a confirmed identity. The
+             screen asks for the wallet proof first, but the refusal is here,
+             because the screen is not the boundary. */
+          if (!person?.cidVerified) return s;
           return {
             ...s,
+            activity: [
+              { id: rid("a"), text: `${person.name} accepted the duties of a controller`, at: today(), orgId: relation.orgId ?? PELDEN },
+              ...s.activity,
+            ].slice(0, 20),
             relations: s.relations.map((r) =>
               r.id === id
                 ? { ...r, state: "ACTIVE", acceptedAt: today(), activatedAt: today() }
@@ -1224,6 +1295,117 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             }),
           };
         }),
+
+      acceptResponsibility: (orgId) => {
+        const s0 = stateRef.current;
+        const root = s0.relations.find((r) => inOrg(orgId)(r) && r.isRootAuthority);
+        /* Only the person the authority named. The screen shows anyone else
+           the reason instead of the control, but this is the boundary. */
+        if (!root || root.personId !== s0.harness.persona) return { ok: false, error: "E3" };
+        if (!s0.organizations.find((o) => o.id === orgId)?.capabilities.includes("holder")) return { ok: false, error: "E4" };
+        setState((s) => ({
+          ...s,
+          responsibilities: [
+            ...s.responsibilities.filter((r) => r.orgId !== orgId),
+            { orgId, state: "ACCEPTED", at: today() },
+          ],
+          relations: s.relations.map((r) =>
+            r.id === root.id ? { ...r, state: "ACTIVE", acceptedAt: today(), activatedAt: today() } : r,
+          ),
+        }));
+        return { ok: true };
+      },
+
+      declineResponsibility: (orgId) =>
+        setState((s) => ({
+          ...s,
+          responsibilities: [
+            ...s.responsibilities.filter((r) => r.orgId !== orgId),
+            { orgId, state: "DECLINED", at: today() },
+          ],
+        })),
+
+      appoint: ({ personId, preset, shareWith, shareNeedsApproval, validUntil, document }) => {
+        const s0 = stateRef.current;
+        const orgId = s0.activeOrgId;
+        const root = s0.relations.find((r) => inOrg(orgId)(r) && r.isRootAuthority && r.state === "ACTIVE");
+        /* DEL-01/P1: the representative, and nobody else, appoints. */
+        if (!root || root.personId !== s0.harness.persona) return { ok: false, error: "E1" };
+        /* DEL-01/E3: one appointment per person per organisation at a time. */
+        if (s0.relations.some((r) => inOrg(orgId)(r) && r.personId === personId && !r.isRootAuthority && standsNow(r, today())))
+          return { ok: false, error: "E3" };
+        if (preset === "share" && shareWith.length === 0) return { ok: false, error: "E12" };
+        const id = rid("rel");
+        const now = today();
+        const person = s0.people.find((p) => p.id === personId);
+        setState((s) => ({
+          ...s,
+          relations: [
+            {
+              id,
+              orgId,
+              personId,
+              legalBasis: "entity_consent",
+              instrument: null,
+              scope: scopeFor(preset, shareWith, shareNeedsApproval, now, validUntil),
+              state: "PENDING_ACCEPTANCE",
+              isRootAuthority: false,
+              createdAt: now,
+              acceptedAt: null,
+              activatedAt: null,
+              preset,
+              shareNeedsApproval,
+              attestation: { attestedBy: s.harness.persona, attestedAt: now },
+              document,
+              expiresAt: inDays(14),
+              verifiedName: null,
+            },
+            ...s.relations,
+          ],
+          activity: [
+            { id: rid("a"), text: `Authority offered to ${person?.name ?? "a member"}, waiting for them to accept`, at: now, orgId },
+            ...s.activity,
+          ].slice(0, 20),
+        }));
+        return { ok: true, id };
+      },
+
+      acceptAppointment: (id, answeredAs) => {
+        const s0 = stateRef.current;
+        const r = s0.relations.find((x) => x.id === id);
+        if (!r || r.state !== "PENDING_ACCEPTANCE") return { ok: false, error: "E8" };
+        if (r.expiresAt && r.expiresAt < today()) return { ok: false, error: "E4" };
+        /* The wallet answered as somebody else. Deliberately not explained —
+           to the person presenting, or to the representative (E7). */
+        if (answeredAs !== r.personId) return { ok: false, error: "E7" };
+        const person = s0.people.find((p) => p.id === r.personId);
+        setState((s) => ({
+          ...s,
+          /* The one scan anchors them too: an appointee who joined by
+             invitation is confirmed here (FLOW-ONB-02 §7.3). */
+          people: s.people.map((p) => (p.id === r.personId ? anchored(p) : p)),
+          relations: s.relations.map((x) =>
+            x.id === id
+              ? { ...x, state: "ACTIVE", acceptedAt: today(), activatedAt: today(), verifiedName: person?.name ?? null }
+              : x,
+          ),
+          activity: [
+            { id: rid("a"), text: `${person?.name ?? "The appointee"} accepted authority to act`, at: today(), orgId: r.orgId ?? PELDEN },
+            ...s.activity,
+          ].slice(0, 20),
+        }));
+        return { ok: true };
+      },
+
+      declineAppointment: (id) =>
+        setState((s) => ({
+          ...s,
+          /* As declineRelation: there is no DECLINED state, so it ends, and
+             the reason says why. */
+          relations: s.relations.map((r) =>
+            r.id === id && r.state === "PENDING_ACCEPTANCE" ? { ...r, state: "TERMINATED", endedReason: "declined" } : r,
+          ),
+        })),
 
       declineRelation: (id, reason) =>
         setState((s) => ({
@@ -1461,8 +1643,19 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         setState((s) => {
           const authority = s.delegatedAuthorities.find((a) => a.id === id);
           if (!authority) return s;
+          const holder = s.people.find((p) => p.id === authority.recipientId);
           return {
             ...s,
+            /* Accepting happens in the holder's own NDI Wallet, which is bound
+               to their citizen credential — so the acceptance is also the
+               proof of who they are. A delegate who joined by invitation is
+               confirmed here, the way a controller is confirmed on accepting
+               their duties. */
+            people: s.people.map((p) => (p.id === authority.recipientId ? anchored(p) : p)),
+            activity: [
+              { id: rid("a"), text: `${holder?.name ?? "The holder"} accepted ${authority.title}`, at: today(), orgId: PELDEN },
+              ...s.activity,
+            ].slice(0, 20),
             delegatedAuthorities: s.delegatedAuthorities.map((a) =>
               a.id === id ? { ...a, acceptance: "accepted", acceptedAt: today() } : a,
             ),
@@ -2205,8 +2398,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           setState((s) => ({
             ...s,
             organizations: s.organizations.map((o) =>
-              o.id === orgId && !o.capabilities.includes("holder")
-                ? { ...o, capabilities: [...o.capabilities, "holder" as const] }
+              o.id === orgId
+                ? { ...o, kind: ob.kind, capabilities: o.capabilities.includes("holder") ? o.capabilities : [...o.capabilities, "holder" as const] }
                 : o,
             ),
             heldCredentials: seedCred
@@ -2215,9 +2408,13 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             relations: seedRel
               ? [
                   ...s.relations.filter((r) => r.id !== seedRel.id),
-                  { ...seedRel, personId, createdAt: now, acceptedAt: now, activatedAt: now, scope: { ...seedRel.scope, validFrom: now } },
+                  /* Created waiting for the representative to accept
+                     responsibility (FLOW-DEL-02 step 1), not in force. */
+                  { ...seedRel, personId, state: "PENDING_ACCEPTANCE" as const, createdAt: now, acceptedAt: null, activatedAt: null, scope: { ...seedRel.scope, validFrom: now } },
                 ]
               : s.relations,
+            responsibilities: [...s.responsibilities.filter((r) => r.orgId !== orgId), { orgId, state: "PENDING", at: now }],
+            harness: { ...s.harness, persona: personId },
             orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, stage: "verified" } : s.orgOnboarding,
             activeOrgId: orgId,
           }));
@@ -2226,8 +2423,23 @@ export function DemoProvider({ children }: { children: ReactNode }) {
         /* Lands on Pelden's first day, not on the story's three-months-in
            seed — see firstRunState. Nothing is logged to the activity feed
            for the same reason: nothing has been done in the console yet. */
-        setState((s) => ({
-          ...firstRunState(s),
+        setState((s) => {
+          const first = firstRunState(s);
+          return {
+          ...first,
+          organizations: first.organizations.map((o) => (o.id === PELDEN ? { ...o, kind: s.orgOnboarding?.kind ?? "company" } : o)),
+          /* The representative's authority is created waiting for them to
+             accept responsibility on SCR-DEL-01 (FLOW-DEL-02 step 1). The
+             first-run state, which other walks start from, has it already
+             accepted; a verification that just finished has not. */
+          relations: first.relations.map((r) =>
+            inOrg(PELDEN)(r) && r.isRootAuthority ? { ...r, state: "PENDING_ACCEPTANCE" as const, acceptedAt: null, activatedAt: null } : r,
+          ),
+          responsibilities: [...first.responsibilities.filter((r) => r.orgId !== PELDEN), { orgId: PELDEN, state: "PENDING", at: today() }],
+          /* The account that verified Pelden is Dorji's, and from here the
+             console acts as the representative the authority confirmed —
+             who alone can accept responsibility on SCR-DEL-01. */
+          harness: { ...first.harness, persona: "dorji" },
           orgOnboarding: s.orgOnboarding ? { ...s.orgOnboarding, stage: "verified" } : s.orgOnboarding,
           /* The account that did this now belongs to the organisation, as its
              owner — the first row of SCR-ONB-05's list. */
@@ -2235,7 +2447,8 @@ export function DemoProvider({ children }: { children: ReactNode }) {
             s.signup && s.signup.stage === "done" && !s.signup.memberships.some((m) => m.orgId === "org-pelden")
               ? { ...s.signup, memberships: [...s.signup.memberships, { orgId: "org-pelden", role: "Owner" }] }
               : s.signup,
-        }));
+          };
+        });
       },
 
       restoreStoryState: () =>
@@ -2299,6 +2512,45 @@ export function DemoProvider({ children }: { children: ReactNode }) {
           activeOrgId: PELDEN,
           harness: { ...SEED.harness, persona: "dorji", guideStep: s.harness.guideStep },
         })),
+
+      /* The first day, plus the two invitations the guide sends in chapters
+         5 and 7, accepted — each through the same joinOrganisation every
+         acceptance uses, so the state is the one the guide would reach. */
+      startTeamReady: () =>
+        setState((s) => {
+          let next: DemoState = {
+            ...firstRunState(platformReadyState(SEED)),
+            activeOrgId: PELDEN,
+            harness: { ...SEED.harness, persona: "dorji", guideStep: s.harness.guideStep },
+          };
+          for (const [personId, email, name] of [
+            ["ugyen", "ugyen.phuntsho@peldentrading.bt", "Ugyen Phuntsho"],
+            ["pema", "pema.choden@druksharpa.bt", "Pema Choden"],
+          ] as const) {
+            const inv: OrgInvitation = {
+              id: `inv-${personId}-team`,
+              kind: "M",
+              email,
+              orgId: PELDEN,
+              role: "Member",
+              legalName: null,
+              legalIdentity: null,
+              purpose: null,
+              needsSecondApproval: false,
+              invitedBy: "dorji",
+              approvedBy: null,
+              createdAt: today(),
+              sentAt: today(),
+              expiresAt: inDays(INVITATION_DAYS.M),
+              state: "PENDING",
+              delivery: "delivered",
+              decidedAt: null,
+              acceptedName: null,
+            };
+            next = joinOrganisation({ ...next, orgInvitations: [inv, ...next.orgInvitations] }, inv, name, personId);
+          }
+          return next;
+        }),
 
 
       invitePlatformAdmin: (emailIn, root) => {

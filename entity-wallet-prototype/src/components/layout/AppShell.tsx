@@ -2,6 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 
+import { ResponsibilityGate } from "@/features/appointment/ResponsibilityGate";
+
 import { Sidebar } from "./Sidebar";
 import { SiteFooter } from "./SiteFooter";
 import { TopBar } from "./TopBar";
@@ -44,8 +46,13 @@ export function AppShell({ children }: AppShellProps) {
           action — sat underneath it. It goes on this column rather than on
           <main> so the footer clears the harness as well. */}
       <div className="flex min-h-dvh flex-col pb-16 pt-16 min-[901px]:pl-[248px]">
-        <main className="mx-auto w-full max-w-[1600px] flex-1 px-4 py-6 min-[641px]:px-6 min-[901px]:px-8 min-[901px]:py-8">
-          {children}
+        {/* A named container, so a page's two-column layouts key off the
+            width the page actually has rather than the window's. With the
+            guided demo's side panel open, a 1366px window gives the page
+            about 650px; layouts keyed to the viewport still split it in two
+            and squeezed a form into a 180px column. */}
+        <main className="@container/page mx-auto w-full max-w-[1600px] flex-1 px-4 py-6 min-[641px]:px-6 min-[901px]:px-8 min-[901px]:py-8">
+          <ResponsibilityGate>{children}</ResponsibilityGate>
         </main>
         <SiteFooter />
       </div>

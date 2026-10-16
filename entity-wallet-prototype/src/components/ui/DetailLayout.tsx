@@ -19,8 +19,9 @@ import type { ReactNode } from "react";
  *      void on one side.
  *   2. Anything that is context rather than the task — who is offering, who
  *      is asking, the trust-registry standing — moves into a rail beside the
- *      column once there is room for one (1201px, the shell's own wide
- *      breakpoint). Below that it stacks under the main column rather than
+ *      column once there is room for one (900px of the page's own width,
+ *      not the window's, so a side panel narrowing the page stacks it).
+ *      Below that it stacks under the main column rather than
  *      above it: on a phone the task comes first and the context is
  *      something you scroll to, which is the right priority on a screen that
  *      can only show one thing at a time.
@@ -47,15 +48,19 @@ export function DetailLayout({
   const cap = side ? 1320 : width;
 
   return (
-    <div className="mx-auto flex w-full flex-col gap-5" style={{ maxWidth: cap }}>
+    <div className="@container mx-auto flex w-full flex-col gap-5" style={{ maxWidth: cap }}>
       {header}
       {side ? (
-        <div className="grid gap-5 min-[1201px]:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] min-[1201px]:items-start">
+        /* The rail appears when the page's own width has room for it, not the
+           window's. Keyed to the viewport, the guided demo's side panel left
+           a 1366px window with a 260px reading column beside a 380px rail,
+           and the wallet scan card on the acceptance screen clipped. */
+        <div className="grid gap-5 @min-[900px]:grid-cols-[minmax(0,1fr)_minmax(300px,380px)] @min-[900px]:items-start">
           <div className="flex min-w-0 flex-col gap-5">{children}</div>
           {/* Sticky, because the rail is what you glance back at while
               working through the column — and short enough that it never
               needs to scroll on its own. */}
-          <div className="flex min-w-0 flex-col gap-5 min-[1201px]:sticky min-[1201px]:top-[88px]">
+          <div className="flex min-w-0 flex-col gap-5 @min-[900px]:sticky @min-[900px]:top-[88px]">
             {side}
           </div>
         </div>

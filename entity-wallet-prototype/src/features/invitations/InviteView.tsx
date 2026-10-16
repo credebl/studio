@@ -242,7 +242,7 @@ export function InviteView({ kind }: { kind: "M" | "O" }) {
             </div>
           </Panel>
         ) : (
-          <div className="grid gap-5 min-[1201px]:grid-cols-[minmax(0,1fr)_380px] min-[1201px]:items-start">
+          <div className="grid gap-5 @min-[880px]/page:grid-cols-[minmax(0,1fr)_380px] @min-[880px]/page:items-start">
             <Panel>
               <div className="relative z-[4] flex flex-col gap-5">
                 {forced === "offline" ? (

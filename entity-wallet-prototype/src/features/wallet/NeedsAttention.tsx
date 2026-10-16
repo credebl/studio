@@ -120,7 +120,7 @@ export function NeedsAttention({ allClear = false }: { allClear?: boolean } = {}
     : [];
 
   return (
-    <div className="grid gap-5 min-[1201px]:grid-cols-[minmax(0,1fr)_360px]">
+    <div className="grid gap-5 @min-[880px]/page:grid-cols-[minmax(0,1fr)_360px]">
       {/* ---- What needs me ---- */}
       <Panel>
         <div className="relative z-[4] flex flex-wrap items-baseline justify-between gap-3">

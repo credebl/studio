@@ -59,6 +59,15 @@ export interface GuideStep {
  * has not designed yet, and made a forty-step demo of an onboarding review.
  * Those screens still exist; the guide no longer walks them.
  *
+ * Appointing a controller and a delegate follow it, because being invited
+ * is only half of getting ready: a member can see the organisation, and
+ * somebody still has to be able to act for it. Both are invited first and
+ * appointed second, in that order and never the other way round, and both
+ * prove who they are at the appointment rather than at the invitation
+ * (FLOW-ONB-02 §7.3). Giving a member authority follows FLOW-DEL-01 and
+ * SCR-DEL-02 to 05; the delegate's role is Flow 8, which is not designed yet,
+ * so its chapter follows Story B5 and says on screen that it is ahead of spec.
+ *
  * Member onboarding is here because the first day is now genuinely empty.
  * When it still listed the seed's colleagues, the room's first question on
  * seeing them was "how did these people get here?" — and the answer, an
@@ -71,6 +80,8 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
   { title: "A new company signs up", shows: "A person signs up — nothing about any company yet" },
   { title: "Verify the organisation", shows: "The authority that registered it, not NDI, confirms the company" },
   { title: "Pelden brings on its people", shows: "The owner invites a colleague; they join from the link" },
+  { title: "Give someone authority to act", shows: "Dorji chooses what Ugyen can do; Ugyen accepts with one wallet approval" },
+  { title: "A role in a wallet — Flow 8, ahead of spec", shows: "A clearing agent is invited, then given a role in their own wallet" },
   { title: "Where to go next", shows: "The other routes, and what's simulated" },
 ];
 
@@ -80,7 +91,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 0,
     title: "Onboarding onto the Entity Wallet",
     happening:
-      "Four onboardings, in the order they have to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner brings on a colleague. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
+      "Everything it takes to get onto the Entity Wallet and ready to use it, in the order it has to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner invites a colleague and gives them authority to act, then — ahead of the specification — invites a clearing agent and gives them a role in their own wallet. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
     doThis:
       "Press **Next**. The guide takes you to each screen and tells you what to press; you do the clicking. **Minimise** tucks this card away when it's in the way.",
   },
@@ -237,6 +248,14 @@ export const GUIDE_STEPS: GuideStep[] = [
   },
   {
     chapter: 4,
+    title: "Dorji accepts responsibility",
+    happening:
+      "Verified isn't usable yet. The screen says what acting for Pelden means — what Dorji can and can't do, and Dorji's responsibilities — and nothing on Pelden works until Dorji accepts. No scan: Dorji proved who they are to the CRA a minute ago.",
+    doThis: "Press **Accept responsibility**.",
+    route: "/onboarding/responsibility",
+  },
+  {
+    chapter: 4,
     title: "Pelden is verified",
     happening:
       "Pelden holds its registration — added automatically, nobody accepted anything. The next step offered is its tax identity, and the screen says plainly what Pelden can't do: issue credentials or verify anyone.",
@@ -295,7 +314,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 5,
     title: "Pelden, as a member sees it",
     happening:
-      "Ugyen can see Pelden but holds no authority for it, and the console says so in the same words the invitation used. No members page, no controllership: those are the owner's.",
+      "Ugyen can see Pelden but holds no authority for it, and the console says so in the same words the invitation used. No members page, and no giving others authority: those are the owner's.",
     doThis: "Press **Next** to go back to Dorji.",
     route: "/dashboard",
     /* No persona: accepting already drives the console as whoever joined. */
@@ -304,18 +323,114 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 5,
     title: "Dorji sees who joined",
     happening:
-      "Ugyen is a member now: identity not yet confirmed — joining never asks the register — and no authority to act. Giving Ugyen authority is the next flow, controller appointment, where Ugyen proves who they are with their own NDI Wallet.",
+      "Ugyen is a member now: identity not yet confirmed — joining never asks anyone — and no authority to act. That comes next: Dorji gives Ugyen authority to act, and Ugyen accepts with one approval in their own NDI wallet.",
     doThis: "Press **Next**.",
     route: "/members",
     persona: "dorji",
   },
 
-  /* ---- 6 · Where to go next ---- */
+  /* ---- 6 · Give someone authority to act (FLOW-DEL-01) ---- */
   {
     chapter: 6,
+    title: "Choose what Ugyen can do",
+    happening:
+      "One of four choices, each saying what it allows and what it doesn't — there's no list of permissions to tick. Dorji confirms they're authorised to make the appointment; citing a document like a board resolution is optional and folded away.",
+    doThis:
+      "Choose **Ugyen Phuntsho**, leave **Receive credentials**, tick the statement that you're authorised, then press **Give authority**.",
+    say: "Membership let Ugyen in. This is the separate thing that lets Ugyen act — and Dorji can say exactly what it covers.",
+    route: "/people-who-can-act/give",
+    persona: "dorji",
+  },
+  {
+    chapter: 6,
+    title: "Waiting for Ugyen",
+    happening:
+      "Dorji is listed first, as the representative. Ugyen's appointment waits for Ugyen, with the date it lapses if they don't accept. Nothing is in force yet.",
+    doThis: "Press **Open it as Ugyen Phuntsho** (dashed — it stands in for Ugyen's notification).",
+    route: "/people-who-can-act",
+  },
+  {
+    chapter: 6,
+    title: "Ugyen reviews the appointment",
+    happening:
+      "Who is appointing them — Dorji, by name — that Dorji confirmed they may, what Ugyen will and won't be able to do, and Ugyen's responsibilities. It says up front that accepting needs Ugyen's NDI wallet.",
+    doThis: "Press **Accept**.",
+    match: "^/appointments/[^/]+$",
+  },
+  {
+    chapter: 6,
+    title: "One approval is the acceptance",
+    happening:
+      "The request comes from Bhutan NDI Verification, named as the wallet will show it. Approving it confirms it's Ugyen and records that Ugyen accepts — there's nothing else to press afterwards.",
+    doThis: "Press **Simulate the scan**. When it's done, the next screen opens by itself.",
+    say: "Dorji couldn't accept on Ugyen's behalf. An acceptance someone else makes isn't worth recording.",
+    match: "^/appointments/[^/]+/confirm$",
+  },
+  {
+    chapter: 6,
+    title: "Ugyen can act for Pelden",
+    happening:
+      "Exactly what Dorji chose — receive credentials — with what it doesn't cover listed beside it. Ugyen can read it and can't change it.",
+    doThis: "Press **Next**.",
+    route: "/organisation",
+  },
+
+  /* ---- 7 · A role in a wallet — Flow 8, ahead of spec ----
+     Story B5. Flow 3 issues nothing into anyone's wallet (EW-FLOW3-SD/D4);
+     role credentials are catalogue flow 8, and the chapter says so on its
+     first step rather than letting it pass as part of Flow 3. */
+  {
+    chapter: 7,
+    title: "Invite the clearing agent",
+    happening:
+      "Ahead of the specification: this is Flow 8, not designed yet, and built from the user stories. Pema Choden, of Druk Sharpa Freight, clears Pelden's imports and acts from their own wallet, not the console — but is still invited first, like Ugyen.",
+    doThis:
+      "Type **pema.choden@druksharpa.bt**, leave **Member** selected and press **Send invitation**. Then press **Open the invitation as pema.choden@druksharpa.bt**.",
+    route: "/members/invite",
+    persona: "dorji",
+  },
+  {
+    chapter: 7,
+    title: "Pema sets up an account",
+    happening: "The same invitation Ugyen had: who sent it, what it gives, what it doesn't, and an account set up from the link.",
+    doThis:
+      "Enter **Pema Choden**, a password such as **Thimphu-Chorten-2026**, the same password again, then press **Set up account and accept**.",
+    match: "^/invitation/[^/]+$",
+  },
+  {
+    chapter: 7,
+    title: "Pema has joined",
+    happening: "Pema is a member of Pelden — still with no authority. Back to Dorji to appoint Pema as delegate.",
+    doThis: "Press **Next**.",
+    match: "^/invitation/[^/]+/accepted$",
+  },
+  {
+    chapter: 7,
+    title: "Issue a role into Pema's wallet",
+    happening:
+      "A delegate's authority is a credential in their own NDI Wallet. Its limits — what for, how much, with whom, until when — travel with it and are checked by every counterparty; \"What a counterparty reads\" shows them exactly as a verifier will.",
+    doThis:
+      "Leave **Role**, choose **Pema Choden**, name it **Customs clearing agent**, tick **Submit customs declarations**, type **500000** as the cap, tick **Bhutan National Single Window**, and press **Issue to Pema**. Then press **Accept it as Pema** (dashed — it stands in for Pema's phone).",
+    say: "Accepting in their own wallet is Pema's consent, and it proves who Pema is — the wallet is bound to Pema's citizen credential.",
+    route: "/delegated-authority/new",
+    persona: "dorji",
+  },
+  {
+    chapter: 7,
+    title: "Pelden is ready",
+    happening:
+      "Three people, three different things: Dorji is the representative, Ugyen can receive credentials for Pelden in the console, and Pema holds a role in their own wallet (Flow 8, ahead of spec). Each was invited first, and each proved who they are when they took authority on.",
+    doThis: "Press **Next**.",
+    route: "/members",
+    persona: "dorji",
+  },
+
+  /* ---- 8 · Where to go next ---- */
+  {
+    chapter: 8,
     title: "That's onboarding",
     happening:
-      "The platform went from its root administrator to a first platform admin; Pelden Trading went from one person signing up to a company holding its own registration; and its first colleague joined by invitation.",
+      "The platform went from its root administrator to a first platform admin; Pelden Trading went from one person signing up to a company holding its own registration; and its people were invited, then given authority to act.",
     doThis:
       "To run any part again, use **Demo controls → Walk a flow**. The **Prototype · data simulated** chip lists what's simulated.",
   },

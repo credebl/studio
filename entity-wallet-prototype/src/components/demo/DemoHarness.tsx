@@ -41,6 +41,7 @@ export function DemoHarness() {
     startDayZero,
     startPlatformReady,
     startFirstDay,
+    startTeamReady,
     hydrated,
   } = useDemo();
 
@@ -93,6 +94,7 @@ export function DemoHarness() {
     if (f.start === "dayZero") startDayZero();
     else if (f.start === "platformReady") startPlatformReady();
     else if (f.start === "firstDay") startFirstDay();
+    else if (f.start === "teamReady") startTeamReady();
     else restoreStoryState();
     if (f.persona) setPersona(f.persona);
     if (f.selfService !== undefined) setSelfServiceSignup(f.selfService);

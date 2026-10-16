@@ -93,7 +93,7 @@ export function EntityProfileView() {
       <DetailLayout
         header={
           <PageHeader
-            crumbs={[{ label: "Controllership" }, { label: "Entity" }]}
+            crumbs={[{ label: "Who can act" }, { label: "Organisation record" }]}
             title={org?.name ?? "The entity"}
             actions={
               <StatusPill

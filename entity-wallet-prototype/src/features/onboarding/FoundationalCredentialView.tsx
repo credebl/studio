@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 
 import { useScreenState } from "@/components/demo/screenState";
+import { GradientButton } from "@/components/ui/GradientButton";
 import { CredentialCard } from "@/components/ui/CredentialCard";
 import { HairlineButton } from "@/components/ui/HairlineButton";
 import { Panel } from "@/components/ui/Panel";
@@ -45,12 +46,21 @@ import { kindOf } from "./orgKinds";
  * carries the negative clause (UXD-04): it can hold and present
  * credentials; it can't issue them or verify anyone else's.
  *
- * WHAT IS LEFT FOR FLOW 3
+ * NOT YET ACCEPTED
  *
- * Giving someone authority to act and seeing who can act are this screen's
- * conditional secondary actions in the specification, as is the
- * not-yet-accepted state. They belong to FLOW-DEL-01/02 and come with that
- * flow. "Ask NDI" to verify or issue (FLOW-ACC-02) likewise waits for Flow 4.
+ * Verified is not the same as usable. Until the representative accepts
+ * responsibility (SCR-DEL-01, FLOW-DEL-02) the screen names the organisation
+ * as verified and offers one thing — accepting — and nothing else that
+ * could be used. A decline is stated without reading as a penalty, with the
+ * way back offered and, for the other case, the authority named as the
+ * place to change who the representative is (DEL-02/E2).
+ *
+ * GIVING OTHERS AUTHORITY, ONLY WHERE IT MEANS SOMETHING
+ *
+ * Giving someone authority to act and seeing who can act are secondary,
+ * and only for an organisation that is not a sole proprietorship (UXD-24):
+ * a proprietor delegating to themselves is not a task. "Ask NDI" to verify
+ * or issue (FLOW-ACC-02) waits for Flow 4.
  *
  * NAME DIFFERS
  *
@@ -61,9 +71,16 @@ import { kindOf } from "./orgKinds";
  */
 export function FoundationalCredentialView() {
   const router = useRouter();
-  const { heldCredentials, orgOnboarding, orgInvitations, organizations, hydrated, setActiveOrg, setPersona } =
+  const { heldCredentials, orgOnboarding, orgInvitations, organizations, responsibilities, hydrated, setActiveOrg, setPersona } =
     useDemo();
-  const forced = useScreenState("SCR-ORG-07", ["live", "default", "name_differs"]);
+  const forced = useScreenState("SCR-ORG-07", [
+    "live",
+    "default",
+    "name_differs",
+    "not_yet_accepted",
+    "declined",
+    "sole_proprietorship",
+  ]);
 
   const kind = kindOf(orgOnboarding?.kind);
   const invitation = orgInvitations.find((i) => i.id === orgOnboarding?.invitationId);
@@ -103,6 +120,12 @@ export function FoundationalCredentialView() {
 
   /* Reached by URL with nothing verified. The credential is the authority's
      to give, and a screen reached by address must not appear to hand it out. */
+  const responsibility = responsibilities.find((r) => r.orgId === orgId)?.state ?? "ACCEPTED";
+  const notAccepted =
+    forced === "not_yet_accepted" || forced === "declined" || (forced === "live" && responsibility !== "ACCEPTED");
+  const declined = forced === "declined" || (forced === "live" && responsibility === "DECLINED");
+  const delegation = forced === "sole_proprietorship" ? false : kind.value !== "sole_proprietorship";
+
   if (forced === "live" && orgOnboarding?.stage !== "verified") {
     return (
       <OnboardingShell current={0}>
@@ -114,6 +137,35 @@ export function FoundationalCredentialView() {
             </p>
             <div>
               <HairlineButton onClick={() => router.push("/onboarding")}>Verify an organisation</HairlineButton>
+            </div>
+          </div>
+        </Panel>
+      </OnboardingShell>
+    );
+  }
+
+  if (notAccepted) {
+    return (
+      <OnboardingShell current={4}>
+        <div className="flex flex-col gap-2">
+          <h1 className="font-display text-[26px] font-semibold leading-[1.15] tracking-[-0.025em] text-strong">
+            {shortName} is <span className="ndi-wave-text">verified</span>
+          </h1>
+        </div>
+        <Panel>
+          <div className="relative z-[4] flex flex-col gap-3" role="status">
+            <p className="m-0 max-w-[62ch] text-[14px] leading-[1.65] text-body">
+              {declined
+                ? `You've declined. Nobody can act for ${shortName} until someone accepts. If you're not the right person, the ${kind.authority} needs to update its records.`
+                : `${shortName} is verified. Before you can use it, accept responsibility for acting on its behalf.`}
+            </p>
+            <div className="flex flex-wrap items-center gap-2.5">
+              <GradientButton onClick={() => router.push("/onboarding/responsibility")}>
+                {declined ? "Reopen and accept" : "Accept responsibility"}
+              </GradientButton>
+              {declined ? (
+                <HairlineButton onClick={() => router.push("/welcome")}>Leave</HairlineButton>
+              ) : null}
             </div>
           </div>
         </Panel>
@@ -241,6 +293,14 @@ export function FoundationalCredentialView() {
           {`Go to ${existing?.name ?? shortName}`}
           <Icon name="arrowRight" size={14} strokeWidth={2} />
         </HairlineButton>
+        {delegation ? (
+          <>
+            <HairlineButton onClick={() => open("/people-who-can-act/give")}>Give someone authority to act</HairlineButton>
+            <button type="button" onClick={() => open("/people-who-can-act")} className="ndi-plainlink text-[12.5px] font-medium text-muted">
+              See who can act
+            </button>
+          </>
+        ) : null}
         {existing ? null : (
           <button type="button" onClick={() => router.push("/onboarding")} className="ndi-plainlink text-[12.5px] font-medium text-muted">
             Add another organisation

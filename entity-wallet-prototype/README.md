@@ -68,14 +68,16 @@ chain explains delegated authority better than any diagram.
 The prototype's current focus is onboarding: NDI's root administrator
 signing in, root inviting the platform's two admins, who set up from the link, a new
 company signing up and getting its Entity Wallet, and that company's owner
-inviting a colleague who joins from the link. Demo controls → **Walk a flow**
+inviting its people and appointing them — a controller who acts through the
+console, and a delegate whose role lives in their own wallet. Demo controls → **Walk a flow**
 starts each one as the right person, from the state it needs.
 
 **New to it? Press Guided demo** (bottom-left of any screen): it walks the
-four onboardings on screen and tells you what to press at each step —
-NDI's root administrator signing in, the two platform admins setting up
-from their invitations, Pelden Trading signing up and receiving its
-registration, and Pelden's first colleague joining. The company's first day
+onboarding on screen and tells you what to press at each step — NDI's root
+administrator signing in, the two platform admins setting up from their
+invitations, Pelden Trading signing up and receiving its registration,
+Pelden's first colleague joining and being appointed controller, and a
+clearing agent invited and appointed delegate. The company's first day
 is genuinely empty: nobody but its owner is a member until someone is
 invited.
 

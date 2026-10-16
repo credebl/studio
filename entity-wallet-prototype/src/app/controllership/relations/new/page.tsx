@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 
-import { CreateRelationView } from "@/features/controllership/CreateRelationView";
+import { GiveAuthorityView } from "@/features/appointment/GiveAuthorityView";
 
-export const metadata: Metadata = {
-  title: "New controllership — NDI Studio",
-};
+export const metadata: Metadata = { title: "Give someone authority — NDI Studio" };
 
-export default function NewRelationPage() {
-  return <CreateRelationView />;
+export default function Page() {
+  return <GiveAuthorityView />;
 }

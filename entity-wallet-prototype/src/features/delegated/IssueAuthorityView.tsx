@@ -12,12 +12,13 @@ import { HairlineButton } from "@/components/ui/HairlineButton";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Panel } from "@/components/ui/Panel";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { SimulatedAction, SimulatedStep } from "@/components/ui/SimulatedStep";
 import { StatusPill } from "@/components/ui/StatusPill";
 import { Switch } from "@/components/ui/Switch";
 import { Icon } from "@/components/ui/icons";
 import { FIELD_BLOCK_CLASS, FIELD_CLASS, LABEL_CLASS } from "@/components/ui/formStyles";
 import { useDemo } from "@/lib/demoStore";
-import { isPlatformAdmin, type AuthorityKind } from "@/lib/demoData";
+import { PELDEN, isPlatformAdmin, type AuthorityKind } from "@/lib/demoData";
 
 import { TASK_SCOPES, formatNu, taskScopeLabel } from "./constraints";
 
@@ -61,7 +62,7 @@ const plusDays = (days: number) => {
 };
 
 export function IssueAuthorityView() {
-  const { people, delegatedAuthorities, issueAuthority, acceptAuthority, personById } = useDemo();
+  const { people, delegatedAuthorities, issueAuthority, acceptAuthority, personById, organizations, harness } = useDemo();
 
   const screenState = useScreenState("D2", [
     "building",
@@ -70,9 +71,15 @@ export function IssueAuthorityView() {
     "accepted",
   ]);
 
-  const [kind, setKind] = useState<AuthorityKind>("capability");
-  const [recipientId, setRecipientId] = useState("pema");
-  const [title, setTitle] = useState("Declaration authority");
+  /* The form starts empty — no recipient, no name, no task, no counterparty.
+     It used to arrive filled in with act 4's declaration authority for Pema,
+     which on a first run read as an authority that already existed, and
+     sent it to whoever "pema" happened to be. A delegate is appointed on
+     purpose; the defaults that remain are the protective ones (a cap, a
+     short expiry). */
+  const [kind, setKind] = useState<AuthorityKind>("role");
+  const [recipientId, setRecipientId] = useState("");
+  const [title, setTitle] = useState("");
   /* Whether the operator has made a choice about the parent yet. Until they
      have, a capability defaults to hanging off the recipient's existing role
      rather than off nothing.
@@ -85,23 +92,32 @@ export function IssueAuthorityView() {
      verifying happily and the whole point of the act evaporated. */
   const [parentTouched, setParentTouched] = useState(false);
   const [parentChoice, setParentChoice] = useState<string | null>(null);
-  const [tasks, setTasks] = useState<string[]>(["customs:declaration"]);
+  const [tasks, setTasks] = useState<string[]>([]);
   const [capped, setCapped] = useState(true);
-  const [cap, setCap] = useState("500000");
+  const [cap, setCap] = useState("");
   const [perTransaction, setPerTransaction] = useState(true);
   const [anyCounterparty, setAnyCounterparty] = useState(false);
-  const [counterparties, setCounterparties] = useState<string[]>([
-    "Bhutan National Single Window",
-  ]);
+  const [counterparties, setCounterparties] = useState<string[]>([]);
   const [validFrom, setValidFrom] = useState(plusDays(0));
-  const [validUntil, setValidUntil] = useState(plusDays(90));
+  const [validUntil, setValidUntil] = useState(plusDays(365));
   const [issuedId, setIssuedId] = useState<string | null>(null);
 
   const recipient = personById(recipientId);
-  /* People on the platform with a confirmed identity — never NDI's own
-     administrators, who act for no business, and never someone who has no
-     account yet (on a first day that is almost everyone in the story). */
-  const candidates = people.filter((p) => p.cidVerified && p.hasAccount !== false && !isPlatformAdmin(p));
+  /* Nobody chosen yet reads as "them", never as the lookup's placeholder. */
+  const recipientName = recipientId ? recipient.name : "the person you choose";
+  /* People Pelden has brought on — a delegate is invited first, then
+     appointed, the same order as a controller. Never NDI's own
+     administrators, never someone with no account, never the person issuing.
+     Not filtered on a confirmed identity: accepting the credential into
+     their own NDI Wallet is what proves who they are (acceptAuthority). */
+  const pelden = organizations.find((o) => o.id === PELDEN);
+  const candidates = people.filter(
+    (p) =>
+      p.hasAccount !== false &&
+      !isPlatformAdmin(p) &&
+      p.id !== harness.persona &&
+      Boolean(pelden?.memberIds.includes(p.id)),
+  );
 
   /* A capability hangs off a role the same person already holds. Offering
      roles belonging to somebody else would build a chain that breaks the
@@ -128,6 +144,7 @@ export function IssueAuthorityView() {
 
   const capAmount = Number(cap) || 0;
   const canIssue =
+    candidates.some((c) => c.id === recipientId) &&
     title.trim() !== "" &&
     tasks.length > 0 &&
     (anyCounterparty || counterparties.length > 0) &&
@@ -237,10 +254,17 @@ export function IssueAuthorityView() {
                   /* The recipient accepting happens on their phone, which we
                      do not redesign. This stands in for that moment so the
                      console's own states can be walked. */
-                  <HairlineButton onClick={() => acceptAuthority(issued.id)}>
-                    <Icon name="check" size={14} strokeWidth={2} />
-                    Simulate {sentTo.name.split(" ")[0]} accepting
-                  </HairlineButton>
+                  <SimulatedStep
+                    standsFor={`${sentTo.name.split(" ")[0]}'s own NDI Wallet`}
+                    action={
+                      <SimulatedAction onClick={() => acceptAuthority(issued.id)}>
+                        Accept it as {sentTo.name.split(" ")[0]}
+                      </SimulatedAction>
+                    }
+                  >
+                    The offer arrives on their phone. Accepting there is their consent, and — because
+                    the wallet is bound to their citizen credential — proves who they are.
+                  </SimulatedStep>
                 ) : null}
                 <Link href="/delegated-authority">
                   <HairlineButton>Back to the register</HairlineButton>
@@ -290,14 +314,24 @@ export function IssueAuthorityView() {
           title="Issue authority to a person"
         />
 
+        {/* Said on the screen, not only in the guide: giving someone
+            authority to act (Flow 3) issues nothing into anyone's wallet
+            (EW-FLOW3-SD/D4). This is catalogue Flow 8, which has no
+            specification yet, built from Story B5 so the room can see where
+            the product goes — and must not mistake it for Flow 3. */}
+        <p className="m-0 flex items-center gap-2 self-start rounded-full border border-dashed px-3 py-1 font-mono text-[10.5px] uppercase tracking-[0.14em] text-muted" style={{ borderColor: "var(--border-strong)" }}>
+          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ background: "var(--ndi-warning)" }} />
+          Flow 8 · ahead of spec
+        </p>
+
         <p className="max-w-[68ch] text-[13.5px] leading-[1.65] text-muted">
           This puts a credential in someone&rsquo;s own wallet. They use it at
-          counterparties, who check it themselves — the entity is not asked
+          counterparties, who check it themselves — the organisation is not asked
           each time. That is why the limits below travel with the credential
           and why they matter more than they look.
         </p>
 
-        <div className="grid gap-5 min-[1201px]:grid-cols-[minmax(0,1fr)_400px]">
+        <div className="grid gap-5 @min-[880px]/page:grid-cols-[minmax(0,1fr)_400px]">
           <div className="flex flex-col gap-5">
             {/* ---- Who and what ---- */}
             <Panel>
@@ -372,10 +406,20 @@ export function IssueAuthorityView() {
                       </label>
                     ))}
                   </div>
-                  <p className="text-[12px] leading-[1.5] text-faint">
-                    Only people whose identity has been confirmed can be given
-                    authority.
-                  </p>
+                  {candidates.length === 0 ? (
+                    <p className="m-0 text-[13px] leading-[1.6] text-muted">
+                      Nobody to appoint yet. A delegate is invited to Pelden first —{" "}
+                      <Link href="/members/invite" className="ndi-plainlink font-medium text-accent">
+                        invite someone
+                      </Link>
+                      , and once they&rsquo;ve joined they appear here.
+                    </p>
+                  ) : (
+                    <p className="text-[12px] leading-[1.5] text-faint">
+                      People who have joined Pelden. They prove who they are by accepting this
+                      into their own NDI Wallet.
+                    </p>
+                  )}
                 </div>
 
                 <label className={FIELD_BLOCK_CLASS}>
@@ -384,7 +428,7 @@ export function IssueAuthorityView() {
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    placeholder="Declaration authority"
+                    placeholder="Customs clearing agent"
                     className={`${FIELD_CLASS} h-11`}
                   />
                   <span className="text-[12px] leading-[1.5] text-faint">
@@ -398,7 +442,7 @@ export function IssueAuthorityView() {
                     <span className={LABEL_CLASS}>Hangs off</span>
                     {parentOptions.length === 0 ? (
                       <p className="text-[12.5px] leading-[1.5] text-faint">
-                        {recipient.name} holds no role for this to hang off. It
+                        {recipientId ? recipient.name : "They"} {recipientId ? "holds" : "hold"} no role for this to hang off. It
                         will trace straight to the entity&rsquo;s own authority.
                       </p>
                     ) : (
@@ -529,20 +573,26 @@ export function IssueAuthorityView() {
                       Anyone
                     </label>
                   </div>
+                  {/* Checkboxes, not pills. The pills read as labels: in review
+                      nobody could tell they were choices, or which were chosen.
+                      A checkbox says both before anyone touches it, and it is
+                      the same control "Give someone authority" uses for the
+                      organisations someone may share with. */}
                   {!anyCounterparty ? (
-                    <div className="flex flex-wrap gap-1.5">
-                      {COUNTERPARTIES.map((option) => (
-                        <button
-                          key={option}
-                          type="button"
-                          onClick={() => toggleCounterparty(option)}
-                          aria-pressed={counterparties.includes(option)}
-                          className="ndi-navrow rounded-full px-3 py-1.5 text-[12.5px] font-medium"
-                          data-active={counterparties.includes(option) ? "1" : "0"}
-                        >
-                          {option}
-                        </button>
-                      ))}
+                    <div className="flex flex-col gap-2">
+                      <p className="m-0 text-[12.5px] leading-[1.5] text-muted">
+                        Tick each organisation {recipientName} may use it with.
+                      </p>
+                      <div className="grid gap-2 min-[641px]:grid-cols-2">
+                        {COUNTERPARTIES.map((option) => (
+                          <Checkbox
+                            key={option}
+                            checked={counterparties.includes(option)}
+                            onChange={() => toggleCounterparty(option)}
+                            label={option}
+                          />
+                        ))}
+                      </div>
                     </div>
                   ) : (
                     <p
@@ -574,11 +624,11 @@ export function IssueAuthorityView() {
           </div>
 
           {/* ---- The preview, always on ---- */}
-          <div className="flex flex-col gap-4 min-[1201px]:sticky min-[1201px]:top-20 min-[1201px]:self-start">
+          <div className="flex flex-col gap-4 @min-[880px]/page:sticky @min-[880px]/page:top-20 @min-[880px]/page:self-start">
             <ConstraintPreview
               kind={kind}
               title={title}
-              recipientName={recipient.name}
+              recipientName={recipientName}
               tasks={tasks}
               cap={capped ? { amount: capAmount, currency: "BTN", perTransaction } : null}
               counterparties={anyCounterparty ? null : counterparties}
@@ -592,7 +642,7 @@ export function IssueAuthorityView() {
             <div className="flex flex-col gap-2.5">
               <GradientButton onClick={issue} disabled={!canIssue}>
                 <Icon name="send" size={15} strokeWidth={2} />
-                Issue to {recipient.name.split(" ")[0]}
+                {recipientId ? `Issue to ${recipient.name.split(" ")[0]}` : "Issue authority"}
               </GradientButton>
               <p className="text-[12px] leading-[1.5] text-faint">
                 It goes to their wallet as an offer. They hold nothing until they

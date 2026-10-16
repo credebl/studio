@@ -175,11 +175,13 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
                  the owner most likely came for. Inviting is offered below,
                  and appointing is available but not prompted. */
               <NextCredentialAction orgName={shortOrgName(orgName)} />
-            ) : isOwner ? (
-              <Link href="/controllership/relations/new">
+            ) : isOwner && org?.kind !== "sole_proprietorship" ? (
+              /* UXD-24: never for a sole proprietorship — a proprietor
+                 delegating to themselves is not a task. */
+              <Link href="/people-who-can-act/give">
                 <GradientButton>
                   <Icon name="userCheck" size={16} strokeWidth={2} />
-                  Grant someone authority
+                  Give someone authority
                 </GradientButton>
               </Link>
             ) : (

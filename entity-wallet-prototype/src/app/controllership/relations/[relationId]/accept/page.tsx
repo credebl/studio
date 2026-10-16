@@ -1,16 +1,10 @@
 import type { Metadata } from "next";
 
-import { AcceptDutiesView } from "@/features/controllership/AcceptDutiesView";
+import { ReviewAppointmentView } from "@/features/appointment/ReviewAppointmentView";
 
-export const metadata: Metadata = {
-  title: "Accept duties — NDI Studio",
-};
+export const metadata: Metadata = { title: "Review your appointment — NDI Studio" };
 
-export default async function AcceptPage({
-  params,
-}: {
-  params: Promise<{ relationId: string }>;
-}) {
+export default async function Page({ params }: { params: Promise<{ relationId: string }> }) {
   const { relationId } = await params;
-  return <AcceptDutiesView relationId={decodeURIComponent(relationId)} />;
+  return <ReviewAppointmentView relationId={decodeURIComponent(relationId)} />;
 }

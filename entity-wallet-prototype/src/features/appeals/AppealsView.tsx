@@ -136,7 +136,7 @@ export function AppealsView() {
                       and the answer to it four scrolls down. Below 1201px the
                       content column is too narrow to split, so it stacks in
                       the order it was always in. */}
-                  <div className="grid gap-4 min-[1201px]:grid-cols-2 min-[1201px]:items-start min-[1201px]:gap-6">
+                  <div className="grid gap-4 @min-[880px]/page:grid-cols-2 @min-[880px]/page:items-start @min-[880px]/page:gap-6">
                     <div className="flex min-w-0 flex-col gap-4">
                     <div className="rounded-[12px] border border-grid px-3.5 py-3">
                       <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
@@ -160,7 +160,7 @@ export function AppealsView() {
 
                     </div>
 
-                    <div className="flex min-w-0 flex-col gap-4 min-[1201px]:border-l min-[1201px]:border-subtle min-[1201px]:pl-6">
+                    <div className="flex min-w-0 flex-col gap-4 @min-[880px]/page:border-l @min-[880px]/page:border-subtle @min-[880px]/page:pl-6">
                     {/* ---- The submission ---- */}
                     {appeal.submission ? (
                       <div className="rounded-[12px] border border-grid px-3.5 py-3">
@@ -227,7 +227,7 @@ export function AppealsView() {
 
                     {/* ---- What each side can do ---- */}
                     {!isOwner && state === "notice_issued" ? (
-                      <div className="flex flex-col gap-3 border-t border-subtle pt-4 min-[1201px]:border-t-0 min-[1201px]:pt-0">
+                      <div className="flex flex-col gap-3 border-t border-subtle pt-4 @min-[880px]/page:border-t-0 @min-[880px]/page:pt-0">
                         <label className={FIELD_BLOCK_CLASS}>
                           <span className={LABEL_CLASS}>Your answer</span>
                           <textarea
@@ -263,7 +263,7 @@ export function AppealsView() {
                     ) : null}
 
                     {!isOwner && state === "under_review" ? (
-                      <p className="border-t border-subtle pt-4 min-[1201px]:border-t-0 min-[1201px]:pt-0 text-[13px] leading-[1.6] text-muted">
+                      <p className="border-t border-subtle pt-4 @min-[880px]/page:border-t-0 @min-[880px]/page:pt-0 text-[13px] leading-[1.6] text-muted">
                         Submitted and waiting on a decision. You will be told the
                         outcome either way — a decision is due within{" "}
                         {appeal.decisionWorkingDays} working days.
@@ -271,7 +271,7 @@ export function AppealsView() {
                     ) : null}
 
                     {isOwner && state === "under_review" ? (
-                      <div className="flex flex-col gap-2.5 border-t border-subtle pt-4 min-[1201px]:border-t-0 min-[1201px]:pt-0">
+                      <div className="flex flex-col gap-2.5 border-t border-subtle pt-4 @min-[880px]/page:border-t-0 @min-[880px]/page:pt-0">
                         <div className="flex flex-wrap items-center gap-2.5">
                           <GradientButton
                             onClick={() => decideAppeal(appeal.id, "upheld_reinstated")}
@@ -297,7 +297,7 @@ export function AppealsView() {
                     ) : null}
 
                     {isOwner && state === "notice_issued" ? (
-                      <p className="border-t border-subtle pt-4 min-[1201px]:border-t-0 min-[1201px]:pt-0 text-[13px] leading-[1.6] text-muted">
+                      <p className="border-t border-subtle pt-4 @min-[880px]/page:border-t-0 @min-[880px]/page:pt-0 text-[13px] leading-[1.6] text-muted">
                         {subject.name} has been told and has not answered yet.
                         There is nothing for you to do until they do, or until the
                         window closes.
