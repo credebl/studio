@@ -123,6 +123,12 @@ export interface Organization {
    * `memberRole` for the seed's Pelden people.
    */
   roles?: Record<PersonId, "Owner" | "Admin" | "Member">;
+  /**
+   * The identity it would be publicly listed under, if it has one
+   * (EW-FLOW4-SD/D13). An organisation already issuing keeps the one it has,
+   * whatever its method — recorded as an exception (§10).
+   */
+  publicDid?: string;
   /** Its name on the register, when that differs from how it is known. */
   legalName?: string;
 }
@@ -343,6 +349,17 @@ export const roleIn = (
 /** Whether someone administers the platform: root, or an admin root invited. */
 export const isPlatformAdmin = (person: { platformRole?: "root" | "admin" } | undefined) =>
   person?.platformRole === "root" || person?.platformRole === "admin";
+
+/**
+ * A named platform admin — never the root account. Routine decisions and
+ * every second approval belong to named admins only: the root account
+ * approves nothing and does no routine work (FLOW-ONB-02 v0.6, S2, S9,
+ * E13). isPlatformAdmin above still answers "may see NDI administration",
+ * which root may; this answers "may decide something there", which it may
+ * not.
+ */
+export const isNamedAdmin = (person: { platformRole?: "root" | "admin" } | undefined) =>
+  person?.platformRole === "admin";
 
 export interface Person {
   id: PersonId;
@@ -1090,29 +1107,135 @@ export interface OrgInterest {
   recordedAt: string;
 }
 
+/* ================================================================== */
+/* Accreditation — Flow 4 (FLOW-ACC-01, FLOW-ACC-02)                   */
+/* ================================================================== */
+
 /**
- * An organisation asking NDI for the right to issue or verify. Never to
- * hold: holding follows from the organisation's authority confirming it
- * (FLOW-ORG-01), so there is nothing for NDI to approve. Reviewed by a
- * platform admin, whose decision is
- * recorded with their name (rule 9: the decision is the server's; here, a
- * fixture or an admin's click, never the requester's screen deciding).
+ * Approval to verify or to issue, for an organisation, on NDI's public
+ * list of trusted organisations (EW-FLOW4-SD).
+ *
+ * WHY THIS REPLACED A SIMPLE REQUEST
+ *
+ * The prototype used to hold "access requests" a single platform admin
+ * approved with one click. The specification has two doors and neither is
+ * that: NDI proposes an approval and a *second* administrator approves it,
+ * then the organisation's officer accepts it — identity-anchored, knowing it
+ * will be publicly listed (FLOW-ACC-01); or a verified business asks, one
+ * administrator recommends and a second decides, on the request exactly as
+ * written (FLOW-ACC-02). Every state either door can reach is here.
  */
-export interface AccessRequest {
+export type AccCapability = "verifier" | "issuer";
+/**
+ * How the accreditation began. `NEW` is FLOW-ACC-01 Kind N (an institution
+ * not yet on the platform, invited to register), `EXISTING` Kind E,
+ * `RECOGNITION` Kind E for an organisation already issuing or verifying
+ * before approvals were enforced, and `REQUEST` FLOW-ACC-02 (a verified
+ * business asking).
+ */
+export type AccDoor = "NEW" | "EXISTING" | "RECOGNITION" | "REQUEST";
+export type AccState =
+  | "SUBMITTED"
+  | "IN_REVIEW"
+  | "PROPOSED"
+  | "PENDING_ACCEPTANCE"
+  | "LISTING"
+  | "ACTIVE"
+  | "DECLINED"
+  | "EXPIRED"
+  | "LAPSED"
+  | "WITHDRAWN"
+  | "RESIGNED"
+  | "SUPERSEDED"
+  | "HELD"
+  | "STOPPED";
+
+/** One thing a verifier may ask people for, from a published credential. */
+export interface AskItem {
+  credential: string;
+  item: string;
+  /** "Check only — you learn whether it's true, not the value" (UXD-28). */
+  checkOnly: boolean;
+}
+
+/** A credential type an issuer may issue, named in words, with its basis. */
+export interface IssueType {
+  name: string;
+  basis: string;
+}
+
+export interface Accreditation {
   id: string;
-  orgId: string;
-  capability: Exclude<OrgCapability, "holder">;
-  requestedBy: PersonId;
-  /** Printed as-is: the requester may be nobody the demo can be driven as. */
-  requesterName: string;
-  requesterEmail: string;
-  note: string;
-  submittedAt: string;
-  state: "PENDING" | "APPROVED" | "DECLINED";
+  /** Absent for `NEW` until the invited officer has registered the organisation. */
+  orgId: string | null;
+  orgName: string;
+  /** `NEW`: whom the Kind O invitation goes to. */
+  officerEmail: string | null;
+  door: AccDoor;
+  capability: AccCapability;
+  purpose: string;
+  agreementRef: string;
+  ask: AskItem[];
+  issue: IssueType[];
+  /** Recognition: what the gate observed it doing, and since when. */
+  observed: { since: string; ask: AskItem[]; issue: IssueType[] } | null;
+  state: AccState;
+  /** The administrator who proposed it — or, for a request, who reviewed and recommended it. */
+  proposedBy: PersonId | null;
+  proposedAt: string | null;
+  /** FLOW-ACC-02: the business's Root, and when they asked. */
+  requestedBy: PersonId | null;
+  requestedAt: string | null;
+  /** FLOW-ACC-02 step 6: the reviewer's recommendation. */
+  recommendation: { by: PersonId; approve: boolean; reason: string | null; at: string } | null;
   decidedBy: PersonId | null;
   decidedAt: string | null;
-  reason: string | null;
+  /** NDI's reason when it declines — shown to the organisation verbatim. */
+  declineReason: string | null;
+  /** The officer declined at acceptance (FLOW-ACC-01 E3). */
+  declinedByOrg: boolean;
+  /** The officer's name as their citizen credential gave it, at acceptance. */
+  acceptedName: string | null;
+  acceptedAt: string | null;
+  listedAt: string | null;
+  /** The 30-day window that is running: decision, acceptance or listing. */
+  expiresAt: string | null;
+  /** The public identity it is listed under. */
+  publicIdentity: string | null;
+  /** Refused in the last 30 days — asked for something outside scope. */
+  refusals: { count: number; items: string[] } | null;
 }
+
+/** What SCR-ACC-01 sends: an administrator's proposal, through any NDI door. */
+export interface AccProposalInput {
+  door: Exclude<AccDoor, "REQUEST">;
+  orgId: string | null;
+  orgName: string;
+  officerEmail: string | null;
+  capability: AccCapability;
+  purpose: string;
+  agreementRef: string;
+  ask: AskItem[];
+  issue: IssueType[];
+  /** Names the ACTIVE approval this one replaces — the way past E10. */
+  replaces: string | null;
+}
+
+/** What SCR-ACC-06 sends: a business's request, exactly as its Root wrote it. */
+export interface AccRequestInput {
+  capability: AccCapability;
+  purpose: string;
+  ask: AskItem[];
+  issue: IssueType[];
+}
+
+/**
+ * Whether an accreditation still stands in the way of another for the same
+ * organisation and capability — in progress, or ACTIVE (FLOW-ACC-01/E10,
+ * FLOW-ACC-02/E3). Ended ones do not.
+ */
+export const accInProgress = (a: Pick<Accreditation, "state">) =>
+  ["SUBMITTED", "IN_REVIEW", "PROPOSED", "PENDING_ACCEPTANCE", "LISTING", "ACTIVE", "HELD", "STOPPED"].includes(a.state);
 
 export interface HarnessState {
   /**
@@ -1194,7 +1317,8 @@ export interface DemoState {
   orgInterests: OrgInterest[];
   /** FLOW-DEL-02 — whether each new organisation's representative has accepted. */
   responsibilities: Responsibility[];
-  accessRequests: AccessRequest[];
+  /** Flow 4 — approvals to verify or issue, through either door. */
+  accreditations: Accreditation[];
   /**
    * True from the moment onboarding completes until the story jumps past
    * act 1: the console is showing Pelden on its first day (`firstRunState`),
@@ -1241,6 +1365,100 @@ const day = (offset: number): string =>
 
 /** A timestamp, for audit rows that show a time as well as a date. */
 const at = (offset: number, time: string): string => `${day(offset)}T${time}:00+06:00`;
+
+/**
+ * When the capability gate stops observing and starts refusing
+ * (EW-FLOW4-SD §6.5). A dated decision, not reached yet: organisations
+ * already operating are recognised before it, and every recognition screen
+ * shows it, because an officer who misses it finds out by being refused.
+ */
+export const ENFORCEMENT_DATE = day(53);
+
+/**
+ * Credentials published on the platform, and what can be asked for from
+ * each — the only things a verifier's scope may be made of (UXD-28). Items
+ * that can be answered as a yes or no come first: asking whether someone is
+ * over 18 is less than asking for their date of birth.
+ */
+export const PUBLISHED_CREDENTIALS: { credential: string; issuer: string; items: { item: string; checkOnly: boolean }[] }[] = [
+  {
+    credential: "Citizen ID",
+    issuer: "Department of Civil Registration and Census",
+    items: [
+      { item: "Is over 18", checkOnly: true },
+      { item: "Is a Bhutanese citizen", checkOnly: true },
+      { item: "Full name", checkOnly: false },
+      { item: "Date of birth", checkOnly: false },
+      { item: "Citizenship ID number", checkOnly: false },
+      { item: "Photo", checkOnly: false },
+      { item: "Permanent address", checkOnly: false },
+    ],
+  },
+  {
+    credential: "Driving licence",
+    issuer: "Road Safety & Transport Authority",
+    items: [
+      { item: "Licence is valid", checkOnly: true },
+      { item: "Licence class", checkOnly: false },
+      { item: "Licence number", checkOnly: false },
+    ],
+  },
+  {
+    credential: "Business Registration",
+    issuer: "Corporate Regulatory Authority",
+    items: [
+      { item: "Registration is active", checkOnly: true },
+      { item: "Registered name", checkOnly: false },
+      { item: "Registration number", checkOnly: false },
+    ],
+  },
+];
+
+/**
+ * What the capability gate saw organisations doing while it only observed
+ * (EW-FLOW4-SD §10) — the recognition list. A fixture: there is no gate.
+ * Bank of Bhutan's verifying asks for more than opening an account needs,
+ * which is the case recognition exists to catch (UC-25).
+ */
+export const OBSERVED_OPERATORS: {
+  orgId: string;
+  capability: AccCapability;
+  since: string;
+  ask: AskItem[];
+  issue: IssueType[];
+  suggestedPurpose: string;
+}[] = [
+  {
+    orgId: "org-bob",
+    capability: "verifier",
+    since: day(-210),
+    ask: [
+      { credential: "Citizen ID", item: "Full name", checkOnly: false },
+      { credential: "Citizen ID", item: "Citizenship ID number", checkOnly: false },
+      { credential: "Citizen ID", item: "Date of birth", checkOnly: false },
+      { credential: "Citizen ID", item: "Photo", checkOnly: false },
+      { credential: "Citizen ID", item: "Permanent address", checkOnly: false },
+    ],
+    issue: [],
+    suggestedPurpose: "Confirming who a customer is when they open an account",
+  },
+  {
+    orgId: "org-bob",
+    capability: "issuer",
+    since: day(-240),
+    ask: [],
+    issue: [{ name: "Bank account confirmation", basis: "Financial Services Act — the bank holds the account record" }],
+    suggestedPurpose: "Confirming to other organisations that a customer holds an account",
+  },
+  {
+    orgId: "org-tashicell",
+    capability: "issuer",
+    since: day(-150),
+    ask: [],
+    issue: [{ name: "SIM registration", basis: "Telecommunications licence — the operator registers its subscribers" }],
+    suggestedPurpose: "Proving which person a mobile number is registered to",
+  },
+];
 
 /** Dates are fixed strings, not computed: a demo should look the same twice. */
 export const SEED: DemoState = {
@@ -1434,12 +1652,15 @@ export const SEED: DemoState = {
       location: "Norzin Lam, Thimphu, Bhutan",
       visibility: "public",
       capabilities: ["issuer", "verifier", "holder"],
+      publicDid: ISSUER_DID,
       memberIds: ["yeshey"],
+      /* Yeshey is the bank's OWNER, and only an OWNER accepts an approval
+         for it (SCR-ACC-03) — recorded, not assumed from the org's role. */
+      roles: { yeshey: "Owner" },
     },
     {
-      /* Another existing NDI customer, here only so the platform admin's
-         queue holds a request that is not about the Entity Wallet — a
-         company asking to verify as well as issue. */
+      /* Another existing NDI customer, already issuing before approvals were
+         enforced — the second entry on the recognition list. */
       id: "org-tashicell",
       name: "Tashi InfoComm Ltd.",
       description: "Mobile network operator. Issues SIM-registration credentials.",
@@ -2614,22 +2835,7 @@ export const SEED: DemoState = {
 
   orgOnboarding: null,
 
-  accessRequests: [
-    {
-      id: "ar-tashicell-verify",
-      orgId: "org-tashicell",
-      capability: "verifier",
-      requestedBy: "tashicell-owner",
-      requesterName: "Pem Dorji",
-      requesterEmail: "pem.dorji@tashicell.bt",
-      note: "We want to check customers' citizen credentials in-store before issuing a SIM, instead of photocopying CIDs.",
-      submittedAt: day(-1),
-      state: "PENDING",
-      decidedBy: null,
-      decidedAt: null,
-      reason: null,
-    },
-  ],
+  accreditations: [],
 
   orgInterests: [],
   responsibilities: [],
@@ -2943,7 +3149,7 @@ export function dayZeroState(seed: DemoState): DemoState {
        sitting in a queue on a platform nobody administers yet read as
        history the day-zero platform cannot have, and the guide no longer
        walks the requests queue at all. */
-    accessRequests: [],
+    accreditations: [],
     firstRun: true,
     harness: { ...seed.harness, persona: "yeshey" },
   };

@@ -25,14 +25,16 @@ import { useDemo } from "@/lib/demoStore";
  * the page says so rather than offering a form that would be refused.
  */
 export function NdiDashboard({ name }: { name: string }) {
-  const { people, organizations, orgInvitations, accessRequests, currentPerson, firstRun, adminStatus: platformStatus } = useDemo();
+  const { people, organizations, orgInvitations, accreditations, currentPerson, firstRun, adminStatus: platformStatus } = useDemo();
   const isRoot = currentPerson.platformRole === "root";
   const rootMayInvite = isRoot && platformStatus().rootBlock === null;
 
   const admins = people.filter((p) => p.platformRole === "admin" && p.hasAccount !== false);
   const invited = orgInvitations.filter((i) => i.kind === "A" && i.state === "PENDING");
   const onPlatform = organizations.filter((o) => o.id !== NDI_ORG);
-  const waiting = accessRequests.filter((a) => a.state === "PENDING");
+  /* What needs an administrator: a second approval, or a business's
+     request to review. Waiting on an organisation to accept is not. */
+  const waiting = accreditations.filter((a) => ["PROPOSED", "SUBMITTED", "IN_REVIEW"].includes(a.state));
 
   const adminStatus =
     admins.length > 0
@@ -64,7 +66,7 @@ export function NdiDashboard({ name }: { name: string }) {
             ? rootMayInvite
               ? "You're using the NDI root account. Its one job now is bringing on the platform's first two administrators — after that, they run it."
               : "You're using the NDI root account. Two administrators run the platform; the root account is for emergencies only."
-            : "You administer the platform for Bhutan NDI. Organisations' requests come to you; the Studio is here too."
+            : "You administer the platform for Bhutan NDI. Organisations' approvals to verify or issue come to you; the Studio is here too."
         }
         action={
           rootMayInvite ? (
@@ -75,10 +77,10 @@ export function NdiDashboard({ name }: { name: string }) {
               </GradientButton>
             </Link>
           ) : isRoot ? undefined : (
-            <Link href="/admin/organisations">
+            <Link href={waiting.length > 0 ? "/admin/accreditations" : "/admin/organisations"}>
               <GradientButton>
                 <Icon name="building" size={16} strokeWidth={2} />
-                {waiting.length > 0 ? "Review requests" : "See organisations"}
+                {waiting.length > 0 ? "Review accreditations" : "See organisations"}
               </GradientButton>
             </Link>
           )
@@ -115,13 +117,18 @@ export function NdiDashboard({ name }: { name: string }) {
               />
             </div>
             <p className="m-0 text-[13px] leading-[1.6] text-muted">
-              {onPlatform.length} on the platform. Requests to issue or verify are decided by a
-              platform admin. Whether an organisation is verified is its authority&rsquo;s decision,
-              not NDI&rsquo;s.
+              {onPlatform.length} on the platform. Approval to verify or issue takes two
+              administrators and the organisation&rsquo;s acceptance. Whether an organisation is
+              verified is its authority&rsquo;s decision, not NDI&rsquo;s.
             </p>
-            <Link href="/admin/organisations" className="ndi-plainlink text-[12.5px] font-medium text-accent">
-              Open organisations
-            </Link>
+            <span className="flex flex-wrap gap-4">
+              <Link href="/admin/accreditations" className="ndi-plainlink text-[12.5px] font-medium text-accent">
+                Open accreditations
+              </Link>
+              <Link href="/admin/organisations" className="ndi-plainlink text-[12.5px] font-medium text-accent">
+                Open organisations
+              </Link>
+            </span>
           </div>
         </Panel>
 

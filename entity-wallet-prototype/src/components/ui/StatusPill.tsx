@@ -104,6 +104,21 @@ const STATUS_TONE: Record<string, Tone> = {
   void: "negative",
   delivery_failed: "warning",
 
+  /* Accreditation (Flow 4). Waiting on NDI or on the organisation is
+     pending — the process, not a problem. A lapse, a withdrawal, a
+     resignation and a replacement are endings nobody did wrong, so they are
+     neutral; held and stopped are reversible and need someone to act, so
+     they warn. */
+  submitted: "pending",
+  proposed: "pending",
+  listing: "pending",
+  lapsed: "neutral",
+  withdrawn: "neutral",
+  resigned: "neutral",
+  superseded: "neutral",
+  held: "warning",
+  stopped: "warning",
+
   /* Presentation flow. */
   ready: "pending",
   signing: "pending",

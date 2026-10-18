@@ -100,7 +100,7 @@ export const actByNumber = (n: number): Act | undefined => ACTS.find((a) => a.nu
  * setting the entry needs, applied when it is chosen, so neither route can
  * be started in a deployment where it would not exist.
  */
-export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint";
+export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "accredit";
 
 /**
  * The flows the demo controls offer — the onboardings the prototype is
@@ -119,6 +119,11 @@ export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint";
  * Member onboarding came back once the first day stopped listing the seed's
  * colleagues: with Pelden starting as one person, how everyone else joins is
  * a question the demo has to answer on screen.
+ *
+ * Flow 4's two doors start from the team-ready state: a platform admin
+ * exists to propose and review, root to approve, Pelden is verified with
+ * Dorji as its representative, and Bank of Bhutan has been verifying
+ * without an approval.
  */
 export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "root", code: "FLOW-ONB-02", title: "Root admin onboarding" },
@@ -126,6 +131,7 @@ export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "company", code: "FLOW-ONB-01 · Flow 2", title: "New company onboarding" },
   { id: "members", code: "FLOW-ONB-02 · Kind M", title: "Member onboarding" },
   { id: "appoint", code: "Flow 3 · Flow 8 ahead of spec", title: "Giving authority to act" },
+  { id: "accredit", code: "Flow 4", title: "Approval to verify or issue" },
 ];
 
 export interface FlowEntry {
@@ -164,4 +170,6 @@ export const FLOW_ENTRIES: FlowEntry[] = [
   { group: "members", label: "Invite a member", persona: "dorji", route: "/members", start: "firstDay" },
   { group: "appoint", label: "Give someone authority", persona: "dorji", route: "/people-who-can-act/give", start: "teamReady" },
   { group: "appoint", label: "A role in a wallet (Flow 8, ahead of spec)", persona: "dorji", route: "/delegated-authority/new", start: "teamReady" },
+  { group: "accredit", label: "Recognise an organisation already verifying", persona: "tshering", route: "/admin/accreditations", start: "teamReady" },
+  { group: "accredit", label: "A business asks to verify", persona: "dorji", route: "/organisation", start: "teamReady" },
 ];

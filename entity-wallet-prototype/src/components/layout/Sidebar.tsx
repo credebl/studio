@@ -95,6 +95,11 @@ const PRIMARY: NavItem[] = [
     platform: "admin",
     children: [
       { label: "Organisations", href: "/admin/organisations", icon: "building" },
+      /* Flow 4 — approval to verify or issue. Administrators may say
+         "accreditation"; organisations never see the word (UX-EW-02 §2.4). */
+      /* Deciding approvals to verify or issue is routine work, which the
+         root account doesn't do (FLOW-ONB-02 S9). */
+      { label: "Accreditations", href: "/admin/accreditations", icon: "certificate", notForRoot: true },
       { label: "Invitations", href: "/admin/invitations", icon: "mail" },
       /* Never offered to the root account, which approves nothing
          (FLOW-ONB-02 S2, E13; UX-EW-01 SCR-INV-02). */
@@ -161,6 +166,13 @@ const PRIMARY: NavItem[] = [
     ],
   },
   { label: "Delegated authority", icon: "send", href: "/delegated-authority", personas: OWNER },
+  /* SCR-ACC-04 — whether the organisation is approved to verify or issue,
+     and the way to ask. Any member may look; only the owner or the
+     representative may act, which the page decides from the record. Not
+     limited to verified organisations: an institution NDI is approving
+     need not hold anything to accept (FLOW-ACC-01), and the business's own
+     way to ask is what is withheld until it is verified (FLOW-ACC-02/E1). */
+  { label: "Verify or issue", icon: "certificate", href: "/verify-or-issue", personas: ORG_OWNERS, members: "any" },
   /* Pema's only reason to open the console at all. */
   { label: "Appeals", icon: "shieldAlert", href: "/appeals", personas: PELDEN },
 

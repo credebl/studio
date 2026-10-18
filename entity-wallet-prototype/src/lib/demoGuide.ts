@@ -68,6 +68,13 @@ export interface GuideStep {
  * SCR-DEL-02 to 05; the delegate's role is Flow 8, which is not designed yet,
  * so its chapter follows Story B5 and says on screen that it is ahead of spec.
  *
+ * Approval to verify or issue (Flow 4) comes after, through both of its
+ * doors: NDI recognising an organisation that was already verifying before
+ * approvals were required, and a verified business asking. They close the
+ * story because they are what the onboarding was for — an organisation that
+ * holds its registration and has people who can act for it is the one that
+ * can be trusted with more.
+ *
  * Member onboarding is here because the first day is now genuinely empty.
  * When it still listed the seed's colleagues, the room's first question on
  * seeing them was "how did these people get here?" — and the answer, an
@@ -82,6 +89,8 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
   { title: "Pelden brings on its people", shows: "The owner invites a colleague; they join from the link" },
   { title: "Give someone authority to act", shows: "Dorji chooses what Ugyen can do; Ugyen accepts with one wallet approval" },
   { title: "A role in a wallet — Flow 8, ahead of spec", shows: "A clearing agent is invited, then given a role in their own wallet" },
+  { title: "Recognise Bank of Bhutan", shows: "NDI approves a bank already verifying — asking for less — and the bank accepts by name" },
+  { title: "Pelden asks to verify customers", shows: "A verified business asks; one administrator reviews, a second decides" },
   { title: "Where to go next", shows: "The other routes, and what's simulated" },
 ];
 
@@ -91,7 +100,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 0,
     title: "Onboarding onto the Entity Wallet",
     happening:
-      "Everything it takes to get onto the Entity Wallet and ready to use it, in the order it has to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner invites a colleague and gives them authority to act, then — ahead of the specification — invites a clearing agent and gives them a role in their own wallet. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
+      "Everything it takes to get onto the Entity Wallet and ready to use it, in the order it has to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner invites a colleague and gives them authority to act, then — ahead of the specification — invites a clearing agent and gives them a role in their own wallet. Last, NDI approves Bank of Bhutan and Pelden to verify customers. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
     doThis:
       "Press **Next**. The guide takes you to each screen and tells you what to press; you do the clicking. **Minimise** tucks this card away when it's in the way.",
   },
@@ -425,12 +434,154 @@ export const GUIDE_STEPS: GuideStep[] = [
     persona: "dorji",
   },
 
-  /* ---- 8 · Where to go next ---- */
+  /* ---- 8 · Recognise Bank of Bhutan (FLOW-ACC-01, recognition) ---- */
   {
     chapter: 8,
-    title: "That's onboarding",
+    title: "Seen operating without approval",
     happening:
-      "The platform went from its root administrator to a first platform admin; Pelden Trading went from one person signing up to a company holding its own registration; and its people were invited, then given authority to act.",
+      "Approval to verify or issue is about to be required. Until then, NDI only watches — and it has seen Bank of Bhutan asking customers for five things from their citizen credential to open an account. Every organisation on this list has until the date shown.",
+    doThis: "Beside **Bank of Bhutan · Verifying**, press **Propose to verify**.",
+    route: "/admin/accreditations",
+    persona: "tshering",
+  },
+  {
+    chapter: 8,
+    title: "Ask for no more than the purpose needs",
+    happening:
+      "The proposal starts from what the bank was seen asking for, each item marked \"observed\". Opening an account needs the customer's name, ID number and photo — not their date of birth or home address. Anything not approved will be refused after the date.",
+    doThis:
+      "Under **Citizen ID**, untick **Date of birth** and **Permanent address**. Type **NDI/AGR/2024/003** as the agreement, press **Propose**, then **Go to pending list**.",
+    say: "The bank has been asking for more than it needs. Recognition is where that gets narrower, before anything is refused.",
+    match: "^/admin/accreditations/new$",
+  },
+  {
+    chapter: 8,
+    title: "Waiting for a second administrator",
+    happening: "Kinzang proposed it, so it waits here for someone else. Nothing has changed for the bank yet.",
+    doThis: "Press **Bank of Bhutan Ltd. · Verify**.",
+    route: "/admin/accreditations",
+  },
+  {
+    chapter: 8,
+    title: "Kinzang can't approve it",
+    happening:
+      "Kinzang sees all of it — what the bank can ask for, the criteria, the public listing — but in place of Approve: \"You proposed this, so a different administrator has to approve it.\"",
+    doThis: "Press **Next** — the guide switches to Tshendu.",
+    match: "^/admin/accreditations/acc-[^/]+$",
+  },
+  {
+    chapter: 8,
+    title: "Tshendu approves",
+    happening:
+      "The consequence is stated at the decision: every citizen's NDI wallet will trust the bank for this. Approving still lists nothing — the bank's owner has to accept.",
+    doThis: "Press **Approve**.",
+    say: "Two named administrators — never the root account — and still nothing is live until the bank accepts by name.",
+    match: "^/admin/accreditations/acc-[^/]+$",
+    persona: "tshendu",
+  },
+  {
+    chapter: 8,
+    title: "The bank is told",
+    happening:
+      "Yeshey Choden is Bank of Bhutan's owner. The dashboard says NDI has proposed approving the bank to verify, how long is left, and that without it what the bank already does stops on the date.",
+    doThis: "Press **Review it**.",
+    route: "/dashboard",
+    persona: "yeshey",
+  },
+  {
+    chapter: 8,
+    title: "What the bank is being approved for",
+    happening:
+      "In plain words: what it can ask for, that anything else is refused before it reaches anyone, and that accepting puts the bank on NDI's public list of trusted organisations with Yeshey's name recorded. The bank keeps the public identity it has been verifying under.",
+    doThis: "Press **Accept with your NDI wallet**, then **Simulate the scan**. When it's done, press **See approval status**.",
+    say: "This is consent by a named person, not a checkbox. One wallet approval confirms it's Yeshey and records that the bank accepts.",
+    match: "^/verify-or-issue/acc-[^/]+$",
+  },
+  {
+    chapter: 8,
+    title: "Approved, and listed",
+    happening:
+      "The listing publishes, then the bank is approved to verify, listed since today, under its public identity — and can ask for three things where it used to ask for five.",
+    doThis: "Press **Next**.",
+    route: "/verify-or-issue",
+    persona: "yeshey",
+  },
+
+  /* ---- 9 · Pelden asks to verify customers (FLOW-ACC-02) ---- */
+  {
+    chapter: 9,
+    title: "The way to ask",
+    happening:
+      "Pelden is verified, so its representative — and only its representative — is offered a way to ask NDI to verify customers or issue credentials.",
+    doThis: "Press **Ask NDI**.",
+    route: "/organisation",
+    persona: "dorji",
+  },
+  {
+    chapter: 9,
+    title: "Ask for a check, not the value",
+    happening:
+      "Pelden sells tobacco and must check customers are over 18. Within each credential the yes-or-no checks come first: Pelden can learn that a customer is over 18 without ever seeing their date of birth.",
+    doThis:
+      "Press **Verify customers**. Open **Citizen ID** and tick **Is over 18**. For what it's for, type **Checking customers are over 18 before selling tobacco**. Press **Send to NDI**, then **Go to status**.",
+    say: "NDI will approve or decline this exactly as Pelden wrote it. It won't change it on Pelden's behalf.",
+    route: "/verify-or-issue/ask",
+  },
+  {
+    chapter: 9,
+    title: "Waiting for NDI",
+    happening: "The request waits, dated, and Dorji can withdraw it. No promise of a decision date beyond what NDI aims for.",
+    doThis: "Press **Next** — the guide switches to Kinzang.",
+    route: "/verify-or-issue",
+  },
+  {
+    chapter: 9,
+    title: "Kinzang reviews",
+    happening: "Business requests come to a review queue first. One administrator recommends; a different one decides.",
+    doThis: "Under **Requests to review**, press **Pelden Trading Pvt. Ltd. · Verify**.",
+    route: "/admin/accreditations",
+    persona: "tshering",
+  },
+  {
+    chapter: 9,
+    title: "Recommend, as submitted",
+    happening:
+      "The request as Pelden wrote it, who asked, when the authority verified Pelden, and NDI's criteria beside their evidence. Kinzang can't edit it — a decline would say what to change, and Pelden would read it word for word.",
+    doThis: "Press **Recommend approval**, then **Back to accreditations**.",
+    match: "^/admin/accreditations/acc-[^/]+/review$",
+  },
+  {
+    chapter: 9,
+    title: "A second administrator decides",
+    happening: "Kinzang reviewed it, so it's Tshendu's to decide.",
+    doThis: "Under **Waiting for approval**, press **Pelden Trading Pvt. Ltd. · Verify**.",
+    route: "/admin/accreditations",
+    persona: "tshendu",
+  },
+  {
+    chapter: 9,
+    title: "Tshendu approves it as asked",
+    happening:
+      "\"You can approve or decline this as the business asked for it. You can't change it.\" Kinzang's recommendation is shown. Approving publishes Pelden's listing — Pelden accepted by asking.",
+    doThis: "Press **Approve**.",
+    match: "^/admin/accreditations/acc-[^/]+$",
+  },
+  {
+    chapter: 9,
+    title: "Pelden can verify customers",
+    happening:
+      "Approved to verify, listed under Pelden's public identity, able to ask one thing: whether a customer is over 18. Anything else it asks for will be refused, and shown here when it is.",
+    doThis: "Press **Next**.",
+    route: "/verify-or-issue",
+    persona: "dorji",
+  },
+
+  /* ---- 10 · Where to go next ---- */
+  {
+    chapter: 10,
+    title: "That's the story",
+    happening:
+      "The platform went from its root account to two named platform admins; Pelden Trading went from one person signing up to a company holding its own registration; its people were invited, then given authority to act; and NDI approved a bank and Pelden to verify — each asking for no more than it needs.",
     doThis:
       "To run any part again, use **Demo controls → Walk a flow**. The **Prototype · data simulated** chip lists what's simulated.",
   },

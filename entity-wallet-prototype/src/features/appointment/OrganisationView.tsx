@@ -36,7 +36,7 @@ import { presetOf } from "./presets";
 type Face = "live" | "representative" | "appointed" | "member";
 
 export function OrganisationView() {
-  const { organizations, activeOrgId, relations, harness } = useDemo();
+  const { organizations, activeOrgId, relations, harness, accreditations } = useDemo();
   const forced = useScreenState("SCR-ORG-07-console", ["live", "representative", "appointed", "member"]) as Face;
 
   const org = organizations.find((o) => o.id === activeOrgId);
@@ -45,6 +45,8 @@ export function OrganisationView() {
   const mine = relations.find((r) => inOrg(activeOrgId)(r) && r.personId === harness.persona && r.state === "ACTIVE");
   const face: Face =
     forced !== "live" ? forced : mine?.isRootAuthority ? "representative" : mine ? "appointed" : "member";
+  /* Anything it has asked NDI for, or been approved for (Flow 4). */
+  const accs = accreditations.filter((a) => a.orgId === activeOrgId && !["EXPIRED", "SUPERSEDED"].includes(a.state));
   const preset = presetOf(face === "appointed" ? (mine?.preset ?? "receive") : undefined);
 
   return (
@@ -79,9 +81,38 @@ export function OrganisationView() {
                   <Icon name="check" size={14} strokeWidth={2.4} className="mt-[5px] flex-none text-accent" />
                   Receive credentials issued to it, and present them when asked.
                 </p>
-                <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
-                  <Icon name="close" size={14} strokeWidth={2.4} className="mt-[5px] flex-none" style={{ color: "var(--text-faint)" }} />
-                  It can&rsquo;t issue credentials to others or verify anyone else&rsquo;s.
+                {org?.capabilities.includes("issuer") || org?.capabilities.includes("verifier") ? (
+                  <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
+                    <Icon name="check" size={14} strokeWidth={2.4} className="mt-[5px] flex-none text-accent" />
+                    {org.capabilities.includes("verifier") && org.capabilities.includes("issuer")
+                      ? "Verify customers and issue credentials, as NDI has approved."
+                      : org.capabilities.includes("verifier")
+                        ? "Verify customers, as NDI has approved."
+                        : "Issue credentials, as NDI has approved."}
+                  </p>
+                ) : (
+                  <p className="m-0 flex items-start gap-2.5 text-[13.5px] leading-[1.6] text-body">
+                    <Icon name="close" size={14} strokeWidth={2.4} className="mt-[5px] flex-none" style={{ color: "var(--text-faint)" }} />
+                    It can&rsquo;t issue credentials to others or verify anyone else&rsquo;s.
+                  </p>
+                )}
+                {/* SCR-ACC-06's entry: the representative's alone, and only
+                    for a verified organisation — which is every one that
+                    reaches this screen (FLOW-ACC-02 P1, P2). Once it has
+                    asked, the same place says where that stands instead. */}
+                <p className="m-0 text-[13px] leading-[1.6] text-muted">
+                  {accs.length ? (
+                    <Link href="/verify-or-issue" className="ndi-plainlink font-medium text-accent">
+                      See what you&rsquo;ve asked NDI for
+                    </Link>
+                  ) : (
+                    <>
+                      Want to verify customers or issue credentials?{" "}
+                      <Link href="/verify-or-issue/ask" className="ndi-plainlink font-medium text-accent">
+                        Ask NDI
+                      </Link>
+                    </>
+                  )}
                 </p>
                 {/* UXD-24: not for a sole proprietorship. */}
                 {org?.kind === "sole_proprietorship" ? null : (
