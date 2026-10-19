@@ -100,7 +100,7 @@ export const actByNumber = (n: number): Act | undefined => ACTS.find((a) => a.nu
  * setting the entry needs, applied when it is chosen, so neither route can
  * be started in a deployment where it would not exist.
  */
-export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "accredit" | "designate";
+export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "accredit" | "designate" | "receive";
 
 /**
  * The flows the demo controls offer — the onboardings the prototype is
@@ -128,6 +128,11 @@ export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "
  * Flow 5 starts from the platform-ready state — two admins, no business —
  * because designating an authority comes before anyone can verify with it:
  * it is what lets sole proprietorships on at all.
+ *
+ * Flow 6 starts from the team-ready state, where Pelden is verified with
+ * Dorji as its representative: a business needs a registration to share
+ * before it can ask for anything. The tax office's side is reached from
+ * the request, by switching to Deki — its queue is empty until Pelden asks.
  */
 export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "root", code: "FLOW-ONB-02", title: "Root admin onboarding" },
@@ -137,6 +142,7 @@ export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "appoint", code: "Flow 3 · Flow 8 ahead of spec", title: "Giving authority to act" },
   { id: "accredit", code: "Flow 4", title: "Approval to verify or issue" },
   { id: "designate", code: "Flow 5", title: "Designating an authority" },
+  { id: "receive", code: "Flow 6", title: "Receiving a credential" },
 ];
 
 export interface FlowEntry {
@@ -178,4 +184,5 @@ export const FLOW_ENTRIES: FlowEntry[] = [
   { group: "accredit", label: "Recognise an organisation already verifying", persona: "tshering", route: "/admin/accreditations", start: "teamReady" },
   { group: "accredit", label: "A business asks to verify", persona: "dorji", route: "/organisation", start: "teamReady" },
   { group: "designate", label: "Designate the ministry for sole proprietorships", persona: "tshering", route: "/admin/designations", start: "platformReady" },
+  { group: "receive", label: "Pelden asks for its TPN", persona: "dorji", route: "/wallet/get", start: "teamReady" },
 ];

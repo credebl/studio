@@ -268,6 +268,42 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
     ],
   },
   {
+    area: "Receiving a credential",
+    icon: "credentials",
+    rows: [
+      {
+        shown: "Pelden shares its registration with the tax office, and the office checks it",
+        reality:
+          "A timer moves the request from sending to waiting. No proof is requested or presented, no signature is checked, and the office's \"Verified\" panel reads Pelden's registration straight from the demo data.",
+        needs: "The organisation's agent presenting the whole credential to the issuer's proof request, verified at the issuer before the request reaches anyone (FLOW-CRD-01 steps 4–8).",
+      },
+      {
+        shown: "The tax office issues, and Pelden accepts",
+        reality:
+          "Issuing writes an offer into your browser; accepting copies it into Pelden's held credentials. Nothing is signed, nothing is stored in a wallet, and the 30-day offer window is a date nothing enforces except the accept button.",
+        needs: "A credential offer over DIDComm to the organisation's agent, stored on acceptance, with the issuer's standing checked against NDI's list at that moment.",
+      },
+      {
+        shown: "\"Have it ask for a bank account too\"",
+        reality:
+          "A prototype control. No issuer system exists to ask for more; the button writes the wider ask into the request so the consent screen can be shown.",
+        needs: "The issuer's proof request, compared with what the business agreed to before anything more is shared.",
+      },
+      {
+        shown: "Integration settings — webhook, secret, clients, delivery log",
+        reality:
+          "Fields in your browser. No URL is called, no secret exists behind the mask, and the test event and its latency are made up on the spot.",
+        needs: "Signed webhook delivery from an outbox with retries, client credentials for the issuer's system, and the fallback to the officers' queue.",
+      },
+      {
+        shown: "Creating a new offering",
+        reality:
+          "Not built. Existing offerings can be paused, retired or given a new version; a new one needs a prerequisite chooser limited to the office's approval to verify, which the prototype doesn't model.",
+        needs: "SCR-CRD-07's composer, reading the issuer's verifier scope.",
+      },
+    ],
+  },
+  {
     area: "The record",
     icon: "fileText",
     rows: [

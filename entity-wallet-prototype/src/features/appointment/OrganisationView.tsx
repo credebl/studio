@@ -67,7 +67,7 @@ export function OrganisationView() {
                   Get {short}&rsquo;s tax identity (TPN), applied for with the registration it holds.
                 </p>
                 <div className="flex flex-wrap items-start gap-2.5">
-                  <NextCredentialAction orgName={short} />
+                  <NextCredentialAction />
                   <Link href="/wallet/credentials">
                     <HairlineButton>View the credential</HairlineButton>
                   </Link>

@@ -80,10 +80,13 @@ const ORG_OWNERS: PersonaId[] = ["dorji", "yeshey"];
 const PELDEN: PersonaId[] = ["dorji", "rinzin", "pema", "ugyen", "invitee"];
 /* Everyone who works in some organisation's console — Pelden's people and
    Bank of Bhutan's owner. */
-const ANY_ORG: PersonaId[] = [...PELDEN, "yeshey", "kesang"];
+const ANY_ORG: PersonaId[] = [...PELDEN, "yeshey", "kesang", "deki"];
 /* An authority's officer — Kesang for the Ministry of Industry, Commerce &
    Employment. */
 const AUTHORITY: PersonaId[] = ["kesang"];
+/* An issuing office's officer — Deki for the Department of Revenue &
+   Customs, who answers requests for taxpayer numbers (Flow 6). */
+const ISSUING_OFFICE: PersonaId[] = ["deki"];
 
 const PRIMARY: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard", personas: ANY_ORG, members: "any", ndi: "also" },
@@ -144,7 +147,11 @@ const PRIMARY: NavItem[] = [
          what they are allowed to do, not what the entity happens to hold. */
       { label: "My authority", href: "/wallet/authority", icon: "lockRounded" },
       { label: "Held credentials", href: "/wallet/credentials", icon: "credentials" },
-      { label: "Offers", href: "/wallet/offers", icon: "download" },
+      /* Flow 6. Offers that arrive unasked are on the same page as the
+         requests that produce them — to the person they're the same thing:
+         something waiting to be accepted (SCR-CRD-03). */
+      { label: "Get a credential", href: "/wallet/get", icon: "issue" },
+      { label: "Requests and offers", href: "/wallet/requests", icon: "download" },
       { label: "Verification requests", href: "/wallet/verification-requests", icon: "verify" },
     ],
   },
@@ -184,6 +191,19 @@ const PRIMARY: NavItem[] = [
      live in its name and who can act in it. Only for the ministry's people;
      a business never sees it. */
   { label: "Authority", icon: "shieldCheck", href: "/authority", personas: AUTHORITY },
+  /* Flow 6 — the issuing office's side of a request (FLOW-CRD-03): what it
+     offers, the officers' queue, and the integration its IT lead sets up.
+     Named for the work, not the role: the office answers requests. */
+  {
+    label: "Requests from businesses",
+    icon: "issue",
+    personas: ISSUING_OFFICE,
+    children: [
+      { label: "Requests to answer", href: "/issuer/requests", icon: "userCheck" },
+      { label: "What you offer", href: "/issuer/offerings", icon: "certificate" },
+      { label: "Integration", href: "/issuer/integration", icon: "settings" },
+    ],
+  },
   /* Pema's only reason to open the console at all. */
   { label: "Appeals", icon: "shieldAlert", href: "/appeals", personas: PELDEN },
 

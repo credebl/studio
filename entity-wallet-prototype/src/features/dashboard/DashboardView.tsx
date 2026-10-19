@@ -178,7 +178,7 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
                  inviting people or appointing anyone (UXD-14): it is what
                  the owner most likely came for. Inviting is offered below,
                  and appointing is available but not prompted. */
-              <NextCredentialAction orgName={shortOrgName(orgName)} />
+              <NextCredentialAction />
             ) : isOwner && org?.kind !== "sole_proprietorship" ? (
               /* UXD-24: never for a sole proprietorship — a proprietor
                  delegating to themselves is not a task. */

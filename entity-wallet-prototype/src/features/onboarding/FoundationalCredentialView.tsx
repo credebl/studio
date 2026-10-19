@@ -206,7 +206,7 @@ export function FoundationalCredentialView() {
                 It&rsquo;s applied for with the registration it now holds.
               </p>
               <div className="flex flex-wrap items-start gap-2.5">
-                <NextCredentialAction orgName={shortName} />
+                <NextCredentialAction />
                 <HairlineButton onClick={() => open("/wallet/credentials")}>View the credential</HairlineButton>
               </div>
             </>
