@@ -57,6 +57,11 @@ import {
   REGISTER_RECORDS,
   OBSERVED_OPERATORS,
   accInProgress,
+  designationInProgress,
+  draftFor,
+  ISSUER_ENTITLEMENTS,
+  type ActivationCheck,
+  type Designation,
   type AccProposalInput,
   type AccRequestInput,
   type Verification,
@@ -136,8 +141,12 @@ const FRESH: DemoState = dayZeroState(SEED);
  *  15 — Flow 4: access requests replaced by accreditations, with two doors
  *       and dual control. A version-14 save holds an `accessRequests` list
  *       nothing reads and no `accreditations` list everything expects.
+ *  16 — Flow 5: designations and adoptions decide which entity types are
+ *       connected, and two new organisations (the CRA and MoICE) with
+ *       Kesang as the ministry's officer. A version-15 save has none of it,
+ *       so nothing would be connected at all.
  */
-const SEED_VERSION = 15;
+const SEED_VERSION = 16;
 
 /**
  * Appends one audit row, carrying the hash chain forward.
@@ -286,13 +295,93 @@ function applyPresentation(
 const today = () => new Date().toISOString().slice(0, 10);
 /**
  * FLOW-ORG-01 P3 as the server would answer it: which entity types have a
- * connected authority (Flow 2 solution design §2.2). On day zero nobody has
- * designated any authority yet, so nothing is connected — the one condition
- * the demo has for it.
+ * connected authority (Flow 2 solution design §2.2).
+ *
+ * Since Flow 5 this is read from the designations and adoptions, which is
+ * what P3 actually is: an authority designated `ACTIVE`, with NDI's access
+ * in place, and an `ACTIVE` adoption for the entity type (FLOW-ORG-03 Q4).
+ * Stopping either — an entity type (A2) or NDI's access (A3) — takes the
+ * type off this list at once, and nothing else changes.
+ *
+ * WHY THERE IS STILL AN ADMINISTRATOR CONDITION
+ *
+ * Demo sequencing, not a rule from the spec. The Corporate Regulatory
+ * Authority's designation predates every state the demo starts in, so on
+ * day zero companies would already be connected — and the guide's first
+ * chapters are about a platform that takes nobody in until it has people
+ * to run it. Requiring an active platform admin keeps that story true
+ * without inventing a second CRA designation for the presenter to walk.
  */
 const ROUTED_KINDS: OrgKind[] = ["company", "sole_proprietorship", "partnership"];
 function connectedKinds(s: DemoState): OrgKind[] {
-  return s.people.some((p) => p.platformRole === "admin" && p.hasAccount !== false) ? ROUTED_KINDS : [];
+  if (!s.people.some((p) => p.platformRole === "admin" && p.hasAccount !== false)) return [];
+  return ROUTED_KINDS.filter((kind) =>
+    s.adoptions.some((a) => {
+      if (a.entityType !== kind || a.state !== "ACTIVE") return false;
+      const d = s.designations.find((x) => x.id === a.designationId);
+      return d?.state === "ACTIVE" && d.ndiAccess === "ACTIVE";
+    }),
+  );
+}
+
+/**
+ * FLOW-ORG-02 step 3 — the activation checks, read-only. Each is read from
+ * the organisation's record as it is now, never inferred from something
+ * having worked before (P5's note). What each failure says, and who fixes
+ * it, is SCR-DSG-04's content — the checks carry both so the screen only
+ * renders them.
+ */
+function activationChecks(s: DemoState, d: Designation): ActivationCheck[] {
+  const org = s.organizations.find((o) => o.id === d.orgId);
+  const did = org?.issuingDid ?? "";
+  const method = did.split(":").slice(0, 2).join(":");
+  const missing = ISSUER_ENTITLEMENTS.filter((e) => !org?.entitlements?.includes(e));
+  const incumbent = s.designations.find(
+    (x) => x.id !== d.id && x.state === "ACTIVE" && x.entityTypes.some((t) => d.entityTypes.includes(t)),
+  );
+  const accepted = d.state === "ACCEPTED" || d.state === "ACTIVE";
+  return [
+    {
+      id: "P2",
+      label: "Accepted by the organisation",
+      pass: accepted,
+      observed: accepted ? null : "Not accepted yet",
+      resolver: accepted ? null : "authority",
+      error: accepted ? null : "E1",
+    },
+    {
+      id: "P3",
+      label: "Organisation set up — agent and wallet",
+      pass: Boolean(org?.agentReady),
+      observed: org?.agentReady ? null : "No agent or wallet",
+      resolver: org?.agentReady ? null : "authority",
+      error: org?.agentReady ? null : "E2",
+    },
+    {
+      id: "P4",
+      label: "Issuing identity is did:ethr on the national network",
+      pass: method === "did:ethr",
+      observed: method === "did:ethr" ? null : method || "None",
+      resolver: method === "did:ethr" ? null : "authority",
+      error: method === "did:ethr" ? null : "E3",
+    },
+    {
+      id: "P5",
+      label: "Entitlements: schema creation, issuance, verification",
+      pass: missing.length === 0,
+      observed: missing.length ? missing.join(", ") : null,
+      resolver: missing.length ? "NDI" : null,
+      error: missing.length ? "E4" : null,
+    },
+    {
+      id: "P6",
+      label: "No other foundational issuer for these entity types",
+      pass: !incumbent,
+      observed: incumbent ? incumbent.orgName : null,
+      resolver: incumbent ? "NDI" : null,
+      error: incumbent ? "E5" : null,
+    },
+  ];
 }
 
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
@@ -896,6 +985,51 @@ interface DemoActions {
   ) => { ok: true; id: string } | { ok: false; error: "E2" | "E3" | "E6" };
   /** SCR-ACC-04 — the Root withdraws a request still waiting (ACC-02/A1). */
   withdrawRequest: (id: string) => void;
+
+  /* ---- Designation and adoption (Flow 5) ----
+     As with Flow 4, every rule that decides lives here — dual control,
+     who may accept or adopt, what activation checks — and the screens
+     render the answer. */
+
+  /** SCR-DSG-01 — a named admin proposes a Kind E designation (FLOW-ORG-02 A1). */
+  proposeDesignation: (input: {
+    orgId: string;
+    entityTypes: OrgKind[];
+    legalBasis: string;
+    legalRef: string;
+  }) => { ok: true; id: string } | { ok: false; error: "not_admin" | "E12" | "exists" | "invalid" };
+  /** SCR-DSG-02 — a second named admin decides. Never the proposer (E7), never root. */
+  decideDesignation: (
+    id: string,
+    approve: boolean,
+    reason?: string,
+  ) => { ok: true } | { ok: false; error: "E6" | "E7" | "not_admin" | "invalid" };
+  /** The proposer withdraws their own proposal — the one action left to them (E7). */
+  withdrawDesignation: (id: string) => void;
+  /** SCR-DSG-03 — the authority's OWNER accepts (A2). Activation runs at once (steps 2–3). */
+  acceptDesignation: (id: string) => { ok: true; active: boolean } | { ok: false; error: "not_owner" | "E6" | "invalid" };
+  /** SCR-DSG-03 — the authority declines. Nothing is created; NDI is told. */
+  declineDesignation: (id: string) => { ok: true } | { ok: false; error: "not_owner" | "invalid" };
+  /** SCR-DSG-04 — run the activation checks again. Switches on if all pass. */
+  rerunActivation: (id: string) => { ok: true; active: boolean } | { ok: false; error: "not_admin" | "invalid" };
+  /** SCR-DSG-04 — NDI grants the missing entitlements (E4 — "NDI grants these"). */
+  grantEntitlements: (orgId: string) => void;
+  /** SCR-DSG-05 / SCR-ADO-04 — the authority removes or restores NDI's access (A3, E8). */
+  setNdiAccess: (designationId: string, on: boolean) => { ok: true } | { ok: false; error: "not_owner" };
+  /** SCR-ADO-01 — send the draft back with a note (E4). */
+  objectToArtefacts: (designationId: string, entityType: OrgKind, item: string | null, note: string) => void;
+  /**
+   * SCR-ADO-02 — adopt the set for an entity type, as one act. A second
+   * adoption for a type already live is a new version (A1), and only when
+   * the caller says so; otherwise it is E7, someone else got there first.
+   */
+  adoptArtefacts: (
+    designationId: string,
+    entityType: OrgKind,
+    newVersion: boolean,
+  ) => { ok: true; version: number } | { ok: false; error: "E1" | "E5" | "E7" | "not_owner" | "invalid" };
+  /** SCR-ADO-04 Option B — stop an entity type (A2). Nothing is un-verified. */
+  stopEntityType: (designationId: string, entityType: OrgKind) => { ok: true } | { ok: false; error: "not_owner" };
 
   /* ---- Demo harness ----
      Not product surface. These drive the persona switcher, the story runner
@@ -3139,6 +3273,270 @@ export function DemoProvider({ children }: { children: ReactNode }) {
               : a,
           ),
         })),
+
+      proposeDesignation: (input) => {
+        const s0 = stateRef.current;
+        const me = s0.people.find((p) => p.id === s0.harness.persona);
+        /* A named admin proposes — never the root account, which does no
+           routine work (FLOW-ONB-02 S9). */
+        if (!isNamedAdmin(me)) {
+          if (me?.platformRole === "root") log("Control failure — the root account tried to propose a designation", NDI_ORG);
+          return { ok: false, error: "not_admin" };
+        }
+        const org = s0.organizations.find((o) => o.id === input.orgId);
+        if (!org || !input.entityTypes.length || !input.legalBasis.trim()) return { ok: false, error: "invalid" };
+        /* E12 (FLOW-ONB-02 P7): a proposal needs a second named admin, so
+           with fewer than two active it is refused up front. */
+        if (activeAdmins(s0).length < 2) return { ok: false, error: "E12" };
+        if (s0.designations.some((d) => d.orgId === org.id && designationInProgress(d))) return { ok: false, error: "exists" };
+        const id = rid("dsg");
+        setState((s) => ({
+          ...s,
+          designations: [
+            {
+              id,
+              orgId: org.id,
+              orgName: org.legalName ?? org.name,
+              kind: "E",
+              entityTypes: input.entityTypes,
+              legalBasis: input.legalBasis.trim(),
+              legalRef: input.legalRef.trim(),
+              state: "PROPOSED",
+              proposedBy: s.harness.persona,
+              proposedAt: today(),
+              approvedBy: null,
+              approvedAt: null,
+              acceptedBy: null,
+              acceptedAt: null,
+              refusedReason: null,
+              expiresAt: null,
+              activatedAt: null,
+              didMethodAtActivation: null,
+              checks: null,
+              checkedAt: null,
+              ndiAccess: "ACTIVE",
+              ndiAccessChangedBy: null,
+              ndiAccessChangedAt: null,
+            },
+            ...s.designations,
+          ],
+        }));
+        log(`Designation proposed for ${org.legalName ?? org.name}`, NDI_ORG);
+        return { ok: true, id };
+      },
+
+      decideDesignation: (id, approve, reason) => {
+        const s0 = stateRef.current;
+        const me = s0.people.find((p) => p.id === s0.harness.persona);
+        const d = s0.designations.find((x) => x.id === id);
+        if (!isNamedAdmin(me)) {
+          if (me?.platformRole === "root") log("Control failure — the root account tried to approve a designation", NDI_ORG);
+          return { ok: false, error: "not_admin" };
+        }
+        if (!d || d.state !== "PROPOSED") return { ok: false, error: "invalid" };
+        /* E7 — the proposer cannot approve their own. The screen doesn't
+           offer it; reaching here anyway is a control failure, logged. */
+        if (d.proposedBy === s0.harness.persona) {
+          log("Control failure — a designation's proposer tried to approve it", NDI_ORG);
+          return { ok: false, error: "E7" };
+        }
+        if (!approve && !reason?.trim()) return { ok: false, error: "invalid" };
+        setState((s) => ({
+          ...s,
+          designations: s.designations.map((x) =>
+            x.id !== id
+              ? x
+              : approve
+                ? { ...x, state: "PENDING" as const, approvedBy: s.harness.persona, approvedAt: today(), expiresAt: inDays(30) }
+                : { ...x, state: "REFUSED" as const, approvedBy: s.harness.persona, approvedAt: today(), refusedReason: reason?.trim() ?? null },
+          ),
+        }));
+        log(`Designation for ${d.orgName} ${approve ? "approved — waiting for it to accept" : "refused"}`, NDI_ORG);
+        return { ok: true };
+      },
+
+      withdrawDesignation: (id) =>
+        setState((s) => ({
+          ...s,
+          designations: s.designations.filter((d) => !(d.id === id && d.state === "PROPOSED" && d.proposedBy === s.harness.persona)),
+        })),
+
+      acceptDesignation: (id) => {
+        const s0 = stateRef.current;
+        const d = s0.designations.find((x) => x.id === id);
+        const org = s0.organizations.find((o) => o.id === d?.orgId);
+        if (!d || !org || d.state !== "PENDING") return { ok: false, error: "invalid" };
+        /* E6 — thirty days without acceptance and it confers nothing. */
+        if (d.expiresAt && d.expiresAt < today()) {
+          setState((s) => ({ ...s, designations: s.designations.map((x) => (x.id === id ? { ...x, state: "EXPIRED" as const } : x)) }));
+          return { ok: false, error: "E6" };
+        }
+        /* Only an OWNER of the authority's own organisation (A2). */
+        if (roleIn(org, s0.people.find((p) => p.id === s0.harness.persona)) !== "Owner") return { ok: false, error: "not_owner" };
+        const accepted: Designation = { ...d, state: "ACCEPTED", acceptedBy: s0.harness.persona, acceptedAt: today(), expiresAt: null };
+        /* Steps 2–3: activation is submitted and checked at once. */
+        const checks = activationChecks({ ...s0, designations: s0.designations.map((x) => (x.id === id ? accepted : x)) }, accepted);
+        const allPass = checks.every((c) => c.pass);
+        setState((s) => ({
+          ...s,
+          designations: s.designations.map((x) =>
+            x.id !== id
+              ? x
+              : allPass
+                ? { ...accepted, state: "ACTIVE" as const, checks, checkedAt: today(), activatedAt: today(), didMethodAtActivation: "did:ethr" }
+                : { ...accepted, checks, checkedAt: today() },
+          ),
+        }));
+        log(`${d.orgName} accepted its designation`, NDI_ORG);
+        log(`Accepted the designation as foundational issuer`, org.id);
+        return { ok: true, active: allPass };
+      },
+
+      declineDesignation: (id) => {
+        const s0 = stateRef.current;
+        const d = s0.designations.find((x) => x.id === id);
+        const org = s0.organizations.find((o) => o.id === d?.orgId);
+        if (!d || !org || d.state !== "PENDING") return { ok: false, error: "invalid" };
+        if (roleIn(org, s0.people.find((p) => p.id === s0.harness.persona)) !== "Owner") return { ok: false, error: "not_owner" };
+        setState((s) => ({
+          ...s,
+          designations: s.designations.map((x) => (x.id === id ? { ...x, state: "DECLINED" as const, expiresAt: null } : x)),
+        }));
+        log(`${d.orgName} declined its designation`, NDI_ORG);
+        return { ok: true };
+      },
+
+      rerunActivation: (id) => {
+        const s0 = stateRef.current;
+        const me = s0.people.find((p) => p.id === s0.harness.persona);
+        const d = s0.designations.find((x) => x.id === id);
+        if (!isNamedAdmin(me)) return { ok: false, error: "not_admin" };
+        if (!d || (d.state !== "ACCEPTED" && d.state !== "PENDING")) return { ok: false, error: "invalid" };
+        const checks = activationChecks(s0, d);
+        const allPass = checks.every((c) => c.pass);
+        setState((s) => ({
+          ...s,
+          designations: s.designations.map((x) =>
+            x.id !== id
+              ? x
+              : allPass
+                ? { ...x, state: "ACTIVE" as const, checks, checkedAt: today(), activatedAt: today(), didMethodAtActivation: "did:ethr" }
+                : { ...x, checks, checkedAt: today() },
+          ),
+        }));
+        if (allPass) {
+          log(`${d.orgName} is designated — nothing is live until it adopts`, NDI_ORG);
+          log("Designated as foundational issuer. Nothing is live in your name yet", d.orgId);
+        }
+        return { ok: true, active: allPass };
+      },
+
+      grantEntitlements: (orgId) => {
+        const s0 = stateRef.current;
+        if (!isNamedAdmin(s0.people.find((p) => p.id === s0.harness.persona))) return;
+        setState((s) => ({
+          ...s,
+          organizations: s.organizations.map((o) =>
+            o.id === orgId ? { ...o, entitlements: Array.from(new Set([...(o.entitlements ?? []), ...ISSUER_ENTITLEMENTS])) } : o,
+          ),
+        }));
+        log("Granted the entitlements a foundational issuer needs", NDI_ORG);
+      },
+
+      setNdiAccess: (designationId, on) => {
+        const s0 = stateRef.current;
+        const d = s0.designations.find((x) => x.id === designationId);
+        const org = s0.organizations.find((o) => o.id === d?.orgId);
+        /* The authority's own control, without asking NDI (UN-24) — so no
+           NDI role can reach it. */
+        if (!d || !org || roleIn(org, s0.people.find((p) => p.id === s0.harness.persona)) !== "Owner") return { ok: false, error: "not_owner" };
+        setState((s) => ({
+          ...s,
+          designations: s.designations.map((x) =>
+            x.id === designationId
+              ? { ...x, ndiAccess: on ? ("ACTIVE" as const) : ("REMOVED" as const), ndiAccessChangedBy: s.harness.persona, ndiAccessChangedAt: today() }
+              : x,
+          ),
+        }));
+        log(on ? "Restored NDI's access" : "Paused NDI's access — its service account can no longer send in your name", org.id);
+        /* E8 to NDI: the permission withdrawn, never an outage. */
+        if (!on) log(`${d.orgName} has withdrawn the platform's permission to request proofs in its name`, NDI_ORG);
+        return { ok: true };
+      },
+
+      objectToArtefacts: (designationId, entityType, item, note) =>
+        setState((s) => ({
+          ...s,
+          artefactObjections: [
+            ...s.artefactObjections.filter((o) => !(o.designationId === designationId && o.entityType === entityType)),
+            { designationId, entityType, item, note: note.trim(), by: s.harness.persona, at: today() },
+          ],
+        })),
+
+      adoptArtefacts: (designationId, entityType, newVersion) => {
+        const s0 = stateRef.current;
+        const d = s0.designations.find((x) => x.id === designationId);
+        const org = s0.organizations.find((o) => o.id === d?.orgId);
+        if (!d || !org) return { ok: false, error: "invalid" };
+        /* P2 — the authority's OWNER, in its own organisation. No NDI role
+           has a route here (EW-FLOW5-SD/D7). */
+        if (roleIn(org, s0.people.find((p) => p.id === s0.harness.persona)) !== "Owner") return { ok: false, error: "not_owner" };
+        if (d.state === "SUSPENDED") return { ok: false, error: "E5" };
+        if (d.state !== "ACTIVE") return { ok: false, error: "invalid" };
+        if (!d.entityTypes.includes(entityType)) return { ok: false, error: "E1" };
+        const live = s0.adoptions.find((a) => a.designationId === designationId && a.entityType === entityType && a.state === "ACTIVE");
+        if (live && !newVersion) return { ok: false, error: "E7" };
+        const draft = draftFor(entityType);
+        const objection = s0.artefactObjections.find((o) => o.designationId === designationId && o.entityType === entityType);
+        /* An objection takes the over-broad item out of what is adopted —
+           resolved by agreement, not by override (E4). */
+        const asked = objection?.item ? draft.asked.filter((i) => i.item !== objection.item) : draft.asked;
+        const prior = s0.adoptions.filter((a) => a.designationId === designationId && a.entityType === entityType);
+        const version = prior.reduce((n, a) => Math.max(n, a.version), 0) + 1;
+        setState((s) => ({
+          ...s,
+          adoptions: [
+            ...s.adoptions.map((a) =>
+              a.designationId === designationId && a.entityType === entityType && a.state === "ACTIVE"
+                ? { ...a, state: "SUPERSEDED" as const }
+                : a,
+            ),
+            {
+              id: rid("ado"),
+              designationId,
+              orgId: org.id,
+              entityType,
+              version,
+              state: "ACTIVE",
+              adoptedBy: s.harness.persona,
+              adoptedAt: today(),
+              asked,
+              purpose: draft.purpose,
+              stoppedBy: null,
+              stoppedAt: null,
+            },
+          ],
+        }));
+        log(`Adopted what people will be asked — version ${version}`, org.id);
+        return { ok: true, version };
+      },
+
+      stopEntityType: (designationId, entityType) => {
+        const s0 = stateRef.current;
+        const d = s0.designations.find((x) => x.id === designationId);
+        const org = s0.organizations.find((o) => o.id === d?.orgId);
+        if (!d || !org || roleIn(org, s0.people.find((p) => p.id === s0.harness.persona)) !== "Owner") return { ok: false, error: "not_owner" };
+        setState((s) => ({
+          ...s,
+          adoptions: s.adoptions.map((a) =>
+            a.designationId === designationId && a.entityType === entityType && a.state === "ACTIVE"
+              ? { ...a, state: "WITHDRAWN" as const, stoppedBy: s.harness.persona, stoppedAt: today() }
+              : a,
+          ),
+        }));
+        log("Stopped an entity type. Businesses already verified are not affected", org.id);
+        return { ok: true };
+      },
 
       setPersona: (persona) =>
         setState((s) => {

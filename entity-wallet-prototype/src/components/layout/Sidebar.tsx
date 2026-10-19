@@ -80,7 +80,10 @@ const ORG_OWNERS: PersonaId[] = ["dorji", "yeshey"];
 const PELDEN: PersonaId[] = ["dorji", "rinzin", "pema", "ugyen", "invitee"];
 /* Everyone who works in some organisation's console — Pelden's people and
    Bank of Bhutan's owner. */
-const ANY_ORG: PersonaId[] = [...PELDEN, "yeshey"];
+const ANY_ORG: PersonaId[] = [...PELDEN, "yeshey", "kesang"];
+/* An authority's officer — Kesang for the Ministry of Industry, Commerce &
+   Employment. */
+const AUTHORITY: PersonaId[] = ["kesang"];
 
 const PRIMARY: NavItem[] = [
   { label: "Dashboard", icon: "dashboard", href: "/dashboard", personas: ANY_ORG, members: "any", ndi: "also" },
@@ -100,6 +103,10 @@ const PRIMARY: NavItem[] = [
       /* Deciding approvals to verify or issue is routine work, which the
          root account doesn't do (FLOW-ONB-02 S9). */
       { label: "Accreditations", href: "/admin/accreditations", icon: "certificate", notForRoot: true },
+      /* Flow 5 — which authority confirms which kind of business. Root
+         proposes and approves nothing (FLOW-ONB-02 v0.6), so it isn't
+         offered the page. */
+      { label: "Designations", href: "/admin/designations", icon: "shieldCheck", notForRoot: true },
       { label: "Invitations", href: "/admin/invitations", icon: "mail" },
       /* Never offered to the root account, which approves nothing
          (FLOW-ONB-02 S2, E13; UX-EW-01 SCR-INV-02). */
@@ -173,6 +180,10 @@ const PRIMARY: NavItem[] = [
      need not hold anything to accept (FLOW-ACC-01), and the business's own
      way to ask is what is withheld until it is verified (FLOW-ACC-02/E1). */
   { label: "Verify or issue", icon: "certificate", href: "/verify-or-issue", personas: ORG_OWNERS, members: "any" },
+  /* Flow 5 — an authority's own console (SCR-DSG-05, SCR-ADO-03): what is
+     live in its name and who can act in it. Only for the ministry's people;
+     a business never sees it. */
+  { label: "Authority", icon: "shieldCheck", href: "/authority", personas: AUTHORITY },
   /* Pema's only reason to open the console at all. */
   { label: "Appeals", icon: "shieldAlert", href: "/appeals", personas: PELDEN },
 

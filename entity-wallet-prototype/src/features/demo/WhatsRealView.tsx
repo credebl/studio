@@ -238,6 +238,36 @@ const SIMULATED: { area: string; icon: IconName; rows: Row[] }[] = [
     ],
   },
   {
+    area: "Designating an authority",
+    icon: "shieldCheck",
+    rows: [
+      {
+        shown: "Which authority confirms which kind of business",
+        reality:
+          "Designations and adoptions in your browser decide which types can be verified. The Corporate Regulatory Authority's is seeded as done; nothing reads a register or a schema.",
+        needs: "The designation register and the adoption records in the Entity-Wallet Service, read by FLOW-ORG-01 P3 on every verification.",
+      },
+      {
+        shown: "Activation checks — issuing identity, set-up, entitlements",
+        reality:
+          "Read from fields on the organisation in the demo data. \"Grant them\" flips a list in your browser; no marketplace is asked and no member is added.",
+        needs: "Reads of org_agents, the ledger namespace and the marketplace entitlements, and adding NDI's service principal as VERIFIER.",
+      },
+      {
+        shown: "Adopting what people will be asked, and stopping it",
+        reality:
+          "Version numbers and states in your browser. No schema is published, no proof request is stored, and stopping something changes only which types the demo treats as connected.",
+        needs: "Write-once schema publication, the versioned proof request and authorisation written in one transaction, and the service account's permission enforced at the agent.",
+      },
+      {
+        shown: "The second approver is always a named administrator",
+        reality:
+          "UX-EW-02 lets the root account approve a designation; FLOW-ONB-02 v0.6 is later and says the root account approves nothing. The prototype follows the later document.",
+        needs: "The two documents agreeing.",
+      },
+    ],
+  },
+  {
     area: "The record",
     icon: "fileText",
     rows: [

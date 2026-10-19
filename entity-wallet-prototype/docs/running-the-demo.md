@@ -16,8 +16,8 @@ switches you to the right person when the story changes hands. **Next** and
 there** brings you back if you wander off, and the chevron minimises it.
 
 **The prototype's focus is onboarding**, and the guide walks that and then
-approval to verify or issue — eleven chapters, 53 steps, starting on the
-platform's day zero:
+approval to verify or issue, and designating an authority — twelve chapters, 68
+steps, starting on the platform's day zero:
 
 1. **Root admin onboarding** — the NDI root account signs in. It is NDI's
    own account, held by two custodians together, not a person's, and made
@@ -81,7 +81,16 @@ platform's day zero:
    so Pelden never sees anyone's date of birth. Kinzang reviews and
    recommends approval without being able to edit it; Tshendu approves it as
    asked, and Pelden is listed.
-10. **Where to go next.**
+10. **Designate the ministry** (FLOW-ORG-02 Kind E, FLOW-ORG-03) — nobody
+    confirms sole proprietorships yet. Kinzang proposes the Ministry of
+    Industry, Commerce & Employment, already on the platform; Tshendu
+    approves. Kesang Wangmo, the ministry's director, reads what it is taking
+    on — including that NDI hosts its keys — and accepts. One activation
+    check fails (an entitlement NDI grants), Kinzang grants it and re-runs.
+    Kesang reads what people will be asked, sends back the date of birth the
+    register doesn't need, and adopts for sole proprietorships. Then **Stop
+    something** shows three different stops, none pre-selected.
+11. **Where to go next.**
 
 Both appointments follow the same rule: **invite first, appoint second**, and
 identity is confirmed **at the appointment, not at the invitation**
@@ -350,11 +359,46 @@ sign-up detour), **expired**, **revoked**, **void** (the inviter lost their
 authority since sending — worded as a lapse, never a rejection),
 **already_accepted**, **declined** and **wrong_person**.
 
+### FLOW-ORG-02 · Designating an authority — `/admin/designations`, as Kinzang
+
+Starts on the platform with its two admins and no business. **Designations**
+lists who confirms what: the Corporate Regulatory Authority for companies,
+designated before the Entity Wallet opened. **Propose a designation**
+(SCR-DSG-01): the ministry, sole proprietorships and partnerships, a legal
+basis — the summary says what it will be able to do and nothing else, that
+the scope can't be edited once switched on, and that a different
+administrator has to approve it. **Propose**.
+
+Kinzang opening it sees **Approve** disabled with the reason (E7) and can
+only withdraw it. As **Tshendu**, **Approve** (SCR-DSG-02) — the consequence
+is stated in the dialog. The root account can't: Designations isn't in its
+menu, and the store refuses it.
+
+As **Kesang**, the dashboard says NDI has proposed it, with the days left.
+**Review it** opens SCR-DSG-03: what the ministry would confirm, the legal
+basis, who proposed and approved, and NDI's access in the spec's words —
+including that NDI hosts the ministry's keys. **Accept**. Activation runs at
+once (SCR-DSG-04): one check fails — schema creation is missing — and says
+NDI grants it. As Kinzang, **Designations → Accepted — checks not passing
+yet**, **Grant them**, **Re-run checks**: designated, and nothing live yet.
+
+As Kesang, **Authority** (SCR-DSG-05 and SCR-ADO-03, one page): the
+designation, NDI's access with **Remove NDI's access**, members including
+NDI's service account, and nothing live. **Review and adopt** beside sole
+proprietorships (SCR-ADO-01): the date of birth is flagged as not needed —
+**Raise an objection** sends it back and takes it out. **Continue to adopt**
+(SCR-ADO-02): three things as one act. Sole proprietorships are now live —
+and in Flow 2's first screen, sole proprietorship is no longer disabled.
+**Stop something** (SCR-ADO-04): pause NDI's access, stop an entity type, or
+change what people are asked — none pre-selected, and none un-verifies
+anyone.
+
 ### Also built · Inviting an agency — as Kinzang, `/admin/invitations/new`
 
-Not in **Walk a flow**: bringing on a foundational issuer is Flow 5, which the
-catalogue has not designed yet. It is still reachable from NDI administration
-→ Invitations, and needs two NDI administrators.
+Not in **Walk a flow**: this is Kind N, a new authority invited to register,
+which the prototype doesn't walk past the invitation — Flow 5 walks Kind E, an
+organisation already on the platform, below. It is still reachable from NDI
+administration → Invitations, and needs two NDI administrators.
 
 1. As Kinzang, propose the agency. It waits in **Approvals**.
 2. Still as Kinzang, open **Approvals**: **Approve** is disabled with the

@@ -11,6 +11,7 @@ import { Panel } from "@/components/ui/Panel";
 import { WaveBanner } from "@/components/ui/WaveBanner";
 import { Icon } from "@/components/ui/icons";
 import { PendingApprovalNotice } from "@/features/accreditation/PendingApprovalNotice";
+import { DesignationNotice } from "@/features/designation/DesignationNotice";
 import { NextCredentialAction } from "@/features/onboarding/NextCredentialAction";
 import { NeedsAttention } from "@/features/wallet/NeedsAttention";
 
@@ -96,6 +97,7 @@ export function DashboardView({ firstName }: { firstName?: string } = {}) {
               </Link>
             }
           />
+          <DesignationNotice />
           <PendingApprovalNotice />
           <div className="grid gap-5 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
             <Panel>

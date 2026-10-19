@@ -100,7 +100,7 @@ export const actByNumber = (n: number): Act | undefined => ACTS.find((a) => a.nu
  * setting the entry needs, applied when it is chosen, so neither route can
  * be started in a deployment where it would not exist.
  */
-export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "accredit";
+export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "accredit" | "designate";
 
 /**
  * The flows the demo controls offer — the onboardings the prototype is
@@ -121,9 +121,13 @@ export type FlowGroup = "root" | "admin" | "company" | "members" | "appoint" | "
  * a question the demo has to answer on screen.
  *
  * Flow 4's two doors start from the team-ready state: a platform admin
- * exists to propose and review, root to approve, Pelden is verified with
- * Dorji as its representative, and Bank of Bhutan has been verifying
- * without an approval.
+ * exists to propose and review, a second named admin to approve, Pelden is
+ * verified with Dorji as its representative, and Bank of Bhutan has been
+ * verifying without an approval.
+ *
+ * Flow 5 starts from the platform-ready state — two admins, no business —
+ * because designating an authority comes before anyone can verify with it:
+ * it is what lets sole proprietorships on at all.
  */
 export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "root", code: "FLOW-ONB-02", title: "Root admin onboarding" },
@@ -132,6 +136,7 @@ export const FLOW_GROUPS: { id: FlowGroup; code: string; title: string }[] = [
   { id: "members", code: "FLOW-ONB-02 · Kind M", title: "Member onboarding" },
   { id: "appoint", code: "Flow 3 · Flow 8 ahead of spec", title: "Giving authority to act" },
   { id: "accredit", code: "Flow 4", title: "Approval to verify or issue" },
+  { id: "designate", code: "Flow 5", title: "Designating an authority" },
 ];
 
 export interface FlowEntry {
@@ -145,8 +150,8 @@ export interface FlowEntry {
    * demo left behind:
    *
    * - `dayZero` — the platform before any admin or business.
-   * - `platformReady` — one platform admin set up, no business yet: where a
-   *   company comes on.
+   * - `platformReady` — two platform admins set up, no business yet: where a
+   *   company comes on, and where an authority is designated.
    * - `firstDay` — Pelden registered a moment ago, Dorji its only member.
    * - `teamReady` — the first day, with Ugyen and Pema joined and no
    *   authority yet: where the appointments start.
@@ -172,4 +177,5 @@ export const FLOW_ENTRIES: FlowEntry[] = [
   { group: "appoint", label: "A role in a wallet (Flow 8, ahead of spec)", persona: "dorji", route: "/delegated-authority/new", start: "teamReady" },
   { group: "accredit", label: "Recognise an organisation already verifying", persona: "tshering", route: "/admin/accreditations", start: "teamReady" },
   { group: "accredit", label: "A business asks to verify", persona: "dorji", route: "/organisation", start: "teamReady" },
+  { group: "designate", label: "Designate the ministry for sole proprietorships", persona: "tshering", route: "/admin/designations", start: "platformReady" },
 ];

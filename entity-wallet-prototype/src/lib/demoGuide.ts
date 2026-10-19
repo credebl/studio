@@ -91,6 +91,7 @@ export const GUIDE_CHAPTERS: GuideChapter[] = [
   { title: "A role in a wallet — Flow 8, ahead of spec", shows: "A clearing agent is invited, then given a role in their own wallet" },
   { title: "Recognise Bank of Bhutan", shows: "NDI approves a bank already verifying — asking for less — and the bank accepts by name" },
   { title: "Pelden asks to verify customers", shows: "A verified business asks; one administrator reviews, a second decides" },
+  { title: "Designate the ministry", shows: "A ministry becomes the authority for sole proprietorships, and agrees what people are asked" },
   { title: "Where to go next", shows: "The other routes, and what's simulated" },
 ];
 
@@ -100,7 +101,7 @@ export const GUIDE_STEPS: GuideStep[] = [
     chapter: 0,
     title: "Onboarding onto the Entity Wallet",
     happening:
-      "Everything it takes to get onto the Entity Wallet and ready to use it, in the order it has to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner invites a colleague and gives them authority to act, then — ahead of the specification — invites a clearing agent and gives them a role in their own wallet. Last, NDI approves Bank of Bhutan and Pelden to verify customers. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
+      "Everything it takes to get onto the Entity Wallet and ready to use it, in the order it has to happen: NDI's root account signs in, root brings on the platform's two administrators, who each set up their own account, a new company — Pelden Trading — signs up and is verified by the authority that registered it, and Pelden's owner invites a colleague and gives them authority to act, then — ahead of the specification — invites a clearing agent and gives them a role in their own wallet. Then NDI approves Bank of Bhutan and Pelden to verify customers, and designates the ministry that confirms sole proprietorships. Nothing is real: the dashed \"Prototype\" panels stand in for a phone, an inbox or a government register.",
     doThis:
       "Press **Next**. The guide takes you to each screen and tells you what to press; you do the clicking. **Minimise** tucks this card away when it's in the way.",
   },
@@ -576,12 +577,143 @@ export const GUIDE_STEPS: GuideStep[] = [
     persona: "dorji",
   },
 
-  /* ---- 10 · Where to go next ---- */
+  /* ---- 10 · Designate the ministry (FLOW-ORG-02 Kind E, FLOW-ORG-03) ---- */
   {
     chapter: 10,
+    title: "Nobody confirms sole proprietors yet",
+    happening:
+      "Companies are confirmed by the Corporate Regulatory Authority. Sole proprietorships and partnerships have nobody — which is why they can't be verified yet. The ministry that licenses them is already on the platform, so it can be designated where it is.",
+    doThis: "Press **Propose a designation**.",
+    route: "/admin/designations",
+    persona: "tshering",
+  },
+  {
+    chapter: 10,
+    title: "Say what it will be able to do",
+    happening:
+      "The summary says, in outcome words, what the ministry will be able to do — and nothing else. Once switched on, the scope can't be edited.",
+    doThis:
+      "Leave **Ministry of Industry, Commerce & Employment** selected, tick **Sole proprietorships** and **Partnerships**, type a legal basis such as **The licensing of businesses under the Ministry's mandate**, press **Propose**, then **Go to pending list**.",
+    match: "^/admin/designations/new$",
+  },
+  {
+    chapter: 10,
+    title: "Waiting for a second administrator",
+    happening: "Kinzang proposed it, so it waits for someone else. Nothing has been sent to the ministry.",
+    doThis: "Press the ministry's row under **Waiting for approval**.",
+    route: "/admin/designations",
+  },
+  {
+    chapter: 10,
+    title: "Kinzang can't approve it",
+    happening: "In place of Approve: \"You proposed this designation, so a different administrator has to approve it.\"",
+    doThis: "Press **Next** — the guide switches to Tshendu.",
+    match: "^/admin/designations/dsg-[^/]+$",
+  },
+  {
+    chapter: 10,
+    title: "Tshendu approves",
+    happening:
+      "The consequence at the decision: the ministry will create the credential that makes these businesses real, and everyone on the platform will trust what it issues.",
+    doThis: "Press **Approve**, then **Approve** in the dialog.",
+    say: "A root of trust takes two named people at NDI — and then the organisation's own consent.",
+    match: "^/admin/designations/dsg-[^/]+$",
+    persona: "tshendu",
+  },
+  {
+    chapter: 10,
+    title: "The ministry is asked",
+    happening:
+      "Kesang Wangmo is the ministry's director and its owner on the platform. The dashboard says what NDI has proposed and how long is left.",
+    doThis: "Press **Review it**.",
+    route: "/dashboard",
+    persona: "kesang",
+  },
+  {
+    chapter: 10,
+    title: "What the ministry is taking on",
+    happening:
+      "The role in the ministry's own terms, and NDI's access stated plainly — including that NDI hosts its keys, so removing the access is a permission the ministry controls, not a technical barrier. Accepting switches nothing on.",
+    doThis: "Press **Accept**.",
+    say: "This is the paragraph that mustn't be softened. A government body has to know what NDI can do before it agrees.",
+    match: "^/designation/dsg-[^/]+$",
+  },
+  {
+    chapter: 10,
+    title: "Accepted — but not switched on",
+    happening: "Before anything switches on, NDI checks the ministry can actually do this.",
+    doThis: "Press **Next** — the guide switches to Kinzang.",
+    match: "^/designation/dsg-[^/]+$",
+  },
+  {
+    chapter: 10,
+    title: "One check failed",
+    happening:
+      "The ministry has the issuing identity a foundational issuer needs, but not the entitlement to publish what its credential contains — it has never needed one. The check says that's NDI's to grant.",
+    doThis: "Under **Accepted — checks not passing yet**, press the ministry's row.",
+    route: "/admin/designations",
+    persona: "tshering",
+  },
+  {
+    chapter: 10,
+    title: "NDI fixes its own part",
+    happening:
+      "Each check says passed or failed in words, what was observed, and who resolves it. This one is NDI's.",
+    doThis: "Press **Grant them**, then **Re-run checks**. When it says the ministry is designated, press **Next**.",
+    say: "The one screen where the mechanism is named — because somebody has to act on it.",
+    match: "^/admin/designations/dsg-[^/]+/activation$",
+  },
+  {
+    chapter: 10,
+    title: "Designated, nothing live",
+    happening:
+      "The ministry's console: its designation, NDI's access with a way to remove it, and nothing live in its name. People can't verify with it until it agrees what they'll be asked.",
+    doThis: "Beside **Sole proprietorships**, press **Review and adopt**.",
+    route: "/authority",
+    persona: "kesang",
+  },
+  {
+    chapter: 10,
+    title: "What people will be asked",
+    happening:
+      "Exactly what a person's wallet will show, item by item, with why each is needed. NDI's draft also asks for the date of birth — which the register doesn't need, and the screen says so on the item.",
+    doThis:
+      "Press **Raise an objection**, type **Our register doesn't need the date of birth**, press **Send back to NDI**, then **Continue to adopt**.",
+    say: "NDI may draft it, but the ministry's name is on it — so the ministry can say no to part of it.",
+    match: "^/authority/sole_proprietorship$",
+  },
+  {
+    chapter: 10,
+    title: "Three things, adopted as one",
+    happening:
+      "The credential, what people are asked, and NDI's permission to ask it — together, or not at all. Each can be stopped separately afterwards.",
+    doThis: "Press **Adopt**, then **Adopt** in the dialog, then **Go to your authority console**.",
+    match: "^/authority/sole_proprietorship/adopt$",
+  },
+  {
+    chapter: 10,
+    title: "Live in the ministry's name",
+    happening:
+      "Sole proprietorships are live — version 1, adopted by Kesang, today. From now a sole proprietor can verify their business with the ministry.",
+    doThis: "Press **Stop something**.",
+    route: "/authority",
+  },
+  {
+    chapter: 10,
+    title: "Three different stops",
+    happening:
+      "Nothing is selected. Pausing NDI's access, stopping an entity type and changing what people are asked are three different things, each saying what stops and what carries on — and none of them un-verifies a business.",
+    doThis: "Read the three, then press **Cancel**.",
+    say: "The wrong stop is the worst mistake an authority can make here, so the screen makes the difference the subject.",
+    route: "/authority/stop",
+  },
+
+  /* ---- 11 · Where to go next ---- */
+  {
+    chapter: 11,
     title: "That's the story",
     happening:
-      "The platform went from its root account to two named platform admins; Pelden Trading went from one person signing up to a company holding its own registration; its people were invited, then given authority to act; and NDI approved a bank and Pelden to verify — each asking for no more than it needs.",
+      "The platform went from its root account to two named platform admins; Pelden Trading went from one person signing up to a company holding its own registration; its people were invited, then given authority to act; NDI approved a bank and Pelden to verify — each asking for no more than it needs; and a ministry became the authority for sole proprietorships, agreeing exactly what people are asked in its name.",
     doThis:
       "To run any part again, use **Demo controls → Walk a flow**. The **Prototype · data simulated** chip lists what's simulated.",
   },
