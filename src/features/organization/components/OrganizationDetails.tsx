@@ -1,4 +1,4 @@
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, FileJson } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -19,14 +19,15 @@ import {
 
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
+import DidDocumentPanel from '@/features/wallet/DidDocumentPanel'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { cn } from '@/lib/utils'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
 import { getAgentHealth } from '@/app/api/Agent'
+import { getDidMethod } from '@/lib/did'
 
 type HealthState = 'checking' | 'online' | 'unreachable'
 
@@ -142,7 +143,7 @@ const OrganizationDetails = ({
   const [loading, setLoading] = useState<boolean>(true)
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const [copyDoc, setCopyDoc] = useState(false)
+  const [didDocOpen, setDidDocOpen] = useState<boolean>(false)
   const [health, setHealth] = useState<HealthState>('checking')
 
   const createQrConnection = async (): Promise<void> => {
@@ -196,6 +197,9 @@ const OrganizationDetails = ({
     : null
   const spinUpStatus = agentData?.agentSpinUpStatus
   const hasTenant = Boolean(agentData?.tenantId)
+  // A did:web document has to be hosted by the organization, so it is offered next to the DID. It is only formatted when
+  // the panel is opened.
+  const isDidWeb = getDidMethod(agentData?.orgDid) === 'web'
 
   let healthPill: React.ReactNode = (
     <StatusPill tone="neutral">Checking…</StatusPill>
@@ -248,7 +252,21 @@ const OrganizationDetails = ({
         )}
         <Detail label="Org DID" wide>
           {agentData?.orgDid ? (
-            <CopyValue value={agentData.orgDid} />
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <CopyValue value={agentData.orgDid} />
+              </div>
+              {isDidWeb && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDidDocOpen(true)}
+                >
+                  <FileJson className="h-4 w-4" />
+                  DID document
+                </Button>
+              )}
+            </div>
           ) : (
             'Not available'
           )}
@@ -282,61 +300,13 @@ const OrganizationDetails = ({
         </DialogContent>
       </Dialog>
 
-      {agentData?.orgDid?.startsWith('did:web') && (
-        <Card className="mt-5 p-6">
-          <h3 className="mb-4 text-xl font-bold">DID Document</h3>
-
-          <div className="space-y-8">
-            <div>
-              <h4 className="mb-2 text-lg font-semibold">Instructions:</h4>
-              <ul className="space-y-1">
-                <li>
-                  1. Kindly provide the DID document for hosting purposes in
-                  order to facilitate its publication
-                </li>
-                <li>
-                  2. Failure to host the DID document will result in the
-                  inability to publish your DID
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-md">
-              <div className="flex items-start justify-between">
-                <pre className="bg-muted relative w-full overflow-x-auto rounded-md p-4">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-3 right-3 h-6 w-6"
-                    aria-label="Copy DID document"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(
-                          JSON.stringify(agentData?.didDocument, undefined, 4),
-                        )
-                        .catch((error) =>
-                          console.error('could not copy to clipboard', error),
-                        )
-                      setCopyDoc(true)
-                      setTimeout(() => {
-                        setCopyDoc(false)
-                      }, 2000)
-                    }}
-                  >
-                    {copyDoc ? (
-                      <Check className="text-success" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <code className="text-sm">
-                    {JSON.stringify(agentData?.didDocument, undefined, 4)}
-                  </code>
-                </pre>
-              </div>
-            </div>
-          </div>
-        </Card>
+      {isDidWeb && agentData?.orgDid && (
+        <DidDocumentPanel
+          open={didDocOpen}
+          onOpenChange={setDidDocOpen}
+          did={agentData.orgDid}
+          didDocument={agentData.didDocument}
+        />
       )}
     </div>
   )
