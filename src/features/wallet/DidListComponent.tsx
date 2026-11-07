@@ -32,10 +32,15 @@ import {
 } from '@/config/CommonConstant'
 import {
   createDid,
+  createDidImportSession,
   createPolygonKeyValuePair,
   getDids,
   updatePrimaryDid,
 } from '@/app/api/Agent'
+import {
+  encryptKeyMaterialForImport,
+  parseKeyMaterial,
+} from '@/utils/keyImport'
 import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
 
@@ -594,6 +599,36 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     return typeof text === 'string' && text ? text : 'Failed to create DID'
   }
 
+  /**
+   * Requests a single-use import session and encrypts the pasted key to it in the browser. Only the resulting JWE
+   * envelope is sent to the gateway, so the plaintext key never leaves this tab.
+   */
+  const buildEncryptedKey = async (
+    values: IFormValues,
+  ): Promise<Awaited<ReturnType<typeof encryptKeyMaterialForImport>>> => {
+    const didMethod = values.method?.split(':')[1] || ''
+    const sessionResponse = await createDidImportSession(orgId, didMethod)
+
+    if (typeof sessionResponse === 'string') {
+      throw new Error(sessionResponse)
+    }
+
+    const { data } = sessionResponse as AxiosResponse
+    if (data?.statusCode !== apiStatusCodes.API_STATUS_CREATED) {
+      throw new Error(
+        getCreateDidErrorMessage(data?.message) ||
+          'Failed to create a key import session',
+      )
+    }
+
+    const session = data.data as Parameters<
+      typeof encryptKeyMaterialForImport
+    >[0]
+    const material = parseKeyMaterial(values.privateKey, values.passphrase)
+
+    return encryptKeyMaterialForImport(session, material)
+  }
+
   const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
     setErrMsg(null)
@@ -614,6 +649,24 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       (values.method === DidMethod.KEY || values.method === DidMethod.WEB) &&
       haveKeyMaterial
 
+    let encryptedKey:
+      | Awaited<ReturnType<typeof encryptKeyMaterialForImport>>
+      | undefined = undefined
+    if (usesImportedKey) {
+      try {
+        encryptedKey = await buildEncryptedKey(values)
+      } catch (error) {
+        setErrMsg(
+          error instanceof Error
+            ? error.message
+            : 'Failed to encrypt the private key for import',
+        )
+        setLoading(false)
+        setIsCreatingDid(false)
+        return
+      }
+    }
+
     const didData = {
       seed: values.method === DidMethod.POLYGON || usesImportedKey ? '' : seed,
       keyType: 'ed25519',
@@ -622,8 +675,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       domain: values.method === DidMethod.WEB ? values.domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
       privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
-      privateKey: usesImportedKey ? values.privateKey : '',
-      passphrase: usesImportedKey ? values.passphrase || undefined : undefined,
+      encryptedKey,
       did: values?.did ?? '',
       endorserDid: values?.endorserDid || '',
       isPrimaryDid: false,
@@ -1010,11 +1062,13 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                                 className="text-destructive mt-1 text-sm"
                               />
                               <p className="text-muted-foreground mt-1 text-sm">
-                                PEM (PKCS#8, SEC1 or PKCS#1, optionally
-                                encrypted), base64 DER (PKCS#8) or a private
-                                JWK. Ed25519, P-256, P-384, P-521 and secp256k1
-                                are supported; RSA is available for did:web
-                                only.
+                                The key is encrypted in your browser to a
+                                single-use key before it is sent, so it never
+                                appears in request bodies or logs. PEM (PKCS#8,
+                                SEC1 or PKCS#1, optionally encrypted), base64
+                                DER (PKCS#8) or a private JWK. Ed25519, P-256,
+                                P-384, P-521 and secp256k1 are supported; RSA is
+                                available for did:web only.
                               </p>
                             </div>
 
