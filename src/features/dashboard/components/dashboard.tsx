@@ -23,6 +23,10 @@ import { setEcosystemEnableStatus } from '@/lib/ecosystemSlice'
 import { setLedgerId } from '@/lib/orgSlice'
 import { useRouter } from 'next/navigation'
 
+// Token-based so the banner follows the active theme (see docs/THEMING.md).
+const walletBannerClass =
+  'relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-lg border bg-gradient-to-br from-accent via-card to-card p-6 shadow-sm'
+
 const initialPageState = {
   pageNumber: 1,
   pageSize: 10,
@@ -172,7 +176,7 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else if (!hasOrganization) {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-start">
           <h3 className="text-xl font-semibold">No Organization Found</h3>
           <p className="mt-2 text-sm">
@@ -183,7 +187,7 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else if (walletData.length === 0) {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex flex-col items-start">
             <h3 className="text-xl font-semibold">
@@ -208,10 +212,10 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else if (currentWallet?.orgDid) {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-start">
           <h3 className="text-xl font-semibold">Wallet Details</h3>
-          <p className="mt-2 text-sm text-gray-700">
+          <p className="text-muted-foreground mt-2 text-sm">
             DID is already created for your organization.
           </p>
         </div>
@@ -225,7 +229,7 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex flex-col items-start">
             <h3 className="text-xl font-semibold">Setup your DID</h3>

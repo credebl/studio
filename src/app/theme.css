@@ -32,26 +32,8 @@ a[href] {
   cursor: pointer;
 }
 
-.bg-success {
-  background-color: var(--success);
-  color: #42c773;
-}
-
-.bg-error {
-  background-color: var(--error);
-  color: white;
-}
-
-.text-success {
-  color: var(--success-text);
-}
-
 .green-text {
-  color: #339b59;
-}
-
-.text-error {
-  color: var(--error-text);
+  color: var(--success);
 }
 
 ul.timelinestatic > li:before {

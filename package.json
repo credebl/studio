@@ -15,6 +15,7 @@
     "lint:strict": "eslint --max-warnings=0 src",
     "format": "prettier --write .",
     "format:check": "prettier -c -w .",
+    "check:theme": "node scripts/check-theme-contrast.mjs public/themes/credebl_theme.css",
     "prepare": "husky install"
   },
   "dependencies": {
