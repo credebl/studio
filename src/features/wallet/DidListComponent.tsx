@@ -509,8 +509,7 @@ const DIDListComponent = ({
     const orgDid: string | undefined = data?.data?.org_agents?.[0]?.orgDid
 
     const orgDidMethod = orgDid?.split(':').slice(0, 2).join(':') as
-      | DidMethod
-      | undefined
+      DidMethod | undefined
 
     // The organization's current DID method is only used to preselect a sensible
     // default. It must never block creating a DID with a different method.
