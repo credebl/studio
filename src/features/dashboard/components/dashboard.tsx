@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  IOrgAgent,
-  IOrganisation,
-} from '@/features/organization/components/interfaces/organization'
 import React, { useEffect, useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getUserEcosystemInvitations,
   getUserInvitations,
@@ -16,9 +11,9 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
+import { IOrgAgent } from '@/features/organization/components/interfaces/organization'
 import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
-import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getEcosystemEnableStausApi } from '@/app/api/ecosystem'
@@ -44,8 +39,6 @@ export default function Dashboard(): React.JSX.Element {
   const [hasOrganization, setHasOrganization] = useState<boolean>(false)
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
-  const [activeTab, setActiveTab] = useState('Overview')
-  const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [isWalletSetupLoading, setIsWalletSetupLoading] =
     useState<boolean>(false)
   const orgId = useAppSelector((state) => state?.organization.orgId)
@@ -222,6 +215,12 @@ export default function Dashboard(): React.JSX.Element {
             DID is already created for your organization.
           </p>
         </div>
+        <Button
+          onClick={() => router.push(pathRoutes.organizations.wallet)}
+          className="mt-4 w-fit"
+        >
+          Open Wallet
+        </Button>
       </div>
     )
   } else {
@@ -280,34 +279,9 @@ export default function Dashboard(): React.JSX.Element {
         </div>
         {walletSection}
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList>
-            <TabsTrigger value="Overview" className="relative">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="Wallet" disabled={walletData.length === 0}>
-              Wallet
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent
-            value="Overview"
-            className="mt-2 space-y-4 rounded-md border"
-          >
-            <OrganizationDashboard
-              orgId={orgId}
-              setOrgDataForDetails={setOrgData}
-            />
-          </TabsContent>
-          <TabsContent
-            value="Wallet"
-            className="mt-2 space-y-4 rounded-md border p-4"
-          >
-            <OrganizationDetails
-              orgData={orgData}
-              setActiveTab={setActiveTab}
-            />
-          </TabsContent>
-        </Tabs>
+        <div className="mt-2 space-y-4 rounded-md border">
+          <OrganizationDashboard orgId={orgId} />
+        </div>
       </div>
     </PageContainer>
   )

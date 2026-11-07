@@ -10,7 +10,7 @@ import {
   IOrgAgent,
   IOrganisation,
 } from './interfaces/organization'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Tooltip,
   TooltipContent,
@@ -22,15 +22,12 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
-import DIDList from '@/features/wallet/DidListComponent'
 import DataTable from '@/components/DataTable'
-import DidPanel from './DidPanel'
 import { ITableData } from '@/components/DataTable/interface'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
-import { useAppSelector } from '@/lib/hooks'
 
 const CopyDid = ({
   value,
@@ -111,10 +108,8 @@ const DateTooltip = ({
 
 const OrganizationDetails = ({
   orgData,
-  setActiveTab,
 }: {
   orgData: IOrganisation | null
-  setActiveTab: React.Dispatch<React.SetStateAction<string>>
 }): React.JSX.Element => {
   const orgId = orgData ? orgData?.id : ''
   // eslint-disable-next-line camelcase
@@ -127,11 +122,7 @@ const OrganizationDetails = ({
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
   const [copied, setCopied] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [copyDoc, setCopyDoc] = useState(false)
-  const selectedDropdownOrgId = useAppSelector(
-    (state) => state.organization.orgId,
-  )
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -150,18 +141,6 @@ const OrganizationDetails = ({
       setCopied(false)
     }
   }, [])
-
-  const previousOrgId = useRef<string | null>(null)
-
-  useEffect(() => {
-    if (
-      previousOrgId.current !== null &&
-      previousOrgId.current !== selectedDropdownOrgId
-    ) {
-      setActiveTab('Overview')
-    }
-    previousOrgId.current = selectedDropdownOrgId
-  }, [selectedDropdownOrgId])
 
   const tableData: ITableData[] = [
     {
@@ -226,10 +205,7 @@ const OrganizationDetails = ({
 
   return (
     <div className="">
-      <div className="flex justify-between">
-        <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
-        <Button onClick={() => setIsDrawerOpen(true)}>Did List</Button>
-      </div>
+      <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
 
       <DataTable
         header={[
@@ -271,14 +247,6 @@ const OrganizationDetails = ({
           </div>
         </DialogContent>
       </Dialog>
-      <DidPanel
-        open={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
-        title={'DID Details'}
-        description={'Detailed view of selected Schema'}
-      >
-        <DIDList orgId={orgId} />
-      </DidPanel>
 
       {agentData?.orgDid?.startsWith('did:web') && (
         <Card className="mt-5 p-6">
