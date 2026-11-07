@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
+
 import * as React from 'react'
 import * as Yup from 'yup'
-
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Check, Copy, Loader2 } from 'lucide-react'
 import {
@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import DidActionDialog, { DidAction, DidActionType } from './DidActionDialog'
 import { DidMethod, Network, Roles } from '@/common/enums'
 import { type EncryptedKey, parseKeyMaterial } from '@/utils/keyImport'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
@@ -32,9 +33,12 @@ import {
   polygonFaucet,
 } from '@/config/CommonConstant'
 import {
+  archiveDid,
   createDid,
   createPolygonKeyValuePair,
+  deleteDid,
   getDids,
+  unarchiveDid,
   updatePrimaryDid,
 } from '@/app/api/Agent'
 import {
@@ -43,35 +47,25 @@ import {
 } from '@/utils/didKeyImport'
 import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
-
 import { AlertComponent } from '@/components/AlertComponent'
-import { AlertDialogDemo } from './ConfirmationDialogue'
 import { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
+import DidDetailsPanel from './DidDetailsPanel'
+import DidRowActions from './DidRowActions'
+import { IDidListData } from '@/features/organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
+import { StatusPill } from './DetailParts'
+import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
-
-interface IDidListData {
-  id: string
-  did: string
-  isPrimaryDid: boolean
-  createDateTime: string
-  lastChangedDateTime: string
-}
-
-interface IUpdatePrimaryDid {
-  id: string
-  did: string
-}
 
 interface IPolygonKeys {
   privateKey: string
@@ -186,11 +180,14 @@ const CopyDid = ({
   className,
   showCheck = false,
   didListLoading,
+  onValueClick,
 }: {
   value: string
   className?: string
   showCheck?: boolean
   didListLoading?: boolean
+  /** Makes the value a button, here to open the DID's details. */
+  onValueClick?: () => void
 }): React.JSX.Element => {
   const [copied, setCopied] = useState(false)
 
@@ -238,7 +235,18 @@ const CopyDid = ({
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={`flex items-center gap-2 ${className}`}>
-          <span className="truncate font-mono">{value}</span>
+          {onValueClick ? (
+            <button
+              type="button"
+              title="View details"
+              onClick={onValueClick}
+              className="focus-visible:ring-ring rounded-sm text-left font-mono break-all hover:underline focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {value}
+            </button>
+          ) : (
+            <span className="font-mono break-all">{value}</span>
+          )}
           <Button
             type="button"
             variant="ghost"
@@ -263,7 +271,17 @@ const TokenWarningMessage = (): React.JSX.Element => (
   </div>
 )
 
-const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
+const DIDListComponent = ({
+  orgId,
+  onDidCountChange,
+  onWalletChange,
+}: {
+  orgId: string
+  /** Called with the number of DIDs each time the list is loaded. */
+  onDidCountChange?: (count: number) => void
+  /** Called after a change that can affect the wallet, such as a new primary DID. */
+  onWalletChange?: () => void
+}): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
   const [showPopup, setShowPopup] = useState(false)
@@ -294,6 +312,13 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [searchTerm] = useState('')
   const [userRoles, setUserRoles] = useState<string[]>([])
   const [didListLoading, setDidListLoading] = useState<boolean>(true)
+  const [showArchived, setShowArchived] = useState<boolean>(false)
+  const [detailsDid, setDetailsDid] = useState<string | null>(null)
+  const [pendingAction, setPendingAction] = useState<DidAction | null>(null)
+  const [actionBusy, setActionBusy] = useState<boolean>(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+  // Shown above the list. Kept apart from successMsg, which the Create DID dialog also displays.
+  const [listMessage, setListMessage] = useState<string | null>(null)
 
   const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
@@ -311,7 +336,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const getData = async (): Promise<void> => {
     setDidListLoading(true)
     try {
-      const response = await getDids(orgId)
+      const response = await getDids(orgId, showArchived)
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const sortedDids = data?.data.sort(
@@ -326,6 +351,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           },
         )
         setDidList(sortedDids)
+        onDidCountChange?.(sortedDids.length)
       }
     } catch (error) {
       console.error('Error fetching DIDs:', error)
@@ -333,25 +359,53 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       setDidListLoading(false)
     }
   }
-  const setPrimaryDid = async (id: string, did: string): Promise<void> => {
-    try {
-      const payload: IUpdatePrimaryDid = {
-        id,
-        did,
-      }
-      const response = await updatePrimaryDid(orgId, payload)
-      const { data } = response as AxiosResponse
+  // Set primary, archive, restore and delete share one flow: call the API, then refresh the list and the wallet.
+  const runAction = async ({ type, item }: DidAction): Promise<void> => {
+    setActionBusy(true)
+    setActionError(null)
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        getData()
-        router.refresh()
-      } else {
-        setErrorPath('')
-        setErrorMsg(response as string)
+    const request = (): Promise<AxiosResponse | string> => {
+      switch (type) {
+        case 'primary':
+          return updatePrimaryDid(orgId, { id: item.id, did: item.did })
+        case 'archive':
+          return archiveDid(orgId, item.did)
+        case 'unarchive':
+          return unarchiveDid(orgId, item.did)
+        default:
+          return deleteDid(orgId, item.did)
       }
-    } catch (error) {
-      console.error('Error setting primary DID:', error)
     }
+    const response = await request()
+
+    setActionBusy(false)
+    if (typeof response === 'string') {
+      setActionError(response)
+      return
+    }
+
+    const { data } = response as AxiosResponse
+    const succeeded =
+      data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS ||
+      data?.statusCode === apiStatusCodes.API_STATUS_CREATED
+    if (!succeeded) {
+      setActionError(data?.message || 'The change could not be made.')
+      return
+    }
+
+    setPendingAction(null)
+    setListMessage(data?.message ?? null)
+    if (type === 'delete' && detailsDid === item.did) {
+      setDetailsDid(null)
+    }
+    await getData()
+    router.refresh()
+    onWalletChange?.()
+  }
+
+  const openAction = (type: DidActionType, item: IDidListData): void => {
+    setActionError(null)
+    setPendingAction({ type, item })
   }
 
   const fetchOrganizations = async (): Promise<void> => {
@@ -389,7 +443,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [showArchived])
 
   // Create DID functions
   const getValidationSchema = (): Yup.AnyObject => {
@@ -755,8 +809,24 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
   }, [havePrivateKey])
 
+  // Only owners and admins may change DIDs, matching the Create DID button.
+  const canManageDids = !(
+    userRoles.includes(Roles.MEMBER) ||
+    userRoles.includes(Roles.ISSUER) ||
+    userRoles.includes(Roles.VERIFIER)
+  )
+
   return (
     <div className="w-full space-y-4">
+      {listMessage && (
+        <div className="w-full" role="status">
+          <AlertComponent
+            message={listMessage}
+            type={'success'}
+            onAlertClose={() => setListMessage(null)}
+          />
+        </div>
+      )}
       {successMsg && (
         <div className="w-full" role="alert">
           <AlertComponent
@@ -784,7 +854,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Button
           onClick={async () => {
             setIsMethodLoading(true)
@@ -814,6 +884,16 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         >
           {getButtonLabel()}
         </Button>
+        <div className="flex items-center gap-2">
+          <Switch
+            id="show-archived-dids"
+            checked={showArchived}
+            onCheckedChange={setShowArchived}
+          />
+          <Label htmlFor="show-archived-dids" className="text-sm font-normal">
+            Show archived
+          </Label>
+        </div>
       </div>
 
       <div className="divide-y rounded-lg border">
@@ -824,33 +904,45 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         ) : (
           <>
             {didList.map((item: IDidListData, index: number) => (
-              <div key={item.id} className={'grid h-20 items-center p-4'}>
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex gap-4">
-                    <span className="w-16 shrink-0">DID {index + 1}</span>
+              <div
+                key={item.id}
+                className={'grid min-h-20 items-center gap-1 p-4'}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <div className="flex min-w-0 gap-2 sm:gap-4">
+                    <span className="w-12 shrink-0 sm:w-16">
+                      DID {index + 1}
+                    </span>
                     <span>:</span>
 
                     {item?.did ? (
-                      <CopyDid value={item.did} className="flex-1 font-mono" />
+                      <CopyDid
+                        value={item.did}
+                        className="min-w-0 flex-1 font-mono"
+                        onValueClick={() => setDetailsDid(item.did)}
+                      />
                     ) : (
                       <span className="flex-1 font-mono">Not available</span>
                     )}
                   </div>
-                  <div className={item.isPrimaryDid ? 'grow' : ''}>
-                    {item.isPrimaryDid ? (
+                  <div className="flex shrink-0 items-center gap-2">
+                    {item.isPrimaryDid && (
                       <Badge
                         variant="default"
                         className="cursor-default text-sm"
                       >
                         Primary DID
                       </Badge>
-                    ) : (
-                      <div className="ml-auto">
-                        <AlertDialogDemo
-                          handler={() => setPrimaryDid(item.id, item.did)}
-                        />
-                      </div>
                     )}
+                    {item.isArchived && (
+                      <StatusPill tone="warn">Archived</StatusPill>
+                    )}
+                    <DidRowActions
+                      item={item}
+                      canManage={canManageDids}
+                      onDetails={() => setDetailsDid(item.did)}
+                      onAction={(type) => openAction(type, item)}
+                    />
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -870,6 +962,20 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           </>
         )}
       </div>
+
+      <DidDetailsPanel
+        orgId={orgId}
+        did={detailsDid}
+        onOpenChange={(open) => !open && setDetailsDid(null)}
+      />
+      <DidActionDialog
+        orgId={orgId}
+        action={pendingAction}
+        busy={actionBusy}
+        error={actionError}
+        onConfirm={runAction}
+        onCancel={() => setPendingAction(null)}
+      />
 
       {/* Create DID dialog. The method is chosen by the user, so an
           organization is never limited to its current primary DID method. */}
@@ -1034,9 +1140,12 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                                   *
                                 </span>
                               </Label>
-                              <Textarea
+                              <Field
+                                as={Textarea}
                                 id="privateKey"
                                 name="privateKey"
+                                autoComplete="off"
+                                spellCheck={false}
                                 rows={4}
                                 className="mt-1 font-mono text-xs"
                                 placeholder="-----BEGIN PRIVATE KEY----- ... or a private JWK JSON"

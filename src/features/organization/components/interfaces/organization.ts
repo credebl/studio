@@ -196,8 +196,39 @@ export interface IDidListData {
   id: string
   did: string
   isPrimaryDid: boolean
+  isArchived?: boolean
+  archivedAt?: string | null
   createDateTime: string
   lastChangedDateTime: string
+}
+
+/** How a DID has been used, which decides whether it can still be deleted. */
+export interface IDidUsage {
+  wasPrimary: boolean
+  schemas: number
+  statusLists: number
+  holderNotifications: number
+  invitations: number
+}
+
+export interface IDidDetails extends IDidListData {
+  method: string
+  didDocument: unknown
+  usage: IDidUsage
+  deletion: {
+    allowed: boolean
+    reasons: string[]
+  }
+}
+
+export type DidResolveSource = 'local' | 'network'
+
+export interface IDidResolution {
+  source: DidResolveSource
+  matchesStored: boolean
+  didDocument: unknown
+  didDocumentMetadata?: Record<string, unknown>
+  didResolutionMetadata?: Record<string, unknown>
 }
 
 export interface IFormikValue {

@@ -1,118 +1,138 @@
+/*
+ * CREDEBL theme: the default Studio theme.
+ *
+ * Brand colors come from the CREDEBL logo: blue #1f4ead and cyan #25afe1.
+ *   - Light mode uses the brand blue as the primary color (7.6:1 on white).
+ *   - Dark mode uses a lightened tint of the brand blue (#5b8cf0) because the raw brand blue is only 2.4:1 on a dark
+ *     background, and the brand cyan as the highlight and focus color (7.4:1).
+ * The cyan is never used for text or icons on light backgrounds (2.5:1).
+ *
+ * Every text/background pair below is checked against WCAG AA by `pnpm check:theme`, so keep that script green when
+ * changing a value. Components must use these tokens (for example `text-success`) rather than raw palette classes.
+ * See docs/THEMING.md.
+ */
 :root {
   --background: #ffffff;
-  --foreground: #111826;
+  --foreground: #0b1220;
   --card: #ffffff;
-  --card-foreground: #111826;
+  --card-foreground: #0b1220;
   --popover: #ffffff;
-  --popover-foreground: #111826;
-  --primary: #0152cb;
+  --popover-foreground: #0b1220;
+  --primary: #1f4ead;
   --primary-foreground: #ffffff;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #364050;
-  --muted: #f5f5f5;
-  --muted-foreground: #6c727e;
-  --accent: #e7effc;
-  --accent-foreground: #0152cb;
-  --destructive: #df2224;
+  --secondary: #f3f6fb;
+  --secondary-foreground: #1b2740;
+  --muted: #f3f6fb;
+  --muted-foreground: #51607a;
+  --accent: #e6f6fc;
+  --accent-foreground: #0b4a63;
+  --destructive: #b91c1c;
   --destructive-foreground: #ffffff;
-  --border: #e4e8ef;
-  --input: #e4e8ef;
-  --ring: #0152cb;
-  --chart-1: #0152cb;
-  --chart-2: #0265fd;
-  --chart-3: #00409b;
-  --chart-4: #0d49a5;
-  --chart-5: #162a4e;
-  --sidebar: #f2f2f2;
-  --sidebar-foreground: #111826;
-  --sidebar-primary: #0152cb;
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --warning: #a16207;
+  --warning-foreground: #ffffff;
+  --info: #0e7490;
+  --info-foreground: #ffffff;
+  /* Decorative separators (cards, dividers). Form controls use --input, which meets the 3:1 control contrast. */
+  --border: #d5dcea;
+  --input: #7a89a6;
+  --ring: #1f4ead;
+  --chart-1: #1f4ead;
+  --chart-2: #25afe1;
+  --chart-3: #15803d;
+  --chart-4: #a16207;
+  --chart-5: #b91c1c;
+  --sidebar: #f3f6fb;
+  --sidebar-foreground: #0b1220;
+  --sidebar-primary: #1f4ead;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e7effc;
-  --sidebar-accent-foreground: #0152cb;
-  --sidebar-border: #e4e8ef;
-  --sidebar-ring: #0152cb;
+  --sidebar-accent: #e6f6fc;
+  --sidebar-accent-foreground: #0b4a63;
+  --sidebar-border: #d5dcea;
+  --sidebar-ring: #1f4ead;
 
   --font-sans: Inter, sans-serif;
   --font-serif: Source Serif 4, serif;
   --font-mono: IBM Plex Mono, monospace;
 
-  --radius: 0.375rem;
+  --radius: 0.5rem;
 
-  --shadow-2xs: 2px 2px 4px 0px hsl(196 83% 10% / 0.07);
-  --shadow-xs: 2px 2px 4px 0px hsl(196 83% 10% / 0.07);
-  --shadow-sm: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 1px 2px -1px hsl(196 83% 10% / 0.15);
-  --shadow: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 1px 2px -1px hsl(196 83% 10% / 0.15);
-  --shadow-md: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 2px 4px -1px hsl(196 83% 10% / 0.15);
-  --shadow-lg: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 4px 6px -1px hsl(196 83% 10% / 0.15);
-  --shadow-xl: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 8px 10px -1px hsl(196 83% 10% / 0.15);
-  --shadow-2xl: 2px 2px 4px 0px hsl(196 83% 10% / 0.38);
-
-  --logo-light: '/logos/credebl_light.svg';
-  --logo-dark: '/logos/credebl_dark.svg';
-  --favicon: '/favicons/favicon-credebl.ico';
+  --shadow-2xs: 0 1px 2px 0 hsl(222 47% 8% / 0.05);
+  --shadow-xs: 0 1px 2px 0 hsl(222 47% 8% / 0.06);
+  --shadow-sm: 0 1px 3px 0 hsl(222 47% 8% / 0.1),
+    0 1px 2px -1px hsl(222 47% 8% / 0.1);
+  --shadow: 0 1px 3px 0 hsl(222 47% 8% / 0.1),
+    0 1px 2px -1px hsl(222 47% 8% / 0.1);
+  --shadow-md: 0 4px 6px -1px hsl(222 47% 8% / 0.1),
+    0 2px 4px -2px hsl(222 47% 8% / 0.1);
+  --shadow-lg: 0 10px 15px -3px hsl(222 47% 8% / 0.1),
+    0 4px 6px -4px hsl(222 47% 8% / 0.1);
+  --shadow-xl: 0 20px 25px -5px hsl(222 47% 8% / 0.1),
+    0 8px 10px -6px hsl(222 47% 8% / 0.1);
+  --shadow-2xl: 0 25px 50px -12px hsl(222 47% 8% / 0.25);
 }
 
-/* Dark mode overrides */
+/* Dark mode: navy-tinted neutrals so surfaces step up in lightness (background, card, muted). */
 .dark {
-  --background: #002b36;
-  --foreground: #93a1a1;
-  --card: #073642;
-  --card-foreground: #93a1a1;
-  --popover: #073642;
-  --popover-foreground: #93a1a1;
-  --primary: #d33682;
-  --primary-foreground: #ffffff;
-  --secondary: #2aa198;
-  --secondary-foreground: #ffffff;
-  --muted: #586e75;
-  --muted-foreground: #93a1a1;
-  --accent: #cb4b16;
-  --accent-foreground: #ffffff;
-  --destructive: #dc322f;
-  --destructive-foreground: #ffffff;
-  --border: #586e75;
-  --input: #586e75;
-  --ring: #d33682;
-  --chart-1: #268bd2;
-  --chart-2: #2aa198;
-  --chart-3: #d33682;
-  --chart-4: #cb4b16;
-  --chart-5: #dc322f;
-  --sidebar: #002b36;
-  --sidebar-foreground: #93a1a1;
-  --sidebar-primary: #d33682;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2aa198;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #586e75;
-  --sidebar-ring: #d33682;
+  --background: #0b1220;
+  --foreground: #e8edf7;
+  --card: #121a2b;
+  --card-foreground: #e8edf7;
+  --popover: #121a2b;
+  --popover-foreground: #e8edf7;
+  --primary: #5b8cf0;
+  --primary-foreground: #06122b;
+  --secondary: #18223a;
+  --secondary-foreground: #e8edf7;
+  --muted: #18223a;
+  --muted-foreground: #9fadc6;
+  --accent: #10324a;
+  --accent-foreground: #bfe9f8;
+  --destructive: #ff6b6b;
+  --destructive-foreground: #1c0505;
+  --success: #3fb950;
+  --success-foreground: #04140a;
+  --warning: #e3b341;
+  --warning-foreground: #1a1303;
+  --info: #25afe1;
+  --info-foreground: #04202c;
+  --border: #2a3752;
+  --input: #56688c;
+  --ring: #25afe1;
+  --chart-1: #5b8cf0;
+  --chart-2: #25afe1;
+  --chart-3: #3fb950;
+  --chart-4: #e3b341;
+  --chart-5: #ff6b6b;
+  --sidebar: #0e1626;
+  --sidebar-foreground: #e8edf7;
+  --sidebar-primary: #5b8cf0;
+  --sidebar-primary-foreground: #06122b;
+  --sidebar-accent: #18223a;
+  --sidebar-accent-foreground: #e8edf7;
+  --sidebar-border: #2a3752;
+  --sidebar-ring: #25afe1;
 
-  --font-sans: Outfit, sans-serif;
-  --font-serif: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
-  --font-mono: Space Mono, monospace;
-
-  --radius: 0.25rem;
-
-  --shadow-2xs: 2px 2px 4px 0px hsl(196 83% 10% / 0.07);
-  --shadow-xs: 2px 2px 4px 0px hsl(196 83% 10% / 0.07);
-  --shadow-sm: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 1px 2px -1px hsl(196 83% 10% / 0.15);
-  --shadow: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 1px 2px -1px hsl(196 83% 10% / 0.15);
-  --shadow-md: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 2px 4px -1px hsl(196 83% 10% / 0.15);
-  --shadow-lg: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 4px 6px -1px hsl(196 83% 10% / 0.15);
-  --shadow-xl: 2px 2px 4px 0px hsl(196 83% 10% / 0.15),
-    2px 8px 10px -1px hsl(196 83% 10% / 0.15);
-  --shadow-2xl: 2px 2px 4px 0px hsl(196 83% 10% / 0.38);
+  --shadow-2xs: 0 1px 2px 0 hsl(222 60% 2% / 0.4);
+  --shadow-xs: 0 1px 2px 0 hsl(222 60% 2% / 0.5);
+  --shadow-sm: 0 1px 3px 0 hsl(222 60% 2% / 0.6),
+    0 1px 2px -1px hsl(222 60% 2% / 0.6);
+  --shadow: 0 1px 3px 0 hsl(222 60% 2% / 0.6),
+    0 1px 2px -1px hsl(222 60% 2% / 0.6);
+  --shadow-md: 0 4px 6px -1px hsl(222 60% 2% / 0.6),
+    0 2px 4px -2px hsl(222 60% 2% / 0.6);
+  --shadow-lg: 0 10px 15px -3px hsl(222 60% 2% / 0.6),
+    0 4px 6px -4px hsl(222 60% 2% / 0.6);
+  --shadow-xl: 0 20px 25px -5px hsl(222 60% 2% / 0.6),
+    0 8px 10px -6px hsl(222 60% 2% / 0.6);
+  --shadow-2xl: 0 25px 50px -12px hsl(222 60% 2% / 0.7);
 }
 
+/*
+ * Maps the variables above to Tailwind utilities. This block is compiled into the app through globals.css; the file
+ * is also served as a plain stylesheet at runtime, where the browser ignores it and only the variables apply.
+ */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -130,6 +150,12 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);

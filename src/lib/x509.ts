@@ -63,6 +63,39 @@ export function parseBase64X509Certificate(base64Cert: string): {
   }
 }
 
+const commonNameCache = new Map<string, string | undefined>()
+
+const readCommonName = (certificate: string): string | undefined => {
+  try {
+    const [commonName] = new X509Certificate(certificate).subjectName.getField(
+      'CN',
+    )
+    return commonName
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Reads the subject common name of a certificate given as base64 DER or PEM. Returns undefined when the certificate has
+ * no common name or cannot be parsed. The platform does not store a common name for a certificate, so it is read from
+ * the certificate itself.
+ */
+export function getCertificateCommonName(
+  certificate?: string | null,
+): string | undefined {
+  if (!certificate) {
+    return undefined
+  }
+  if (commonNameCache.has(certificate)) {
+    return commonNameCache.get(certificate)
+  }
+
+  const commonName = readCommonName(certificate)
+  commonNameCache.set(certificate, commonName)
+  return commonName
+}
+
 export const normalizeCertificate = (pem: string): string =>
   pem
     .replaceAll('-----BEGIN CERTIFICATE-----', '')
