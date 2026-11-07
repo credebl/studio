@@ -108,7 +108,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@eslint/js": "^9.26.0",
+    "@eslint/js": "^9.39.5",
     "@faker-js/faker": "^10.5.0",
     "@types/crypto-js": "^4.2.2",
     "@types/dom-to-image": "^2.6.7",
