@@ -557,6 +557,19 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
   }, [privateKeyValue])
 
+  const getCreateDidErrorMessage = (message: unknown): string => {
+    const text = Array.isArray(message) ? message.join(', ') : message
+
+    if (
+      typeof text === 'string' &&
+      text.toLowerCase().includes('network is mismatched')
+    ) {
+      return "This organization's agent is not configured for the selected ledger network. Choose did:key or did:web, or configure the agent for that ledger before creating a ledger-based DID."
+    }
+
+    return typeof text === 'string' && text ? text : 'Failed to create DID'
+  }
+
   const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
     setErrMsg(null)
@@ -612,7 +625,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           router.refresh()
         }, 2000)
       } else {
-        setErrMsg(data?.message || 'Failed to create DID')
+        setErrMsg(getCreateDidErrorMessage(data?.message))
         setLoading(false)
         setIsCreatingDid(false)
         if (
