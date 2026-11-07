@@ -1,4 +1,4 @@
-import { Check, Copy } from 'lucide-react'
+import { CopyValue, Detail, StatusPill } from '@/features/wallet/DetailParts'
 import {
   Dialog,
   DialogContent,
@@ -10,111 +10,33 @@ import {
   IOrgAgent,
   IOrganisation,
 } from './interfaces/organization'
-import React, { useEffect, useRef, useState } from 'react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import React, { useEffect, useState } from 'react'
 
 import type { AxiosResponse } from 'axios'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
-import DIDList from '@/features/wallet/DidListComponent'
-import DataTable from '@/components/DataTable'
-import DidPanel from './DidPanel'
-import { ITableData } from '@/components/DataTable/interface'
+import DidDocumentPanel from '@/features/wallet/DidDocumentPanel'
+import { FileJson } from 'lucide-react'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
-import { useAppSelector } from '@/lib/hooks'
+import { getAgentHealth } from '@/app/api/Agent'
+import { getDidMethod } from '@/lib/did'
 
-const CopyDid = ({
-  value,
-  className,
-  hideValue = false,
-  ellipsis = true,
-  setCopied,
-  copied,
-}: {
-  value: string
-  className?: string
-  hideValue?: boolean
-  ellipsis?: boolean
-  setCopied: React.Dispatch<React.SetStateAction<boolean>>
-  copied: boolean
-}): React.JSX.Element => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <div className={`flex items-center gap-2 ${className}`}>
-        {!hideValue && ellipsis ? (
-          <span className="max-w-sm truncate">{value}</span>
-        ) : (
-          <span className="">{value}</span>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6"
-          onClick={() => {
-            navigator.clipboard
-              .writeText(value)
-              .catch((error) =>
-                console.error('could not copy to clipboard', error),
-              )
-              .then(() => setCopied(true))
+type HealthState = 'checking' | 'online' | 'unreachable'
 
-            setTimeout(() => {
-              setCopied(false)
-            }, 2000)
-          }}
-        >
-          {copied ? (
-            <Check className="text-green-400" />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
-    </TooltipTrigger>
-    <TooltipContent>
-      <p>Copy to clipboard</p>
-    </TooltipContent>
-  </Tooltip>
-)
-
-const DateTooltip = ({
-  date,
-  children,
-  showLabel = false,
-}: {
-  date: string
-  children: React.ReactNode
-  showLabel?: boolean
-}): React.JSX.Element => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <span>{children}</span>
-    </TooltipTrigger>
-    <TooltipContent>
-      {showLabel ? (
-        <p>Wallet Created on : {new Date(date).toLocaleString()}</p>
-      ) : (
-        <p>{new Date(date).toLocaleString()}</p>
-      )}
-    </TooltipContent>
-  </Tooltip>
-)
+// Mirrors AgentSpinUpStatus in the platform: the wallet is created first, then its DID.
+const SPIN_UP_LABELS: Record<number, string> = {
+  0: 'Pending',
+  1: 'Wallet created',
+  2: 'Ready',
+}
 
 const OrganizationDetails = ({
   orgData,
-  setActiveTab,
 }: {
   orgData: IOrganisation | null
-  setActiveTab: React.Dispatch<React.SetStateAction<string>>
 }): React.JSX.Element => {
   const orgId = orgData ? orgData?.id : ''
   // eslint-disable-next-line camelcase
@@ -125,13 +47,9 @@ const OrganizationDetails = ({
 
   const [loading, setLoading] = useState<boolean>(true)
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
-  const [copied, setCopied] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
-  const [copyDoc, setCopyDoc] = useState(false)
-  const selectedDropdownOrgId = useAppSelector(
-    (state) => state.organization.orgId,
-  )
+  const [didDocOpen, setDidDocOpen] = useState<boolean>(false)
+  const [health, setHealth] = useState<HealthState>('checking')
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -146,104 +64,119 @@ const OrganizationDetails = ({
 
   useEffect(() => {
     createQrConnection()
-    return () => {
-      setCopied(false)
-    }
   }, [])
 
-  const previousOrgId = useRef<string | null>(null)
-
   useEffect(() => {
-    if (
-      previousOrgId.current !== null &&
-      previousOrgId.current !== selectedDropdownOrgId
-    ) {
-      setActiveTab('Overview')
+    if (!orgId || !agentData?.agentEndPoint) {
+      setHealth('unreachable')
+      return
     }
-    previousOrgId.current = selectedDropdownOrgId
-  }, [selectedDropdownOrgId])
 
-  const tableData: ITableData[] = [
-    {
-      data: [
-        {
-          data: (
-            <div className="ml-8 flex items-center space-x-4">
-              {agentData?.walletName || 'Not available'}
-            </div>
-          ),
-        },
-        {
-          data: (
-            <div className="flex gap-2">
-              {agentData?.orgDid ? (
-                <CopyDid
-                  value={agentData?.orgDid}
-                  className="font-mono font-semibold"
-                  ellipsis={false}
-                  setCopied={setCopied}
-                  copied={copied}
-                />
-              ) : (
-                <span className="font-semibold">Not available</span>
-              )}{' '}
-            </div>
-          ),
-        },
-        {
-          data: agentData?.ledgers?.name || '-',
-        },
-        {
-          data: agentData?.org_agent_type?.agent
-            ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
-              agentData.org_agent_type.agent.slice(1).toLowerCase()
-            : '',
-        },
-        {
-          data: (
-            <Badge className="rounded-full border" variant={'outline'}>
-              Created :
-              {agentData?.createDateTime ? (
-                <DateTooltip date={agentData.createDateTime} showLabel={true}>
-                  {dateConversion(agentData.createDateTime)}
-                </DateTooltip>
-              ) : (
-                <div className="ml-1">Not Available</div>
-              )}
-            </Badge>
-          ),
-        },
-        {
-          data: (
-            <Button className="" onClick={() => setOpenModal(true)}>
-              Scan QR
-            </Button>
-          ),
-        },
-      ],
-    },
-  ]
+    let cancelled = false
+    setHealth('checking')
+    getAgentHealth(orgId)
+      .then((response) => {
+        if (cancelled) {
+          return
+        }
+        const { data } = response as AxiosResponse
+        const online =
+          data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
+          data?.data?.isInitialized !== false
+        setHealth(online ? 'online' : 'unreachable')
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setHealth('unreachable')
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [orgId, agentData?.agentEndPoint])
+
+  const agentType = agentData?.org_agent_type?.agent
+    ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
+      agentData.org_agent_type.agent.slice(1).toLowerCase()
+    : null
+  const spinUpStatus = agentData?.agentSpinUpStatus
+  const hasTenant = Boolean(agentData?.tenantId)
+  // A did:web document has to be hosted by the organization, so it is offered next to the DID. It is only formatted when
+  // the panel is opened.
+  const isDidWeb = getDidMethod(agentData?.orgDid) === 'web'
+
+  let healthPill: React.ReactNode = (
+    <StatusPill tone="neutral">Checking…</StatusPill>
+  )
+  if (health === 'online') {
+    healthPill = <StatusPill tone="good">Online</StatusPill>
+  } else if (health === 'unreachable') {
+    healthPill = <StatusPill tone="bad">Unreachable</StatusPill>
+  }
 
   return (
-    <div className="">
-      <div className="flex justify-between">
-        <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
-        <Button onClick={() => setIsDrawerOpen(true)}>Did List</Button>
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-4">
+        <h2 className="text-2xl font-bold">Wallet Details</h2>
+        <Button variant="outline" onClick={() => setOpenModal(true)}>
+          Scan QR
+        </Button>
       </div>
 
-      <DataTable
-        header={[
-          { columnName: 'Wallet Name' },
-          { columnName: 'Org DID' },
-          { columnName: 'Network' },
-          { columnName: 'Agent Type' },
-          { columnName: '' },
-          { columnName: '' },
-        ]}
-        data={tableData}
-        loading={loading}
-        isEmailVerification={true}
-      />
+      <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Detail label="Wallet name">
+          {agentData?.walletName || 'Not available'}
+        </Detail>
+        <Detail label="Agent type">{agentType ?? 'Not available'}</Detail>
+        <Detail label="Network">{agentData?.ledgers?.name || '-'}</Detail>
+        <Detail label="Agent status">
+          <div className="flex flex-wrap items-center gap-2">
+            {healthPill}
+            {spinUpStatus !== undefined && (
+              <StatusPill tone={spinUpStatus === 2 ? 'good' : 'warn'}>
+                {SPIN_UP_LABELS[spinUpStatus] ?? `Status ${spinUpStatus}`}
+              </StatusPill>
+            )}
+          </div>
+        </Detail>
+        <Detail label="Created">
+          {agentData?.createDateTime
+            ? dateConversion(agentData.createDateTime)
+            : 'Not available'}
+        </Detail>
+        {hasTenant && (
+          <Detail label="Tenant ID">
+            <CopyValue value={String(agentData?.tenantId)} />
+          </Detail>
+        )}
+        {agentData?.agentEndPoint && (
+          <Detail label="Agent endpoint" wide>
+            <CopyValue value={agentData.agentEndPoint} />
+          </Detail>
+        )}
+        <Detail label="Org DID" wide>
+          {agentData?.orgDid ? (
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="min-w-0 flex-1">
+                <CopyValue value={agentData.orgDid} />
+              </div>
+              {isDidWeb && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDidDocOpen(true)}
+                >
+                  <FileJson className="h-4 w-4" />
+                  DID document
+                </Button>
+              )}
+            </div>
+          ) : (
+            'Not available'
+          )}
+        </Detail>
+      </dl>
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent
@@ -271,69 +204,14 @@ const OrganizationDetails = ({
           </div>
         </DialogContent>
       </Dialog>
-      <DidPanel
-        open={isDrawerOpen}
-        onOpenChange={setIsDrawerOpen}
-        title={'DID Details'}
-        description={'Detailed view of selected Schema'}
-      >
-        <DIDList orgId={orgId} />
-      </DidPanel>
 
-      {agentData?.orgDid?.startsWith('did:web') && (
-        <Card className="mt-5 p-6">
-          <h3 className="mb-4 text-xl font-bold">DID Document</h3>
-
-          <div className="space-y-8">
-            <div>
-              <h4 className="mb-2 text-lg font-semibold">Instructions:</h4>
-              <ul className="space-y-1">
-                <li>
-                  1. Kindly provide the DID document for hosting purposes in
-                  order to facilitate its publication
-                </li>
-                <li>
-                  2. Failure to host the DID document will result in the
-                  inability to publish your DID
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-md">
-              <div className="flex items-start justify-between">
-                <pre className="bg-muted relative w-full overflow-x-auto rounded-md p-4">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute top-3 right-3 h-6 w-6"
-                    onClick={() => {
-                      navigator.clipboard
-                        .writeText(
-                          JSON.stringify(agentData?.didDocument, undefined, 4),
-                        )
-                        .catch((error) =>
-                          console.error('could not copy to clipboard', error),
-                        )
-                      setCopyDoc(true)
-                      setTimeout(() => {
-                        setCopyDoc(false)
-                      }, 2000)
-                    }}
-                  >
-                    {copyDoc ? (
-                      <Check className="text-green-400" />
-                    ) : (
-                      <Copy className="h-4 w-4" />
-                    )}
-                  </Button>
-                  <code className="text-sm">
-                    {JSON.stringify(agentData?.didDocument, undefined, 4)}
-                  </code>
-                </pre>
-              </div>
-            </div>
-          </div>
-        </Card>
+      {isDidWeb && agentData?.orgDid && (
+        <DidDocumentPanel
+          open={didDocOpen}
+          onOpenChange={setDidDocOpen}
+          did={agentData.orgDid}
+          didDocument={agentData.didDocument}
+        />
       )}
     </div>
   )

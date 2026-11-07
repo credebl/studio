@@ -19,7 +19,7 @@ import {
   apiStatusCodes,
   confirmationCertificateMessages,
 } from '@/config/CommonConstant'
-
+import { formatKmsBackend, getCertificateCommonName } from '@/lib/x509'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -28,7 +28,6 @@ import CertificateDetailsDialog from './CertificateDetailsDialog'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
-import { formatKmsBackend } from '@/lib/x509'
 import { useAppSelector } from '@/lib/hooks'
 
 export interface PaginationState {
@@ -74,13 +73,13 @@ const StatusCell = ({
   const getStatusClass = (value?: string): string => {
     switch (value) {
       case 'Active':
-        return 'badges-success text-foreground'
+        return 'status-accepted'
       case 'Inactive':
-        return 'badges-error text-foreground'
+        return 'status-rejected'
       case 'Pending activation':
-        return 'badges-warning text-foreground'
+        return 'status-pending'
       default:
-        return 'badges-secondary text-foreground'
+        return 'bg-muted text-muted-foreground'
     }
   }
 
@@ -97,11 +96,19 @@ const StatusCell = ({
   )
 }
 
+// The platform does not return a common name, so fall back to the one inside the certificate.
+const commonNameOf = (certificate: Certificate): string | undefined =>
+  certificate.commonName ||
+  getCertificateCommonName(certificate.certificateBase64)
+
 const CommonNameCell = ({
   row,
 }: CellContext<Certificate, unknown>): JSX.Element => (
-  <span className="max-w-[220px] truncate text-sm font-medium">
-    {row.original.commonName || '—'}
+  <span
+    className="max-w-[220px] truncate text-sm font-medium"
+    title={commonNameOf(row.original)}
+  >
+    {commonNameOf(row.original) || '—'}
   </span>
 )
 
