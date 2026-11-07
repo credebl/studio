@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { InfoText, apiStatusCodes } from '@/config/CommonConstant'
+import { type KeyImportKeyMaterial, parseKeyMaterial } from '@/utils/keyImport'
 import React, { useEffect, useState } from 'react'
 import {
   Select,
@@ -32,6 +33,7 @@ import { AlertComponent } from '@/components/AlertComponent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { DidMethod } from '@/common/enums'
+import ImportPrivateKeyInput from './ImportPrivateKeyInput'
 import PageContainer from '@/components/layout/page-container'
 import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
@@ -53,6 +55,10 @@ const CreateDid = (): React.JSX.Element => {
   const [success, setSuccess] = useState<string | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
   const [domainError, setDomainError] = useState<string | null>(null)
+  const [haveKeyMaterial, setHaveKeyMaterial] = useState<boolean>(false)
+  const [importPrivateKey, setImportPrivateKey] = useState<string>('')
+  const [importPassphrase, setImportPassphrase] = useState<string>('')
+  const [importKeyError, setImportKeyError] = useState<string | null>(null)
   type Protocol = 'didcomm' | 'oid4vc'
   const [step, setStep] = useState(3)
 
@@ -68,8 +74,35 @@ const CreateDid = (): React.JSX.Element => {
     setSeeds(generatedSeeds)
   }, [])
 
+  const supportsKeyImport =
+    selectedDid === DidMethod.KEY || selectedDid === DidMethod.WEB
+  const usesImportedKey = supportsKeyImport && haveKeyMaterial
+
+  const resetKeyImport = (): void => {
+    setHaveKeyMaterial(false)
+    setImportPrivateKey('')
+    setImportPassphrase('')
+    setImportKeyError(null)
+  }
+
+  /** `undefined` when no key is imported, `null` when the pasted key is invalid. */
+  const parseImportedKey = (): KeyImportKeyMaterial | null | undefined => {
+    if (!usesImportedKey) {
+      return undefined
+    }
+    try {
+      return parseKeyMaterial(importPrivateKey, importPassphrase || undefined)
+    } catch (error) {
+      setImportKeyError(
+        error instanceof Error ? error.message : 'Invalid private key',
+      )
+      return null
+    }
+  }
+
   const validateForm = (): boolean => {
     setDomainError(null)
+    setImportKeyError(null)
 
     let isValid = true
 
@@ -83,10 +116,21 @@ const CreateDid = (): React.JSX.Element => {
       isValid = false
     }
 
+    if (usesImportedKey && !importPrivateKey.trim()) {
+      setImportKeyError('Enter the private key to import')
+      isValid = false
+    }
+
     return isValid
   }
   const handleSubmit = async (): Promise<void> => {
     if (!validateForm()) {
+      return
+    }
+
+    // Parse an imported did:key / did:web key before asking for an import session, so an invalid key does not burn one.
+    const importedKeyMaterial = parseImportedKey()
+    if (importedKeyMaterial === null) {
       return
     }
 
@@ -106,17 +150,17 @@ const CreateDid = (): React.JSX.Element => {
       }
 
       const isPolygon = fullMethod === DidMethod.POLYGON
-      // The Polygon key is encrypted in the browser to a single-use import session; only the envelope is sent.
-      const encryptedKey = isPolygon
-        ? await encryptKeyForDidImport(
-            orgId!,
-            method,
-            polygonKeyMaterial(privateKeyValue),
-          )
+      // Imported keys are encrypted in the browser to a single-use import session; only the envelope is sent.
+      const keyMaterial = isPolygon
+        ? polygonKeyMaterial(privateKeyValue)
+        : importedKeyMaterial
+      const encryptedKey = keyMaterial
+        ? await encryptKeyForDidImport(orgId!, method, keyMaterial)
         : undefined
 
       const payload = {
-        seed: isPolygon ? '' : seeds,
+        // An imported key determines the DID, so no seed is sent with it.
+        seed: isPolygon || importedKeyMaterial ? '' : seeds,
         keyType: 'ed25519',
         method,
         ledger: didParts[2] || '',
@@ -243,6 +287,7 @@ const CreateDid = (): React.JSX.Element => {
                         setSelectedOption(null)
                         setSelectedDid(null)
                         setDomainError(null)
+                        resetKeyImport()
                       }}
                       disabled={isDisabled}
                       className={`relative rounded-xl border-2 p-6 text-left transition-all ${selectedProtocol === option.id ? 'border-primary bg-secondary shadow-sm' : 'border-border bg-background hover:shadow-sm'} ${isDisabled ? 'cursor-not-allowed opacity-50' : ''} `}
@@ -282,6 +327,7 @@ const CreateDid = (): React.JSX.Element => {
                           setSelectedOption(option.id)
                           setSelectedDid(null)
                           setDomainError(null)
+                          resetKeyImport()
                         }}
                         className={`relative rounded-xl border-2 p-6 text-left transition-all ${
                           selectedOption === option.id
@@ -326,6 +372,7 @@ const CreateDid = (): React.JSX.Element => {
                       onValueChange={(value) => {
                         setSelectedDid(value)
                         setDomainError(null)
+                        resetKeyImport()
                       }}
                     >
                       <SelectTrigger className="w-full md:w-1/2">
@@ -359,6 +406,25 @@ const CreateDid = (): React.JSX.Element => {
                   domainValue={domainValue}
                   setDomainValue={handleDomainChange}
                   domainError={domainError}
+                />
+              )}
+
+              {/* Optional private key import for did:key and did:web */}
+              {supportsKeyImport && (
+                <ImportPrivateKeyInput
+                  enabled={haveKeyMaterial}
+                  privateKey={importPrivateKey}
+                  passphrase={importPassphrase}
+                  error={importKeyError}
+                  onEnabledChange={(enabled) => {
+                    resetKeyImport()
+                    setHaveKeyMaterial(enabled)
+                  }}
+                  onPrivateKeyChange={(value) => {
+                    setImportPrivateKey(value)
+                    setImportKeyError(null)
+                  }}
+                  onPassphraseChange={setImportPassphrase}
                 />
               )}
             </CardContent>
