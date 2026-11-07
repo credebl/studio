@@ -2,6 +2,10 @@
 
 @import 'tw-animate-css';
 
+/* Tailwind v4 ignores tailwind.config.js, so tie `dark:` to the .dark class that next-themes sets. Without this,
+   `dark:` utilities follow the OS setting and disagree with the theme switcher. */
+@custom-variant dark (&:is(.dark *));
+
 @import '../../public/themes/credebl_theme.css';
 
 /* Cursor pointer globally for buttons */
