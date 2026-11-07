@@ -91,6 +91,27 @@ export const spinupSharedAgent = async (
   }
 }
 
+export const createDidImportSession = async (
+  orgId: string,
+  method: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.didImportSession}`
+  const config = getHeaderConfigs()
+
+  const axiosPayload = {
+    url,
+    payload: { method },
+    config,
+  }
+
+  try {
+    return await axiosPost(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
 export const createDid = async (
   orgId: string,
   data: object,
