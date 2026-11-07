@@ -195,8 +195,8 @@ importers:
         specifier: ^3.7.15
         version: 3.8.16(next@16.4.1(@types/node@22.10.2)(react-dom@19.0.1(react@19.0.1))(react@19.0.1))(react-dom@19.0.1(react@19.0.1))(react@19.0.1)
       node-forge:
-        specifier: ^1.3.3
-        version: 1.3.3
+        specifier: ^1.4.1
+        version: 1.4.1
       nuqs:
         specifier: ^2.4.1
         version: 2.4.2(next@16.4.1(@types/node@22.10.2)(react-dom@19.0.1(react@19.0.1))(react@19.0.1))(react@19.0.1)
@@ -3545,8 +3545,8 @@ packages:
       react: '>= 16.0.0'
       react-dom: '>= 16.0.0'
 
-  node-forge@1.3.3:
-    resolution: {integrity: sha512-rLvcdSyRCyouf6jcOIPe/BgwG/d7hKjzMKOas33/pHEr6gbq18IK9zV7DiPvzsz0oBJPme6qr6H6kGZuI9/DZg==}
+  node-forge@1.4.1:
+    resolution: {integrity: sha512-w5/MfWaeMrpR/5ba6fZyAUTLSuE6aYz7H/3cYrqwZEmf5eQS3IaaLgJt4MBv7HglGFWmV22K8h4U18RJQmw/ow==}
     engines: {node: '>= 6.13.0'}
 
   node-releases@2.0.19:
@@ -7771,7 +7771,7 @@ snapshots:
       react: 19.0.1
       react-dom: 19.0.1(react@19.0.1)
 
-  node-forge@1.3.3: {}
+  node-forge@1.4.1: {}
 
   node-releases@2.0.19: {}
 
