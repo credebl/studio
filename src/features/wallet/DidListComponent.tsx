@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { DidMethod, Network, Roles } from '@/common/enums'
+import { type EncryptedKey, parseKeyMaterial } from '@/utils/keyImport'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import {
   Select,
@@ -36,6 +37,10 @@ import {
   getDids,
   updatePrimaryDid,
 } from '@/app/api/Agent'
+import {
+  encryptKeyForDidImport,
+  polygonKeyMaterial,
+} from '@/utils/didKeyImport'
 import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
 
@@ -49,6 +54,7 @@ import { CommonConstants } from '../common/enum'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
+import { Textarea } from '@/components/ui/textarea'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
@@ -79,6 +85,8 @@ interface IFormValues {
   network: string
   domain: string
   privatekey: string
+  privateKey: string
+  passphrase: string
   endorserDid: string
   did: string
 }
@@ -276,6 +284,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     string | null
   >(null)
   const [havePrivateKey, setHavePrivateKey] = useState(false)
+  const [haveKeyMaterial, setHaveKeyMaterial] = useState(false)
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(
     null,
@@ -292,6 +301,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     network: '',
     domain: '',
     privatekey: '',
+    privateKey: '',
+    passphrase: '',
     endorserDid: '',
     did: '',
   })
@@ -388,6 +399,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       network: Yup.string(),
       domain: Yup.string(),
       privatekey: Yup.string(),
+      privateKey: Yup.string(),
+      passphrase: Yup.string(),
       endorserDid: Yup.string(),
       did: Yup.string(),
     })
@@ -405,6 +418,17 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     } else if (method === DidMethod.INDY) {
       schema = schema.shape({
         network: Yup.string().required('Network is required'),
+      })
+    }
+
+    if (
+      (method === DidMethod.KEY || method === DidMethod.WEB) &&
+      haveKeyMaterial
+    ) {
+      schema = schema.shape({
+        privateKey: Yup.string().required(
+          'Private key (PEM, base64 DER or JWK) is required',
+        ),
       })
     }
 
@@ -459,6 +483,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       network,
       domain: '',
       privatekey: generatedKeys?.privateKey.slice(2) || '',
+      privateKey: '',
+      passphrase: '',
       endorserDid: '',
       did: '',
     }
@@ -480,7 +506,10 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     setFieldValue('network', network)
     setFieldValue('domain', '')
     setFieldValue('privatekey', '')
+    setFieldValue('privateKey', '')
+    setFieldValue('passphrase', '')
     setHavePrivateKey(false)
+    setHaveKeyMaterial(false)
     setGeneratedKeys(null)
     setPrivateKeyValue('')
     setWalletErrorMessage(null)
@@ -570,6 +599,24 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     return typeof text === 'string' && text ? text : 'Failed to create DID'
   }
 
+  /**
+   * Requests a single-use import session and encrypts the pasted key to it in the browser. Only the resulting JWE
+   * envelope is sent to the gateway, so the plaintext key never leaves this tab.
+   */
+  const buildEncryptedKey = async (
+    values: IFormValues,
+  ): Promise<EncryptedKey> => {
+    const didMethod = values.method?.split(':')[1] || ''
+    // Parse before asking for a session, so an invalid key does not burn one.
+    // did:polygon uses the hex secp256k1 key from the Polygon key pair flow.
+    const material =
+      values.method === DidMethod.POLYGON
+        ? polygonKeyMaterial(values.privatekey)
+        : parseKeyMaterial(values.privateKey, values.passphrase)
+
+    return encryptKeyForDidImport(orgId, didMethod, material)
+  }
+
   const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
     setErrMsg(null)
@@ -585,14 +632,35 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     } else if (values.method === DidMethod.POLYGON) {
       network = `${values.ledger}:${values.network}`
     }
+
+    const usesImportedKey =
+      (values.method === DidMethod.KEY || values.method === DidMethod.WEB) &&
+      haveKeyMaterial
+
+    let encryptedKey: EncryptedKey | undefined = undefined
+    if (usesImportedKey || values.method === DidMethod.POLYGON) {
+      try {
+        encryptedKey = await buildEncryptedKey(values)
+      } catch (error) {
+        setErrMsg(
+          error instanceof Error
+            ? error.message
+            : 'Failed to encrypt the private key for import',
+        )
+        setLoading(false)
+        setIsCreatingDid(false)
+        return
+      }
+    }
+
     const didData = {
-      seed: values.method === DidMethod.POLYGON ? '' : seed,
+      seed: values.method === DidMethod.POLYGON || usesImportedKey ? '' : seed,
       keyType: 'ed25519',
       method: values.method?.split(':')[1] || '',
       network,
       domain: values.method === DidMethod.WEB ? values.domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
-      privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
+      encryptedKey,
       did: values?.did ?? '',
       endorserDid: values?.endorserDid || '',
       isPrimaryDid: false,
@@ -940,6 +1008,74 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                       </div>
                     )}
 
+                    {(method === DidMethod.KEY || method === DidMethod.WEB) && (
+                      <div className="col-span-1 space-y-4 rounded-md border p-4 sm:col-span-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="haveKeyMaterial"
+                            checked={haveKeyMaterial}
+                            onCheckedChange={(checked) => {
+                              setHaveKeyMaterial(checked === true)
+                              setFieldValue('privateKey', '')
+                              setFieldValue('passphrase', '')
+                            }}
+                          />
+                          <Label htmlFor="haveKeyMaterial">
+                            Import an existing private key
+                          </Label>
+                        </div>
+
+                        {haveKeyMaterial && (
+                          <>
+                            <div>
+                              <Label htmlFor="privateKey">
+                                Private key{' '}
+                                <span className="text-destructive text-xs">
+                                  *
+                                </span>
+                              </Label>
+                              <Textarea
+                                id="privateKey"
+                                name="privateKey"
+                                rows={4}
+                                className="mt-1 font-mono text-xs"
+                                placeholder="-----BEGIN PRIVATE KEY----- ... or a private JWK JSON"
+                              />
+                              <ErrorMessage
+                                name="privateKey"
+                                component="div"
+                                className="text-destructive mt-1 text-sm"
+                              />
+                              <p className="text-muted-foreground mt-1 text-sm">
+                                The key is encrypted in your browser to a
+                                single-use key before it is sent, so it never
+                                appears in request bodies or logs. PEM (PKCS#8,
+                                SEC1 or PKCS#1, optionally encrypted), base64
+                                DER (PKCS#8) or a private JWK. Ed25519, P-256,
+                                P-384, P-521 and secp256k1 are supported; RSA is
+                                available for did:web only.
+                              </p>
+                            </div>
+
+                            <div>
+                              <Label htmlFor="passphrase">
+                                Passphrase (optional)
+                              </Label>
+                              <Field
+                                as={Input}
+                                id="passphrase"
+                                name="passphrase"
+                                type="password"
+                                autoComplete="new-password"
+                                placeholder="Passphrase of an encrypted PEM key"
+                                className="mt-1"
+                              />
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    )}
+
                     {method === DidMethod.POLYGON && (
                       <>
                         <div className="col-span-1 sm:col-span-2">
@@ -1111,7 +1247,11 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                       disabled={
                         loading ||
                         (method === DidMethod.POLYGON && !values.privatekey) ||
-                        (method === DidMethod.WEB && !values.domain)
+                        (method === DidMethod.WEB && !values.domain) ||
+                        ((method === DidMethod.KEY ||
+                          method === DidMethod.WEB) &&
+                          haveKeyMaterial &&
+                          !values.privateKey)
                       }
                     >
                       {loading ? 'Submitting...' : 'Submit'}
