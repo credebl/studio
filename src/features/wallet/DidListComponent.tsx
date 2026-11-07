@@ -1034,9 +1034,12 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                                   *
                                 </span>
                               </Label>
-                              <Textarea
+                              <Field
+                                as={Textarea}
                                 id="privateKey"
                                 name="privateKey"
+                                autoComplete="off"
+                                spellCheck={false}
                                 rows={4}
                                 className="mt-1 font-mono text-xs"
                                 placeholder="-----BEGIN PRIVATE KEY----- ... or a private JWK JSON"
