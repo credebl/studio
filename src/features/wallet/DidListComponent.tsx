@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { DidMethod, Network, Roles } from '@/common/enums'
+import { type EncryptedKey, parseKeyMaterial } from '@/utils/keyImport'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import {
   Select,
@@ -32,15 +33,14 @@ import {
 } from '@/config/CommonConstant'
 import {
   createDid,
-  createDidImportSession,
   createPolygonKeyValuePair,
   getDids,
   updatePrimaryDid,
 } from '@/app/api/Agent'
 import {
-  encryptKeyMaterialForImport,
-  parseKeyMaterial,
-} from '@/utils/keyImport'
+  encryptKeyForDidImport,
+  polygonKeyMaterial,
+} from '@/utils/didKeyImport'
 import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
 
@@ -605,28 +605,16 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
    */
   const buildEncryptedKey = async (
     values: IFormValues,
-  ): Promise<Awaited<ReturnType<typeof encryptKeyMaterialForImport>>> => {
+  ): Promise<EncryptedKey> => {
     const didMethod = values.method?.split(':')[1] || ''
-    const sessionResponse = await createDidImportSession(orgId, didMethod)
+    // Parse before asking for a session, so an invalid key does not burn one.
+    // did:polygon uses the hex secp256k1 key from the Polygon key pair flow.
+    const material =
+      values.method === DidMethod.POLYGON
+        ? polygonKeyMaterial(values.privatekey)
+        : parseKeyMaterial(values.privateKey, values.passphrase)
 
-    if (typeof sessionResponse === 'string') {
-      throw new Error(sessionResponse)
-    }
-
-    const { data } = sessionResponse as AxiosResponse
-    if (data?.statusCode !== apiStatusCodes.API_STATUS_CREATED) {
-      throw new Error(
-        getCreateDidErrorMessage(data?.message) ||
-          'Failed to create a key import session',
-      )
-    }
-
-    const session = data.data as Parameters<
-      typeof encryptKeyMaterialForImport
-    >[0]
-    const material = parseKeyMaterial(values.privateKey, values.passphrase)
-
-    return encryptKeyMaterialForImport(session, material)
+    return encryptKeyForDidImport(orgId, didMethod, material)
   }
 
   const createNewDid = async (values: IFormValues): Promise<void> => {
@@ -649,10 +637,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       (values.method === DidMethod.KEY || values.method === DidMethod.WEB) &&
       haveKeyMaterial
 
-    let encryptedKey:
-      | Awaited<ReturnType<typeof encryptKeyMaterialForImport>>
-      | undefined = undefined
-    if (usesImportedKey) {
+    let encryptedKey: EncryptedKey | undefined = undefined
+    if (usesImportedKey || values.method === DidMethod.POLYGON) {
       try {
         encryptedKey = await buildEncryptedKey(values)
       } catch (error) {
@@ -674,7 +660,6 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       network,
       domain: values.method === DidMethod.WEB ? values.domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
-      privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
       encryptedKey,
       did: values?.did ?? '',
       endorserDid: values?.endorserDid || '',
