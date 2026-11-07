@@ -5,14 +5,14 @@ import { cn } from '@/lib/utils'
 export default function PageContainer({
   children,
   scrollable = true,
-  fitWidth = false,
+  fitWidth = true,
 }: {
   children: React.ReactNode
   scrollable?: boolean
   /**
-   * Keep the content within the page width so long values wrap and wide tables scroll inside their own container.
-   * Radix renders the scroll viewport's content as a table, which otherwise grows to the widest unbroken line, and the
-   * content's minimum width would otherwise widen the whole layout.
+   * Keep the content within the page width so long values wrap and wide tables scroll inside their own container
+   * (on by default). Radix renders the scroll viewport's content as a table, which otherwise grows to the widest
+   * unbroken line and pushes columns such as a table's Status off screen. Pass `false` to let the content size itself.
    */
   fitWidth?: boolean
 }): React.ReactElement {
