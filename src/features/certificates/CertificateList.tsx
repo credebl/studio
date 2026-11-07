@@ -28,6 +28,7 @@ import CertificateDetailsDialog from './CertificateDetailsDialog'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
+import { formatKmsBackend } from '@/lib/x509'
 import { useAppSelector } from '@/lib/hooks'
 
 export interface PaginationState {
@@ -44,6 +45,7 @@ interface Certificate {
   commonName?: string
   certificateBase64?: string
   publicKeyAlgorithm?: string
+  kmsBackend?: string
   type: string
   keyType: string
   countryName: string
@@ -108,6 +110,12 @@ const KeyTypeCell = ({
 }: CellContext<Certificate, unknown>): JSX.Element => (
   <span className="max-w-[220px] truncate text-sm font-medium">
     {row.original.publicKeyAlgorithm || row.original.keyType || '—'}
+  </span>
+)
+
+const KmsCell = ({ row }: CellContext<Certificate, unknown>): JSX.Element => (
+  <span className="max-w-[220px] truncate text-sm font-medium">
+    {formatKmsBackend(row.original.kmsBackend)}
   </span>
 )
 
@@ -340,6 +348,13 @@ const CertificateList = ({
       title: 'Key Type',
       accessorKey: 'keyType',
       cell: KeyTypeCell,
+      columnFunction: [],
+    },
+    {
+      id: 'kmsBackend',
+      title: 'KMS',
+      accessorKey: 'kmsBackend',
+      cell: KmsCell,
       columnFunction: [],
     },
     {

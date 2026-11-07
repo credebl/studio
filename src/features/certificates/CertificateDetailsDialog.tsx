@@ -1,6 +1,10 @@
 'use client'
 
-import { CertificateDetails, getCertificateDetailsFromBase64 } from '@/lib/x509'
+import {
+  CertificateDetails,
+  formatKmsBackend,
+  getCertificateDetailsFromBase64,
+} from '@/lib/x509'
 import {
   Dialog,
   DialogContent,
@@ -17,6 +21,7 @@ interface CertificateDetailsDialogProps {
     commonName?: string
     certificateBase64?: string
     keyType?: string
+    kmsBackend?: string
     status?: string
   } | null
 }
@@ -124,6 +129,10 @@ const CertificateDetailsContent = ({
         {certificate?.status && (
           <DetailRow label="Status" value={certificate.status} />
         )}
+        <DetailRow
+          label="KMS Backend"
+          value={formatKmsBackend(certificate?.kmsBackend)}
+        />
       </div>
 
       <div>

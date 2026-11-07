@@ -33,6 +33,7 @@ interface Certificate {
   commonName?: string
   certificateBase64?: string
   publicKeyAlgorithm?: string
+  kmsBackend?: string
   type: string
   keyType: string
   countryName: string

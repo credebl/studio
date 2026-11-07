@@ -253,3 +253,17 @@ export function getCertificateDetailsFromBase64(
       ?.keyId,
   }
 }
+
+const KMS_BACKEND_LABELS: Record<string, string> = {
+  askar: 'Askar',
+  node: 'NodeKMS',
+  nodekms: 'NodeKMS',
+  openbao: 'OpenBao',
+}
+
+export function formatKmsBackend(backend?: string | null): string {
+  if (!backend) {
+    return '—'
+  }
+  return KMS_BACKEND_LABELS[backend.toLowerCase()] || backend
+}
