@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
@@ -68,6 +68,23 @@ export default function WalletPage(): React.JSX.Element {
     }
   }, [orgId])
 
+  // Re-reads the organization without the loading state, so the DID list stays mounted. A change in the list, such as
+  // a new primary DID, shows up in the wallet details above it.
+  const refreshOrganization = useCallback(async (): Promise<void> => {
+    if (!orgId) {
+      return
+    }
+    try {
+      const response = await getOrganizationById(orgId)
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
+        setOrgData(data?.data)
+      }
+    } catch (error) {
+      console.error('Error refreshing organization wallet:', error)
+    }
+  }, [orgId])
+
   const [wallet] = orgData?.org_agents ?? []
 
   let content: React.ReactNode = null
@@ -120,7 +137,11 @@ export default function WalletPage(): React.JSX.Element {
               </span>
             )}
           </h2>
-          <DIDList orgId={orgId} onDidCountChange={setDidCount} />
+          <DIDList
+            orgId={orgId}
+            onDidCountChange={setDidCount}
+            onWalletChange={refreshOrganization}
+          />
         </section>
       </div>
     )
