@@ -13,6 +13,13 @@ import {
 import { DidMethod, Network, Roles } from '@/common/enums'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
@@ -94,6 +101,60 @@ interface Organization {
   name: string
   userOrgRoles: UserOrgRole[]
 }
+
+const createDidMethods: DidMethod[] = [
+  DidMethod.INDY,
+  DidMethod.KEY,
+  DidMethod.WEB,
+  DidMethod.POLYGON,
+]
+
+const indyNetworks = [
+  'bcovrin:testnet',
+  'indicio:testnet',
+  'indicio:demonet',
+  'indicio:mainnet',
+]
+
+const polygonNetworks =
+  process.env.NEXT_PUBLIC_MODE === 'PROD' ? ['testnet', 'mainnet'] : ['testnet']
+
+const getMethodDefaults = (
+  didMethod: DidMethod,
+  network?: string,
+): Pick<IFormValues, 'ledger' | 'network'> => {
+  switch (didMethod) {
+    case DidMethod.INDY:
+      return {
+        ledger: 'indy',
+        network:
+          network && indyNetworks.includes(network) ? network : indyNetworks[0],
+      }
+    case DidMethod.POLYGON:
+      return {
+        ledger: 'polygon',
+        network:
+          network === Network.MAINNET &&
+          polygonNetworks.includes(Network.MAINNET)
+            ? Network.MAINNET
+            : Network.TESTNET,
+      }
+    default:
+      return { ledger: 'No Ledger', network: '' }
+  }
+}
+
+const getCompleteDidMethod = (
+  didMethod: DidMethod,
+  network: string,
+): string => {
+  if (didMethod === DidMethod.INDY) {
+    return `did:indy:${network}`
+  }
+
+  return didMethod
+}
+
 const DateTooltip = ({
   date,
   children,
@@ -341,6 +402,10 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           .required('Private key is required')
           .length(64, 'Private key must be exactly 64 characters long'),
       })
+    } else if (method === DidMethod.INDY) {
+      schema = schema.shape({
+        network: Yup.string().required('Network is required'),
+      })
     }
 
     return schema
@@ -364,43 +429,34 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
 
     const orgDid: string | undefined = data?.data?.org_agents?.[0]?.orgDid
-    if (!orgDid) {
-      return undefined
-    }
 
-    const didMethod = orgDid.split(':').slice(0, 2).join(':')
-    setMethod(didMethod as DidMethod)
+    const orgDidMethod = orgDid?.split(':').slice(0, 2).join(':') as
+      | DidMethod
+      | undefined
 
-    let ledgerName: string = ''
-    if (didMethod === DidMethod.INDY || didMethod === DidMethod.POLYGON) {
-      const [, ledgerFromDid] = orgDid.split(':')
-      ledgerName = ledgerFromDid ?? ''
-    } else {
-      ledgerName = 'No Ledger'
-    }
+    // The organization's current DID method is only used to preselect a sensible
+    // default. It must never block creating a DID with a different method.
+    const didMethod =
+      orgDidMethod && createDidMethods.includes(orgDidMethod)
+        ? orgDidMethod
+        : DidMethod.KEY
 
-    let networkName: string = ''
+    const networkFromDid =
+      didMethod === DidMethod.INDY
+        ? orgDid?.split(':').slice(2, 4).join(':')
+        : didMethod === DidMethod.POLYGON
+          ? orgDid?.split(':')[2]
+          : undefined
 
-    if (didMethod === DidMethod.INDY) {
-      networkName = orgDid.split(':').slice(2, 4).join(':')
-    } else if (didMethod === DidMethod.POLYGON) {
-      const [, , networkFromDid] = orgDid.split(':')
-      networkName = networkFromDid ?? ''
-    }
-
-    let completeDidMethod: string = ''
-    if (didMethod === DidMethod.INDY) {
-      completeDidMethod = orgDid.split(':').slice(0, 4).join(':')
-    } else {
-      completeDidMethod = didMethod
-    }
-    setCompleteDidMethodValue(completeDidMethod)
+    const { ledger, network } = getMethodDefaults(didMethod, networkFromDid)
+    setMethod(didMethod)
+    setCompleteDidMethodValue(getCompleteDidMethod(didMethod, network))
 
     // Update initial values
     const resolvedValues: IFormValues = {
       method: didMethod,
-      ledger: ledgerName,
-      network: networkName,
+      ledger,
+      network,
       domain: '',
       privatekey: generatedKeys?.privateKey.slice(2) || '',
       endorserDid: '',
@@ -409,6 +465,25 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     setInitialValues(resolvedValues)
 
     return resolvedValues
+  }
+
+  const handleMethodChange = (
+    nextMethod: DidMethod,
+    setFieldValue: FormikHelpers<IFormValues>['setFieldValue'],
+  ): void => {
+    const { ledger, network } = getMethodDefaults(nextMethod)
+
+    setMethod(nextMethod)
+    setCompleteDidMethodValue(getCompleteDidMethod(nextMethod, network))
+    setFieldValue('method', nextMethod)
+    setFieldValue('ledger', ledger)
+    setFieldValue('network', network)
+    setFieldValue('domain', '')
+    setFieldValue('privatekey', '')
+    setHavePrivateKey(false)
+    setGeneratedKeys(null)
+    setPrivateKeyValue('')
+    setWalletErrorMessage(null)
   }
 
   const getButtonLabel = (): React.ReactNode => {
@@ -641,40 +716,12 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
             if (!resolvedValues) {
               setErrMsg(
-                'Unable to determine the DID method for this organization. Please configure your wallet and try again.',
+                'Unable to load the organization wallet. Please try again.',
               )
               return
             }
 
-            const resolvedMethod = resolvedValues.method
-
-            if (
-              resolvedMethod === DidMethod.POLYGON ||
-              resolvedMethod === DidMethod.WEB
-            ) {
-              setShowPopup(true)
-              return
-            }
-
-            if (
-              resolvedMethod !== DidMethod.INDY &&
-              resolvedMethod !== DidMethod.KEY
-            ) {
-              if (resolvedMethod === 'did:x509') {
-                setErrMsg(
-                  'This organization uses the did:x509 method. Create an X.509 certificate to add a DID.',
-                )
-                setErrorPath('/x509-certificate')
-              } else {
-                setErrMsg(
-                  `Creating a DID with the ${resolvedMethod} method is not supported from this screen.`,
-                )
-              }
-              return
-            }
-
-            setIsCreatingDid(true)
-            await createNewDid(resolvedValues)
+            setShowPopup(true)
           }}
           disabled={
             userRoles.includes(Roles.MEMBER) ||
@@ -743,8 +790,9 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         )}
       </div>
 
-      {/* Conditionally render the Dialog for both Polygon and Web DIDs */}
-      {(method === DidMethod.POLYGON || method === DidMethod.WEB) && (
+      {/* Create DID dialog. The method is chosen by the user, so an
+          organization is never limited to its current primary DID method. */}
+      {showPopup && (
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
           <DialogContent className="max-w-2xl!">
             <DialogHeader>
@@ -766,11 +814,37 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
               {({ values, setFieldValue }) => (
                 <Form className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <Label htmlFor="ledger">
-                        Ledger{' '}
+                    <div className="col-span-1 sm:col-span-2">
+                      <Label>
+                        DID Method{' '}
                         <span className="text-destructive text-xs">*</span>
                       </Label>
+                      <Select
+                        value={method ?? ''}
+                        onValueChange={(value) =>
+                          handleMethodChange(value as DidMethod, setFieldValue)
+                        }
+                      >
+                        <SelectTrigger className="mt-1 w-full">
+                          <SelectValue placeholder="Select DID method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {createDidMethods.map((didMethod) => (
+                            <SelectItem key={didMethod} value={didMethod}>
+                              {didMethod}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {completeDidMethodValue && (
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          {completeDidMethodValue}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ledger">Ledger</Label>
                       <Field
                         as={Input}
                         id="ledger"
@@ -787,18 +861,46 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                       />
                     </div>
 
-                    <div>
-                      <Label>
-                        DID Method{' '}
-                        <span className="text-destructive text-xs">*</span>
-                      </Label>
-                      <Input
-                        value={completeDidMethodValue || ''}
-                        readOnly
-                        tabIndex={-1}
-                        className="bg-muted cursor-default select-none"
-                      />
-                    </div>
+                    {(method === DidMethod.INDY ||
+                      method === DidMethod.POLYGON) && (
+                      <div>
+                        <Label>
+                          Network{' '}
+                          <span className="text-destructive text-xs">*</span>
+                        </Label>
+                        <Select
+                          value={values.network}
+                          onValueChange={(value) => {
+                            setFieldValue('network', value)
+                            setCompleteDidMethodValue(
+                              getCompleteDidMethod(method as DidMethod, value),
+                            )
+                          }}
+                        >
+                          <SelectTrigger className="mt-1 w-full">
+                            <SelectValue placeholder="Select network" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(method === DidMethod.INDY
+                              ? indyNetworks
+                              : polygonNetworks
+                            ).map((networkOption) => (
+                              <SelectItem
+                                key={networkOption}
+                                value={networkOption}
+                              >
+                                {networkOption}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <ErrorMessage
+                          name="network"
+                          component="div"
+                          className="text-destructive mt-1 text-sm"
+                        />
+                      </div>
+                    )}
 
                     {method === DidMethod.WEB && (
                       <div className="col-span-1 sm:col-span-2">
