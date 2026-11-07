@@ -42,6 +42,7 @@ const CopyDid = ({
         variant="ghost"
         size="icon"
         className={cn('h-6 w-6 shrink-0', hideValue ? 'ml-0' : 'ml-2')}
+        aria-label="Copy to clipboard"
         onClick={(e) => !copied && copyTextVal(e)}
       >
         {copied ? (
