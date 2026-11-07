@@ -32,10 +32,6 @@ a[href] {
   cursor: pointer;
 }
 
-.green-text {
-  color: var(--success);
-}
-
 ul.timelinestatic > li:before {
   content: counter(step);
   counter-increment: step;
@@ -90,33 +86,6 @@ ul.timelinestatic > li {
   color: var(--color-revocable-no, #06b6d4);
 }
 
-.badges-warning {
-  background-color: #ffedd5;
-}
-
-.badges-success {
-  background-color: #dcfce7;
-}
-
-.badges-error {
-  background-color: #fee2e2;
-}
-
 * {
   border-color: var(--color-border);
-}
-
-.status-pending {
-  background-color: #ffedd5;
-  color: #c2410c;
-}
-
-.status-accepted {
-  background-color: #dcfce7;
-  color: #065f46;
-}
-
-.status-rejected {
-  background-color: #fee2e2;
-  color: #b91c1c;
 }
