@@ -199,6 +199,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [didList, setDidList] = useState<IDidListData[]>([])
   const [showPopup, setShowPopup] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [errorPath, setErrorPath] = useState<string>('')
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [isMethodLoading, setIsMethodLoading] = useState(false)
 
@@ -273,6 +274,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         getData()
         router.refresh()
       } else {
+        setErrorPath('')
         setErrorMsg(response as string)
       }
     } catch (error) {
@@ -344,59 +346,69 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     return schema
   }
 
-  const fetchOrganizationDetails = async (): Promise<void> => {
+  const fetchOrganizationDetails = async (): Promise<
+    IFormValues | undefined
+  > => {
     const response = await getOrganizationById(orgId)
+    if (typeof response === 'string') {
+      console.error('Error in fetching organization:::', response)
+      setLoading(false)
+      return undefined
+    }
+
     const { data } = response as AxiosResponse
     setLoading(false)
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const didMethod = data?.data?.org_agents[0]?.orgDid
-        ?.split(':')
-        .slice(0, 2)
-        .join(':')
-      setMethod(didMethod)
-
-      let ledgerName: string = ''
-      if (didMethod === DidMethod.INDY || didMethod === DidMethod.POLYGON) {
-        ledgerName = data?.data?.org_agents[0]?.orgDid.split(':')[1]
-      } else {
-        ledgerName = 'No Ledger'
-      }
-
-      let networkName: string = ''
-
-      if (didMethod === DidMethod.INDY) {
-        networkName = data?.data?.org_agents[0]?.orgDid
-          .split(':')
-          .slice(2, 4)
-          .join(':')
-      } else if (didMethod === DidMethod.POLYGON) {
-        networkName = data?.data?.org_agents[0]?.orgDid.split(':')[2]
-      }
-
-      let completeDidMethod: string = ''
-      if (didMethod === DidMethod.INDY) {
-        completeDidMethod = data?.data?.org_agents[0]?.orgDid
-          .split(':')
-          .slice(0, 4)
-          .join(':')
-      } else {
-        completeDidMethod = didMethod
-      }
-      setCompleteDidMethodValue(completeDidMethod)
-
-      // Update initial values
-      setInitialValues({
-        method: didMethod,
-        ledger: ledgerName,
-        network: networkName,
-        domain: '',
-        privatekey: generatedKeys?.privateKey.slice(2) || '',
-        endorserDid: '',
-        did: '',
-      })
-    } else {
+    if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
       console.error('Error in fetching organization:::')
+      return undefined
     }
+
+    const orgDid: string | undefined = data?.data?.org_agents?.[0]?.orgDid
+    if (!orgDid) {
+      return undefined
+    }
+
+    const didMethod = orgDid.split(':').slice(0, 2).join(':')
+    setMethod(didMethod as DidMethod)
+
+    let ledgerName: string = ''
+    if (didMethod === DidMethod.INDY || didMethod === DidMethod.POLYGON) {
+      const [, ledgerFromDid] = orgDid.split(':')
+      ledgerName = ledgerFromDid ?? ''
+    } else {
+      ledgerName = 'No Ledger'
+    }
+
+    let networkName: string = ''
+
+    if (didMethod === DidMethod.INDY) {
+      networkName = orgDid.split(':').slice(2, 4).join(':')
+    } else if (didMethod === DidMethod.POLYGON) {
+      const [, , networkFromDid] = orgDid.split(':')
+      networkName = networkFromDid ?? ''
+    }
+
+    let completeDidMethod: string = ''
+    if (didMethod === DidMethod.INDY) {
+      completeDidMethod = orgDid.split(':').slice(0, 4).join(':')
+    } else {
+      completeDidMethod = didMethod
+    }
+    setCompleteDidMethodValue(completeDidMethod)
+
+    // Update initial values
+    const resolvedValues: IFormValues = {
+      method: didMethod,
+      ledger: ledgerName,
+      network: networkName,
+      domain: '',
+      privatekey: generatedKeys?.privateKey.slice(2) || '',
+      endorserDid: '',
+      did: '',
+    }
+    setInitialValues(resolvedValues)
+
+    return resolvedValues
   }
 
   const getButtonLabel = (): React.ReactNode => {
@@ -499,6 +511,20 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
     try {
       const response = await createDid(orgId, didData)
+
+      if (typeof response === 'string') {
+        setErrMsg(response)
+        setLoading(false)
+        setIsCreatingDid(false)
+        if (
+          values.method === DidMethod.POLYGON ||
+          values.method === DidMethod.WEB
+        ) {
+          setShowPopup(true)
+        }
+        return
+      }
+
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -511,7 +537,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           router.refresh()
         }, 2000)
       } else {
-        setErrMsg(response as string)
+        setErrMsg(data?.message || 'Failed to create DID')
         setLoading(false)
         setIsCreatingDid(false)
         if (
@@ -526,6 +552,11 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       }
     } catch (error) {
       console.error('An error occurred while creating did:', error)
+      setErrMsg(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while creating the DID. Please try again.',
+      )
       setLoading(false)
       setIsCreatingDid(false)
     }
@@ -581,14 +612,18 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           />
         </div>
       )}
-      {errorMsg && (
+      {(errorMsg || errMsg) && !showPopup && (
         <div className="w-full" role="alert">
           <AlertComponent
-            message={errorMsg}
+            message={errorMsg || errMsg || ''}
             type={'failure'}
             onAlertClose={() => {
               setErrorMsg(null)
+              setErrMsg(null)
+              setErrorPath('')
             }}
+            viewButton={Boolean(errorPath)}
+            path={errorPath}
           />
         </div>
       )}
@@ -597,19 +632,49 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         <Button
           onClick={async () => {
             setIsMethodLoading(true)
-            await fetchOrganizationDetails()
-            setIsMethodLoading(false)
             setErrMsg(null)
+            setErrorMsg(null)
+            setErrorPath('')
 
-            if (method === DidMethod.POLYGON || method === DidMethod.WEB) {
-              setShowPopup(true)
-            } else {
-              setIsCreatingDid(true)
-              createNewDid({
-                ...initialValues,
-                method: method || '',
-              })
+            const resolvedValues = await fetchOrganizationDetails()
+            setIsMethodLoading(false)
+
+            if (!resolvedValues) {
+              setErrMsg(
+                'Unable to determine the DID method for this organization. Please configure your wallet and try again.',
+              )
+              return
             }
+
+            const resolvedMethod = resolvedValues.method
+
+            if (
+              resolvedMethod === DidMethod.POLYGON ||
+              resolvedMethod === DidMethod.WEB
+            ) {
+              setShowPopup(true)
+              return
+            }
+
+            if (
+              resolvedMethod !== DidMethod.INDY &&
+              resolvedMethod !== DidMethod.KEY
+            ) {
+              if (resolvedMethod === 'did:x509') {
+                setErrMsg(
+                  'This organization uses the did:x509 method. Create an X.509 certificate to add a DID.',
+                )
+                setErrorPath('/x509-certificate')
+              } else {
+                setErrMsg(
+                  `Creating a DID with the ${resolvedMethod} method is not supported from this screen.`,
+                )
+              }
+              return
+            }
+
+            setIsCreatingDid(true)
+            await createNewDid(resolvedValues)
           }}
           disabled={
             userRoles.includes(Roles.MEMBER) ||
