@@ -263,7 +263,14 @@ const TokenWarningMessage = (): React.JSX.Element => (
   </div>
 )
 
-const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
+const DIDListComponent = ({
+  orgId,
+  onDidCountChange,
+}: {
+  orgId: string
+  /** Called with the number of DIDs each time the list is loaded. */
+  onDidCountChange?: (count: number) => void
+}): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
   const [showPopup, setShowPopup] = useState(false)
@@ -326,6 +333,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           },
         )
         setDidList(sortedDids)
+        onDidCountChange?.(sortedDids.length)
       }
     } catch (error) {
       console.error('Error fetching DIDs:', error)

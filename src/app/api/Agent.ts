@@ -184,6 +184,24 @@ export const createPolygonKeyValuePair = async (
   }
 }
 
+export const getAgentHealth = async (
+  orgId: string,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.Agent.checkAgentHealth}`
+  const config = getHeaderConfigs()
+  const axiosPayload = {
+    url,
+    config,
+  }
+
+  try {
+    return await axiosGet(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
 export const getDids = async (
   orgId: string,
 ): Promise<AxiosResponse | string> => {

@@ -18,92 +18,113 @@ import {
 } from '@/components/ui/tooltip'
 
 import type { AxiosResponse } from 'axios'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import CustomQRCode from '@/features/wallet/CustomQRCode'
-import DataTable from '@/components/DataTable'
-import { ITableData } from '@/components/DataTable/interface'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
+import { cn } from '@/lib/utils'
 import { createConnection } from '@/app/api/organization'
 import { dateConversion } from '@/utils/DateConversion'
+import { getAgentHealth } from '@/app/api/Agent'
 
-const CopyDid = ({
-  value,
-  className,
-  hideValue = false,
-  ellipsis = true,
-  setCopied,
-  copied,
+type HealthState = 'checking' | 'online' | 'unreachable'
+
+// Mirrors AgentSpinUpStatus in the platform: the wallet is created first, then its DID.
+const SPIN_UP_LABELS: Record<number, string> = {
+  0: 'Pending',
+  1: 'Wallet created',
+  2: 'Ready',
+}
+
+// Status chips use the theme-aware classes from globals.css, so they stay readable in light and dark mode.
+const STATUS_CLASSES = {
+  good: 'status-accepted',
+  warn: 'status-pending',
+  bad: 'status-rejected',
+  neutral: 'bg-muted text-muted-foreground',
+} as const
+
+const StatusPill = ({
+  tone,
+  children,
 }: {
-  value: string
-  className?: string
-  hideValue?: boolean
-  ellipsis?: boolean
-  setCopied: React.Dispatch<React.SetStateAction<boolean>>
-  copied: boolean
+  tone: keyof typeof STATUS_CLASSES
+  children: React.ReactNode
 }): React.JSX.Element => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <div className={`flex items-center gap-2 ${className}`}>
-        {!hideValue && ellipsis ? (
-          <span className="max-w-sm truncate">{value}</span>
-        ) : (
-          <span className="">{value}</span>
-        )}
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-6 w-6"
-          onClick={() => {
-            navigator.clipboard
-              .writeText(value)
-              .catch((error) =>
-                console.error('could not copy to clipboard', error),
-              )
-              .then(() => setCopied(true))
-
-            setTimeout(() => {
-              setCopied(false)
-            }, 2000)
-          }}
-        >
-          {copied ? (
-            <Check className="text-green-400" />
-          ) : (
-            <Copy className="h-4 w-4" />
-          )}
-        </Button>
-      </div>
-    </TooltipTrigger>
-    <TooltipContent>
-      <p>Copy to clipboard</p>
-    </TooltipContent>
-  </Tooltip>
+  <span
+    className={cn(
+      'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+      STATUS_CLASSES[tone],
+    )}
+  >
+    {children}
+  </span>
 )
 
-const DateTooltip = ({
-  date,
-  children,
-  showLabel = false,
+const CopyValue = ({
+  value,
+  mono = true,
 }: {
-  date: string
+  value: string
+  mono?: boolean
+}): React.JSX.Element => {
+  const [copied, setCopied] = useState(false)
+
+  return (
+    <div className="flex items-start gap-2">
+      <span className={cn('min-w-0 break-all', mono && 'font-mono text-sm')}>
+        {value}
+      </span>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-6 w-6 shrink-0"
+            aria-label="Copy to clipboard"
+            onClick={() => {
+              navigator.clipboard
+                .writeText(value)
+                .then(() => {
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                })
+                .catch((error) =>
+                  console.error('could not copy to clipboard', error),
+                )
+            }}
+          >
+            {copied ? (
+              <Check className="text-success h-4 w-4" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Copy to clipboard</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  )
+}
+
+const Detail = ({
+  label,
+  wide = false,
+  children,
+}: {
+  label: string
+  wide?: boolean
   children: React.ReactNode
-  showLabel?: boolean
 }): React.JSX.Element => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <span>{children}</span>
-    </TooltipTrigger>
-    <TooltipContent>
-      {showLabel ? (
-        <p>Wallet Created on : {new Date(date).toLocaleString()}</p>
-      ) : (
-        <p>{new Date(date).toLocaleString()}</p>
-      )}
-    </TooltipContent>
-  </Tooltip>
+  <div
+    className={cn('min-w-0 space-y-1', wide && 'sm:col-span-2 lg:col-span-3')}
+  >
+    <dt className="text-muted-foreground text-sm">{label}</dt>
+    <dd className="text-sm font-medium">{children}</dd>
+  </div>
 )
 
 const OrganizationDetails = ({
@@ -120,9 +141,9 @@ const OrganizationDetails = ({
 
   const [loading, setLoading] = useState<boolean>(true)
   const [connectionData, setConnectionData] = useState<IConnection | null>(null)
-  const [copied, setCopied] = useState<boolean>(false)
   const [openModal, setOpenModal] = useState<boolean>(false)
   const [copyDoc, setCopyDoc] = useState(false)
+  const [health, setHealth] = useState<HealthState>('checking')
 
   const createQrConnection = async (): Promise<void> => {
     setLoading(true)
@@ -137,89 +158,102 @@ const OrganizationDetails = ({
 
   useEffect(() => {
     createQrConnection()
-    return () => {
-      setCopied(false)
-    }
   }, [])
 
-  const tableData: ITableData[] = [
-    {
-      data: [
-        {
-          data: (
-            <div className="ml-8 flex items-center space-x-4">
-              {agentData?.walletName || 'Not available'}
-            </div>
-          ),
-        },
-        {
-          data: (
-            <div className="flex gap-2">
-              {agentData?.orgDid ? (
-                <CopyDid
-                  value={agentData?.orgDid}
-                  className="font-mono font-semibold"
-                  ellipsis={false}
-                  setCopied={setCopied}
-                  copied={copied}
-                />
-              ) : (
-                <span className="font-semibold">Not available</span>
-              )}{' '}
-            </div>
-          ),
-        },
-        {
-          data: agentData?.ledgers?.name || '-',
-        },
-        {
-          data: agentData?.org_agent_type?.agent
-            ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
-              agentData.org_agent_type.agent.slice(1).toLowerCase()
-            : '',
-        },
-        {
-          data: (
-            <Badge className="rounded-full border" variant={'outline'}>
-              Created :
-              {agentData?.createDateTime ? (
-                <DateTooltip date={agentData.createDateTime} showLabel={true}>
-                  {dateConversion(agentData.createDateTime)}
-                </DateTooltip>
-              ) : (
-                <div className="ml-1">Not Available</div>
-              )}
-            </Badge>
-          ),
-        },
-        {
-          data: (
-            <Button className="" onClick={() => setOpenModal(true)}>
-              Scan QR
-            </Button>
-          ),
-        },
-      ],
-    },
-  ]
+  useEffect(() => {
+    if (!orgId || !agentData?.agentEndPoint) {
+      setHealth('unreachable')
+      return
+    }
+
+    let cancelled = false
+    setHealth('checking')
+    getAgentHealth(orgId)
+      .then((response) => {
+        if (cancelled) {
+          return
+        }
+        const { data } = response as AxiosResponse
+        const online =
+          data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS &&
+          data?.data?.isInitialized !== false
+        setHealth(online ? 'online' : 'unreachable')
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setHealth('unreachable')
+        }
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [orgId, agentData?.agentEndPoint])
+
+  const agentType = agentData?.org_agent_type?.agent
+    ? agentData.org_agent_type.agent.charAt(0).toUpperCase() +
+      agentData.org_agent_type.agent.slice(1).toLowerCase()
+    : null
+  const spinUpStatus = agentData?.agentSpinUpStatus
+  const hasTenant = Boolean(agentData?.tenantId)
+
+  let healthPill: React.ReactNode = (
+    <StatusPill tone="neutral">Checking…</StatusPill>
+  )
+  if (health === 'online') {
+    healthPill = <StatusPill tone="good">Online</StatusPill>
+  } else if (health === 'unreachable') {
+    healthPill = <StatusPill tone="bad">Unreachable</StatusPill>
+  }
 
   return (
-    <div className="">
-      <h2 className="pb-4 text-2xl font-bold">Wallet Details</h2>
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-4">
+        <h2 className="text-2xl font-bold">Wallet Details</h2>
+        <Button variant="outline" onClick={() => setOpenModal(true)}>
+          Scan QR
+        </Button>
+      </div>
 
-      <DataTable
-        header={[
-          { columnName: 'Wallet Name' },
-          { columnName: 'Org DID' },
-          { columnName: 'Network' },
-          { columnName: 'Agent Type' },
-          { columnName: '' },
-          { columnName: '' },
-        ]}
-        data={tableData}
-        loading={loading}
-        isEmailVerification={true}
-      />
+      <dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2 lg:grid-cols-3">
+        <Detail label="Wallet name">
+          {agentData?.walletName || 'Not available'}
+        </Detail>
+        <Detail label="Agent type">{agentType ?? 'Not available'}</Detail>
+        <Detail label="Network">{agentData?.ledgers?.name || '-'}</Detail>
+        <Detail label="Agent status">
+          <div className="flex flex-wrap items-center gap-2">
+            {healthPill}
+            {spinUpStatus !== undefined && (
+              <StatusPill tone={spinUpStatus === 2 ? 'good' : 'warn'}>
+                {SPIN_UP_LABELS[spinUpStatus] ?? `Status ${spinUpStatus}`}
+              </StatusPill>
+            )}
+          </div>
+        </Detail>
+        <Detail label="Created">
+          {agentData?.createDateTime
+            ? dateConversion(agentData.createDateTime)
+            : 'Not available'}
+        </Detail>
+        {hasTenant && (
+          <Detail label="Tenant ID">
+            <CopyValue value={String(agentData?.tenantId)} />
+          </Detail>
+        )}
+        {agentData?.agentEndPoint && (
+          <Detail label="Agent endpoint" wide>
+            <CopyValue value={agentData.agentEndPoint} />
+          </Detail>
+        )}
+        <Detail label="Org DID" wide>
+          {agentData?.orgDid ? (
+            <CopyValue value={agentData.orgDid} />
+          ) : (
+            'Not available'
+          )}
+        </Detail>
+      </dl>
 
       <Dialog open={openModal} onOpenChange={setOpenModal}>
         <DialogContent
@@ -274,6 +308,7 @@ const OrganizationDetails = ({
                     variant="ghost"
                     size="icon"
                     className="absolute top-3 right-3 h-6 w-6"
+                    aria-label="Copy DID document"
                     onClick={() => {
                       navigator.clipboard
                         .writeText(
@@ -289,7 +324,7 @@ const OrganizationDetails = ({
                     }}
                   >
                     {copyDoc ? (
-                      <Check className="text-green-400" />
+                      <Check className="text-success" />
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}

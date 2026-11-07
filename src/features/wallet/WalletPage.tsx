@@ -24,6 +24,7 @@ export default function WalletPage(): React.JSX.Element {
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [didCount, setDidCount] = useState<number | null>(null)
 
   useEffect(() => {
     if (!orgId) {
@@ -111,8 +112,15 @@ export default function WalletPage(): React.JSX.Element {
           <OrganizationDetails orgData={orgData} />
         </div>
         <section className="space-y-4 rounded-md border p-4">
-          <h2 className="text-2xl font-bold">DIDs</h2>
-          <DIDList orgId={orgId} />
+          <h2 className="text-2xl font-bold">
+            DIDs
+            {didCount !== null && (
+              <span className="text-muted-foreground ml-2 text-base font-normal">
+                ({didCount})
+              </span>
+            )}
+          </h2>
+          <DIDList orgId={orgId} onDidCountChange={setDidCount} />
         </section>
       </div>
     )
