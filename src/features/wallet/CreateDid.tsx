@@ -22,6 +22,10 @@ import {
   protocolOptions,
   subOptionsMap,
 } from '@/config/didOptions'
+import {
+  encryptKeyForDidImport,
+  polygonKeyMaterial,
+} from '@/utils/didKeyImport'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -101,12 +105,22 @@ const CreateDid = (): React.JSX.Element => {
         network = didParts.slice(-2).join(':')
       }
 
+      const isPolygon = fullMethod === DidMethod.POLYGON
+      // The Polygon key is encrypted in the browser to a single-use import session; only the envelope is sent.
+      const encryptedKey = isPolygon
+        ? await encryptKeyForDidImport(
+            orgId!,
+            method,
+            polygonKeyMaterial(privateKeyValue),
+          )
+        : undefined
+
       const payload = {
-        seed: method === DidMethod.POLYGON ? '' : seeds,
+        seed: isPolygon ? '' : seeds,
         keyType: 'ed25519',
         method,
         ledger: didParts[2] || '',
-        privatekey: privateKeyValue,
+        encryptedKey,
         network,
         domain: domainValue,
         role: method === 'indy' ? 'endorser' : '',
@@ -149,6 +163,7 @@ const CreateDid = (): React.JSX.Element => {
       }
     } catch (error) {
       console.error('Error creating did', error)
+      setAlert(error instanceof Error ? error.message : 'Failed to create DID')
     } finally {
       setIsApiInProgress(false)
     }
@@ -349,7 +364,8 @@ const CreateDid = (): React.JSX.Element => {
             </CardContent>
           </Card>
 
-          {(selectedDid === 'did:polygon:testnet' || selectedDid === 'did:polygon:mainnet') && (
+          {(selectedDid === 'did:polygon:testnet' ||
+            selectedDid === 'did:polygon:mainnet') && (
             <Card className="border-border mt-6 border shadow-sm">
               <CardHeader>
                 <CardTitle className="text-foreground text-lg font-semibold">
