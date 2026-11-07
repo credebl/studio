@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle2, MoreVertical, Trash2, XCircle } from 'lucide-react'
+import { CheckCircle2, Eye, MoreVertical, Trash2, XCircle } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,9 +24,11 @@ import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { CellContext } from '@tanstack/react-table'
+import CertificateDetailsDialog from './CertificateDetailsDialog'
 import ConfirmationModal from '@/components/confirmation-modal'
 import { DataTable } from '@/components/ui/generic-table-component/data-table'
 import { DateCell } from '../organization/connectionIssuance/components/CredentialTableCells'
+import { formatKmsBackend } from '@/lib/x509'
 import { useAppSelector } from '@/lib/hooks'
 
 export interface PaginationState {
@@ -40,7 +42,10 @@ export interface PaginationState {
 
 interface Certificate {
   id: string
-  commonName: string
+  commonName?: string
+  certificateBase64?: string
+  publicKeyAlgorithm?: string
+  kmsBackend?: string
   type: string
   keyType: string
   countryName: string
@@ -104,7 +109,13 @@ const KeyTypeCell = ({
   row,
 }: CellContext<Certificate, unknown>): JSX.Element => (
   <span className="max-w-[220px] truncate text-sm font-medium">
-    {row.original.keyType || '—'}
+    {row.original.publicKeyAlgorithm || row.original.keyType || '—'}
+  </span>
+)
+
+const KmsCell = ({ row }: CellContext<Certificate, unknown>): JSX.Element => (
+  <span className="max-w-[220px] truncate text-sm font-medium">
+    {formatKmsBackend(row.original.kmsBackend)}
   </span>
 )
 
@@ -140,6 +151,7 @@ const CertificateList = ({
   const [selectedCert, setSelectedCert] = React.useState<Certificate | null>(
     null,
   )
+  const [detailsCert, setDetailsCert] = React.useState<Certificate | null>(null)
   const [successMessage, setSuccessMessage] = React.useState<string | null>(
     null,
   )
@@ -165,6 +177,14 @@ const CertificateList = ({
   const handleActivate = async (certificateId: string): Promise<boolean> => {
     try {
       const response = await activateCertificate(orgId, certificateId)
+
+      if (typeof response === 'string') {
+        setErrorMessage(response)
+        setSuccessMessage(null)
+        onFailure(response)
+        return false
+      }
+
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -192,6 +212,14 @@ const CertificateList = ({
   const handleDeactivate = async (certificateId: string): Promise<boolean> => {
     try {
       const response = await deactivateCertificate(orgId, certificateId)
+
+      if (typeof response === 'string') {
+        setErrorMessage(response)
+        setSuccessMessage(null)
+        onFailure(response)
+        return false
+      }
+
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
@@ -277,6 +305,11 @@ const CertificateList = ({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem onClick={() => setDetailsCert(cert)}>
+            <Eye className="mr-2 h-4 w-4" />
+            Details
+          </DropdownMenuItem>
+
           <DropdownMenuItem
             disabled={isActive}
             onClick={() => openConfirmation(cert, 'activate')}
@@ -318,6 +351,13 @@ const CertificateList = ({
       columnFunction: [],
     },
     {
+      id: 'kmsBackend',
+      title: 'KMS',
+      accessorKey: 'kmsBackend',
+      cell: KmsCell,
+      columnFunction: [],
+    },
+    {
       id: 'validFrom',
       title: 'Valid From',
       accessorKey: 'validFrom',
@@ -353,6 +393,16 @@ const CertificateList = ({
 
   return (
     <Card className="p-4">
+      <CertificateDetailsDialog
+        open={detailsCert !== null}
+        onOpenChange={(isOpen: boolean) => {
+          if (!isOpen) {
+            setDetailsCert(null)
+          }
+        }}
+        certificate={detailsCert}
+      />
+
       {showConfirmModal && selectedCert && actionType && (
         <ConfirmationModal
           openModal={showConfirmModal}
