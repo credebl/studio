@@ -20,6 +20,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { adminNavItem, navItems } from '@/constants/data'
 import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
@@ -33,8 +34,8 @@ import { NavItem } from '../../../types'
 import { Organization } from '@/features/dashboard/type/organization'
 import ThemeSwitcher from './ThemeToggle/theme-switcher'
 import { getOrganizations } from '@/app/api/organization'
-import { navItems } from '@/constants/data'
 import { setSidebarCollapsed } from '@/lib/sidebarSlice'
+import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
 const APP_ENV =
@@ -143,6 +144,24 @@ export default function AppSidebar(): React.JSX.Element {
       })
     }
   }, [ecosystemEnableStatus])
+
+  const { data: session } = useSession()
+  const isPlatformAdmin = session?.isPlatformAdmin === true
+
+  useEffect(() => {
+    setManagedNavItem((prev) => {
+      const hasAdminItem = prev.some((item) => item.url === '/admin')
+
+      if (!isPlatformAdmin) {
+        return hasAdminItem
+          ? prev.filter((item) => item.url !== '/admin')
+          : prev
+      }
+
+      return hasAdminItem ? prev : [...prev, adminNavItem]
+    })
+  }, [isPlatformAdmin])
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="group" data-collapsed>

@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import React, { useEffect, useState } from 'react'
+import { signOut, useSession } from 'next-auth/react'
 
 import { Button } from '@/components/ui/button'
 import { IUserProfile } from '../profile/interfaces'
@@ -24,7 +25,6 @@ import { apiStatusCodes } from '@/config/CommonConstant'
 import { generateAccessToken } from '@/utils/session'
 import { getUserProfile } from '@/app/api/Auth'
 import { setUserProfileDetails } from '@/lib/userSlice'
-import { signOut } from 'next-auth/react'
 import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
@@ -32,6 +32,9 @@ import { useRouter } from 'next/navigation'
 export function UserNav(): React.JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
+  const { data: session } = useSession()
+  const isPlatformAdmin = session?.isPlatformAdmin === true
+  const hasOrgAccess = session?.hasOrgAccess === true
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
   const token = useAppSelector((state) => state.auth.token)
@@ -142,14 +145,17 @@ export function UserNav(): React.JSX.Element | null {
             Profile
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => router.push('/developers-setting')}>
-            Developer Settings
-          </DropdownMenuItem>
+          {hasOrgAccess && (
+            <DropdownMenuItem
+              onClick={() => router.push('/developers-setting')}
+            >
+              Developer Settings
+            </DropdownMenuItem>
+          )}
 
-          {process.env.NEXT_PUBLIC_ENABLE_BILLING_OPTION?.toLowerCase() ===
-            'true' && (
-            <DropdownMenuItem onClick={() => router.push('/billing ')}>
-              Billing
+          {isPlatformAdmin && (
+            <DropdownMenuItem onClick={() => router.push('/admin')}>
+              Platform Admin
             </DropdownMenuItem>
           )}
 

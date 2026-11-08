@@ -205,7 +205,7 @@ ul.timelinestatic > li {
 }
 
 .url-link {
-  color: initial;
+  color: var(--foreground);
   cursor: pointer;
   transition: color 0.2s ease;
 }

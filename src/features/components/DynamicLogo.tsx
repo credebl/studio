@@ -29,6 +29,7 @@ function DynamicApplicationLogo(): JSX.Element {
         width={CredeblLogoWidth}
         alt={`${APP_ENV} Logo`}
         src={logoImageSrc}
+        loading="eager"
         className="mx-0 h-10 w-fit object-contain px-2 md:h-20 md:w-50"
         onError={(e) => {
           e.currentTarget.src =
