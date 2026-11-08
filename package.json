@@ -12,6 +12,11 @@
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
+    "changeset": "changeset",
+    "changeset:status": "changeset status",
+    "changeset:version": "changeset version",
+    "changeset:publish": "changeset publish",
+    "changeset:tag": "changeset git-tag",
     "lint": "next lint",
     "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "lint:strict": "eslint --max-warnings=0 src",
@@ -110,6 +115,7 @@
     "zustand": "^5.0.15"
   },
   "devDependencies": {
+    "@changesets/cli": "^3.0.3",
     "@eslint/js": "^9.26.0",
     "@faker-js/faker": "^10.6.0",
     "@types/crypto-js": "^4.2.2",
