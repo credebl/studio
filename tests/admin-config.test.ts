@@ -34,16 +34,12 @@ describe('admin security configuration', () => {
     expect(headers['Referrer-Policy']).toBe('no-referrer')
   })
 
-  // Documents the current header gap: the route handler sets no-store itself,
-  // but the hardened header set is not applied to /api/admin responses.
-  it.fails(
-    'applies the same hardened headers to /api/admin routes',
-    async () => {
-      const rules = await getHeaderRules()
+  it('applies the same hardened headers to /api/admin routes', async () => {
+    const rules = await getHeaderRules()
+    const adminRule = rules.find((rule) => rule.source === '/admin/:path*')
+    const apiRule = rules.find((rule) => rule.source === '/api/admin/:path*')
 
-      expect(rules.some((rule) => rule.source === '/api/admin/:path*')).toBe(
-        true,
-      )
-    },
-  )
+    expect(apiRule).toBeDefined()
+    expect(apiRule?.headers).toEqual(adminRule?.headers)
+  })
 })
