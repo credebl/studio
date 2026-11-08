@@ -52,6 +52,80 @@ interface JwtDataPayload extends JwtPayload {
   name?: string
 }
 
+const PLATFORM_ADMIN_ROLE = 'platform_admin'
+
+/**
+ * Resolves whether the signed-in user holds the platform_admin role.
+ *
+ * Runs server-side only (authorize is never bundled for the browser) and fails
+ * closed: returns null when the profile lookup cannot be completed so callers
+ * can decide whether to treat the user as a non-admin.
+ */
+const resolveIsPlatformAdmin = async (
+  accessToken: string,
+): Promise<boolean | null> => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.users.userProfile}`,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store',
+      },
+    )
+
+    if (!response.ok) {
+      return null
+    }
+
+    const body = await response.json()
+    const roles = body?.data?.userOrgRoles
+
+    return (
+      Array.isArray(roles) &&
+      roles.some(
+        (item: { orgRole?: { name?: string } }) =>
+          item?.orgRole?.name === PLATFORM_ADMIN_ROLE,
+      )
+    )
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Resolves the platform_admin claim for a session minted before the claim
+ * existed, by exchanging the httpOnly sessionId for an access token.
+ * Returns null when the lookup could not be completed so the claim can be
+ * retried on a later request instead of being cached as a false negative.
+ */
+const resolveIsPlatformAdminFromSessionId = async (
+  sessionId: string,
+): Promise<boolean | null> => {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+  if (!baseUrl) {
+    return null
+  }
+
+  try {
+    const encryptedSessionId = passwordEncryption(sessionId)
+    const response = await fetch(
+      `${baseUrl}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encodeURIComponent(encryptedSessionId)}`,
+      { cache: 'no-store' },
+    )
+
+    if (!response.ok) {
+      return null
+    }
+
+    const body = await response.json()
+    const accessToken = body?.data?.sessionToken
+
+    return accessToken ? resolveIsPlatformAdmin(accessToken) : null
+  } catch {
+    return null
+  }
+}
+
 export const authOptions: MyAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -147,17 +221,20 @@ export const authOptions: MyAuthOptions = {
 
           const user = responseData
           if (user.statusCode === 200 && user.data) {
-            const decodedToken = jwtDecode<JwtDataPayload>(
-              user.data.access_token,
-            )
+            const accessToken = user.data.access_token as string
+            const decodedToken = jwtDecode<JwtDataPayload>(accessToken)
 
             if (!decodedToken?.email) {
               return null
             }
 
+            const isPlatformAdmin =
+              (await resolveIsPlatformAdmin(accessToken)) ?? false
+
             return {
               id: user.data.session_state || user.data.email,
               sessionId: user.data.sessionId,
+              isPlatformAdmin,
             }
           }
 
@@ -176,7 +253,24 @@ export const authOptions: MyAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }): Promise<JWT> {
       if (user) {
         token.sessionId = user.sessionId
+        token.isPlatformAdmin = Boolean(user.isPlatformAdmin)
+        return token
       }
+
+      // Sessions minted before the claim existed are resolved once and then
+      // persisted, so the admin navigation appears without a forced re-login.
+      if (
+        typeof token.isPlatformAdmin !== 'boolean' &&
+        typeof token.sessionId === 'string'
+      ) {
+        const isPlatformAdmin = await resolveIsPlatformAdminFromSessionId(
+          token.sessionId,
+        )
+        if (isPlatformAdmin !== null) {
+          token.isPlatformAdmin = isPlatformAdmin
+        }
+      }
+
       return token
     },
 
@@ -188,6 +282,7 @@ export const authOptions: MyAuthOptions = {
       token: JWT
     }): Promise<Session> {
       session.sessionId = token.sessionId as string
+      session.isPlatformAdmin = Boolean(token.isPlatformAdmin)
       return session
     },
 

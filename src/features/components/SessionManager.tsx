@@ -28,6 +28,7 @@ const preventRedirectOnPaths = [
   '/schemas',
   '/invitations',
   '/delete-organization',
+  '/admin',
   '/agent-config',
   '/credentials',
   '/verification',

@@ -35,9 +35,7 @@ export function DataTableToolbar<TData>({
   const [localValue, setLocalValue] = useState('')
 
   useEffect(() => {
-    console.log('Inside useEffect')
     const handler = setTimeout(() => {
-      console.log('Inside handler')
       onSearchTermChange(localValue)
     }, 1000) // debounce delay in ms i.e. 1 sec for now, we can change this or can even take from a common config file for all other configs as well
 
