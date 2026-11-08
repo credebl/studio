@@ -192,7 +192,9 @@ export function InvitationsPanel({
     <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-lg font-semibold">Ecosystem invitations</h2>
+          <h2 className="text-xl font-semibold tracking-tight">
+            Ecosystem invitations
+          </h2>
           <p className="text-muted-foreground text-sm">
             Invite organizations to create an ecosystem on this platform.
           </p>
