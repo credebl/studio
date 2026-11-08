@@ -154,13 +154,6 @@ export function UserNav(): React.JSX.Element | null {
             </DropdownMenuItem>
           )}
 
-          {process.env.NEXT_PUBLIC_ENABLE_BILLING_OPTION?.toLowerCase() ===
-            'true' && (
-            <DropdownMenuItem onClick={() => router.push('/billing ')}>
-              Billing
-            </DropdownMenuItem>
-          )}
-
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
             <DropdownMenuSubContent className="border">

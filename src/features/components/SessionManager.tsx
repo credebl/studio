@@ -25,7 +25,6 @@ const preventRedirectOnPaths = [
   '/ecosystems',
   '/profile',
   '/developers-setting',
-  '/billing',
   '/schemas',
   '/invitations',
   '/delete-organization',
