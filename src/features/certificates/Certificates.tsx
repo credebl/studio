@@ -25,11 +25,15 @@ import { PaginationState } from '@/common/interface'
 import RoleViewButton from '@/components/RoleViewButton'
 import { certificateSvgComponent } from '@/config/certificateSvgComponent'
 import { getAllx509Certificates } from '@/app/api/x509'
+import { getCertificateDetailsFromBase64 } from '@/lib/x509'
 import { useAppSelector } from '@/lib/hooks'
 
 interface Certificate {
   id: string
-  commonName: string
+  commonName?: string
+  certificateBase64?: string
+  publicKeyAlgorithm?: string
+  kmsBackend?: string
   type: string
   keyType: string
   countryName: string
@@ -69,11 +73,27 @@ const Certificates = (): JSX.Element => {
 
       const response = await getAllx509Certificates(orgId || '')
 
+      if (typeof response === 'string') {
+        setFailure(response)
+        return
+      }
+
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const raw = data?.data?.data || []
-        setCertificates(raw)
+        const certificatesWithDetails = raw.map((certificate: Certificate) => {
+          const details = getCertificateDetailsFromBase64(
+            certificate.certificateBase64 || '',
+          )
+          return {
+            ...certificate,
+            commonName: certificate.commonName || details?.commonName,
+            publicKeyAlgorithm:
+              details?.publicKeyAlgorithm || certificate.keyType,
+          }
+        })
+        setCertificates(certificatesWithDetails)
         setPaginationState((prev) => ({
           ...prev,
           pageCount: data?.data?.lastPage ?? 1,

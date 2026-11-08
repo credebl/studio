@@ -32,6 +32,7 @@ import {
   IconUserCircle,
   IconUserEdit,
   IconUserX,
+  IconWallet,
   IconWorld,
   IconX,
 } from '@tabler/icons-react'
@@ -71,6 +72,7 @@ export const Icons = {
   twitter: IconBrandTwitter,
   check: IconCheck,
   connections: IconTopologyStar,
+  wallet: IconWallet,
   organization: IconBuildingSkyscraper,
   world: IconWorld,
 }
