@@ -2,7 +2,11 @@
 
 @import 'tw-animate-css';
 
-@import '../../public/themes/sovio_theme.css';
+/* Tailwind v4 ignores tailwind.config.js, so tie `dark:` to the .dark class that next-themes sets. Without this,
+   `dark:` utilities follow the OS setting and disagree with the theme switcher. */
+@custom-variant dark (&:is(.dark *));
+
+@import '../../public/themes/credebl_theme.css';
 
 /* Cursor pointer globally for buttons */
 button:not(:disabled),
@@ -11,30 +15,9 @@ a[href] {
   cursor: pointer;
 }
 
-.bg-success {
-  background-color: var(--success);
-  color: white;
-}
-
-.bg-warning {
-  background-color: #facc15;
-}
-
-.bg-error {
-  background-color: var(--error);
-  color: white;
-}
-
-.text-success {
-  color: var(--success-text);
-}
-
+/* Status colors come from the theme tokens (--success, --warning, --destructive); see docs/THEMING.md. */
 .green-text {
-  color: #339b59;
-}
-
-.text-error {
-  color: var(--error-text);
+  color: var(--success);
 }
 
 ul.timelinestatic > li:before {
@@ -92,19 +75,23 @@ ul.timelinestatic > li {
 }
 
 .badges-warning {
-  background-color: #ffedd5;
+  background-color: color-mix(in srgb, var(--warning) 18%, var(--background));
 }
 
 .badges-success {
-  background-color: #dcfce7;
+  background-color: color-mix(in srgb, var(--success) 18%, var(--background));
 }
 
 .badges-error {
-  background-color: #fee2e2;
+  background-color: color-mix(
+    in srgb,
+    var(--destructive) 18%,
+    var(--background)
+  );
 }
 
 .badges-secondary {
-  background-color: #7dd3fc;
+  background-color: color-mix(in srgb, var(--info) 18%, var(--background));
 }
 
 * {
@@ -112,36 +99,44 @@ ul.timelinestatic > li {
 }
 
 .status-pending {
-  background-color: #ffedd5;
-  color: #c2410c;
+  background-color: color-mix(in srgb, var(--warning) 14%, var(--background));
+  color: color-mix(in srgb, var(--warning) 80%, var(--foreground));
 }
 
 .status-accepted {
-  background-color: #dcfce7;
-  color: #065f46;
+  background-color: color-mix(in srgb, var(--success) 14%, var(--background));
+  color: color-mix(in srgb, var(--success) 80%, var(--foreground));
 }
 
 .status-rejected {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: color-mix(
+    in srgb,
+    var(--destructive) 14%,
+    var(--background)
+  );
+  color: color-mix(in srgb, var(--destructive) 80%, var(--foreground));
 }
 
 .success-alert {
-  background-color: #dcfce7;
-  color: #008236;
+  background-color: color-mix(in srgb, var(--success) 14%, var(--background));
+  color: color-mix(in srgb, var(--success) 80%, var(--foreground));
 }
 
 .failure-alert {
-  background-color: #ffe2e2;
-  color: #e7000b;
+  background-color: color-mix(
+    in srgb,
+    var(--destructive) 14%,
+    var(--background)
+  );
+  color: color-mix(in srgb, var(--destructive) 80%, var(--foreground));
 }
 
 .success-alert div {
-  color: #008236;
+  color: color-mix(in srgb, var(--success) 80%, var(--foreground));
 }
 
 .failure-alert div {
-  color: #e7000b;
+  color: color-mix(in srgb, var(--destructive) 80%, var(--foreground));
 }
 
 .animate-text {
@@ -216,7 +211,7 @@ ul.timelinestatic > li {
 }
 
 .url-link:hover {
-  color: #0265fd !important;
+  color: var(--primary) !important;
   text-decoration: underline;
 }
 

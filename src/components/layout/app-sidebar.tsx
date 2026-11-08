@@ -9,6 +9,7 @@ import React, { JSX, useEffect, useState } from 'react'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -31,6 +32,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { NavItem } from '../../../types'
 import { Organization } from '@/features/dashboard/type/organization'
+import ThemeSwitcher from './ThemeToggle/theme-switcher'
 import { getOrganizations } from '@/app/api/organization'
 import { setSidebarCollapsed } from '@/lib/sidebarSlice'
 import { useSession } from 'next-auth/react'
@@ -40,10 +42,10 @@ const APP_ENV =
   process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
 
 const APP_CONFIG = {
-  logo: (theme: string, resolvedTheme: string): string =>
-    (resolvedTheme === 'dark'
-      ? `/logos/${theme}_logo_dark.svg`
-      : `/logos/${theme}_logo.svg`),
+  logo: (theme: string, resolvedTheme: string): string => {
+    const variant = resolvedTheme === 'dark' ? '_logo_dark' : '_logo'
+    return `/logos/${theme}${variant}.svg`
+  },
   collapsedLogo: (theme: string): string => `/favicons/favicon-${theme}.ico`,
   poweredBy: (theme: string): { src: string; alt: string } | null => {
     if (theme === 'credebl') {
@@ -261,6 +263,10 @@ export default function AppSidebar(): React.JSX.Element {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
+      <SidebarFooter className="border-t">
+        <ThemeSwitcher />
+      </SidebarFooter>
 
       {poweredBy && (
         <div className="text-muted-foreground flex items-center justify-center border-t p-3 text-sm group-data-[collapsed=true]:flex-col group-data-[collapsed=true]:gap-1">

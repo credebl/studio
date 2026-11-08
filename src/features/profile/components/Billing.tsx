@@ -3,7 +3,7 @@
 import { JSX } from 'react'
 
 export default function Billing(): JSX.Element {
-  const sovioLandingPageURL = process.env.NEXT_PUBLIC_LANDINGPAGE_URL || ''
+  const landingPageURL = process.env.NEXT_PUBLIC_LANDINGPAGE_URL || ''
   const plans = [
     {
       name: 'FREE',
@@ -24,7 +24,7 @@ export default function Billing(): JSX.Element {
     },
     {
       name: 'PRO',
-      link: `${sovioLandingPageURL}/pricing`,
+      link: `${landingPageURL}/pricing`,
       buttonLabel: 'Contact Us',
       features: [
         'Organizations: Unlimited',
@@ -66,7 +66,7 @@ export default function Billing(): JSX.Element {
               </button>
             ) : (
               <a
-                href={`${sovioLandingPageURL}/pricing?openContact=true`}
+                href={`${landingPageURL}/pricing?openContact=true`}
                 target="_blank"
                 className="bg-primary text-primary-foreground block w-full rounded-lg px-4 py-2 text-center font-medium"
                 rel="noreferrer"

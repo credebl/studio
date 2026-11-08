@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
+
 import * as React from 'react'
 import * as Yup from 'yup'
-
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Check, Copy, Loader2 } from 'lucide-react'
 import {
@@ -10,8 +10,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import DidActionDialog, { DidAction, DidActionType } from './DidActionDialog'
 import { DidMethod, Network, Roles } from '@/common/enums'
+import { type EncryptedKey, parseKeyMaterial } from '@/utils/keyImport'
 import { ErrorMessage, Field, Form, Formik, FormikHelpers } from 'formik'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Tooltip,
   TooltipContent,
@@ -24,41 +33,39 @@ import {
   polygonFaucet,
 } from '@/config/CommonConstant'
 import {
+  archiveDid,
   createDid,
   createPolygonKeyValuePair,
+  deleteDid,
   getDids,
+  unarchiveDid,
   updatePrimaryDid,
 } from '@/app/api/Agent'
+import {
+  encryptKeyForDidImport,
+  polygonKeyMaterial,
+} from '@/utils/didKeyImport'
 import { getOrganizationById, getOrganizations } from '@/app/api/organization'
 import { useEffect, useState } from 'react'
-
 import { AlertComponent } from '@/components/AlertComponent'
-import { AlertDialogDemo } from './ConfirmationDialogue'
 import { AxiosResponse } from 'axios'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
+import DidDetailsPanel from './DidDetailsPanel'
+import DidRowActions from './DidRowActions'
+import { IDidListData } from '@/features/organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
+import { StatusPill } from './DetailParts'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
 import { useRouter } from 'next/navigation'
-
-interface IDidListData {
-  id: string
-  did: string
-  isPrimaryDid: boolean
-  createDateTime: string
-  lastChangedDateTime: string
-}
-
-interface IUpdatePrimaryDid {
-  id: string
-  did: string
-}
 
 interface IPolygonKeys {
   privateKey: string
@@ -72,6 +79,8 @@ interface IFormValues {
   network: string
   domain: string
   privatekey: string
+  privateKey: string
+  passphrase: string
   endorserDid: string
   did: string
 }
@@ -94,6 +103,60 @@ interface Organization {
   name: string
   userOrgRoles: UserOrgRole[]
 }
+
+const createDidMethods: DidMethod[] = [
+  DidMethod.INDY,
+  DidMethod.KEY,
+  DidMethod.WEB,
+  DidMethod.POLYGON,
+]
+
+const indyNetworks = [
+  'bcovrin:testnet',
+  'indicio:testnet',
+  'indicio:demonet',
+  'indicio:mainnet',
+]
+
+const polygonNetworks =
+  process.env.NEXT_PUBLIC_MODE === 'PROD' ? ['testnet', 'mainnet'] : ['testnet']
+
+const getMethodDefaults = (
+  didMethod: DidMethod,
+  network?: string,
+): Pick<IFormValues, 'ledger' | 'network'> => {
+  switch (didMethod) {
+    case DidMethod.INDY:
+      return {
+        ledger: 'indy',
+        network:
+          network && indyNetworks.includes(network) ? network : indyNetworks[0],
+      }
+    case DidMethod.POLYGON:
+      return {
+        ledger: 'polygon',
+        network:
+          network === Network.MAINNET &&
+          polygonNetworks.includes(Network.MAINNET)
+            ? Network.MAINNET
+            : Network.TESTNET,
+      }
+    default:
+      return { ledger: 'No Ledger', network: '' }
+  }
+}
+
+const getCompleteDidMethod = (
+  didMethod: DidMethod,
+  network: string,
+): string => {
+  if (didMethod === DidMethod.INDY) {
+    return `did:indy:${network}`
+  }
+
+  return didMethod
+}
+
 const DateTooltip = ({
   date,
   children,
@@ -117,11 +180,14 @@ const CopyDid = ({
   className,
   showCheck = false,
   didListLoading,
+  onValueClick,
 }: {
   value: string
   className?: string
   showCheck?: boolean
   didListLoading?: boolean
+  /** Makes the value a button, here to open the DID's details. */
+  onValueClick?: () => void
 }): React.JSX.Element => {
   const [copied, setCopied] = useState(false)
 
@@ -169,7 +235,18 @@ const CopyDid = ({
     <Tooltip>
       <TooltipTrigger asChild>
         <div className={`flex items-center gap-2 ${className}`}>
-          <span className="truncate font-mono">{value}</span>
+          {onValueClick ? (
+            <button
+              type="button"
+              title="View details"
+              onClick={onValueClick}
+              className="focus-visible:ring-ring rounded-sm text-left font-mono break-all hover:underline focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {value}
+            </button>
+          ) : (
+            <span className="font-mono break-all">{value}</span>
+          )}
           <Button
             type="button"
             variant="ghost"
@@ -194,11 +271,22 @@ const TokenWarningMessage = (): React.JSX.Element => (
   </div>
 )
 
-const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
+const DIDListComponent = ({
+  orgId,
+  onDidCountChange,
+  onWalletChange,
+}: {
+  orgId: string
+  /** Called with the number of DIDs each time the list is loaded. */
+  onDidCountChange?: (count: number) => void
+  /** Called after a change that can affect the wallet, such as a new primary DID. */
+  onWalletChange?: () => void
+}): React.JSX.Element => {
   // State for DID list
   const [didList, setDidList] = useState<IDidListData[]>([])
   const [showPopup, setShowPopup] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [errorPath, setErrorPath] = useState<string>('')
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
   const [isMethodLoading, setIsMethodLoading] = useState(false)
 
@@ -214,6 +302,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     string | null
   >(null)
   const [havePrivateKey, setHavePrivateKey] = useState(false)
+  const [haveKeyMaterial, setHaveKeyMaterial] = useState(false)
   const [privateKeyValue, setPrivateKeyValue] = useState<string>('')
   const [walletErrorMessage, setWalletErrorMessage] = useState<string | null>(
     null,
@@ -223,6 +312,13 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const [searchTerm] = useState('')
   const [userRoles, setUserRoles] = useState<string[]>([])
   const [didListLoading, setDidListLoading] = useState<boolean>(true)
+  const [showArchived, setShowArchived] = useState<boolean>(false)
+  const [detailsDid, setDetailsDid] = useState<string | null>(null)
+  const [pendingAction, setPendingAction] = useState<DidAction | null>(null)
+  const [actionBusy, setActionBusy] = useState<boolean>(false)
+  const [actionError, setActionError] = useState<string | null>(null)
+  // Shown above the list. Kept apart from successMsg, which the Create DID dialog also displays.
+  const [listMessage, setListMessage] = useState<string | null>(null)
 
   const [initialValues, setInitialValues] = useState<IFormValues>({
     method: '',
@@ -230,6 +326,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     network: '',
     domain: '',
     privatekey: '',
+    privateKey: '',
+    passphrase: '',
     endorserDid: '',
     did: '',
   })
@@ -238,7 +336,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
   const getData = async (): Promise<void> => {
     setDidListLoading(true)
     try {
-      const response = await getDids(orgId)
+      const response = await getDids(orgId, showArchived)
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
         const sortedDids = data?.data.sort(
@@ -253,6 +351,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           },
         )
         setDidList(sortedDids)
+        onDidCountChange?.(sortedDids.length)
       }
     } catch (error) {
       console.error('Error fetching DIDs:', error)
@@ -260,24 +359,53 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       setDidListLoading(false)
     }
   }
-  const setPrimaryDid = async (id: string, did: string): Promise<void> => {
-    try {
-      const payload: IUpdatePrimaryDid = {
-        id,
-        did,
-      }
-      const response = await updatePrimaryDid(orgId, payload)
-      const { data } = response as AxiosResponse
+  // Set primary, archive, restore and delete share one flow: call the API, then refresh the list and the wallet.
+  const runAction = async ({ type, item }: DidAction): Promise<void> => {
+    setActionBusy(true)
+    setActionError(null)
 
-      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        getData()
-        router.refresh()
-      } else {
-        setErrorMsg(response as string)
+    const request = (): Promise<AxiosResponse | string> => {
+      switch (type) {
+        case 'primary':
+          return updatePrimaryDid(orgId, { id: item.id, did: item.did })
+        case 'archive':
+          return archiveDid(orgId, item.did)
+        case 'unarchive':
+          return unarchiveDid(orgId, item.did)
+        default:
+          return deleteDid(orgId, item.did)
       }
-    } catch (error) {
-      console.error('Error setting primary DID:', error)
     }
+    const response = await request()
+
+    setActionBusy(false)
+    if (typeof response === 'string') {
+      setActionError(response)
+      return
+    }
+
+    const { data } = response as AxiosResponse
+    const succeeded =
+      data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS ||
+      data?.statusCode === apiStatusCodes.API_STATUS_CREATED
+    if (!succeeded) {
+      setActionError(data?.message || 'The change could not be made.')
+      return
+    }
+
+    setPendingAction(null)
+    setListMessage(data?.message ?? null)
+    if (type === 'delete' && detailsDid === item.did) {
+      setDetailsDid(null)
+    }
+    await getData()
+    router.refresh()
+    onWalletChange?.()
+  }
+
+  const openAction = (type: DidActionType, item: IDidListData): void => {
+    setActionError(null)
+    setPendingAction({ type, item })
   }
 
   const fetchOrganizations = async (): Promise<void> => {
@@ -315,7 +443,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
 
   useEffect(() => {
     getData()
-  }, [])
+  }, [showArchived])
 
   // Create DID functions
   const getValidationSchema = (): Yup.AnyObject => {
@@ -325,6 +453,8 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       network: Yup.string(),
       domain: Yup.string(),
       privatekey: Yup.string(),
+      privateKey: Yup.string(),
+      passphrase: Yup.string(),
       endorserDid: Yup.string(),
       did: Yup.string(),
     })
@@ -339,64 +469,103 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           .required('Private key is required')
           .length(64, 'Private key must be exactly 64 characters long'),
       })
+    } else if (method === DidMethod.INDY) {
+      schema = schema.shape({
+        network: Yup.string().required('Network is required'),
+      })
+    }
+
+    if (
+      (method === DidMethod.KEY || method === DidMethod.WEB) &&
+      haveKeyMaterial
+    ) {
+      schema = schema.shape({
+        privateKey: Yup.string().required(
+          'Private key (PEM, base64 DER or JWK) is required',
+        ),
+      })
     }
 
     return schema
   }
 
-  const fetchOrganizationDetails = async (): Promise<void> => {
+  const fetchOrganizationDetails = async (): Promise<
+    IFormValues | undefined
+  > => {
     const response = await getOrganizationById(orgId)
+    if (typeof response === 'string') {
+      console.error('Error in fetching organization:::', response)
+      setLoading(false)
+      return undefined
+    }
+
     const { data } = response as AxiosResponse
     setLoading(false)
-    if (data?.statusCode === apiStatusCodes.API_STATUS_SUCCESS) {
-      const didMethod = data?.data?.org_agents[0]?.orgDid
-        ?.split(':')
-        .slice(0, 2)
-        .join(':')
-      setMethod(didMethod)
-
-      let ledgerName: string = ''
-      if (didMethod === DidMethod.INDY || didMethod === DidMethod.POLYGON) {
-        ledgerName = data?.data?.org_agents[0]?.orgDid.split(':')[1]
-      } else {
-        ledgerName = 'No Ledger'
-      }
-
-      let networkName: string = ''
-
-      if (didMethod === DidMethod.INDY) {
-        networkName = data?.data?.org_agents[0]?.orgDid
-          .split(':')
-          .slice(2, 4)
-          .join(':')
-      } else if (didMethod === DidMethod.POLYGON) {
-        networkName = data?.data?.org_agents[0]?.orgDid.split(':')[2]
-      }
-
-      let completeDidMethod: string = ''
-      if (didMethod === DidMethod.INDY) {
-        completeDidMethod = data?.data?.org_agents[0]?.orgDid
-          .split(':')
-          .slice(0, 4)
-          .join(':')
-      } else {
-        completeDidMethod = didMethod
-      }
-      setCompleteDidMethodValue(completeDidMethod)
-
-      // Update initial values
-      setInitialValues({
-        method: didMethod,
-        ledger: ledgerName,
-        network: networkName,
-        domain: '',
-        privatekey: generatedKeys?.privateKey.slice(2) || '',
-        endorserDid: '',
-        did: '',
-      })
-    } else {
+    if (data?.statusCode !== apiStatusCodes.API_STATUS_SUCCESS) {
       console.error('Error in fetching organization:::')
+      return undefined
     }
+
+    const orgDid: string | undefined = data?.data?.org_agents?.[0]?.orgDid
+
+    const orgDidMethod = orgDid?.split(':').slice(0, 2).join(':') as
+      DidMethod | undefined
+
+    // The organization's current DID method is only used to preselect a sensible
+    // default. It must never block creating a DID with a different method.
+    const didMethod =
+      orgDidMethod && createDidMethods.includes(orgDidMethod)
+        ? orgDidMethod
+        : DidMethod.KEY
+
+    const networkFromDid =
+      didMethod === DidMethod.INDY
+        ? orgDid?.split(':').slice(2, 4).join(':')
+        : didMethod === DidMethod.POLYGON
+          ? orgDid?.split(':')[2]
+          : undefined
+
+    const { ledger, network } = getMethodDefaults(didMethod, networkFromDid)
+    setMethod(didMethod)
+    setCompleteDidMethodValue(getCompleteDidMethod(didMethod, network))
+
+    // Update initial values
+    const resolvedValues: IFormValues = {
+      method: didMethod,
+      ledger,
+      network,
+      domain: '',
+      privatekey: generatedKeys?.privateKey.slice(2) || '',
+      privateKey: '',
+      passphrase: '',
+      endorserDid: '',
+      did: '',
+    }
+    setInitialValues(resolvedValues)
+
+    return resolvedValues
+  }
+
+  const handleMethodChange = (
+    nextMethod: DidMethod,
+    setFieldValue: FormikHelpers<IFormValues>['setFieldValue'],
+  ): void => {
+    const { ledger, network } = getMethodDefaults(nextMethod)
+
+    setMethod(nextMethod)
+    setCompleteDidMethodValue(getCompleteDidMethod(nextMethod, network))
+    setFieldValue('method', nextMethod)
+    setFieldValue('ledger', ledger)
+    setFieldValue('network', network)
+    setFieldValue('domain', '')
+    setFieldValue('privatekey', '')
+    setFieldValue('privateKey', '')
+    setFieldValue('passphrase', '')
+    setHavePrivateKey(false)
+    setHaveKeyMaterial(false)
+    setGeneratedKeys(null)
+    setPrivateKeyValue('')
+    setWalletErrorMessage(null)
   }
 
   const getButtonLabel = (): React.ReactNode => {
@@ -470,6 +639,37 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
   }, [privateKeyValue])
 
+  const getCreateDidErrorMessage = (message: unknown): string => {
+    const text = Array.isArray(message) ? message.join(', ') : message
+
+    if (
+      typeof text === 'string' &&
+      text.toLowerCase().includes('network is mismatched')
+    ) {
+      return "This organization's agent is not configured for the selected ledger network. Choose did:key or did:web, or configure the agent for that ledger before creating a ledger-based DID."
+    }
+
+    return typeof text === 'string' && text ? text : 'Failed to create DID'
+  }
+
+  /**
+   * Requests a single-use import session and encrypts the pasted key to it in the browser. Only the resulting JWE
+   * envelope is sent to the gateway, so the plaintext key never leaves this tab.
+   */
+  const buildEncryptedKey = async (
+    values: IFormValues,
+  ): Promise<EncryptedKey> => {
+    const didMethod = values.method?.split(':')[1] || ''
+    // Parse before asking for a session, so an invalid key does not burn one.
+    // did:polygon uses the hex secp256k1 key from the Polygon key pair flow.
+    const material =
+      values.method === DidMethod.POLYGON
+        ? polygonKeyMaterial(values.privatekey)
+        : parseKeyMaterial(values.privateKey, values.passphrase)
+
+    return encryptKeyForDidImport(orgId, didMethod, material)
+  }
+
   const createNewDid = async (values: IFormValues): Promise<void> => {
     setLoading(true)
     setErrMsg(null)
@@ -485,20 +685,55 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     } else if (values.method === DidMethod.POLYGON) {
       network = `${values.ledger}:${values.network}`
     }
+
+    const usesImportedKey =
+      (values.method === DidMethod.KEY || values.method === DidMethod.WEB) &&
+      haveKeyMaterial
+
+    let encryptedKey: EncryptedKey | undefined = undefined
+    if (usesImportedKey || values.method === DidMethod.POLYGON) {
+      try {
+        encryptedKey = await buildEncryptedKey(values)
+      } catch (error) {
+        setErrMsg(
+          error instanceof Error
+            ? error.message
+            : 'Failed to encrypt the private key for import',
+        )
+        setLoading(false)
+        setIsCreatingDid(false)
+        return
+      }
+    }
+
     const didData = {
-      seed: values.method === DidMethod.POLYGON ? '' : seed,
+      seed: values.method === DidMethod.POLYGON || usesImportedKey ? '' : seed,
       keyType: 'ed25519',
       method: values.method?.split(':')[1] || '',
       network,
       domain: values.method === DidMethod.WEB ? values.domain : '',
       role: values.method === DidMethod.INDY ? 'endorser' : '',
-      privatekey: values.method === DidMethod.POLYGON ? values.privatekey : '',
+      encryptedKey,
       did: values?.did ?? '',
       endorserDid: values?.endorserDid || '',
       isPrimaryDid: false,
     }
     try {
       const response = await createDid(orgId, didData)
+
+      if (typeof response === 'string') {
+        setErrMsg(response)
+        setLoading(false)
+        setIsCreatingDid(false)
+        if (
+          values.method === DidMethod.POLYGON ||
+          values.method === DidMethod.WEB
+        ) {
+          setShowPopup(true)
+        }
+        return
+      }
+
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
@@ -511,7 +746,7 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           router.refresh()
         }, 2000)
       } else {
-        setErrMsg(response as string)
+        setErrMsg(getCreateDidErrorMessage(data?.message))
         setLoading(false)
         setIsCreatingDid(false)
         if (
@@ -526,6 +761,11 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
       }
     } catch (error) {
       console.error('An error occurred while creating did:', error)
+      setErrMsg(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while creating the DID. Please try again.',
+      )
       setLoading(false)
       setIsCreatingDid(false)
     }
@@ -568,8 +808,24 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
     }
   }, [havePrivateKey])
 
+  // Only owners and admins may change DIDs, matching the Create DID button.
+  const canManageDids = !(
+    userRoles.includes(Roles.MEMBER) ||
+    userRoles.includes(Roles.ISSUER) ||
+    userRoles.includes(Roles.VERIFIER)
+  )
+
   return (
     <div className="w-full space-y-4">
+      {listMessage && (
+        <div className="w-full" role="status">
+          <AlertComponent
+            message={listMessage}
+            type={'success'}
+            onAlertClose={() => setListMessage(null)}
+          />
+        </div>
+      )}
       {successMsg && (
         <div className="w-full" role="alert">
           <AlertComponent
@@ -581,35 +837,41 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
           />
         </div>
       )}
-      {errorMsg && (
+      {(errorMsg || errMsg) && !showPopup && (
         <div className="w-full" role="alert">
           <AlertComponent
-            message={errorMsg}
+            message={errorMsg || errMsg || ''}
             type={'failure'}
             onAlertClose={() => {
               setErrorMsg(null)
+              setErrMsg(null)
+              setErrorPath('')
             }}
+            viewButton={Boolean(errorPath)}
+            path={errorPath}
           />
         </div>
       )}
 
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <Button
           onClick={async () => {
             setIsMethodLoading(true)
-            await fetchOrganizationDetails()
-            setIsMethodLoading(false)
             setErrMsg(null)
+            setErrorMsg(null)
+            setErrorPath('')
 
-            if (method === DidMethod.POLYGON || method === DidMethod.WEB) {
-              setShowPopup(true)
-            } else {
-              setIsCreatingDid(true)
-              createNewDid({
-                ...initialValues,
-                method: method || '',
-              })
+            const resolvedValues = await fetchOrganizationDetails()
+            setIsMethodLoading(false)
+
+            if (!resolvedValues) {
+              setErrMsg(
+                'Unable to load the organization wallet. Please try again.',
+              )
+              return
             }
+
+            setShowPopup(true)
           }}
           disabled={
             userRoles.includes(Roles.MEMBER) ||
@@ -621,6 +883,16 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         >
           {getButtonLabel()}
         </Button>
+        <div className="flex items-center gap-2">
+          <Switch
+            id="show-archived-dids"
+            checked={showArchived}
+            onCheckedChange={setShowArchived}
+          />
+          <Label htmlFor="show-archived-dids" className="text-sm font-normal">
+            Show archived
+          </Label>
+        </div>
       </div>
 
       <div className="divide-y rounded-lg border">
@@ -631,33 +903,45 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         ) : (
           <>
             {didList.map((item: IDidListData, index: number) => (
-              <div key={item.id} className={'grid h-20 items-center p-4'}>
-                <div className="flex items-center justify-between gap-4">
-                  <div className="flex gap-4">
-                    <span className="w-16 shrink-0">DID {index + 1}</span>
+              <div
+                key={item.id}
+                className={'grid min-h-20 items-center gap-1 p-4'}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                  <div className="flex min-w-0 gap-2 sm:gap-4">
+                    <span className="w-12 shrink-0 sm:w-16">
+                      DID {index + 1}
+                    </span>
                     <span>:</span>
 
                     {item?.did ? (
-                      <CopyDid value={item.did} className="flex-1 font-mono" />
+                      <CopyDid
+                        value={item.did}
+                        className="min-w-0 flex-1 font-mono"
+                        onValueClick={() => setDetailsDid(item.did)}
+                      />
                     ) : (
                       <span className="flex-1 font-mono">Not available</span>
                     )}
                   </div>
-                  <div className={item.isPrimaryDid ? 'grow' : ''}>
-                    {item.isPrimaryDid ? (
+                  <div className="flex shrink-0 items-center gap-2">
+                    {item.isPrimaryDid && (
                       <Badge
                         variant="default"
                         className="cursor-default text-sm"
                       >
                         Primary DID
                       </Badge>
-                    ) : (
-                      <div className="ml-auto">
-                        <AlertDialogDemo
-                          handler={() => setPrimaryDid(item.id, item.did)}
-                        />
-                      </div>
                     )}
+                    {item.isArchived && (
+                      <StatusPill tone="warn">Archived</StatusPill>
+                    )}
+                    <DidRowActions
+                      item={item}
+                      canManage={canManageDids}
+                      onDetails={() => setDetailsDid(item.did)}
+                      onAction={(type) => openAction(type, item)}
+                    />
                   </div>
                 </div>
                 <div className="flex gap-2">
@@ -678,8 +962,23 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
         )}
       </div>
 
-      {/* Conditionally render the Dialog for both Polygon and Web DIDs */}
-      {(method === DidMethod.POLYGON || method === DidMethod.WEB) && (
+      <DidDetailsPanel
+        orgId={orgId}
+        did={detailsDid}
+        onOpenChange={(open) => !open && setDetailsDid(null)}
+      />
+      <DidActionDialog
+        orgId={orgId}
+        action={pendingAction}
+        busy={actionBusy}
+        error={actionError}
+        onConfirm={runAction}
+        onCancel={() => setPendingAction(null)}
+      />
+
+      {/* Create DID dialog. The method is chosen by the user, so an
+          organization is never limited to its current primary DID method. */}
+      {showPopup && (
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
           <DialogContent className="max-w-2xl!">
             <DialogHeader>
@@ -701,11 +1000,37 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
               {({ values, setFieldValue }) => (
                 <Form className="space-y-4">
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                    <div>
-                      <Label htmlFor="ledger">
-                        Ledger{' '}
+                    <div className="col-span-1 sm:col-span-2">
+                      <Label>
+                        DID Method{' '}
                         <span className="text-destructive text-xs">*</span>
                       </Label>
+                      <Select
+                        value={method ?? ''}
+                        onValueChange={(value) =>
+                          handleMethodChange(value as DidMethod, setFieldValue)
+                        }
+                      >
+                        <SelectTrigger className="mt-1 w-full">
+                          <SelectValue placeholder="Select DID method" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {createDidMethods.map((didMethod) => (
+                            <SelectItem key={didMethod} value={didMethod}>
+                              {didMethod}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {completeDidMethodValue && (
+                        <p className="text-muted-foreground mt-1 text-xs">
+                          {completeDidMethodValue}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <Label htmlFor="ledger">Ledger</Label>
                       <Field
                         as={Input}
                         id="ledger"
@@ -722,18 +1047,46 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                       />
                     </div>
 
-                    <div>
-                      <Label>
-                        DID Method{' '}
-                        <span className="text-destructive text-xs">*</span>
-                      </Label>
-                      <Input
-                        value={completeDidMethodValue || ''}
-                        readOnly
-                        tabIndex={-1}
-                        className="bg-muted cursor-default select-none"
-                      />
-                    </div>
+                    {(method === DidMethod.INDY ||
+                      method === DidMethod.POLYGON) && (
+                      <div>
+                        <Label>
+                          Network{' '}
+                          <span className="text-destructive text-xs">*</span>
+                        </Label>
+                        <Select
+                          value={values.network}
+                          onValueChange={(value) => {
+                            setFieldValue('network', value)
+                            setCompleteDidMethodValue(
+                              getCompleteDidMethod(method as DidMethod, value),
+                            )
+                          }}
+                        >
+                          <SelectTrigger className="mt-1 w-full">
+                            <SelectValue placeholder="Select network" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {(method === DidMethod.INDY
+                              ? indyNetworks
+                              : polygonNetworks
+                            ).map((networkOption) => (
+                              <SelectItem
+                                key={networkOption}
+                                value={networkOption}
+                              >
+                                {networkOption}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <ErrorMessage
+                          name="network"
+                          component="div"
+                          className="text-destructive mt-1 text-sm"
+                        />
+                      </div>
+                    )}
 
                     {method === DidMethod.WEB && (
                       <div className="col-span-1 sm:col-span-2">
@@ -757,6 +1110,77 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                           Enter the domain where your DID document will be
                           hosted
                         </p>
+                      </div>
+                    )}
+
+                    {(method === DidMethod.KEY || method === DidMethod.WEB) && (
+                      <div className="col-span-1 space-y-4 rounded-md border p-4 sm:col-span-2">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="haveKeyMaterial"
+                            checked={haveKeyMaterial}
+                            onCheckedChange={(checked) => {
+                              setHaveKeyMaterial(checked === true)
+                              setFieldValue('privateKey', '')
+                              setFieldValue('passphrase', '')
+                            }}
+                          />
+                          <Label htmlFor="haveKeyMaterial">
+                            Import an existing private key
+                          </Label>
+                        </div>
+
+                        {haveKeyMaterial && (
+                          <>
+                            <div>
+                              <Label htmlFor="privateKey">
+                                Private key{' '}
+                                <span className="text-destructive text-xs">
+                                  *
+                                </span>
+                              </Label>
+                              <Field
+                                as={Textarea}
+                                id="privateKey"
+                                name="privateKey"
+                                autoComplete="off"
+                                spellCheck={false}
+                                rows={4}
+                                className="mt-1 font-mono text-xs"
+                                placeholder="-----BEGIN PRIVATE KEY----- ... or a private JWK JSON"
+                              />
+                              <ErrorMessage
+                                name="privateKey"
+                                component="div"
+                                className="text-destructive mt-1 text-sm"
+                              />
+                              <p className="text-muted-foreground mt-1 text-sm">
+                                The key is encrypted in your browser to a
+                                single-use key before it is sent, so it never
+                                appears in request bodies or logs. PEM (PKCS#8,
+                                SEC1 or PKCS#1, optionally encrypted), base64
+                                DER (PKCS#8) or a private JWK. Ed25519, P-256,
+                                P-384, P-521 and secp256k1 are supported; RSA is
+                                available for did:web only.
+                              </p>
+                            </div>
+
+                            <div>
+                              <Label htmlFor="passphrase">
+                                Passphrase (optional)
+                              </Label>
+                              <Field
+                                as={Input}
+                                id="passphrase"
+                                name="passphrase"
+                                type="password"
+                                autoComplete="new-password"
+                                placeholder="Passphrase of an encrypted PEM key"
+                                className="mt-1"
+                              />
+                            </div>
+                          </>
+                        )}
                       </div>
                     )}
 
@@ -931,7 +1355,11 @@ const DIDListComponent = ({ orgId }: { orgId: string }): React.JSX.Element => {
                       disabled={
                         loading ||
                         (method === DidMethod.POLYGON && !values.privatekey) ||
-                        (method === DidMethod.WEB && !values.domain)
+                        (method === DidMethod.WEB && !values.domain) ||
+                        ((method === DidMethod.KEY ||
+                          method === DidMethod.WEB) &&
+                          haveKeyMaterial &&
+                          !values.privateKey)
                       }
                     >
                       {loading ? 'Submitting...' : 'Submit'}

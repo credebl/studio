@@ -90,6 +90,7 @@ export const apiRoutes = {
     editUserROle: '/user-roles',
     didList: '/dids',
     createDid: '/agents/did',
+    didImportSession: '/agents/did/import/session',
     primaryDid: '/primary-did',
     getOrgReferences: '/activity-count',
     deleteOrganization: '/deleteorganizations',

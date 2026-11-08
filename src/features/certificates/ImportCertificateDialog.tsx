@@ -57,9 +57,16 @@ const ImportCertificateDialog = ({
       setError('Invalid X.509 PEM file')
       return
     }
-    const parsed = parsePemCertificate(text)
-    setParsedCert({ ...parsed, certificatePem: text })
-    setError(null)
+    try {
+      const parsed = parsePemCertificate(text)
+      setParsedCert({ ...parsed, certificatePem: text })
+      setError(null)
+    } catch {
+      setParsedCert(null)
+      setError(
+        'Unable to parse the X.509 certificate. Please check the PEM file.',
+      )
+    }
   }
 
   const handleImport = async (): Promise<void> => {
@@ -78,6 +85,12 @@ const ImportCertificateDialog = ({
         certificate: normalizedCert,
         privateKey,
       })
+
+      if (typeof response === 'string') {
+        setError(response)
+        onFailure(response)
+        return
+      }
 
       const { data } = response as AxiosResponse
 
