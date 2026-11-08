@@ -20,6 +20,9 @@ the Studio image.
 - `/admin` responses are sent with `Cache-Control: no-store` and
   `X-Robots-Tag: noindex, nofollow`, and the page metadata also disables
   indexing.
+- The `isPlatformAdmin` claim is trusted for the lifetime of the NextAuth JWT.
+  Revoking the backend role takes effect on the next sign-in/token re-issue;
+  the platform API remains the final authorization boundary.
 
 ## Screens
 
@@ -31,6 +34,25 @@ the Studio image.
 
 The previous standalone app's `/sessions` screen was dropped because Studio
 already provides an equivalent sessions view under Profile.
+
+## Security tests
+
+`pnpm test` runs the Vitest negative suite in `tests/`. It mocks the session,
+backend fetches and server actions, and covers:
+
+- missing and non-admin sessions, stale claims and failed profile lookups
+- direct server-action invocation, invalid input and backend error redaction
+- route-guard denial, paging/search clamping and `no-store` responses
+- hardened headers on `/admin*` plus token refresh-once behavior
+
+Two `it.fails` cases deliberately pin known gaps so they stay visible:
+
+- a stale `isPlatformAdmin` claim is trusted until the JWT is re-issued
+  (revocation latency; the backend remains the enforcement point)
+- the hardened header set is not applied to `/api/admin/*`; that route sets
+  `Cache-Control: no-store` itself
+
+Remove the `it.fails` marker when the corresponding gap is fixed.
 
 ## Deployment
 
