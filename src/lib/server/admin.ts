@@ -136,7 +136,9 @@ const platformFetch = async (
   return refreshedToken ? send(refreshedToken) : response
 }
 
-const holdsPlatformAdminRole = async (): Promise<boolean> => {
+// Cached per request so a layout, page and server action that run together do
+// not each call the profile endpoint.
+const holdsPlatformAdminRole = cache(async (): Promise<boolean> => {
   const response = await platformFetch(apiRoutes.users.userProfile)
   if (!response?.ok) {
     return false
@@ -155,21 +157,19 @@ const holdsPlatformAdminRole = async (): Promise<boolean> => {
   } catch {
     return false
   }
-}
+})
 
 /**
  * Returns the current session only when the user is a platform admin.
- * Falls back to a live profile check for sessions minted before the
- * isPlatformAdmin claim was added to the NextAuth JWT.
+ *
+ * The JWT claim is a UI hint, not an authorization source: the live role is
+ * checked on every request so revoking `platform_admin` takes effect
+ * immediately instead of waiting for the token to be re-issued.
  */
 export const getPlatformAdminSession = async (): Promise<Session | null> => {
   const session = await getServerSession(authOptions)
   if (!session?.sessionId) {
     return null
-  }
-
-  if (session.isPlatformAdmin) {
-    return session
   }
 
   return (await holdsPlatformAdminRole()) ? session : null

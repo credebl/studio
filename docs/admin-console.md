@@ -13,16 +13,16 @@ the Studio image.
 - `/admin` is guarded in two places:
   - `src/app/admin/layout.tsx` redirects non-admins to `/dashboard`.
   - Every server action and the `/api/admin/invitations` route re-check the
-    role before doing any work.
+    live role before doing any work.
 - Platform access tokens are never sent to the browser for these screens. The
   server exchanges the httpOnly NextAuth `sessionId` for an access token via
   `/auth/sessionDetails`, cached per request with React `cache`.
-- `/admin` responses are sent with `Cache-Control: no-store` and
-  `X-Robots-Tag: noindex, nofollow`, and the page metadata also disables
-  indexing.
-- The `isPlatformAdmin` claim is trusted for the lifetime of the NextAuth JWT.
-  Revoking the backend role takes effect on the next sign-in/token re-issue;
-  the platform API remains the final authorization boundary.
+- `/admin` and `/api/admin` responses are sent with `Cache-Control: no-store`,
+  `X-Robots-Tag: noindex, nofollow`, `X-Content-Type-Options: nosniff` and
+  `Referrer-Policy: no-referrer`.
+- The `isPlatformAdmin` claim is only a UI hint. Server guards re-check the live
+  `platform_admin` role on every request, so revoking the role takes effect
+  immediately; the platform API remains the final authorization boundary.
 
 ## Screens
 
@@ -40,19 +40,16 @@ already provides an equivalent sessions view under Profile.
 `pnpm test` runs the Vitest negative suite in `tests/`. It mocks the session,
 backend fetches and server actions, and covers:
 
-- missing and non-admin sessions, stale claims and failed profile lookups
+- missing and non-admin sessions, a revoked admin with a stale claim, and failed
+  profile lookups
 - direct server-action invocation, invalid input and backend error redaction
 - route-guard denial, paging/search clamping and `no-store` responses
-- hardened headers on `/admin*` plus token refresh-once behavior
+- hardened headers on `/admin*` and `/api/admin/*`, plus token refresh-once
+  behavior
 
-Two `it.fails` cases deliberately pin known gaps so they stay visible:
-
-- a stale `isPlatformAdmin` claim is trusted until the JWT is re-issued
-  (revocation latency; the backend remains the enforcement point)
-- the hardened header set is not applied to `/api/admin/*`; that route sets
-  `Cache-Control: no-store` itself
-
-Remove the `it.fails` marker when the corresponding gap is fixed.
+A stale `isPlatformAdmin` claim is never trusted for authorization: every guard
+call re-validates the role against the profile endpoint. The claim is still used
+to decide whether the admin navigation is shown.
 
 ## Deployment
 

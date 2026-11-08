@@ -38,6 +38,9 @@ const sessionTokens = (): Response =>
     data: { sessionToken: 'access-token', refreshToken: 'refresh-token' },
   })
 
+const profileWithRole = (role = 'platform_admin'): Response =>
+  jsonResponse({ data: { userOrgRoles: [{ orgRole: { name: role } }] } })
+
 describe('getPlatformAdminSession', () => {
   it('denies access when there is no session', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
@@ -55,17 +58,20 @@ describe('getPlatformAdminSession', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('allows a session whose server-resolved claim is true', async () => {
+  it('re-validates a true claim against the live profile', async () => {
     vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole())
 
     await expect(getPlatformAdminSession()).resolves.toMatchObject({
       sessionId: 'session-1',
       isPlatformAdmin: true,
     })
-    expect(fetchMock).not.toHaveBeenCalled()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
   })
 
-  it('denies a stale session when the lazy role lookup fails', async () => {
+  it('denies a session when the role lookup fails', async () => {
     vi.mocked(getServerSession).mockResolvedValue(
       makeSession({ isPlatformAdmin: false }),
     )
@@ -78,11 +84,9 @@ describe('getPlatformAdminSession', () => {
     vi.mocked(getServerSession).mockResolvedValue(
       makeSession({ isPlatformAdmin: false }),
     )
-    fetchMock.mockResolvedValueOnce(sessionTokens()).mockResolvedValueOnce(
-      jsonResponse({
-        data: { userOrgRoles: [{ orgRole: { name: 'owner' } }] },
-      }),
-    )
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole('owner'))
 
     await expect(getPlatformAdminSession()).resolves.toBeNull()
   })
@@ -91,11 +95,9 @@ describe('getPlatformAdminSession', () => {
     vi.mocked(getServerSession).mockResolvedValue(
       makeSession({ isPlatformAdmin: false }),
     )
-    fetchMock.mockResolvedValueOnce(sessionTokens()).mockResolvedValueOnce(
-      jsonResponse({
-        data: { userOrgRoles: [{ orgRole: { name: 'platform_admin' } }] },
-      }),
-    )
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole())
 
     await expect(getPlatformAdminSession()).resolves.toMatchObject({
       sessionId: 'session-1',
@@ -115,6 +117,9 @@ describe('getPlatformAdminSession', () => {
 
   it('never exposes backend tokens on the client-facing session', async () => {
     vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole())
 
     const session = await getPlatformAdminSession()
 
@@ -124,11 +129,11 @@ describe('getPlatformAdminSession', () => {
     expect(JSON.stringify(session)).not.toContain('refresh-token')
   })
 
-  // Documents a known gap: the claim is trusted until the JWT is re-issued.
-  // When the guard starts re-validating live, this test will fail because the
-  // expectation will start passing; drop the `fails` marker at that point.
-  it.fails('denies a revoked admin whose JWT claim is stale', async () => {
+  it('denies a revoked admin even when the JWT claim is stale', async () => {
     vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole('owner'))
 
     await expect(getPlatformAdminSession()).resolves.toBeNull()
   })
@@ -147,9 +152,25 @@ describe('requirePlatformAdmin', () => {
 
   it('allows platform admins through', async () => {
     vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole())
 
     await expect(requirePlatformAdmin()).resolves.toBeUndefined()
     expect(redirect).not.toHaveBeenCalled()
+  })
+
+  it('redirects a revoked admin even with a stale claim', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(profileWithRole('owner'))
+    vi.mocked(redirect).mockImplementation(() => {
+      throw new Error('NEXT_REDIRECT')
+    })
+
+    await expect(requirePlatformAdmin()).rejects.toThrow('NEXT_REDIRECT')
+    expect(redirect).toHaveBeenCalledWith('/dashboard')
   })
 })
 
