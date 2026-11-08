@@ -1,5 +1,6 @@
 'use client'
 
+import ModeToggle from '@/components/mode-toggle'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { UserNav } from '@/components/layout/user-nav'
 import { usePathname } from 'next/navigation'
@@ -17,7 +18,7 @@ export function AdminHeader(): React.JSX.Element {
   )
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+    <header className="border-border/70 bg-background/80 sticky top-0 z-20 flex h-16 shrink-0 items-center justify-between gap-2 border-b backdrop-blur transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
       <div className="text-muted-foreground flex items-center gap-2 px-4 text-sm">
         <SidebarTrigger className="-ml-1" />
         <span>Platform Administration</span>
@@ -28,6 +29,7 @@ export function AdminHeader(): React.JSX.Element {
       </div>
 
       <div className="flex items-center gap-2 px-4">
+        <ModeToggle />
         <UserNav />
       </div>
     </header>
