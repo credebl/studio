@@ -57,7 +57,12 @@ const loadSessionTokens = cache(async (): Promise<SessionTokens | null> => {
   }
 
   try {
-    const encryptedSessionId = passwordEncryption(session.sessionId)
+    // The platform decrypts with JSON.parse, so the session id must be
+    // JSON-encoded before encryption. Encrypting the raw string yields a
+    // payload the backend rejects with 400 Invalid Credentials.
+    const encryptedSessionId = passwordEncryption(
+      JSON.stringify(session.sessionId),
+    )
     const response = await fetch(
       `${BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encodeURIComponent(encryptedSessionId)}`,
       { cache: 'no-store' },

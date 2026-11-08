@@ -69,6 +69,13 @@ describe('getPlatformAdminSession', () => {
       isPlatformAdmin: true,
     })
     expect(fetchMock).toHaveBeenCalledTimes(2)
+
+    // The platform decrypts with JSON.parse, so the session id has to be
+    // JSON-encoded before encryption.
+    const sessionDetailsUrl = String(fetchMock.mock.calls[0][0])
+    expect(decodeURIComponent(sessionDetailsUrl)).toContain(
+      'sessionId=encrypted:"session-1"',
+    )
   })
 
   it('denies a session when the role lookup fails', async () => {

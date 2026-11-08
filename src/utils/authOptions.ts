@@ -107,7 +107,9 @@ const resolveIsPlatformAdminFromSessionId = async (
   }
 
   try {
-    const encryptedSessionId = passwordEncryption(sessionId)
+    // The platform decrypts with JSON.parse, so the session id must be
+    // JSON-encoded before encryption.
+    const encryptedSessionId = passwordEncryption(JSON.stringify(sessionId))
     const response = await fetch(
       `${baseUrl}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encodeURIComponent(encryptedSessionId)}`,
       { cache: 'no-store' },
