@@ -54,16 +54,25 @@ interface JwtDataPayload extends JwtPayload {
 
 const PLATFORM_ADMIN_ROLE = 'platform_admin'
 
+interface PlatformAccess {
+  isPlatformAdmin: boolean
+  hasOrgAccess: boolean
+}
+
 /**
- * Resolves whether the signed-in user holds the platform_admin role.
+ * Resolves which consoles the signed-in user may use.
+ *
+ * `platform_admin` grants the platform console. Any other org role (owner,
+ * admin, issuer, verifier, member, …) grants the organization console, so a
+ * person holding both roles can switch between the two shells.
  *
  * Runs server-side only (authorize is never bundled for the browser) and fails
  * closed: returns null when the profile lookup cannot be completed so callers
  * can decide whether to treat the user as a non-admin.
  */
-const resolveIsPlatformAdmin = async (
+const resolvePlatformAccess = async (
   accessToken: string,
-): Promise<boolean | null> => {
+): Promise<PlatformAccess | null> => {
   try {
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.users.userProfile}`,
@@ -80,27 +89,32 @@ const resolveIsPlatformAdmin = async (
     const body = await response.json()
     const roles = body?.data?.userOrgRoles
 
-    return (
-      Array.isArray(roles) &&
-      roles.some(
-        (item: { orgRole?: { name?: string } }) =>
-          item?.orgRole?.name === PLATFORM_ADMIN_ROLE,
-      )
-    )
+    if (!Array.isArray(roles)) {
+      return { isPlatformAdmin: false, hasOrgAccess: false }
+    }
+
+    const roleNames = roles
+      .map((item: { orgRole?: { name?: string } }) => item?.orgRole?.name)
+      .filter((name): name is string => Boolean(name))
+
+    return {
+      isPlatformAdmin: roleNames.includes(PLATFORM_ADMIN_ROLE),
+      hasOrgAccess: roleNames.some((name) => name !== PLATFORM_ADMIN_ROLE),
+    }
   } catch {
     return null
   }
 }
 
 /**
- * Resolves the platform_admin claim for a session minted before the claim
- * existed, by exchanging the httpOnly sessionId for an access token.
- * Returns null when the lookup could not be completed so the claim can be
+ * Resolves the console claims for a session minted before the claims existed,
+ * by exchanging the httpOnly sessionId for an access token.
+ * Returns null when the lookup could not be completed so the claims can be
  * retried on a later request instead of being cached as a false negative.
  */
-const resolveIsPlatformAdminFromSessionId = async (
+const resolvePlatformAccessFromSessionId = async (
   sessionId: string,
-): Promise<boolean | null> => {
+): Promise<PlatformAccess | null> => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
   if (!baseUrl) {
     return null
@@ -122,7 +136,7 @@ const resolveIsPlatformAdminFromSessionId = async (
     const body = await response.json()
     const accessToken = body?.data?.sessionToken
 
-    return accessToken ? resolveIsPlatformAdmin(accessToken) : null
+    return accessToken ? resolvePlatformAccess(accessToken) : null
   } catch {
     return null
   }
@@ -230,13 +244,13 @@ export const authOptions: MyAuthOptions = {
               return null
             }
 
-            const isPlatformAdmin =
-              (await resolveIsPlatformAdmin(accessToken)) ?? false
+            const access = await resolvePlatformAccess(accessToken)
 
             return {
               id: user.data.session_state || user.data.email,
               sessionId: user.data.sessionId,
-              isPlatformAdmin,
+              isPlatformAdmin: access?.isPlatformAdmin ?? false,
+              hasOrgAccess: access?.hasOrgAccess ?? false,
             }
           }
 
@@ -256,20 +270,21 @@ export const authOptions: MyAuthOptions = {
       if (user) {
         token.sessionId = user.sessionId
         token.isPlatformAdmin = Boolean(user.isPlatformAdmin)
+        token.hasOrgAccess = Boolean(user.hasOrgAccess)
         return token
       }
 
-      // Sessions minted before the claim existed are resolved once and then
-      // persisted, so the admin navigation appears without a forced re-login.
+      // Sessions minted before these claims existed are resolved once and then
+      // persisted, so the navigation appears without a forced re-login.
       if (
-        typeof token.isPlatformAdmin !== 'boolean' &&
-        typeof token.sessionId === 'string'
+        typeof token.sessionId === 'string' &&
+        (typeof token.isPlatformAdmin !== 'boolean' ||
+          typeof token.hasOrgAccess !== 'boolean')
       ) {
-        const isPlatformAdmin = await resolveIsPlatformAdminFromSessionId(
-          token.sessionId,
-        )
-        if (isPlatformAdmin !== null) {
-          token.isPlatformAdmin = isPlatformAdmin
+        const access = await resolvePlatformAccessFromSessionId(token.sessionId)
+        if (access !== null) {
+          token.isPlatformAdmin = access.isPlatformAdmin
+          token.hasOrgAccess = access.hasOrgAccess
         }
       }
 
@@ -285,6 +300,7 @@ export const authOptions: MyAuthOptions = {
     }): Promise<Session> {
       session.sessionId = token.sessionId as string
       session.isPlatformAdmin = Boolean(token.isPlatformAdmin)
+      session.hasOrgAccess = Boolean(token.hasOrgAccess)
       return session
     },
 

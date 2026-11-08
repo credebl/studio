@@ -34,6 +34,7 @@ export function UserNav(): React.JSX.Element | null {
   const router = useRouter()
   const { data: session } = useSession()
   const isPlatformAdmin = session?.isPlatformAdmin === true
+  const hasOrgAccess = session?.hasOrgAccess === true
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
   const token = useAppSelector((state) => state.auth.token)
@@ -144,9 +145,13 @@ export function UserNav(): React.JSX.Element | null {
             Profile
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => router.push('/developers-setting')}>
-            Developer Settings
-          </DropdownMenuItem>
+          {hasOrgAccess && (
+            <DropdownMenuItem
+              onClick={() => router.push('/developers-setting')}
+            >
+              Developer Settings
+            </DropdownMenuItem>
+          )}
 
           {isPlatformAdmin && (
             <DropdownMenuItem onClick={() => router.push('/admin')}>

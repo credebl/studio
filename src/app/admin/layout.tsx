@@ -1,4 +1,6 @@
-import { AdminTabs } from './admin-tabs'
+import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
+import { AdminHeader } from './admin-header'
+import { AdminSidebar } from '@/components/layout/admin-sidebar'
 import type { Metadata } from 'next'
 import PageContainer from '@/components/layout/page-container'
 import { requirePlatformAdmin } from '@/lib/server/admin'
@@ -18,20 +20,12 @@ export default async function AdminLayout({
   await requirePlatformAdmin()
 
   return (
-    <PageContainer>
-      <div className="mb-4 space-y-1">
-        <h1 className="text-2xl font-bold tracking-tight">
-          Platform Administration
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Platform-wide metrics, invitations and configuration. Restricted to
-          platform administrators.
-        </p>
-      </div>
-
-      <AdminTabs />
-
-      <div className="mt-6">{children}</div>
-    </PageContainer>
+    <SidebarProvider defaultOpen={true}>
+      <AdminSidebar />
+      <SidebarInset>
+        <AdminHeader />
+        <PageContainer>{children}</PageContainer>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

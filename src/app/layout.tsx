@@ -55,6 +55,11 @@ export default async function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link
+          rel="icon"
+          type="image/x-icon"
+          href="/favicons/favicon-credebl.ico"
+        />
         <script
           dangerouslySetInnerHTML={{
             __html: `

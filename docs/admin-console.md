@@ -10,6 +10,9 @@ the Studio image.
 - The role is resolved server-side during sign-in and stored as a signed
   `isPlatformAdmin` claim in the NextAuth JWT. Sessions minted before the claim
   existed are resolved lazily on their next request.
+- A second claim, `hasOrgAccess`, is resolved from the same profile lookup. It
+  is `true` when the user holds any org role other than `platform_admin` (owner,
+  admin, issuer, verifier, member, …).
 - `/admin` is guarded in two places:
   - `src/app/admin/layout.tsx` redirects non-admins to `/dashboard`.
   - Every server action and the `/api/admin/invitations` route re-check the
@@ -24,11 +27,33 @@ the Studio image.
   `platform_admin` role on every request, so revoking the role takes effect
   immediately; the platform API remains the final authorization boundary.
 
+## Shell model
+
+The platform console has its own admin-only shell (`AdminSidebar` +
+`AdminHeader`) and does not render the organization sidebar, org switcher,
+command palette or any org API calls. `PageLayout` excludes the `/admin` prefix
+from the organization shell.
+
+Navigation is sidebar-only: **Dashboard** (`/admin`) and an **Ecosystem** parent
+containing **Invitations** (`/admin/invitations`) and **Settings**
+(`/admin/settings`). The old in-page tabs were removed.
+
+Which shell a user gets is decided by the two session claims:
+
+| Claims                             | Behavior                                                                                                                                                     |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `isPlatformAdmin`, `!hasOrgAccess` | Platform shell only. Org routes redirect to `/admin`; no org menus are shown.                                                                                |
+| `isPlatformAdmin`, `hasOrgAccess`  | Both shells. Sign-in lands on `/admin`; the admin sidebar shows an **Organization console** switch, and the org shell shows **Platform Admin** in `UserNav`. |
+| `!isPlatformAdmin`, `hasOrgAccess` | Organization shell only. `/admin` redirects to `/dashboard`.                                                                                                 |
+
+Menu visibility is a UX concern only. It never replaces `requirePlatformAdmin()`
+or the live role check in the server actions and route handlers.
+
 ## Screens
 
 | Route                | Purpose                                               |
 | -------------------- | ----------------------------------------------------- |
-| `/admin`             | Platform metrics (ecosystems, invitations, orgs)      |
+| `/admin`             | Dashboard: KPIs, recent invitations and quick actions |
 | `/admin/invitations` | List and create ecosystem-owner invitations           |
 | `/admin/settings`    | Enable or disable the ecosystem feature platform-wide |
 

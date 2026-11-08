@@ -73,7 +73,23 @@ export const SessionManager = ({
     if (redirectTo && !isOnRestrictedPage) {
       window.location.href = redirectTo
     } else if (!redirectTo && !isOnRestrictedPage) {
-      router.push('/dashboard')
+      const isPlatformAdmin = session?.isPlatformAdmin === true
+      const hasOrgAccess = session?.hasOrgAccess === true
+
+      // A platform operator without an org role has no usable org console, so
+      // keep them in the platform shell instead of a dashboard full of 403s.
+      if (isPlatformAdmin && !hasOrgAccess) {
+        router.push('/admin')
+        return
+      }
+
+      // Dual-role operators land in the platform console after sign-in and can
+      // switch to the organization console from there.
+      router.push(
+        isPlatformAdmin && pathname.startsWith('/sign-in')
+          ? '/admin'
+          : '/dashboard',
+      )
     }
   }
 

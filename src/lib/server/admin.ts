@@ -141,28 +141,59 @@ const platformFetch = async (
   return refreshedToken ? send(refreshedToken) : response
 }
 
-// Cached per request so a layout, page and server action that run together do
-// not each call the profile endpoint.
-const holdsPlatformAdminRole = cache(async (): Promise<boolean> => {
+interface PlatformProfile {
+  firstName?: string
+  lastName?: string
+  email?: string
+  userOrgRoles?: { orgRole?: { name?: string } }[]
+}
+
+// Cached per request so the layout, page and server actions that run together
+// share a single profile lookup.
+const loadPlatformProfile = cache(async (): Promise<PlatformProfile | null> => {
   const response = await platformFetch(apiRoutes.users.userProfile)
   if (!response?.ok) {
-    return false
+    return null
   }
 
   try {
-    const body = (await response.json()) as ApiEnvelope<{
-      userOrgRoles?: { orgRole?: { name?: string } }[]
-    }>
-    const roles = body?.data?.userOrgRoles
-
-    return (
-      Array.isArray(roles) &&
-      roles.some((item) => item?.orgRole?.name === PLATFORM_ADMIN_ROLE)
-    )
+    const body = (await response.json()) as ApiEnvelope<PlatformProfile>
+    return body?.data ?? null
   } catch {
-    return false
+    return null
   }
 })
+
+const holdsPlatformAdminRole = cache(async (): Promise<boolean> => {
+  const profile = await loadPlatformProfile()
+  const roles = profile?.userOrgRoles
+
+  return (
+    Array.isArray(roles) &&
+    roles.some((item) => item?.orgRole?.name === PLATFORM_ADMIN_ROLE)
+  )
+})
+
+/**
+ * Display identity for the signed-in platform operator, resolved from the same
+ * cached profile lookup used by the authorization guard.
+ */
+export const getPlatformAdminIdentity = async (): Promise<{
+  name?: string
+  email?: string
+} | null> => {
+  const profile = await loadPlatformProfile()
+  if (!profile) {
+    return null
+  }
+
+  const name = [profile.firstName, profile.lastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+
+  return { name: name || profile.email, email: profile.email }
+}
 
 /**
  * Returns the current session only when the user is a platform admin.
