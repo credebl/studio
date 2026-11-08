@@ -1,5 +1,6 @@
 'use client'
 
+import ModeToggle from '@/components/mode-toggle'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { UserNav } from '@/components/layout/user-nav'
 import { usePathname } from 'next/navigation'
@@ -28,6 +29,7 @@ export function AdminHeader(): React.JSX.Element {
       </div>
 
       <div className="flex items-center gap-2 px-4">
+        <ModeToggle />
         <UserNav />
       </div>
     </header>

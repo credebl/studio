@@ -9,7 +9,6 @@ import React, { JSX, useEffect, useState } from 'react'
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarHeader,
   SidebarMenu,
@@ -32,7 +31,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { NavItem } from '../../../types'
 import { Organization } from '@/features/dashboard/type/organization'
-import ThemeSwitcher from './ThemeToggle/theme-switcher'
 import { getOrganizations } from '@/app/api/organization'
 import { setSidebarCollapsed } from '@/lib/sidebarSlice'
 import { useSession } from 'next-auth/react'
@@ -263,10 +261,6 @@ export default function AppSidebar(): React.JSX.Element {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="border-t">
-        <ThemeSwitcher />
-      </SidebarFooter>
 
       {poweredBy && (
         <div className="text-muted-foreground flex items-center justify-center border-t p-3 text-sm group-data-[collapsed=true]:flex-col group-data-[collapsed=true]:gap-1">
