@@ -64,3 +64,9 @@ directory, and runs `node server.js` as a non-root user with telemetry disabled.
 that is fixed in `credebl/platform`, the overview page will return the
 "unavailable" state for platform admins other than that single email address.
 The rest of the console is unaffected.
+
+## Decisions
+
+- [ADR 0001: Re-validate the platform admin role on every guarded request](adr/0001-live-platform-admin-revalidation.md)
+  — why the guard performs a live profile check instead of trusting the JWT
+  claim, and when to revisit that trade-off.
