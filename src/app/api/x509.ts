@@ -104,6 +104,8 @@ export const deactivateCertificate = async (
 
 export interface IImportCertificatePayload {
   certificate: string
+  /** The certificates that follow `certificate` in its chain (base64 DER), each issued by the next, root last. */
+  certificateChain?: string[]
   keyType: 'Ed25519' | 'P-256'
   encryptedKey: EncryptedKey
 }
