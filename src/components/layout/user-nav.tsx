@@ -128,11 +128,11 @@ export function UserNav(): React.JSX.Element | null {
         forceMount
       >
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm leading-none font-medium">
+          <div className="flex min-w-0 flex-col space-y-1">
+            <p className="truncate text-sm leading-none font-medium">
               {userProfile?.firstName} {userProfile?.lastName}
             </p>
-            <p className="text-sm leading-none font-medium">
+            <p className="text-sm leading-snug font-medium break-words">
               {userProfile?.email}
             </p>
           </div>
