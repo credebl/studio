@@ -237,42 +237,35 @@ const CreateDid = (): React.JSX.Element => {
                 )}
               </div>
               <div className="mb-8 grid gap-4 md:grid-cols-2">
-                {protocolOptions.map((option) => {
-                  const isDisabled = option.id === 'oid4vc'
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => {
-                        if (isDisabled) {
-                          return
-                        }
-                        setSelectedProtocol(option.id as Protocol)
-                        setSelectedOption(null)
-                        setSelectedDid(null)
-                        setDomainError(null)
-                      }}
-                      disabled={isDisabled}
-                      className={`relative rounded-xl border-2 p-6 text-left transition-all ${selectedProtocol === option.id ? 'border-primary bg-secondary shadow-sm' : 'border-border bg-background hover:shadow-sm'} ${isDisabled ? 'cursor-not-allowed opacity-50' : ''} `}
-                    >
-                      {option.id === 'didcomm' && (
-                        <TooltipInfo text={InfoText.DIDCommInfoText} />
-                      )}
-                      {option.id === 'oid4vc' && (
-                        <TooltipInfo text={InfoText.OID4VCInfoText} />
-                      )}
+                {protocolOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedProtocol(option.id as Protocol)
+                      setSelectedOption(null)
+                      setSelectedDid(null)
+                      setDomainError(null)
+                    }}
+                    className={`relative rounded-xl border-2 p-6 text-left transition-all ${selectedProtocol === option.id ? 'border-primary bg-secondary shadow-sm' : 'border-border bg-background hover:shadow-sm'}`}
+                  >
+                    {option.id === 'didcomm' && (
+                      <TooltipInfo text={InfoText.DIDCommInfoText} />
+                    )}
+                    {option.id === 'oid4vc' && (
+                      <TooltipInfo text={InfoText.OID4VCInfoText} />
+                    )}
 
-                      <div className="mb-6">{option.icon}</div>
+                    <div className="mb-6">{option.icon}</div>
 
-                      <h3 className="text-foreground mb-1 font-semibold">
-                        {option.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        {option.desc}
-                      </p>
-                    </button>
-                  )
-                })}
+                    <h3 className="text-foreground mb-1 font-semibold">
+                      {option.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {option.desc}
+                    </p>
+                  </button>
+                ))}
               </div>
 
               {selectedProtocol && (
@@ -321,43 +314,64 @@ const CreateDid = (): React.JSX.Element => {
                 </div>
               )}
 
-              {selectedProtocol === 'didcomm' && selectedOption && (
-                <div className="mt-6">
-                  <label className="text-foreground mb-2 block text-sm font-medium">
-                    Select DID Method{' '}
-                    <span className="text-destructive">*</span>
-                  </label>
+              {(selectedProtocol === 'didcomm' || selectedOption === 'sdjwt') &&
+                selectedOption && (
+                  <div className="mt-6">
+                    <label className="text-foreground mb-2 block text-sm font-medium">
+                      Select DID Method{' '}
+                      <span className="text-destructive">*</span>
+                    </label>
 
-                  <div className="flex items-center gap-4">
-                    <Select
-                      value={selectedDid ?? ''}
-                      onValueChange={(value) => {
-                        setSelectedDid(value)
-                        setDomainError(null)
-                      }}
-                    >
-                      <SelectTrigger className="w-full md:w-1/2">
-                        <SelectValue placeholder="Select DID" />
-                      </SelectTrigger>
+                    <div className="flex items-center gap-4">
+                      <Select
+                        value={selectedDid ?? ''}
+                        onValueChange={(value) => {
+                          setSelectedDid(value)
+                          setDomainError(null)
+                        }}
+                      >
+                        <SelectTrigger className="w-full md:w-1/2">
+                          <SelectValue placeholder="Select DID" />
+                        </SelectTrigger>
 
-                      <SelectContent>
-                        {didOptions.map((did) => (
-                          <SelectItem key={did} value={did}>
-                            {did}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <SelectContent>
+                          {didOptions.map((did) => (
+                            <SelectItem key={did} value={did}>
+                              {did}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                    {selectedDid && (
-                      <div className="rounded-md px-3 py-2 font-mono text-sm font-semibold whitespace-nowrap">
-                        <span className="text-muted-foreground font-normal">
-                          e.g.
-                        </span>
-                        <span className="ml-1">{didExamples[selectedDid]}</span>
-                      </div>
-                    )}
+                      {selectedDid && (
+                        <div className="rounded-md px-3 py-2 font-mono text-sm font-semibold whitespace-nowrap">
+                          <span className="text-muted-foreground font-normal">
+                            e.g.
+                          </span>
+                          <span className="ml-1">
+                            {didExamples[selectedDid]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                )}
+
+              {selectedOption === 'mdoc' && (
+                <div className="border-border bg-secondary mt-6 rounded-lg border p-4">
+                  <p className="text-foreground text-sm font-medium">
+                    No DID is needed for mDoc
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    mDoc credentials are signed with an X.509 certificate. Set
+                    one up next to start issuing.
+                  </p>
+                  <Button
+                    className="mt-4"
+                    onClick={() => router.push('/x509-certificate')}
+                  >
+                    Continue to X.509 certificates
+                  </Button>
                 </div>
               )}
 

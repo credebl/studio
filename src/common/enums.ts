@@ -5,6 +5,7 @@ export enum DidMethod {
   KEY = 'did:key',
   WEB = 'did:web',
   POLYGON = 'did:polygon',
+  X509 = 'did:x509',
 }
 
 export enum Network {
