@@ -21,7 +21,7 @@ export default function ModeToggle(): React.JSX.Element {
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <Button
-            className="group/toggle size-8"
+            className="group/toggle relative size-8"
             variant="secondary"
             size="icon"
             aria-label="Toggle light and dark theme"
@@ -30,7 +30,7 @@ export default function ModeToggle(): React.JSX.Element {
             }
           >
             <SunIcon className="h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-transform duration-500 ease-in-out dark:scale-100 dark:rotate-0" />
-            <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] scale-1000 rotate-0 transition-transform duration-500 ease-in-out dark:scale-0 dark:-rotate-90" />
+            <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-transform duration-500 ease-in-out dark:scale-0 dark:-rotate-90" />
             <span className="sr-only">Switch Theme</span>
           </Button>
         </TooltipTrigger>
