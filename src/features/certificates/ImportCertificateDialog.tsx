@@ -8,6 +8,11 @@ import {
 } from '@/components/ui/dialog'
 import { Loader2, Upload } from 'lucide-react'
 import React, { JSX, useState } from 'react'
+import {
+  X509_CERTIFICATE_IMPORT_METHOD,
+  encryptKeyForDidImport,
+  x509CertificateKeyMaterial,
+} from '@/utils/didKeyImport'
 import { normalizeCertificate, parsePemCertificate } from '@/lib/x509'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -81,9 +86,16 @@ const ImportCertificateDialog = ({
     try {
       const normalizedCert = normalizeCertificate(parsedCert.certificatePem)
 
+      const encryptedKey = await encryptKeyForDidImport(
+        orgId,
+        X509_CERTIFICATE_IMPORT_METHOD,
+        x509CertificateKeyMaterial(privateKey),
+      )
+
       const response = await importCertificate(orgId, {
         certificate: normalizedCert,
-        privateKey,
+        keyType: parsedCert.keyType,
+        encryptedKey,
       })
 
       if (typeof response === 'string') {
@@ -106,8 +118,11 @@ const ImportCertificateDialog = ({
         setError(errorMessage)
         onFailure(errorMessage)
       }
-    } catch {
-      const errorMessage = 'An unexpected error occurred'
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error && err.message
+          ? err.message
+          : 'An unexpected error occurred'
       setError(errorMessage)
       onFailure(errorMessage)
     } finally {
