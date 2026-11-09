@@ -37,6 +37,7 @@ import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import TooltipInfo from '@/components/TooltipInfo'
+import { buildDidWebIdentifier } from '@/lib/did'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 
@@ -52,6 +53,7 @@ const CreateDid = (): React.JSX.Element => {
   const [alert, setAlert] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
+  const [pathValue, setPathValue] = useState<string>('')
   const [domainError, setDomainError] = useState<string | null>(null)
   type Protocol = 'didcomm' | 'oid4vc'
   const [step, setStep] = useState(3)
@@ -73,9 +75,12 @@ const CreateDid = (): React.JSX.Element => {
 
     let isValid = true
 
-    if (selectedDid === 'did:web' && !domainValue.trim()) {
-      setDomainError('Domain is required')
-      isValid = false
+    if (selectedDid === 'did:web') {
+      const parts = buildDidWebIdentifier(domainValue, pathValue)
+      if (!parts.ok) {
+        setDomainError(parts.error)
+        isValid = false
+      }
     }
 
     if (!selectedDid) {
@@ -106,6 +111,9 @@ const CreateDid = (): React.JSX.Element => {
       }
 
       const isPolygon = fullMethod === DidMethod.POLYGON
+      const webParts = buildDidWebIdentifier(domainValue, pathValue)
+      const webIdentifier =
+        fullMethod === DidMethod.WEB && webParts.ok ? webParts.identifier : ''
       // The Polygon key is encrypted in the browser to a single-use import session; only the envelope is sent.
       const encryptedKey = isPolygon
         ? await encryptKeyForDidImport(
@@ -122,7 +130,7 @@ const CreateDid = (): React.JSX.Element => {
         ledger: didParts[2] || '',
         encryptedKey,
         network,
-        domain: domainValue,
+        domain: webIdentifier,
         role: method === 'indy' ? 'endorser' : '',
         endorserDid: '',
         clientSocketId: '',
@@ -358,6 +366,8 @@ const CreateDid = (): React.JSX.Element => {
                 <SetDomainValueInput
                   domainValue={domainValue}
                   setDomainValue={handleDomainChange}
+                  pathValue={pathValue}
+                  setPathValue={setPathValue}
                   domainError={domainError}
                 />
               )}
