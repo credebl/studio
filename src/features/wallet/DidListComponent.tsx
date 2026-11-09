@@ -458,53 +458,55 @@ const DIDListComponent = ({
     getData()
   }, [showArchived])
 
-  // DIDs created before the backend was recorded: ask the platform once each (it also persists the answer).
+  // DIDs created before the backend was recorded: ask the platform once each (it also persists the answer). At most
+  // two lookups run at a time; each finished lookup updates the list, which starts the next ones.
   const kmsAttempted = React.useRef<Set<string>>(new Set())
+  const kmsInFlight = React.useRef(0)
+  const kmsUnmounted = React.useRef(false)
+  const [kmsRound, setKmsRound] = React.useState(0)
   useEffect(() => {
+    kmsUnmounted.current = false
+    return () => {
+      kmsUnmounted.current = true
+    }
+  }, [])
+  useEffect(() => {
+    const free = Math.max(2 - kmsInFlight.current, 0)
     const pending = didList
       .filter(
         (item) =>
           item.did && !item.kmsBackend && !kmsAttempted.current.has(item.did),
       )
-      .map((item) => item.did)
-    if (!pending.length) {
-      return
-    }
-    pending.forEach((did) => kmsAttempted.current.add(did))
-    let cancelled = false
-    const worker = async (): Promise<void> => {
-      while (!cancelled) {
-        const did = pending.shift()
-        if (!did) {
-          return
+      .slice(0, free)
+    pending.forEach(async ({ did }) => {
+      kmsAttempted.current.add(did)
+      kmsInFlight.current += 1
+      try {
+        const response = await getDidKms(orgId, did)
+        const backend =
+          typeof response === 'string'
+            ? null
+            : ((response as AxiosResponse).data?.data?.kmsBackend ?? null)
+        if (!kmsUnmounted.current && backend) {
+          setDidList((prev) =>
+            prev.map((item) => {
+              if (item.did === did) {
+                return { ...item, kmsBackend: backend }
+              }
+              return item
+            }),
+          )
         }
-        try {
-          const response = await getDidKms(orgId, did)
-          const backend =
-            typeof response === 'string'
-              ? null
-              : ((response as AxiosResponse).data?.data?.kmsBackend ?? null)
-          if (!cancelled && backend) {
-            setDidList((prev) =>
-              prev.map((item) => {
-                if (item.did === did) {
-                  return { ...item, kmsBackend: backend }
-                }
-                return item
-              }),
-            )
-          }
-        } catch {
-          // leave the row as "—"
+      } catch {
+        // leave the row as "—"
+      } finally {
+        kmsInFlight.current -= 1
+        if (!kmsUnmounted.current) {
+          setKmsRound((round) => round + 1)
         }
       }
-    }
-    worker()
-    worker()
-    return () => {
-      cancelled = true
-    }
-  }, [didList, orgId])
+    })
+  }, [didList, orgId, kmsRound])
 
   // Create DID functions
   const getValidationSchema = (): Yup.AnyObject => {
