@@ -37,7 +37,6 @@ import {
   createDid,
   createPolygonKeyValuePair,
   deleteDid,
-  getDidKms,
   getDids,
   importDidX509,
   unarchiveDid,
@@ -66,11 +65,14 @@ import Loader from '@/components/Loader'
 import { StatusPill } from './DetailParts'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import X509DidFields from './X509DidFields'
 import { buildDidWebIdentifier } from '@/lib/did'
+import { cn } from '@/lib/utils'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
 import { parseCertificateChain } from '@/utils/didX509'
+import { useKmsBackendLookup } from './useKmsBackendLookup'
 import { useRouter } from 'next/navigation'
 
 interface IPolygonKeys {
@@ -458,55 +460,8 @@ const DIDListComponent = ({
     getData()
   }, [showArchived])
 
-  // DIDs created before the backend was recorded: ask the platform once each (it also persists the answer). At most
-  // two lookups run at a time; each finished lookup updates the list, which starts the next ones.
-  const kmsAttempted = React.useRef<Set<string>>(new Set())
-  const kmsInFlight = React.useRef(0)
-  const kmsUnmounted = React.useRef(false)
-  const [kmsRound, setKmsRound] = React.useState(0)
-  useEffect(() => {
-    kmsUnmounted.current = false
-    return () => {
-      kmsUnmounted.current = true
-    }
-  }, [])
-  useEffect(() => {
-    const free = Math.max(2 - kmsInFlight.current, 0)
-    const pending = didList
-      .filter(
-        (item) =>
-          item.did && !item.kmsBackend && !kmsAttempted.current.has(item.did),
-      )
-      .slice(0, free)
-    pending.forEach(async ({ did }) => {
-      kmsAttempted.current.add(did)
-      kmsInFlight.current += 1
-      try {
-        const response = await getDidKms(orgId, did)
-        const backend =
-          typeof response === 'string'
-            ? null
-            : ((response as AxiosResponse).data?.data?.kmsBackend ?? null)
-        if (!kmsUnmounted.current && backend) {
-          setDidList((prev) =>
-            prev.map((item) => {
-              if (item.did === did) {
-                return { ...item, kmsBackend: backend }
-              }
-              return item
-            }),
-          )
-        }
-      } catch {
-        // leave the row as "—"
-      } finally {
-        kmsInFlight.current -= 1
-        if (!kmsUnmounted.current) {
-          setKmsRound((round) => round + 1)
-        }
-      }
-    })
-  }, [didList, orgId, kmsRound])
+  // DIDs created before the backend was recorded get it from the platform, which also persists it.
+  useKmsBackendLookup(didList, setDidList, orgId)
 
   // Create DID functions
   const getValidationSchema = (): Yup.AnyObject => {
@@ -819,6 +774,7 @@ const DIDListComponent = ({
 
       const { data } = response as AxiosResponse
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setShowPopup(false)
         setSuccessMsg(data?.message ?? 'did:x509 imported successfully')
         finish()
         await getData()
@@ -1162,7 +1118,12 @@ const DIDListComponent = ({
           organization is never limited to its current primary DID method. */}
       {showPopup && (
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
-          <DialogContent className="max-w-2xl!">
+          <DialogContent
+            className={cn(
+              'max-h-[90vh] overflow-y-auto',
+              method === DidMethod.X509 ? 'max-w-4xl!' : 'max-w-2xl!',
+            )}
+          >
             <DialogHeader>
               <DialogTitle>Create DID</DialogTitle>
             </DialogHeader>
@@ -1211,23 +1172,27 @@ const DIDListComponent = ({
                       )}
                     </div>
 
-                    <div>
-                      <Label htmlFor="ledger">Ledger</Label>
-                      <Field
-                        as={Input}
-                        id="ledger"
-                        name="ledger"
-                        readOnly
-                        tabIndex={-1}
-                        className="bg-muted cursor-default select-none"
-                        value={values.ledger}
-                      />
-                      <ErrorMessage
-                        name="ledger"
-                        component="div"
-                        className="text-destructive mt-1 text-sm"
-                      />
-                    </div>
+                    {/* Only the ledger based methods have a ledger; the value is still kept for the others. */}
+                    {(method === DidMethod.INDY ||
+                      method === DidMethod.POLYGON) && (
+                      <div>
+                        <Label htmlFor="ledger">Ledger</Label>
+                        <Field
+                          as={Input}
+                          id="ledger"
+                          name="ledger"
+                          readOnly
+                          tabIndex={-1}
+                          className="bg-muted cursor-default select-none"
+                          value={values.ledger}
+                        />
+                        <ErrorMessage
+                          name="ledger"
+                          component="div"
+                          className="text-destructive mt-1 text-sm"
+                        />
+                      </div>
+                    )}
 
                     {(method === DidMethod.INDY ||
                       method === DidMethod.POLYGON) && (
@@ -1393,92 +1358,7 @@ const DIDListComponent = ({
                     )}
 
                     {method === DidMethod.X509 && (
-                      <div className="col-span-1 space-y-4 rounded-md border p-4 sm:col-span-2">
-                        <div>
-                          <Label htmlFor="certificateChain">
-                            Certificate chain{' '}
-                            <span className="text-destructive text-xs">*</span>
-                          </Label>
-                          <Field
-                            as={Textarea}
-                            id="certificateChain"
-                            name="certificateChain"
-                            autoComplete="off"
-                            spellCheck={false}
-                            rows={8}
-                            className="mt-1 font-mono text-xs"
-                            placeholder={
-                              '-----BEGIN CERTIFICATE-----\n... leaf certificate ...\n-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----\n... root CA ...\n-----END CERTIFICATE-----'
-                            }
-                          />
-                          <ErrorMessage
-                            name="certificateChain"
-                            component="div"
-                            className="text-destructive mt-1 text-sm"
-                          />
-                          <p className="text-muted-foreground mt-1 text-sm">
-                            PEM certificates, the leaf first and the root CA
-                            last. The DID is derived from the chain and
-                            restricted to the common name of the leaf.
-                          </p>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="privateKey">
-                            Leaf private key{' '}
-                            <span className="text-destructive text-xs">*</span>
-                          </Label>
-                          <Field
-                            as={Textarea}
-                            id="privateKey"
-                            name="privateKey"
-                            autoComplete="off"
-                            spellCheck={false}
-                            rows={4}
-                            className="mt-1 font-mono text-xs"
-                            placeholder="-----BEGIN PRIVATE KEY----- ... or a private JWK JSON"
-                          />
-                          <ErrorMessage
-                            name="privateKey"
-                            component="div"
-                            className="text-destructive mt-1 text-sm"
-                          />
-                          <p className="text-muted-foreground mt-1 text-sm">
-                            The key is encrypted in your browser to a single-use
-                            key before it is sent, so it never appears in
-                            request bodies or logs. It must belong to the leaf
-                            certificate.
-                          </p>
-                        </div>
-
-                        <div>
-                          <Label htmlFor="passphrase">
-                            Passphrase (optional)
-                          </Label>
-                          <Field
-                            as={Input}
-                            id="passphrase"
-                            name="passphrase"
-                            type="password"
-                            autoComplete="new-password"
-                            placeholder="Passphrase of an encrypted PEM key"
-                            className="mt-1"
-                          />
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <Checkbox
-                            id="isPrimaryDid"
-                            checked={values.isPrimaryDid}
-                            onCheckedChange={(checked) =>
-                              setFieldValue('isPrimaryDid', checked === true)
-                            }
-                          />
-                          <Label htmlFor="isPrimaryDid">
-                            Set as the primary DID
-                          </Label>
-                        </div>
-                      </div>
+                      <X509DidFields loading={loading} />
                     )}
 
                     {method === DidMethod.POLYGON && (
@@ -1646,24 +1526,25 @@ const DIDListComponent = ({
                     )}
                   </div>
 
-                  <div className="flex justify-end">
-                    <Button
-                      type="submit"
-                      disabled={
-                        loading ||
-                        (method === DidMethod.POLYGON && !values.privatekey) ||
-                        (method === DidMethod.WEB && !values.domain) ||
-                        (method === DidMethod.X509 &&
-                          (!values.certificateChain || !values.privateKey)) ||
-                        ((method === DidMethod.KEY ||
-                          method === DidMethod.WEB) &&
-                          haveKeyMaterial &&
-                          !values.privateKey)
-                      }
-                    >
-                      {loading ? 'Submitting...' : 'Submit'}
-                    </Button>
-                  </div>
+                  {method !== DidMethod.X509 && (
+                    <div className="bg-background sticky -bottom-6 -mx-6 -mb-6 flex justify-end border-t px-6 py-4">
+                      <Button
+                        type="submit"
+                        disabled={
+                          loading ||
+                          (method === DidMethod.POLYGON &&
+                            !values.privatekey) ||
+                          (method === DidMethod.WEB && !values.domain) ||
+                          ((method === DidMethod.KEY ||
+                            method === DidMethod.WEB) &&
+                            haveKeyMaterial &&
+                            !values.privateKey)
+                        }
+                      >
+                        {loading ? 'Submitting...' : 'Submit'}
+                      </Button>
+                    </div>
+                  )}
                 </Form>
               )}
             </Formik>
