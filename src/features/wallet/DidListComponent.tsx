@@ -37,6 +37,7 @@ import {
   createDid,
   createPolygonKeyValuePair,
   deleteDid,
+  getDidKms,
   getDids,
   unarchiveDid,
   updatePrimaryDid,
@@ -58,6 +59,7 @@ import DidRowActions from './DidRowActions'
 import DidWebPreview from './DidWebPreview'
 import { IDidListData } from '@/features/organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
+import KmsBackendBadge from './KmsBackendBadge'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import { StatusPill } from './DetailParts'
@@ -448,6 +450,54 @@ const DIDListComponent = ({
   useEffect(() => {
     getData()
   }, [showArchived])
+
+  // DIDs created before the backend was recorded: ask the platform once each (it also persists the answer).
+  const kmsAttempted = React.useRef<Set<string>>(new Set())
+  useEffect(() => {
+    const pending = didList
+      .filter(
+        (item) =>
+          item.did && !item.kmsBackend && !kmsAttempted.current.has(item.did),
+      )
+      .map((item) => item.did)
+    if (!pending.length) {
+      return
+    }
+    pending.forEach((did) => kmsAttempted.current.add(did))
+    let cancelled = false
+    const worker = async (): Promise<void> => {
+      while (!cancelled) {
+        const did = pending.shift()
+        if (!did) {
+          return
+        }
+        try {
+          const response = await getDidKms(orgId, did)
+          const backend =
+            typeof response === 'string'
+              ? null
+              : ((response as AxiosResponse).data?.data?.kmsBackend ?? null)
+          if (!cancelled && backend) {
+            setDidList((prev) =>
+              prev.map((item) => {
+                if (item.did === did) {
+                  return { ...item, kmsBackend: backend }
+                }
+                return item
+              }),
+            )
+          }
+        } catch {
+          // leave the row as "—"
+        }
+      }
+    }
+    worker()
+    worker()
+    return () => {
+      cancelled = true
+    }
+  }, [didList, orgId])
 
   // Create DID functions
   const getValidationSchema = (): Yup.AnyObject => {
@@ -947,6 +997,8 @@ const DIDListComponent = ({
                     )}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
+                    <span className="text-muted-foreground text-xs">KMS</span>
+                    <KmsBackendBadge backend={item.kmsBackend} />
                     {item.isPrimaryDid && (
                       <Badge
                         variant="default"

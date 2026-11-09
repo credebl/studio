@@ -284,6 +284,21 @@ export const resolveDid = async (
   }
 }
 
+export const getDidKms = async (
+  orgId: string,
+  did: string,
+): Promise<AxiosResponse | string> => {
+  try {
+    return await axiosGet({
+      url: `${didUrl(orgId, did)}/kms`,
+      config: getHeaderConfigs(),
+    })
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
 export const archiveDid = async (
   orgId: string,
   did: string,
