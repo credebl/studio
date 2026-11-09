@@ -39,6 +39,7 @@ import {
   deleteDid,
   getDidKms,
   getDids,
+  importDidX509,
   unarchiveDid,
   updatePrimaryDid,
 } from '@/app/api/Agent'
@@ -69,6 +70,7 @@ import { buildDidWebIdentifier } from '@/lib/did'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
+import { parseCertificateChain } from '@/utils/didX509'
 import { useRouter } from 'next/navigation'
 
 interface IPolygonKeys {
@@ -88,6 +90,8 @@ interface IFormValues {
   passphrase: string
   endorserDid: string
   did: string
+  certificateChain: string
+  isPrimaryDid: boolean
 }
 
 interface OrgRole {
@@ -114,6 +118,7 @@ const createDidMethods: DidMethod[] = [
   DidMethod.KEY,
   DidMethod.WEB,
   DidMethod.POLYGON,
+  DidMethod.X509,
 ]
 
 const indyNetworks = [
@@ -336,6 +341,8 @@ const DIDListComponent = ({
     passphrase: '',
     endorserDid: '',
     did: '',
+    certificateChain: '',
+    isPrimaryDid: false,
   })
 
   const router = useRouter()
@@ -512,6 +519,7 @@ const DIDListComponent = ({
       passphrase: Yup.string(),
       endorserDid: Yup.string(),
       did: Yup.string(),
+      certificateChain: Yup.string(),
     })
 
     if (method === DidMethod.WEB) {
@@ -537,6 +545,24 @@ const DIDListComponent = ({
     } else if (method === DidMethod.INDY) {
       schema = schema.shape({
         network: Yup.string().required('Network is required'),
+      })
+    } else if (method === DidMethod.X509) {
+      schema = schema.shape({
+        certificateChain: Yup.string()
+          .required('Certificate chain is required')
+          .test('pem-chain', (value, context) => {
+            try {
+              parseCertificateChain(value ?? '')
+              return true
+            } catch (error) {
+              return context.createError({
+                message: error instanceof Error ? error.message : 'Invalid',
+              })
+            }
+          }),
+        privateKey: Yup.string().required(
+          'Leaf private key (PEM, base64 DER or JWK) is required',
+        ),
       })
     }
 
@@ -579,7 +605,9 @@ const DIDListComponent = ({
     // The organization's current DID method is only used to preselect a sensible
     // default. It must never block creating a DID with a different method.
     const didMethod =
-      orgDidMethod && createDidMethods.includes(orgDidMethod)
+      orgDidMethod &&
+      orgDidMethod !== DidMethod.X509 &&
+      createDidMethods.includes(orgDidMethod)
         ? orgDidMethod
         : DidMethod.KEY
 
@@ -606,6 +634,8 @@ const DIDListComponent = ({
       passphrase: '',
       endorserDid: '',
       did: '',
+      certificateChain: '',
+      isPrimaryDid: false,
     }
     setInitialValues(resolvedValues)
 
@@ -628,6 +658,8 @@ const DIDListComponent = ({
     setFieldValue('privatekey', '')
     setFieldValue('privateKey', '')
     setFieldValue('passphrase', '')
+    setFieldValue('certificateChain', '')
+    setFieldValue('isPrimaryDid', false)
     setHavePrivateKey(false)
     setHaveKeyMaterial(false)
     setGeneratedKeys(null)
@@ -653,7 +685,9 @@ const DIDListComponent = ({
       return (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Creating DID...
+          {method === DidMethod.X509
+            ? 'Importing did:x509...'
+            : 'Creating DID...'}
         </>
       )
     }
@@ -737,7 +771,79 @@ const DIDListComponent = ({
     return encryptKeyForDidImport(orgId, didMethod, material)
   }
 
+  const importX509Did = async (values: IFormValues): Promise<void> => {
+    setLoading(true)
+    setErrMsg(null)
+    setIsCreatingDid(true)
+
+    const finish = (): void => {
+      setLoading(false)
+      setIsCreatingDid(false)
+    }
+
+    let payload: {
+      certificateChain: string[]
+      encryptedKey: EncryptedKey
+    } | null = null
+    try {
+      // Parse both before asking for a session, so invalid input does not burn one.
+      const certificateChain = parseCertificateChain(values.certificateChain)
+      const material = parseKeyMaterial(values.privateKey, values.passphrase)
+      payload = {
+        certificateChain,
+        encryptedKey: await encryptKeyForDidImport(orgId, 'x509', material),
+      }
+    } catch (error) {
+      setErrMsg(
+        error instanceof Error
+          ? error.message
+          : 'Failed to encrypt the private key for import',
+      )
+      finish()
+      return
+    }
+
+    try {
+      const response = await importDidX509(orgId, {
+        ...payload,
+        isPrimaryDid: values.isPrimaryDid,
+      })
+
+      if (typeof response === 'string') {
+        setErrMsg(response)
+        finish()
+        return
+      }
+
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setSuccessMsg(data?.message ?? 'did:x509 imported successfully')
+        finish()
+        await getData()
+        setTimeout(() => {
+          router.refresh()
+        }, 2000)
+      } else {
+        setErrMsg(getCreateDidErrorMessage(data?.message))
+        finish()
+      }
+    } catch (error) {
+      console.error('An error occurred while importing did:x509:', error)
+      setErrMsg(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while importing the did:x509. Please try again.',
+      )
+      finish()
+    }
+  }
+
   const createNewDid = async (values: IFormValues): Promise<void> => {
+    if (values.method === DidMethod.X509) {
+      await importX509Did(values)
+      return
+    }
+
     setLoading(true)
     setErrMsg(null)
 
@@ -1284,6 +1390,95 @@ const DIDListComponent = ({
                       </div>
                     )}
 
+                    {method === DidMethod.X509 && (
+                      <div className="col-span-1 space-y-4 rounded-md border p-4 sm:col-span-2">
+                        <div>
+                          <Label htmlFor="certificateChain">
+                            Certificate chain{' '}
+                            <span className="text-destructive text-xs">*</span>
+                          </Label>
+                          <Field
+                            as={Textarea}
+                            id="certificateChain"
+                            name="certificateChain"
+                            autoComplete="off"
+                            spellCheck={false}
+                            rows={8}
+                            className="mt-1 font-mono text-xs"
+                            placeholder={
+                              '-----BEGIN CERTIFICATE-----\n... leaf certificate ...\n-----END CERTIFICATE-----\n-----BEGIN CERTIFICATE-----\n... root CA ...\n-----END CERTIFICATE-----'
+                            }
+                          />
+                          <ErrorMessage
+                            name="certificateChain"
+                            component="div"
+                            className="text-destructive mt-1 text-sm"
+                          />
+                          <p className="text-muted-foreground mt-1 text-sm">
+                            PEM certificates, the leaf first and the root CA
+                            last. The DID is derived from the chain and
+                            restricted to the common name of the leaf.
+                          </p>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="privateKey">
+                            Leaf private key{' '}
+                            <span className="text-destructive text-xs">*</span>
+                          </Label>
+                          <Field
+                            as={Textarea}
+                            id="privateKey"
+                            name="privateKey"
+                            autoComplete="off"
+                            spellCheck={false}
+                            rows={4}
+                            className="mt-1 font-mono text-xs"
+                            placeholder="-----BEGIN PRIVATE KEY----- ... or a private JWK JSON"
+                          />
+                          <ErrorMessage
+                            name="privateKey"
+                            component="div"
+                            className="text-destructive mt-1 text-sm"
+                          />
+                          <p className="text-muted-foreground mt-1 text-sm">
+                            The key is encrypted in your browser to a single-use
+                            key before it is sent, so it never appears in
+                            request bodies or logs. It must belong to the leaf
+                            certificate.
+                          </p>
+                        </div>
+
+                        <div>
+                          <Label htmlFor="passphrase">
+                            Passphrase (optional)
+                          </Label>
+                          <Field
+                            as={Input}
+                            id="passphrase"
+                            name="passphrase"
+                            type="password"
+                            autoComplete="new-password"
+                            placeholder="Passphrase of an encrypted PEM key"
+                            className="mt-1"
+                          />
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="isPrimaryDid"
+                            checked={values.isPrimaryDid}
+                            onCheckedChange={(checked) =>
+                              setFieldValue('isPrimaryDid', checked === true)
+                            }
+                          />
+                          <Label htmlFor="isPrimaryDid">
+                            Set as the primary DID
+                          </Label>
+                        </div>
+                      </div>
+                    )}
+
                     {method === DidMethod.POLYGON && (
                       <>
                         <div className="col-span-1 sm:col-span-2">
@@ -1456,6 +1651,8 @@ const DIDListComponent = ({
                         loading ||
                         (method === DidMethod.POLYGON && !values.privatekey) ||
                         (method === DidMethod.WEB && !values.domain) ||
+                        (method === DidMethod.X509 &&
+                          (!values.certificateChain || !values.privateKey)) ||
                         ((method === DidMethod.KEY ||
                           method === DidMethod.WEB) &&
                           haveKeyMaterial &&
