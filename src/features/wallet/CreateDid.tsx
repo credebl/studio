@@ -279,7 +279,6 @@ const CreateDid = (): React.JSX.Element => {
                       <button
                         key={option.id}
                         type="button"
-                        disabled={option.id === 'mdoc'}
                         onClick={() => {
                           setSelectedOption(option.id)
                           setSelectedDid(null)
@@ -289,7 +288,7 @@ const CreateDid = (): React.JSX.Element => {
                           selectedOption === option.id
                             ? 'border-primary bg-secondary shadow-sm'
                             : 'border-border bg-background hover:border-foreground/30 hover:shadow-sm'
-                        } ${option.id === 'mdoc' ? 'cursor-not-allowed opacity-50' : ''}`}
+                        }`}
                       >
                         <TooltipInfo
                           text={
@@ -312,13 +311,6 @@ const CreateDid = (): React.JSX.Element => {
                       </button>
                     ))}
                   </div>
-                  {selectedProtocol === 'oid4vc' && (
-                    <p className="text-muted-foreground mt-3 text-sm">
-                      mDoc credentials are signed with an X.509 certificate, not
-                      a DID. Set one up under Trust → X.509 after the wallet is
-                      ready.
-                    </p>
-                  )}
                 </div>
               )}
 
@@ -364,6 +356,24 @@ const CreateDid = (): React.JSX.Element => {
                     </div>
                   </div>
                 )}
+
+              {selectedOption === 'mdoc' && (
+                <div className="border-border bg-secondary mt-6 rounded-lg border p-4">
+                  <p className="text-foreground text-sm font-medium">
+                    No DID is needed for mDoc
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    mDoc credentials are signed with an X.509 certificate. Set
+                    one up next to start issuing.
+                  </p>
+                  <Button
+                    className="mt-4"
+                    onClick={() => router.push('/x509-certificate')}
+                  >
+                    Continue to X.509 certificates
+                  </Button>
+                </div>
+              )}
 
               {/* DID:web Domain Input */}
               {selectedDid === 'did:web' && (
