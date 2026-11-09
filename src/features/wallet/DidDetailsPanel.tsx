@@ -376,13 +376,13 @@ const DidDetailsBody = ({
   }
 
   return (
-    <Tabs defaultValue="overview" className="min-h-0 flex-1 px-4">
-      <TabsList>
+    <Tabs defaultValue="overview" className="flex min-h-0 flex-1 flex-col px-4">
+      <TabsList className="shrink-0">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="document">Document</TabsTrigger>
         <TabsTrigger value="resolve">Resolve</TabsTrigger>
       </TabsList>
-      <div className="overflow-y-auto pt-4 pb-6">
+      <div className="min-h-0 flex-1 overflow-y-auto pt-4 pb-6">
         <TabsContent value="overview">
           <OverviewTab orgId={orgId} details={details} />
         </TabsContent>
