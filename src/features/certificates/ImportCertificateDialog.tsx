@@ -12,6 +12,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Loader2, Upload } from 'lucide-react'
+import {
+  PENDING_ACTIVATION,
+  importedCertificateMessage,
+  normalizeCertificate,
+  parsePemCertificate,
+} from '@/lib/x509'
 import React, { JSX, useState } from 'react'
 import {
   X509_CERTIFICATE_IMPORT_METHOD,
@@ -23,7 +29,6 @@ import {
   isEncryptedPrivateKey,
   privateKeyFromFile,
 } from '@/utils/pemFiles'
-import { normalizeCertificate, parsePemCertificate } from '@/lib/x509'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
@@ -173,13 +178,18 @@ const ImportCertificateDialog = ({
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-        const message = data?.message
+        const message = importedCertificateMessage(
+          data?.message,
+          data?.data?.status,
+          keyType,
+        )
+        const isPending = data?.data?.status === PENDING_ACTIVATION
         setSuccess(message)
         resetCertificates()
         setPrivateKey('')
         setKeyNote(null)
         onSuccess(message)
-        setTimeout(() => onOpenChange(false), 1500)
+        setTimeout(() => onOpenChange(false), isPending ? 6000 : 1500)
       } else {
         const errorMessage = data?.message
         setError(errorMessage)
