@@ -55,6 +55,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { CommonConstants } from '../common/enum'
 import DidDetailsPanel from './DidDetailsPanel'
 import DidRowActions from './DidRowActions'
+import DidWebPreview from './DidWebPreview'
 import { IDidListData } from '@/features/organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -62,6 +63,7 @@ import Loader from '@/components/Loader'
 import { StatusPill } from './DetailParts'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { buildDidWebIdentifier } from '@/lib/did'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
@@ -78,6 +80,7 @@ interface IFormValues {
   ledger: string
   network: string
   domain: string
+  path: string
   privatekey: string
   privateKey: string
   passphrase: string
@@ -325,6 +328,7 @@ const DIDListComponent = ({
     ledger: '',
     network: '',
     domain: '',
+    path: '',
     privatekey: '',
     privateKey: '',
     passphrase: '',
@@ -452,6 +456,7 @@ const DIDListComponent = ({
       ledger: Yup.string().required('Ledger is required'),
       network: Yup.string(),
       domain: Yup.string(),
+      path: Yup.string(),
       privatekey: Yup.string(),
       privateKey: Yup.string(),
       passphrase: Yup.string(),
@@ -461,7 +466,17 @@ const DIDListComponent = ({
 
     if (method === DidMethod.WEB) {
       schema = schema.shape({
-        domain: Yup.string().required('Domain is required'),
+        domain: Yup.string()
+          .required('Domain is required')
+          .test('did-web-host', (value, context) => {
+            const parts = buildDidWebIdentifier(value ?? '')
+            return parts.ok || context.createError({ message: parts.error })
+          }),
+        path: Yup.string().test('did-web-path', (value, context) => {
+          // Only the path is checked here; the domain has its own check above.
+          const parts = buildDidWebIdentifier('example.com', value ?? '')
+          return parts.ok || context.createError({ message: parts.error })
+        }),
       })
     } else if (method === DidMethod.POLYGON) {
       schema = schema.shape({
@@ -535,6 +550,7 @@ const DIDListComponent = ({
       ledger,
       network,
       domain: '',
+      path: '',
       privatekey: generatedKeys?.privateKey.slice(2) || '',
       privateKey: '',
       passphrase: '',
@@ -558,6 +574,7 @@ const DIDListComponent = ({
     setFieldValue('ledger', ledger)
     setFieldValue('network', network)
     setFieldValue('domain', '')
+    setFieldValue('path', '')
     setFieldValue('privatekey', '')
     setFieldValue('privateKey', '')
     setFieldValue('passphrase', '')
@@ -706,12 +723,17 @@ const DIDListComponent = ({
       }
     }
 
+    const webParts =
+      values.method === DidMethod.WEB
+        ? buildDidWebIdentifier(values.domain, values.path)
+        : null
+    const webIdentifier = webParts?.ok ? webParts.identifier : ''
     const didData = {
       seed: values.method === DidMethod.POLYGON || usesImportedKey ? '' : seed,
       keyType: 'ed25519',
       method: values.method?.split(':')[1] || '',
       network,
-      domain: values.method === DidMethod.WEB ? values.domain : '',
+      domain: webIdentifier,
       role: values.method === DidMethod.INDY ? 'endorser' : '',
       encryptedKey,
       did: values?.did ?? '',
@@ -1107,9 +1129,35 @@ const DIDListComponent = ({
                           className="text-destructive mt-1 text-sm"
                         />
                         <p className="text-muted-foreground mt-1 text-sm">
-                          Enter the domain where your DID document will be
-                          hosted
+                          Enter only the domain, for example example.com
                         </p>
+
+                        <Label htmlFor="path" className="mt-4 block">
+                          Path (optional)
+                        </Label>
+                        <Field
+                          as={Input}
+                          id="path"
+                          name="path"
+                          placeholder="folder/sub-folder, e.g. iec/0522012345"
+                          className="mt-1"
+                        />
+                        <ErrorMessage
+                          name="path"
+                          component="div"
+                          className="text-destructive mt-1 text-sm"
+                        />
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          The folders on your domain that hold did.json. Leave
+                          empty to host it at the domain root.
+                        </p>
+
+                        <div className="mt-3">
+                          <DidWebPreview
+                            domain={values.domain}
+                            path={values.path}
+                          />
+                        </div>
                       </div>
                     )}
 
