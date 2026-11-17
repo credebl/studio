@@ -66,5 +66,21 @@ by hand unless you are recovering from a failed workflow run.
   private app is versioned and tagged like a published package.
 - the changelog uses the default Changesets CLI generator.
 
-The first release is `2.2.0` because the initial changeset is a `minor` bump
-for the `/admin` console.
+## Release candidates
+
+A release candidate is cut by hand, outside the Changesets flow, so that it can
+be tested with the matching platform and agent-controller candidates first.
+
+1. Open a `chore(release): vX.Y.Z-rc.N` pull request that sets `package.json`
+   to `X.Y.Z-rc.N` and adds the release notes to the PR description. Leave the
+   pending changesets in place: they become the changelog of the final release.
+2. After it merges, the release workflow only updates the
+   **chore(release): version packages** pull request, which now proposes the
+   final `X.Y.Z`. It does not tag the candidate. Do not merge the version PR
+   until the candidate has passed testing.
+3. Tag `vX.Y.Z-rc.N` on the merge commit and publish a GitHub Release from it
+   marked **pre-release**, not Latest, with the notes from the PR.
+4. Deploy with `NEXT_PUBLIC_CURRENT_RELEASE=vX.Y.Z-rc.N` so Developer settings
+   shows the candidate's version.
+
+Merging the version PR releases the final `X.Y.Z`.
