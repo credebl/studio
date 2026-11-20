@@ -120,6 +120,10 @@ const apiRoutes = {
     deactivateCertificate: '/deactivate',
     importCertificate: '/import',
   },
+  Oid4vcIssuer: {
+    root: 'oid4vc',
+    createIssuer: '/oid4vc/issuers',
+  },
 }
 
 export default apiRoutes
