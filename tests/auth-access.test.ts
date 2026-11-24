@@ -75,4 +75,30 @@ describe('resolvePlatformAccess', () => {
     fetchMock.mockResolvedValueOnce(jsonResponse({}, 500))
     await expect(resolvePlatformAccess('token')).resolves.toBeNull()
   })
+
+  it('detects a holder from the wallet probe when the profile is forbidden', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({}, 403))
+      .mockResolvedValueOnce(jsonResponse({}, 404))
+
+    await expect(resolvePlatformAccess('token')).resolves.toEqual({
+      isPlatformAdmin: false,
+      hasOrgAccess: false,
+      hasHolderAccess: true,
+    })
+
+    expect(fetchMock.mock.calls[1]?.[0]).toContain('/did')
+  })
+
+  it('does not grant holder access when the wallet probe is forbidden', async () => {
+    fetchMock
+      .mockResolvedValueOnce(jsonResponse({}, 403))
+      .mockResolvedValueOnce(jsonResponse({}, 403))
+
+    await expect(resolvePlatformAccess('token')).resolves.toEqual({
+      isPlatformAdmin: false,
+      hasOrgAccess: false,
+      hasHolderAccess: false,
+    })
+  })
 })

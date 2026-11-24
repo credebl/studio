@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import EmailVerificationForm from './EmailVerificationForm'
 import Footer from '@/components/Footer'
@@ -15,6 +15,15 @@ export default function SignUpUser(): React.JSX.Element {
   const userEmail = searchParam.get('email')
   const redirectTo = searchParam.get('redirectTo')
   const clientAlias = searchParam.get('clientAlias')
+  const holderSignup = searchParam.get('holder')
+
+  // The verification link returns to /sign-up without our query string, so
+  // remember the opt-in for the rest of this browser session.
+  useEffect(() => {
+    if (holderSignup === '1' || holderSignup === 'true') {
+      sessionStorage.setItem('studio-holder-signup', '1')
+    }
+  }, [holderSignup])
 
   const signInUrl =
     redirectTo && clientAlias

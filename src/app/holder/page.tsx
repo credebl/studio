@@ -26,8 +26,8 @@ export default async function HolderOverviewPage(): Promise<React.JSX.Element> {
       <Alert variant="destructive">
         <AlertTitle>Wallet unavailable</AlertTitle>
         <AlertDescription>
-          The platform cloud wallet is not reachable right now. Please try again
-          later.
+          {wallet.message ??
+            'The platform cloud wallet is not reachable right now. Please try again later.'}
         </AlertDescription>
       </Alert>
     )
