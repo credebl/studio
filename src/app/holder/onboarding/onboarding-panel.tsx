@@ -7,20 +7,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
-import { createDidAction, createWalletAction } from '../actions'
 import { useActionState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { FormStatus } from '@/features/holder/components/form-status'
 import type { HolderActionResult } from '@/features/holder/types'
+import { HolderDidCreateForm } from '@/features/holder/components/holder-did-create-form'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { createWalletAction } from '../actions'
 import { useRouter } from 'next/navigation'
 
 interface OnboardingPanelProps {
@@ -38,10 +32,6 @@ export function OnboardingPanel({
     createWalletAction,
     null,
   )
-  const [didState, didAction, didPending] = useActionState(
-    createDidAction,
-    null,
-  )
 
   useEffect(() => {
     if (walletState?.status === 'success') {
@@ -49,14 +39,7 @@ export function OnboardingPanel({
     }
   }, [walletState, router])
 
-  useEffect(() => {
-    if (didState?.status === 'success') {
-      router.push('/holder')
-    }
-  }, [didState, router])
-
   const walletStatus: HolderActionResult | null = walletState
-  const didStatus: HolderActionResult | null = didState
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -72,7 +55,6 @@ export function OnboardingPanel({
       </div>
 
       <FormStatus state={walletStatus} />
-      <FormStatus state={didStatus} />
 
       {!hasWallet && (
         <Card>
@@ -118,59 +100,12 @@ export function OnboardingPanel({
           <CardHeader>
             <CardTitle>Create DID</CardTitle>
             <CardDescription>
-              Start with did:key unless you control a domain for did:web.
+              Start with did:key, or import an existing key for did:key, did:web
+              or did:polygon.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form action={didAction} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="did-method">Method</Label>
-                <Select name="method" defaultValue="key" required>
-                  <SelectTrigger id="did-method">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="key">did:key</SelectItem>
-                    <SelectItem value="web">did:web</SelectItem>
-                    <SelectItem value="polygon">did:polygon</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="did-key-type">Key type</Label>
-                <Select name="keyType" defaultValue="ed25519" required>
-                  <SelectTrigger id="did-key-type">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ed25519">Ed25519</SelectItem>
-                    <SelectItem value="secp256k1">Secp256k1</SelectItem>
-                    <SelectItem value="rsa">RSA</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="did-domain">Domain (did:web)</Label>
-                  <Input
-                    id="did-domain"
-                    name="domain"
-                    placeholder="example.com"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="did-network">Network (optional)</Label>
-                  <Input
-                    id="did-network"
-                    name="network"
-                    placeholder="bcovrin:testnet"
-                  />
-                </div>
-              </div>
-              <Button type="submit" disabled={didPending}>
-                {didPending ? 'Creating…' : 'Create DID'}
-              </Button>
-            </form>
+            <HolderDidCreateForm onSuccess={() => router.push('/holder')} />
           </CardContent>
         </Card>
       )}

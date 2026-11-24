@@ -62,6 +62,24 @@ side-effect-free probe: a 404 means no wallet exists, any other error means the
 service is unavailable. `POST /create-wallet` returns 409 if a wallet already
 exists, so that path remains safe against duplicate provisioning.
 
+The shared DID form offers `did:key`, `did:web` and `did:polygon`. Platform
+v2.3.0 requires a 32-character `seed` for `did:key` and `did:web` when no key is
+imported, so Studio generates a fresh random seed in the server action. It is
+never rendered in the browser, stored in Studio, or accepted from the form.
+
+Holders can also import their own private key (PEM, base64 DER or private JWK;
+a 64-character hex secp256k1 key for `did:polygon`). The browser requests a
+single-use import session from `POST /did/import/session`, encrypts the key with
+WebCrypto to the session's public key, and submits only the opaque JWE and
+session id as `encryptedKey`. Plaintext private keys never reach Studio, the
+platform gateway, NATS, or logs. Imported-key DIDs omit the generated seed.
+
+`did:x509` is shown but disabled for holders. Platform v2.3.0 only exposes x509
+under `/orgs/:orgId/agents/did/x509/import`, and the holder import-session DTO
+rejects `x509`/`x509-certificate`, although agent-controller v2.3.3 supports
+both. Holder x509 support is tracked in
+[credebl/platform#1864](https://github.com/credebl/platform/issues/1864).
+
 ## Known limitations
 
 - Holder list endpoints return a plain array with no query parameters, but an

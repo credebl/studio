@@ -36,6 +36,21 @@ export class KeyImportError extends Error {
   }
 }
 
+/** Validates the public-only session descriptor returned by the platform. */
+export function isKeyImportSession(value: unknown): value is KeyImportSession {
+  if (!value || typeof value !== 'object') {
+    return false
+  }
+  const session = value as Partial<KeyImportSession>
+  return Boolean(
+    session.sessionId &&
+    session.alg &&
+    session.enc &&
+    session.publicKeyJwk &&
+    session.protectedHeader,
+  )
+}
+
 const TEXT_ENCODER = new TextEncoder()
 const IV_LENGTH = 12
 const TAG_LENGTH = 16
