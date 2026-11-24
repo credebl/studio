@@ -120,7 +120,9 @@ export default function IssuerFormDialog({
   const errors = useMemo(() => {
     const nextErrors = getCreateIssuerErrors(fields)
     if (issuer) {
+      // The platform omits these optional fields for existing issuers.
       delete nextErrors.authorizationServerUrl
+      delete nextErrors.description
     }
     if (Number(fields.batchCredentialIssuanceSize) < 1) {
       nextErrors.batch = 'Batch size must be at least 1'
