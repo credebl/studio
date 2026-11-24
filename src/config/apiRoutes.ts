@@ -139,6 +139,10 @@ export const apiRoutes = {
     deleteWallet: '/agents/wallet',
   },
 
+  oid4vc: {
+    createIssuer: '/oid4vc/issuers',
+  },
+
   setting: {
     setting: '/client_credentials',
   },

@@ -1,7 +1,16 @@
 'use client'
 
-import { ChevronDown, ChevronRight, Plus } from 'lucide-react'
-import { JSX, useEffect, useState } from 'react'
+import {
+  ChevronDown,
+  ChevronRight,
+  Image as ImageIcon,
+  Plus,
+} from 'lucide-react'
+import {
+  ICreateIssuerResponse,
+  ILocaleEntry,
+} from '@/app/oid4vc/interface/interface'
+import { JSX, useEffect, useMemo, useState } from 'react'
 import {
   Select,
   SelectContent,
@@ -9,164 +18,184 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  buildCreateIssuerPayload,
+  getCreateIssuerErrors,
+} from '@/features/oid4vc/utils/createIssuer'
+import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 
 import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { IDisplayItem } from '@/app/oid4vc/interface/interface'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import { Textarea } from '@/components/ui/textarea'
+import { addIssuer } from '@/lib/oid4vc'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { createIssuer } from '@/app/api/oid4vc'
-import { useAppSelector } from '@/lib/hooks'
+import { getOrganizationById } from '@/app/api/organization'
 
-interface LocaleEntry {
-  name: string
-  description: string
-  locale: string
+const localeOptions: Record<string, string> = {
+  Fr: 'fr',
+  De: 'de',
+  Es: 'es',
 }
 
 export default function CreateIssuer(): JSX.Element {
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [logoLink, setLogoLink] = useState('')
+  const [authorizationServerUrl, setAuthorizationServerUrl] = useState('')
   const [advancedOpen, setAdvancedOpen] = useState(false)
-  const [locales, setLocales] = useState<LocaleEntry[]>([])
-  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [locales, setLocales] = useState<ILocaleEntry[]>([])
   const [touched, setTouched] = useState<Record<string, boolean>>({})
+  const [submitted, setSubmitted] = useState(false)
 
-  const [loading, setLoading] = useState<boolean>(false)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+
+  const dispatch = useAppDispatch()
   const orgId = useAppSelector((state) => state.organization.orgId)
   const orgName = useAppSelector((state) => state.organization.orgInfo?.name)
-  const localesSelection: Record<string, string> = {
-    Fr: 'fr',
-    De: 'de',
-    Es: 'es',
-  }
 
   useEffect(() => {
-    setTimeout(() => {
+    if (!orgId) {
+      return
+    }
+
+    let cancelled = false
+
+    getOrganizationById(orgId)
+      .then((response) => {
+        if (cancelled || typeof response === 'string') {
+          return
+        }
+
+        const { data } = response as AxiosResponse
+        const endpoint = data?.data?.org_agents?.[0]?.agentEndPoint
+
+        if (typeof endpoint === 'string' && endpoint.trim()) {
+          setAuthorizationServerUrl(endpoint.trim())
+        }
+      })
+      .catch(() => {
+        // Leave the field editable if the agent endpoint cannot be loaded.
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [orgId])
+
+  useEffect(() => {
+    if (!success && !error) {
+      return
+    }
+
+    const timer = setTimeout(() => {
       setSuccess(null)
       setError(null)
     }, 3000)
+
+    return () => clearTimeout(timer)
   }, [success, error])
 
+  const errors = useMemo(
+    () =>
+      getCreateIssuerErrors({
+        name,
+        description,
+        logoLink,
+        authorizationServerUrl,
+        locales,
+      }),
+    [authorizationServerUrl, description, locales, logoLink, name],
+  )
+
+  const getFieldError = (key: string): string | undefined => {
+    if (submitted || touched[key]) {
+      return errors[key]
+    }
+    return undefined
+  }
+
+  const markTouched = (key: string): void =>
+    setTouched((previous) => ({ ...previous, [key]: true }))
+
   const addLocale = (): void =>
-    setLocales((prev) => [...prev, { name: '', description: '', locale: 'fr' }])
+    setLocales((previous) => [
+      ...previous,
+      { name: '', description: '', locale: 'fr' },
+    ])
 
   const updateLocale = (
     index: number,
-    field: keyof LocaleEntry,
+    field: keyof ILocaleEntry,
     value: string,
   ): void =>
-    setLocales((prev) =>
-      prev.map((l, i) => (i === index ? { ...l, [field]: value } : l)),
+    setLocales((previous) =>
+      previous.map((entry, entryIndex) => {
+        if (entryIndex === index) {
+          return { ...entry, [field]: value }
+        }
+        return entry
+      }),
     )
 
   const removeLocale = (index: number): void =>
-    setLocales((prev) => prev.filter((_, i) => i !== index))
+    setLocales((previous) =>
+      previous.filter((_, entryIndex) => entryIndex !== index),
+    )
 
-  const validate = (fieldName?: string): boolean => {
-    const newErrors = { ...errors }
-
-    const check = (key: string, condition: boolean, message: string): void => {
-      if (condition) {
-        newErrors[key] = message
-      } else {
-        delete newErrors[key]
-      }
-    }
-
-    if (!fieldName || fieldName === 'name') {
-      check('name', !name.trim(), 'Name is required')
-    }
-
-    if (!fieldName || fieldName === 'description') {
-      check('description', !description.trim(), 'Description is required')
-    }
-
-    if (!fieldName || fieldName === 'logo') {
-      check('logo', !logoLink.trim(), 'Logo link is required')
-
-      const urlPattern = /^(https?:\/\/)[^\s$.?#].[^\s]*$/i
-      check(
-        'serverUrl',
-        logoLink !== '' && !urlPattern.test(logoLink),
-        'Please enter a valid URL',
-      )
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const generateIssuerKey = (orgName: string, issuerName: string): string => {
-    const getShortCode = (str: string): string => {
-      const words = str.trim().split(/\s+/)
-      if (words.length >= 2) {
-        return (words[0][0] + words[1][0]).toLowerCase()
-      }
-      return str.substring(0, 2).toLowerCase()
-    }
-
-    const orgPart = getShortCode(orgName)
-    const issuerPart = getShortCode(issuerName)
-
-    const suffix = Math.random().toString(36).substring(2, 6)
-
-    return `${orgPart}-${issuerPart}-${suffix}`
+  const resetForm = (): void => {
+    setName('')
+    setDescription('')
+    setLogoLink('')
+    setLocales([])
+    setAdvancedOpen(false)
+    setTouched({})
+    setSubmitted(false)
   }
 
   const handleSubmit = async (): Promise<void> => {
-    if (validate()) {
-      try {
-        setLoading(true)
+    setSubmitted(true)
+    setError(null)
+    setSuccess(null)
 
-        const logo = {
-          uri: logoLink,
-          // eslint-disable-next-line camelcase
-          alt_text: 'Issuer logo',
-        }
-        const formattedLocales = locales.map((value) => ({ ...value, logo }))
-        let display = [
-          {
-            locale: 'en',
-            name,
-            description,
-            logo,
-          },
-        ]
-        if (formattedLocales.length > 0) {
-          display = [...display, ...formattedLocales]
-        }
-        const seen: Record<string, boolean> = {}
-        const uniqueData = display.reduce<IDisplayItem[]>((acc, current) => {
-          if (!seen[current.locale]) {
-            seen[current.locale] = true
-            acc.push(current)
-          }
-          return acc
-        }, [])
-        const payload = {
-          issuerId: `${generateIssuerKey(orgName || '', name)}-jwt-issuer`,
-          display: uniqueData,
-        }
-        const res = await createIssuer(orgId, payload)
-        const { data } = res as AxiosResponse
-        if (data && data.statusCode === apiStatusCodes.API_STATUS_CREATED) {
-          setSuccess('Issuer created successfully')
-        }
-      } catch (error) {
-        setError('Failed to create Issuer')
-        console.error('Failed to submit form', error)
-      } finally {
-        setLoading(false)
+    if (Object.keys(errors).length > 0) {
+      return
+    }
+
+    try {
+      setLoading(true)
+
+      const fields = {
+        name,
+        description,
+        logoLink,
+        authorizationServerUrl,
+        locales,
       }
+      const payload = buildCreateIssuerPayload(orgName ?? '', fields)
+      const response = await createIssuer(orgId, payload)
+      const { data } = response as AxiosResponse<ICreateIssuerResponse>
+
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        dispatch(addIssuer(data.data?.id ?? payload.issuerId))
+        setSuccess(data.message ?? 'Issuer created successfully')
+        resetForm()
+      } else {
+        setError(data?.message ?? 'Failed to create issuer')
+      }
+    } catch (caught) {
+      setError(
+        caught instanceof Error ? caught.message : 'Failed to create issuer',
+      )
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -194,61 +223,38 @@ export default function CreateIssuer(): JSX.Element {
               </Label>
               <Input
                 id="issuer-name"
-                className={errors.name ? 'border-destructive' : ''}
                 value={name}
-                onChange={(e) => {
-                  setName(e.target.value)
-                  if (errors.name) {
-                    setErrors({ ...errors, name: '' })
-                  } // Clear error on type
-                }}
-                onBlur={() => {
-                  setTouched({ ...touched, name: true })
-                  validate('name')
-                }}
+                onChange={(event) => setName(event.target.value)}
+                onBlur={() => markTouched('name')}
                 placeholder="Enter issuer name"
               />
-              {touched.name && errors.name && (
+              {getFieldError('name') && (
                 <p className="text-destructive text-xs font-medium">
-                  {errors.name}
+                  {getFieldError('name')}
                 </p>
               )}
             </div>
 
             <div className="space-y-2">
-              <Label className="text-base font-medium">Logo</Label>
+              <Label htmlFor="issuer-logo" className="text-base font-medium">
+                Logo
+              </Label>
               <div className="border-input bg-background flex items-center gap-4 rounded-md border p-3">
-                <div className="border-border bg-accent text-muted-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-dashed text-xs">
-                  {logoLink ? (
-                    <img
-                      src={logoLink}
-                      alt="Logo preview"
-                      className="h-full w-full rounded-md object-cover"
-                    />
-                  ) : (
-                    'Logo'
-                  )}
+                <div className="border-border bg-accent text-muted-foreground flex h-14 w-14 shrink-0 items-center justify-center rounded-md border border-dashed">
+                  <ImageIcon aria-hidden="true" className="h-5 w-5" />
                 </div>
                 <div className="flex-1 space-y-1">
-                  {/* <p className="text-muted-foreground text-xs">or link</p> */}
                   <Input
+                    id="issuer-logo"
                     value={logoLink}
                     placeholder="https://..."
                     className="h-8 text-xs"
-                    onChange={(e) => {
-                      setLogoLink(e.target.value)
-                      if (errors.name) {
-                        setErrors({ ...errors, logo: '' })
-                      }
-                    }}
-                    onBlur={() => {
-                      setTouched({ ...touched, logo: true })
-                      validate('logo')
-                    }}
+                    onChange={(event) => setLogoLink(event.target.value)}
+                    onBlur={() => markTouched('logo')}
                   />
-                  {touched.logo && errors.logo && (
+                  {getFieldError('logo') && (
                     <p className="text-destructive text-xs font-medium">
-                      {errors.logo}
+                      {getFieldError('logo')}
                     </p>
                   )}
                 </div>
@@ -266,20 +272,39 @@ export default function CreateIssuer(): JSX.Element {
               value={description}
               placeholder="Enter issuer description"
               rows={4}
-              onChange={(e) => {
-                setDescription(e.target.value)
-                if (errors.description) {
-                  setErrors({ ...errors, description: '' })
-                }
-              }}
-              onBlur={() => {
-                setTouched({ ...touched, description: true })
-                validate('description')
-              }}
+              onChange={(event) => setDescription(event.target.value)}
+              onBlur={() => markTouched('description')}
             />
-            {touched.description && errors.description && (
+            {getFieldError('description') && (
               <p className="text-destructive text-xs font-medium">
-                {errors.description}
+                {getFieldError('description')}
+              </p>
+            )}
+          </div>
+
+          {/* Authorization server URL */}
+          <div className="space-y-2">
+            <Label
+              htmlFor="issuer-authorization-server"
+              className="text-base font-medium"
+            >
+              Authorization server URL
+            </Label>
+            <Input
+              id="issuer-authorization-server"
+              value={authorizationServerUrl}
+              placeholder="https://agent.example.com"
+              onChange={(event) =>
+                setAuthorizationServerUrl(event.target.value)
+              }
+              onBlur={() => markTouched('authorizationServerUrl')}
+            />
+            <p className="text-muted-foreground text-xs">
+              Pre-filled from your organization&apos;s agent endpoint.
+            </p>
+            {getFieldError('authorizationServerUrl') && (
+              <p className="text-destructive text-xs font-medium">
+                {getFieldError('authorizationServerUrl')}
               </p>
             )}
           </div>
@@ -287,6 +312,7 @@ export default function CreateIssuer(): JSX.Element {
           {/* Advanced Options */}
           <div>
             <button
+              type="button"
               onClick={() => setAdvancedOpen(!advancedOpen)}
               className="text-foreground text-md flex items-center gap-2 font-bold"
             >
@@ -297,7 +323,7 @@ export default function CreateIssuer(): JSX.Element {
                 <ChevronRight className="h-4 w-4" />
               )}
             </button>
-            <hr className="my-2"></hr>
+            <hr />
 
             {advancedOpen && (
               <div className="border-border mt-4 space-y-6 rounded-lg border p-4">
@@ -307,64 +333,105 @@ export default function CreateIssuer(): JSX.Element {
                     Add Issuer&apos;s display info in other locales
                   </p>
 
-                  {locales.map((locale, i) => (
+                  {locales.map((locale, index) => (
                     <div
-                      key={i}
+                      key={`locale-${index}`}
                       className="border-border space-y-3 rounded-md border p-4 shadow"
                     >
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-1">
-                          <Label className="text-base font-medium">Name</Label>
+                          <Label
+                            htmlFor={`locale-${index}-name`}
+                            className="text-base font-medium"
+                          >
+                            Name
+                          </Label>
                           <Input
+                            id={`locale-${index}-name`}
                             value={locale.name}
-                            onChange={(e) =>
-                              updateLocale(i, 'name', e.target.value)
+                            onChange={(event) =>
+                              updateLocale(index, 'name', event.target.value)
                             }
+                            onBlur={() => markTouched(`locale-${index}-name`)}
                             className="h-8 text-xs"
                           />
+                          {getFieldError(`locale-${index}-name`) && (
+                            <p className="text-destructive text-xs font-medium">
+                              {getFieldError(`locale-${index}-name`)}
+                            </p>
+                          )}
                         </div>
-                        <div className="text-base font-medium">
-                          <Label className="text-base font-medium">
+                        <div className="space-y-1">
+                          <Label
+                            htmlFor={`locale-${index}-locale`}
+                            className="text-base font-medium"
+                          >
                             Locale
                           </Label>
                           <Select
                             value={locale.locale}
-                            onValueChange={(v) => updateLocale(i, 'locale', v)}
+                            onValueChange={(value) =>
+                              updateLocale(index, 'locale', value)
+                            }
                           >
-                            <SelectTrigger className="h-8 text-xs">
+                            <SelectTrigger
+                              id={`locale-${index}-locale`}
+                              className="h-8 text-xs"
+                            >
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {Object.keys(localesSelection).map((value) => (
+                              {Object.keys(localeOptions).map((label) => (
                                 <SelectItem
-                                  key={value}
-                                  value={`${localesSelection[value]}`}
+                                  key={label}
+                                  value={localeOptions[label]}
                                 >
-                                  {value}
+                                  {label}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
+                          {getFieldError(`locale-${index}-locale`) && (
+                            <p className="text-destructive text-xs font-medium">
+                              {getFieldError(`locale-${index}-locale`)}
+                            </p>
+                          )}
                         </div>
                       </div>
-                      <div className="text-base font-medium">
-                        <Label className="text-base font-medium">
+                      <div className="space-y-1">
+                        <Label
+                          htmlFor={`locale-${index}-description`}
+                          className="text-base font-medium"
+                        >
                           Description
                         </Label>
                         <Textarea
+                          id={`locale-${index}-description`}
                           value={locale.description}
-                          onChange={(e) =>
-                            updateLocale(i, 'description', e.target.value)
+                          onChange={(event) =>
+                            updateLocale(
+                              index,
+                              'description',
+                              event.target.value,
+                            )
                           }
-                          className="text-base font-medium"
+                          onBlur={() =>
+                            markTouched(`locale-${index}-description`)
+                          }
                           rows={2}
                         />
+                        {getFieldError(`locale-${index}-description`) && (
+                          <p className="text-destructive text-xs font-medium">
+                            {getFieldError(`locale-${index}-description`)}
+                          </p>
+                        )}
                       </div>
                       <div className="flex justify-end text-base">
                         <Button
+                          type="button"
                           variant="outline"
                           size="lg"
-                          onClick={() => removeLocale(i)}
+                          onClick={() => removeLocale(index)}
                           className="text-destructive"
                         >
                           Remove
@@ -374,6 +441,7 @@ export default function CreateIssuer(): JSX.Element {
                   ))}
 
                   <Button
+                    type="button"
                     variant="outline"
                     size="sm"
                     onClick={addLocale}
@@ -389,7 +457,7 @@ export default function CreateIssuer(): JSX.Element {
 
           {/* Submit */}
           <div className="flex justify-end pt-4">
-            <Button onClick={handleSubmit} disabled={!name.trim() || loading}>
+            <Button type="button" onClick={handleSubmit} disabled={loading}>
               {loading && <Loader size={20} />}Create Issuer
             </Button>
           </div>

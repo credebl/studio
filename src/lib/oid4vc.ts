@@ -19,7 +19,6 @@ const oid4vcSlice = createSlice({
     addIssuer: (state, action: PayloadAction<string>) => {
       state.issuance.issuerId = action.payload
     },
-    clearProfile: () => initialState,
   },
 })
 

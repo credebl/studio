@@ -47,6 +47,7 @@ const persistConfig = {
     'schema',
     'schemaStorage',
     'ecosystem',
+    'oid4vc',
   ],
 }
 

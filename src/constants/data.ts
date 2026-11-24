@@ -71,6 +71,12 @@ export const navItems: NavItem[] = [
         url: '/x509-certificate',
         icon: 'login',
       },
+      {
+        title: 'OID4VC Issuer',
+        shortcut: ['o', 'i'],
+        url: '/oid4vc/create-issuer',
+        icon: 'add',
+      },
     ],
   },
 ]
