@@ -66,3 +66,11 @@ export interface CloudBaseWalletActionResult extends AdminActionResult {
   agentEndpoint?: string
   configuredAt?: string
 }
+
+/**
+ * Runtime token fetched directly from the shared agent. The token is returned
+ * only to populate the form; the raw authorization key is never returned.
+ */
+export interface AgentTokenActionResult extends AdminActionResult {
+  token?: string
+}

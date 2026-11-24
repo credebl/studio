@@ -68,12 +68,25 @@ requires before any holder can create a wallet. The form sends `agentEndpoint`,
 `apiKey` and `walletKey` to `POST /configure/base-wallet`; the platform encrypts
 both keys at rest and creates one tenant on that shared agent per holder.
 
+The **Fetch token** button accepts the raw agent authorization key alongside the
+endpoint, calls `POST /agent/token` from the Studio server, verifies the agent is
+reachable, and fills the runtime JWT into the Agent API key field. The raw
+authorization key is not forwarded to the platform, stored in Studio, or echoed
+back to the browser. The fetched JWT is kept only in the form until the admin
+submits or leaves it.
+
 The platform accepts only one base wallet and exposes no update or delete route.
 The screen therefore opens in a read-only view when Studio knows a wallet is
 configured, with an **Edit** button that opens the form for a deliberate retry.
 Studio keeps only a non-secret endpoint/status hint in an httpOnly cookie; the
 backend's `409` response is authoritative. A conflict switches the screen back to
 the read-only view without changing any settings.
+
+On submission, only the endpoint, runtime JWT and wallet key are sent to
+`POST /configure/base-wallet`. The platform stores the base wallet with the keys
+encrypted at rest; Studio keeps only the non-secret status/endpoint hint in the
+httpOnly cookie. This configuration enables the platform to create one wallet
+tenant per holder; it does not create holder wallets by itself.
 
 Both key fields require explicit confirmation and are cleared from the DOM as
 soon as the form is left. Studio never stores, logs or echoes the keys; the

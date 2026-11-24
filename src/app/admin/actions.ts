@@ -2,11 +2,14 @@
 
 import type {
   AdminActionResult,
+  AgentTokenActionResult,
   CloudBaseWalletActionResult,
 } from '@/features/admin/types'
 import {
+  AgentTokenFetchError,
   CloudBaseWalletConflictError,
   configureCloudBaseWallet,
+  fetchAgentAuthToken,
   getPlatformAdminSession,
   inviteEcosystemOwner,
   rememberCloudBaseWalletConfigured,
@@ -25,7 +28,11 @@ const isValidAgentEndpoint = (value: string): boolean => {
     return (
       (url.protocol === 'https:' || url.protocol === 'http:') &&
       Boolean(url.hostname) &&
-      (url.pathname === '' || url.pathname === '/')
+      (url.pathname === '' || url.pathname === '/') &&
+      !url.username &&
+      !url.password &&
+      !url.search &&
+      !url.hash
     )
   } catch {
     return false
@@ -65,6 +72,59 @@ export async function inviteEcosystemOwnerAction(
     return {
       status: 'error',
       message: 'Could not send the invitation. Please try again.',
+    }
+  }
+}
+
+/**
+ * Verifies the shared agent is reachable and mints the base-agent JWT used by
+ * the platform. This is a separate action so the raw agent authorization key
+ * never becomes part of the base-wallet configuration request.
+ */
+export async function fetchAgentAuthTokenAction(
+  _previousState: AgentTokenActionResult | null,
+  formData: FormData,
+): Promise<AgentTokenActionResult> {
+  if (!(await getPlatformAdminSession())) {
+    return forbidden()
+  }
+
+  const agentEndpoint = String(formData.get('agentEndpoint') ?? '').trim()
+  const authorizationKey = String(formData.get('agentAuthKey') ?? '').trim()
+
+  if (
+    !agentEndpoint ||
+    agentEndpoint.length > MAX_ENDPOINT_LENGTH ||
+    !isValidAgentEndpoint(agentEndpoint)
+  ) {
+    return {
+      status: 'error',
+      message:
+        'Enter a valid agent endpoint, for example https://agent.example.com:4001.',
+    }
+  }
+
+  if (!authorizationKey || authorizationKey.length > MAX_KEY_LENGTH) {
+    return {
+      status: 'error',
+      message: 'Enter the agent authorization key used to fetch the token.',
+    }
+  }
+
+  try {
+    const token = await fetchAgentAuthToken(agentEndpoint, authorizationKey)
+    return {
+      status: 'success',
+      message: 'Agent reachable. Runtime API key added to the form.',
+      token,
+    }
+  } catch (error) {
+    return {
+      status: 'error',
+      message:
+        error instanceof AgentTokenFetchError
+          ? error.message
+          : 'Unable to reach the agent or fetch its token.',
     }
   }
 }

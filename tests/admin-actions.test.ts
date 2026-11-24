@@ -1,6 +1,8 @@
 import {
+  AgentTokenFetchError,
   CloudBaseWalletConflictError,
   configureCloudBaseWallet,
+  fetchAgentAuthToken,
   getPlatformAdminSession,
   inviteEcosystemOwner,
   rememberCloudBaseWalletConfigured,
@@ -9,6 +11,7 @@ import {
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   configureCloudBaseWalletAction,
+  fetchAgentAuthTokenAction,
   inviteEcosystemOwnerAction,
   setEcosystemEnabledAction,
 } from '@/app/admin/actions'
@@ -20,7 +23,9 @@ vi.mock('@/lib/server/admin', () => ({
   inviteEcosystemOwner: vi.fn(),
   updateEcosystemStatus: vi.fn(),
   configureCloudBaseWallet: vi.fn(),
+  fetchAgentAuthToken: vi.fn(),
   rememberCloudBaseWalletConfigured: vi.fn(),
+  AgentTokenFetchError: class AgentTokenFetchError extends Error {},
   CloudBaseWalletConflictError: class CloudBaseWalletConflictError extends Error {},
 }))
 
@@ -35,9 +40,20 @@ const emailForm = (email: string): FormData => {
 const walletForm = (overrides: Record<string, string> = {}): FormData => {
   const form = new FormData()
   form.set('agentEndpoint', ' https://agent.example.com:4001 ')
+  form.set('agentAuthKey', ' raw-agent-key ')
   form.set('apiKey', ' agent-secret ')
   form.set('walletKey', ' wallet-secret ')
   form.set('confirm', 'on')
+  for (const [key, value] of Object.entries(overrides)) {
+    form.set(key, value)
+  }
+  return form
+}
+
+const tokenForm = (overrides: Record<string, string> = {}): FormData => {
+  const form = new FormData()
+  form.set('agentEndpoint', ' https://agent.example.com:4001 ')
+  form.set('agentAuthKey', ' raw-agent-key ')
   for (const [key, value] of Object.entries(overrides)) {
     form.set(key, value)
   }
@@ -49,6 +65,7 @@ beforeEach(() => {
   vi.mocked(inviteEcosystemOwner).mockResolvedValue(undefined)
   vi.mocked(updateEcosystemStatus).mockResolvedValue(undefined)
   vi.mocked(configureCloudBaseWallet).mockResolvedValue({})
+  vi.mocked(fetchAgentAuthToken).mockResolvedValue('runtime-jwt')
   vi.mocked(rememberCloudBaseWalletConfigured).mockResolvedValue({
     configured: true,
     agentEndpoint: 'https://agent.example.com:4001',
@@ -130,6 +147,90 @@ describe('inviteEcosystemOwnerAction', () => {
   })
 })
 
+describe('fetchAgentAuthTokenAction', () => {
+  it('rejects a direct invocation without a platform-admin session', async () => {
+    vi.mocked(getPlatformAdminSession).mockResolvedValue(null)
+
+    const result = await fetchAgentAuthTokenAction(null, tokenForm())
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'You are not allowed to perform this action.',
+    })
+    expect(fetchAgentAuthToken).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    'not-a-url',
+    'https://user:pass@agent.example.com:4001',
+    'https://agent.example.com:4001?token=1',
+  ])('rejects an invalid agent endpoint: %s', async (agentEndpoint) => {
+    const result = await fetchAgentAuthTokenAction(
+      null,
+      tokenForm({ agentEndpoint }),
+    )
+
+    expect(result.status).toBe('error')
+    expect(fetchAgentAuthToken).not.toHaveBeenCalled()
+  })
+
+  it('requires the agent authorization key', async () => {
+    const result = await fetchAgentAuthTokenAction(
+      null,
+      tokenForm({ agentAuthKey: '' }),
+    )
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'Enter the agent authorization key used to fetch the token.',
+    })
+    expect(fetchAgentAuthToken).not.toHaveBeenCalled()
+  })
+
+  it('returns the runtime token without echoing the authorization key', async () => {
+    const result = await fetchAgentAuthTokenAction(null, tokenForm())
+
+    expect(fetchAgentAuthToken).toHaveBeenCalledWith(
+      'https://agent.example.com:4001',
+      'raw-agent-key',
+    )
+    expect(result).toEqual({
+      status: 'success',
+      message: 'Agent reachable. Runtime API key added to the form.',
+      token: 'runtime-jwt',
+    })
+    expect(JSON.stringify(result)).not.toContain('raw-agent-key')
+  })
+
+  it('surfaces a safe agent rejection message', async () => {
+    vi.mocked(fetchAgentAuthToken).mockRejectedValue(
+      new AgentTokenFetchError('The agent rejected the authorization key.'),
+    )
+
+    const result = await fetchAgentAuthTokenAction(null, tokenForm())
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'The agent rejected the authorization key.',
+    })
+    expect(JSON.stringify(result)).not.toContain('raw-agent-key')
+  })
+
+  it('does not leak unexpected fetch details', async () => {
+    vi.mocked(fetchAgentAuthToken).mockRejectedValue(
+      new Error('raw connection detail'),
+    )
+
+    const result = await fetchAgentAuthTokenAction(null, tokenForm())
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'Unable to reach the agent or fetch its token.',
+    })
+    expect(JSON.stringify(result)).not.toContain('raw connection detail')
+  })
+})
+
 describe('configureCloudBaseWalletAction', () => {
   it('rejects a direct invocation without a platform-admin session', async () => {
     vi.mocked(getPlatformAdminSession).mockResolvedValue(null)
@@ -199,6 +300,7 @@ describe('configureCloudBaseWalletAction', () => {
     })
     expect(JSON.stringify(result)).not.toContain('agent-secret')
     expect(JSON.stringify(result)).not.toContain('wallet-secret')
+    expect(JSON.stringify(result)).not.toContain('raw-agent-key')
   })
 
   it('switches to view mode when a base wallet is already configured', async () => {

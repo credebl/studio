@@ -327,6 +327,8 @@ export const updateEcosystemStatus = async (
 
 const CLOUD_WALLET_STATUS_COOKIE = 'studio_cloud_base_wallet_status'
 const MAX_COOKIE_ENDPOINT_LENGTH = 2048
+const AGENT_TOKEN_PATH = '/agent/token'
+const AGENT_TOKEN_TIMEOUT_MS = 8000
 
 /**
  * The platform allows exactly one base wallet, so a second configuration
@@ -408,6 +410,81 @@ export const rememberCloudBaseWalletConfigured = async (
   })
 
   return status
+}
+
+/**
+ * Mints the base-agent JWT at configuration time. The raw authorization key
+ * is used only for this request: it is never stored in Studio, returned to the
+ * browser, or forwarded to the platform's base-wallet endpoint.
+ */
+export class AgentTokenFetchError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'AgentTokenFetchError'
+  }
+}
+
+const buildAgentTokenUrl = (agentEndpoint: string): URL | null => {
+  try {
+    const url = new URL(AGENT_TOKEN_PATH, agentEndpoint)
+    url.search = ''
+    url.hash = ''
+    return url
+  } catch {
+    return null
+  }
+}
+
+export const fetchAgentAuthToken = async (
+  agentEndpoint: string,
+  authorizationKey: string,
+): Promise<string> => {
+  const url = buildAgentTokenUrl(agentEndpoint)
+  if (!url) {
+    throw new AgentTokenFetchError(
+      'Unable to reach the agent or fetch its token.',
+    )
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: authorizationKey,
+      },
+      redirect: 'error',
+      credentials: 'omit',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(AGENT_TOKEN_TIMEOUT_MS),
+    })
+
+    if (response.status === 401 || response.status === 403) {
+      throw new AgentTokenFetchError(
+        'The agent rejected the authorization key.',
+      )
+    }
+
+    if (!response.ok) {
+      throw new AgentTokenFetchError('The agent did not return a token.')
+    }
+
+    const body = (await response.json()) as { token?: unknown }
+    const token = typeof body?.token === 'string' ? body.token.trim() : ''
+    if (!token) {
+      throw new AgentTokenFetchError('The agent did not return a token.')
+    }
+
+    return token
+  } catch (error) {
+    if (error instanceof AgentTokenFetchError) {
+      throw error
+    }
+
+    throw new AgentTokenFetchError(
+      'Unable to reach the agent or fetch its token.',
+    )
+  }
 }
 
 export const configureCloudBaseWallet = async (

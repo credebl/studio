@@ -1,6 +1,8 @@
 import {
+  AgentTokenFetchError,
   CloudBaseWalletConflictError,
   configureCloudBaseWallet,
+  fetchAgentAuthToken,
   getCloudBaseWalletStatus,
   getDashboardSummary,
   getPlatformAdminSession,
@@ -390,6 +392,61 @@ describe('configureCloudBaseWallet', () => {
     await expect(configureCloudBaseWallet(config)).rejects.toThrow(
       'Unable to configure the cloud base wallet',
     )
+  })
+})
+
+describe('fetchAgentAuthToken', () => {
+  const endpoint = 'https://agent.example.com:4001'
+  const authorizationKey = 'raw-agent-key'
+
+  it('posts directly to the agent with the raw key and returns the JWT', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ token: 'runtime-jwt' }))
+
+    await expect(fetchAgentAuthToken(endpoint, authorizationKey)).resolves.toBe(
+      'runtime-jwt',
+    )
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    const [[url, init]] = fetchMock.mock.calls
+    expect(String(url)).toBe('https://agent.example.com:4001/agent/token')
+    expect(init?.method).toBe('POST')
+    expect(init?.body).toBeUndefined()
+    expect(init?.cache).toBe('no-store')
+    expect(init?.redirect).toBe('error')
+
+    const headers = init?.headers as Record<string, string>
+    expect(headers.Authorization).toBe(authorizationKey)
+    expect(headers.Authorization).not.toContain('Bearer')
+    expect(fetchMock.mock.calls.length).toBe(1)
+  })
+
+  it('reports a rejected key without echoing it', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ message: 'raw-agent-key rejected' }, 401),
+    )
+
+    const request = fetchAgentAuthToken(endpoint, authorizationKey)
+
+    await expect(request).rejects.toBeInstanceOf(AgentTokenFetchError)
+    await expect(request).rejects.toThrow(
+      'The agent rejected the authorization key.',
+    )
+  })
+
+  it('rejects a response without a token', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ token: '   ' }))
+
+    await expect(
+      fetchAgentAuthToken(endpoint, authorizationKey),
+    ).rejects.toThrow('The agent did not return a token.')
+  })
+
+  it('hides network error details', async () => {
+    fetchMock.mockRejectedValueOnce(new Error('http://metadata.internal'))
+
+    await expect(
+      fetchAgentAuthToken(endpoint, authorizationKey),
+    ).rejects.toThrow('Unable to reach the agent or fetch its token.')
   })
 })
 
