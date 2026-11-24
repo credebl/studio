@@ -1,9 +1,11 @@
 'use client'
 
+import { AgentEndpointField, CUSTOM_AGENT_ID } from './agent-endpoint-field'
 import type {
   AgentTokenActionResult,
   CloudBaseWalletActionResult,
   CloudBaseWalletStatus,
+  KnownAgentOption,
 } from '@/features/admin/types'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
@@ -56,6 +58,18 @@ const initialFormValues = (status: CloudBaseWalletStatus): FormValues => ({
   confirm: false,
 })
 
+const initialSelectedAgentId = (
+  status: CloudBaseWalletStatus,
+  knownAgents: KnownAgentOption[],
+): string => {
+  const endpoint = status.agentEndpoint?.trim()
+  const match = knownAgents.find((option) => option.endpoint === endpoint)
+  if (endpoint) {
+    return match?.id ?? CUSTOM_AGENT_ID
+  }
+  return knownAgents.length > 0 ? '' : CUSTOM_AGENT_ID
+}
+
 const walletAction = async (
   previous: WalletActionState,
   payload: WalletActionPayload,
@@ -91,12 +105,17 @@ const formatConfiguredAt = (value?: string): string | undefined => {
 
 export function CloudBaseWalletPanel({
   initialStatus,
+  knownAgents,
 }: {
   initialStatus: CloudBaseWalletStatus
+  knownAgents: KnownAgentOption[]
 }): React.JSX.Element {
   const [status, setStatus] = useState(initialStatus)
   const [formValues, setFormValues] = useState<FormValues>(() =>
     initialFormValues(initialStatus),
+  )
+  const [selectedAgentId, setSelectedAgentId] = useState(() =>
+    initialSelectedAgentId(initialStatus, knownAgents),
   )
   const [isEditing, setIsEditing] = useState(!initialStatus.configured)
   const [tokenNotice, setTokenNotice] = useState<Notice | null>(null)
@@ -156,8 +175,11 @@ export function CloudBaseWalletPanel({
   const clearTransientSecrets = (): void => {
     setFetchedToken('')
     setTokenNotice(null)
+    setSelectedAgentId(initialSelectedAgentId(status, knownAgents))
     setFormValues((current) => ({
       ...current,
+      agentEndpoint: status.agentEndpoint ?? '',
+      tokenEndpoint: '',
       agentAuthKey: '',
       walletKey: '',
       confirm: false,
@@ -170,6 +192,29 @@ export function CloudBaseWalletPanel({
 
   const updateFetchInput = (field: FetchInputField, value: string): void => {
     updateTextField(field, value)
+    setFetchedToken('')
+    setTokenNotice(null)
+  }
+
+  const handleSelectAgent = (value: string): void => {
+    setSelectedAgentId(value)
+
+    if (value === CUSTOM_AGENT_ID) {
+      updateFetchInput('agentEndpoint', '')
+      updateFetchInput('tokenEndpoint', '')
+      return
+    }
+
+    const option = knownAgents.find((item) => item.id === value)
+    if (!option) {
+      return
+    }
+
+    setFormValues((current) => ({
+      ...current,
+      agentEndpoint: option.endpoint,
+      tokenEndpoint: option.tokenEndpoint ?? '',
+    }))
     setFetchedToken('')
     setTokenNotice(null)
   }
@@ -282,31 +327,13 @@ export function CloudBaseWalletPanel({
 
       <CardContent>
         <form action={dispatch} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="agent-endpoint">Agent endpoint</Label>
-            <Input
-              id="agent-endpoint"
-              name="agentEndpoint"
-              type="text"
-              required
-              maxLength={2048}
-              value={formValues.agentEndpoint}
-              placeholder="https://agent.example.com:4001"
-              autoComplete="off"
-              spellCheck={false}
-              onChange={(event) =>
-                updateFetchInput('agentEndpoint', event.target.value)
-              }
-              aria-describedby="agent-endpoint-description"
-            />
-            <p
-              id="agent-endpoint-description"
-              className="text-muted-foreground text-sm"
-            >
-              Base URL of the agent-controller v2.3.3 instance, including the
-              port if it is not the default.
-            </p>
-          </div>
+          <AgentEndpointField
+            value={formValues.agentEndpoint}
+            options={knownAgents}
+            selectedId={selectedAgentId}
+            onSelect={handleSelectAgent}
+            onChange={(value) => updateFetchInput('agentEndpoint', value)}
+          />
 
           <div className="space-y-2">
             <Label htmlFor="agent-token-url">Token fetch URL (optional)</Label>

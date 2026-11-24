@@ -52,6 +52,19 @@ export interface CloudBaseWalletStatus {
   configuredAt?: string
 }
 
+/**
+ * Non-secret candidate shown in the base-wallet agent dropdown. Values are
+ * built on the server from configured sources; no keys or tokens are included.
+ */
+export interface KnownAgentOption {
+  id: string
+  label: string
+  endpoint: string
+  tokenEndpoint?: string
+  source: 'allowlist' | 'cloud-wallet' | 'platform-org'
+  description?: string
+}
+
 /** Sanitized fields returned by the platform after configuration. */
 export interface CloudBaseWalletSummary {
   id?: string

@@ -15,29 +15,15 @@ import {
   rememberCloudBaseWalletConfigured,
   updateEcosystemStatus,
 } from '@/lib/server/admin'
+import {
+  MAX_AGENT_ENDPOINT_LENGTH,
+  isValidAgentEndpoint,
+} from '@/lib/agent-endpoints'
 import { revalidatePath } from 'next/cache'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 const MAX_EMAIL_LENGTH = 254
-const MAX_ENDPOINT_LENGTH = 2048
 const MAX_KEY_LENGTH = 4096
-
-const isValidAgentEndpoint = (value: string): boolean => {
-  try {
-    const url = new URL(value)
-    return (
-      (url.protocol === 'https:' || url.protocol === 'http:') &&
-      Boolean(url.hostname) &&
-      (url.pathname === '' || url.pathname === '/') &&
-      !url.username &&
-      !url.password &&
-      !url.search &&
-      !url.hash
-    )
-  } catch {
-    return false
-  }
-}
 
 const forbidden = (): AdminActionResult => ({
   status: 'error',
@@ -96,7 +82,7 @@ export async function fetchAgentAuthTokenAction(
 
   if (
     !tokenEndpoint ||
-    tokenEndpoint.length > MAX_ENDPOINT_LENGTH ||
+    tokenEndpoint.length > MAX_AGENT_ENDPOINT_LENGTH ||
     !isValidAgentEndpoint(tokenEndpoint)
   ) {
     return {
@@ -158,7 +144,7 @@ export async function configureCloudBaseWalletAction(
 
   if (
     !agentEndpoint ||
-    agentEndpoint.length > MAX_ENDPOINT_LENGTH ||
+    agentEndpoint.length > MAX_AGENT_ENDPOINT_LENGTH ||
     !isValidAgentEndpoint(agentEndpoint)
   ) {
     return {

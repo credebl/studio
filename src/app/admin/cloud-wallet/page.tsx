@@ -1,5 +1,6 @@
 import {
   getCloudBaseWalletStatus,
+  getKnownAgentOptions,
   requirePlatformAdmin,
 } from '@/lib/server/admin'
 import { CloudBaseWalletPanel } from './cloud-base-wallet-form'
@@ -11,6 +12,7 @@ export const metadata = {
 export default async function AdminCloudWalletPage(): Promise<React.JSX.Element> {
   await requirePlatformAdmin()
   const initialStatus = await getCloudBaseWalletStatus()
+  const knownAgents = await getKnownAgentOptions(initialStatus.agentEndpoint)
 
   return (
     <div className="max-w-2xl space-y-4">
@@ -22,7 +24,10 @@ export default async function AdminCloudWalletPage(): Promise<React.JSX.Element>
         </p>
       </div>
 
-      <CloudBaseWalletPanel initialStatus={initialStatus} />
+      <CloudBaseWalletPanel
+        initialStatus={initialStatus}
+        knownAgents={knownAgents}
+      />
     </div>
   )
 }

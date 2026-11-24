@@ -79,6 +79,30 @@ sent to the platform. The raw authorization key is not forwarded to the platform
 stored in Studio, or echoed back to the browser. The fetched JWT is cleared when
 the admin changes a fetch input, cancels, configures, or leaves the form.
 
+The **Agent endpoint** dropdown is built on the server. It combines:
+
+- the endpoint already stored in Studio's non-secret base-wallet status cookie;
+- `STUDIO_KNOWN_AGENTS`, a server-only JSON allowlist of labels and endpoints;
+- org agent endpoints the signed-in operator can already read through
+  `GET /orgs` and `GET /orgs/:orgId`.
+
+```bash
+STUDIO_KNOWN_AGENTS='[
+  {
+    "label": "Local shared agent",
+    "endpoint": "http://host.docker.internal:4001",
+    "tokenEndpoint": "http://localhost:4001"
+  }
+]'
+```
+
+Platform v2.3.0 only returns org agents to users who hold an org role, so a
+platform-admin-only account will not see them in the dropdown. The allowlist,
+the stored base-wallet endpoint and the **Custom endpoint…** fallback always
+work. Candidates are URL-validated, deduplicated by endpoint and capped at 20.
+Only labels, endpoints and optional descriptions reach the browser; no keys or
+tokens are included.
+
 The platform accepts only one base wallet and exposes no update or delete route.
 The screen therefore opens in a read-only view when Studio knows a wallet is
 configured, with an **Edit** button that opens the form for a deliberate retry.

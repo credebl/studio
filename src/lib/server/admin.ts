@@ -5,13 +5,19 @@ import type {
   CloudBaseWalletConfigInput,
   CloudBaseWalletStatus,
   CloudBaseWalletSummary,
+  KnownAgentOption,
 } from '@/features/admin/types'
+import {
+  buildKnownAgentOptions,
+  parseKnownAgentAllowlist,
+} from '@/lib/server/known-agents'
 import type { Session } from 'next-auth'
 import { apiRoutes } from '@/config/apiRoutes'
 import { authOptions } from '@/utils/authOptions'
 import { cache } from 'react'
 import { cookies } from 'next/headers'
 import { getServerSession } from 'next-auth/next'
+import { loadAccessibleOrgAgents } from '@/lib/server/known-agent-orgs'
 import { passwordEncryption } from '@/app/api/server/encryption'
 import { redirect } from 'next/navigation'
 
@@ -176,6 +182,25 @@ const holdsPlatformAdminRole = cache(async (): Promise<boolean> => {
     Array.isArray(roles) &&
     roles.some((item) => item?.orgRole?.name === PLATFORM_ADMIN_ROLE)
   )
+})
+
+/**
+ * v2.3.0's `/orgs` endpoint returns only organizations where the caller holds
+ * a specific org role. Platform-admin is not an org role, so an operator who
+ * also belongs to organizations can use those roles to discover their agents.
+ */
+const getAccessibleOrgRoles = cache(async (): Promise<string[]> => {
+  const profile = await loadPlatformProfile()
+  const roles = new Set<string>()
+
+  for (const item of profile?.userOrgRoles ?? []) {
+    const name = item?.orgRole?.name?.trim()
+    if (name && name !== PLATFORM_ADMIN_ROLE) {
+      roles.add(name)
+    }
+  }
+
+  return Array.from(roles)
 })
 
 /**
@@ -382,6 +407,29 @@ const readCloudBaseWalletStatus = async (): Promise<CloudBaseWalletStatus> => {
 }
 
 export const getCloudBaseWalletStatus = readCloudBaseWalletStatus
+
+/**
+ * Builds the non-secret dropdown candidates. The allowlist and the stored
+ * endpoint always work; org agents appear only for admins who also hold an org
+ * role in v2.3.0. A future platform discovery API can replace these lookups.
+ */
+export const getKnownAgentOptions = async (
+  cloudEndpoint?: string,
+): Promise<KnownAgentOption[]> => {
+  if (!(await getPlatformAdminSession())) {
+    return []
+  }
+
+  const [allowlist, orgs] = await Promise.all([
+    Promise.resolve(parseKnownAgentAllowlist(process.env.STUDIO_KNOWN_AGENTS)),
+    loadAccessibleOrgAgents({
+      fetcher: platformFetch,
+      roles: await getAccessibleOrgRoles(),
+    }),
+  ])
+
+  return buildKnownAgentOptions({ cloudEndpoint, allowlist, orgs })
+}
 
 export const rememberCloudBaseWalletConfigured = async (
   details: Pick<CloudBaseWalletStatus, 'agentEndpoint'> = {},
