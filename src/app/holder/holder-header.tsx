@@ -10,6 +10,7 @@ const pageTitles = [
   { prefix: '/holder/proofs', title: 'Proof requests' },
   { prefix: '/holder/connections', title: 'Connections' },
   { prefix: '/holder/dids', title: 'DIDs' },
+  { prefix: '/holder/profile', title: 'Profile' },
   { prefix: '/holder/onboarding', title: 'Set up your wallet' },
   { prefix: '/holder', title: 'Overview' },
 ]
@@ -31,7 +32,7 @@ export function HolderHeader(): React.JSX.Element {
         </span>
       </div>
       <div className="px-4">
-        <UserNav />
+        <UserNav profileHref="/holder/profile" />
       </div>
     </header>
   )

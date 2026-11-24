@@ -54,15 +54,81 @@ export const rawRecords = (value: unknown): Record<string, unknown>[] => {
   return value.filter(isRecord)
 }
 
+const nestedRecord = (value: unknown): Record<string, unknown> | undefined => {
+  if (isRecord(value)) {
+    return value
+  }
+  return undefined
+}
+
+const countValues = (value: unknown): number => {
+  if (Array.isArray(value)) {
+    return value.length
+  }
+  return 0
+}
+
+const keyTypeLabel = (
+  verificationMethods: Record<string, unknown>[],
+): string | undefined => {
+  const [firstMethod] = verificationMethods
+  if (!firstMethod) {
+    return undefined
+  }
+
+  const type = firstString(firstMethod, ['type'])
+  if (type) {
+    return type
+      .replace(/VerificationKey\d{4}$/, '')
+      .replace(/KeyAgreementKey\d{4}$/, '')
+  }
+
+  const jwk = nestedRecord(firstMethod.publicKeyJwk)
+  return jwk ? firstString(jwk, ['crv', 'kty']) : undefined
+}
+
+/**
+ * The released cloud-wallet DID endpoint returns the agent's DID records. The
+ * record's searchable fields live under `_tags`, while verification methods and
+ * timestamps live in `didDocument`, so both shapes are normalised here.
+ */
 export const normalizeHolderDids = (value: unknown): HolderDid[] =>
-  asRecordList(value).map((raw) => ({
-    id: firstString(raw, ['id', 'didRecordId']),
-    did: firstString(raw, ['did', 'didUrl']),
-    method: firstString(raw, ['method', 'didMethod']),
-    keyType: firstString(raw, ['keyType']),
-    isPrimary: raw.isPrimary === true || raw.primary === true,
-    raw,
-  }))
+  asRecordList(value).map((raw) => {
+    const tags = nestedRecord(raw._tags) ?? {}
+    const document = nestedRecord(raw.didDocument) ?? {}
+    const verificationMethods = Array.isArray(document.verificationMethod)
+      ? document.verificationMethod.filter(isRecord)
+      : []
+    const did =
+      firstString(raw, ['did', 'didUrl']) ?? firstString(tags, ['did'])
+    const method =
+      firstString(raw, ['method', 'didMethod']) ??
+      firstString(tags, ['method']) ??
+      did?.match(/^did:([^:]+)/)?.[1]
+
+    return {
+      id: firstString(raw, ['id', 'didRecordId']),
+      did,
+      method,
+      methodSpecificIdentifier:
+        firstString(tags, ['methodSpecificIdentifier']) ??
+        (did && method ? did.slice(`did:${method}:`.length) : undefined),
+      keyType:
+        firstString(raw, ['keyType']) ?? keyTypeLabel(verificationMethods),
+      role: firstString(raw, ['role']) ?? firstString(tags, ['role']),
+      isPrimary:
+        raw.isPrimary === true ||
+        raw.primary === true ||
+        tags.isPrimary === true,
+      createdAt: firstString(raw, ['createdAt', 'created']),
+      updatedAt: firstString(raw, ['updatedAt', 'updated']),
+      verificationMethodCount: verificationMethods.length,
+      authenticationCount: countValues(document.authentication),
+      assertionMethodCount: countValues(document.assertionMethod),
+      keyAgreementCount: countValues(document.keyAgreement),
+      raw,
+    }
+  })
 
 const encodedKeys: Record<HolderCredentialFormat, string[]> = {
   'sd-jwt-vc': ['jwt', 'sdJwt', 'compact', 'credential', 'encodedCredential'],

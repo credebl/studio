@@ -17,8 +17,16 @@ export interface HolderDid {
   id?: string
   did?: string
   method?: string
+  methodSpecificIdentifier?: string
   keyType?: string
+  role?: string
   isPrimary?: boolean
+  createdAt?: string
+  updatedAt?: string
+  verificationMethodCount?: number
+  authenticationCount?: number
+  assertionMethodCount?: number
+  keyAgreementCount?: number
   raw: Record<string, unknown>
 }
 

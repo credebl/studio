@@ -37,6 +37,42 @@ describe('holder normalization', () => {
     expect(dids).toMatchObject([{ id: 'did-1', did: 'did:key:z6Mk' }])
   })
 
+  it('extracts DID details from the agent record shape', () => {
+    const [did] = normalizeHolderDids([
+      {
+        id: 'record-1',
+        did: 'did:key:z6Mk',
+        role: 'created',
+        createdAt: '2026-11-24T20:49:57.827Z',
+        _tags: {
+          method: 'key',
+          methodSpecificIdentifier: 'z6Mk',
+          role: 'created',
+        },
+        didDocument: {
+          verificationMethod: [{ type: 'Ed25519VerificationKey2018' }],
+          authentication: ['did:key:z6Mk#z6Mk'],
+          assertionMethod: ['did:key:z6Mk#z6Mk'],
+          keyAgreement: [{ id: 'did:key:z6Mk#z6LS' }],
+        },
+      },
+    ])
+
+    expect(did).toMatchObject({
+      id: 'record-1',
+      did: 'did:key:z6Mk',
+      method: 'key',
+      methodSpecificIdentifier: 'z6Mk',
+      keyType: 'Ed25519',
+      role: 'created',
+      createdAt: '2026-11-24T20:49:57.827Z',
+      verificationMethodCount: 1,
+      authenticationCount: 1,
+      assertionMethodCount: 1,
+      keyAgreementCount: 1,
+    })
+  })
+
   it('extracts credential configuration ids from a resolved offer', () => {
     const offer = normalizeResolvedOffer({
       credentialConfigurationsSupported: {
