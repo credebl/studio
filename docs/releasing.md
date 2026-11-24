@@ -37,6 +37,10 @@ Docs-only, test-only and CI-only changes do not need a changeset.
 Merging the version PR is the release. Do not run `changeset version` on `main`
 by hand unless you are recovering from a failed workflow run.
 
+Publishing the GitHub Release also triggers the container image build in
+`.github/workflows/build-image.yml`. See [jenkins-cicd.md](jenkins-cicd.md) for
+the Jenkins-side build and deployment process.
+
 ## Manual commands
 
 | Command                  | Purpose                                      |

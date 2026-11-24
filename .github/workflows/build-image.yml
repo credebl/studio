@@ -1,0 +1,97 @@
+name: Build and publish Studio image
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: GitHub environment to read build variables from
+        required: true
+        default: dev
+        type: choice
+        options:
+          - dev
+          - qa
+          - prod
+      tag:
+        description: Optional extra image tag (for example, dev or v2.3.0)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: studio-image-${{ github.event_name == 'release' && 'release' || inputs.environment }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-push:
+    name: Build and push (${{ github.event_name == 'release' && 'prod' || inputs.environment }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: ${{ github.event_name == 'release' && 'prod' || inputs.environment }}
+    env:
+      IMAGE: ghcr.io/${{ github.repository }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Resolve release version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "release" ]; then
+            echo "value=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve image tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha,format=short,prefix=${{ github.event_name == 'release' && '' || format('{0}-', inputs.environment) }}
+            type=raw,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
+            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+            type=raw,value=${{ inputs.tag }},enable=${{ github.event_name == 'workflow_dispatch' && inputs.tag != '' }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_MODE=${{ vars.NEXT_PUBLIC_MODE }}
+            NEXT_PUBLIC_BASE_URL=${{ vars.NEXT_PUBLIC_BASE_URL }}
+            NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL=${{ vars.NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL }}
+            NEXT_PUBLIC_PLATFORM_NAME=${{ vars.NEXT_PUBLIC_PLATFORM_NAME }}
+            NEXT_PUBLIC_POLYGON_TESTNET_URL=${{ vars.NEXT_PUBLIC_POLYGON_TESTNET_URL }}
+            NEXT_PUBLIC_POLYGON_MAINNET_URL=${{ vars.NEXT_PUBLIC_POLYGON_MAINNET_URL }}
+            NEXT_PUBLIC_ENABLE_APP_LAUNCHER=${{ vars.NEXT_PUBLIC_ENABLE_APP_LAUNCHER }}
+            NEXT_PUBLIC_APP_NAME=${{ vars.NEXT_PUBLIC_APP_NAME }}
+            NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN=${{ vars.NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN }}
+            NEXT_PUBLIC_ACTIVE_THEME=${{ vars.NEXT_PUBLIC_ACTIVE_THEME }}
+            NEXT_PUBLIC_APP_TITLE=${{ vars.NEXT_PUBLIC_APP_TITLE }}
+            NEXT_PUBLIC_FOOTER_TEXT=${{ vars.NEXT_PUBLIC_FOOTER_TEXT }}
+            NEXT_PUBLIC_LOGO_BASE_URL=${{ vars.NEXT_PUBLIC_LOGO_BASE_URL }}
+            NEXT_PUBLIC_CURRENT_RELEASE=${{ vars.NEXT_PUBLIC_CURRENT_RELEASE || steps.version.outputs.value }}
+            NEXT_PUBLIC_ENABLE_BILLING_OPTION=${{ vars.NEXT_PUBLIC_ENABLE_BILLING_OPTION }}
+            NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID=${{ vars.NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID }}
+            NEXT_PUBLIC_LANDINGPAGE_URL=${{ vars.NEXT_PUBLIC_LANDINGPAGE_URL }}
