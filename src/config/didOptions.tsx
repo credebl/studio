@@ -85,4 +85,7 @@ export const didOptionsMap: Record<string, string[]> = {
     'did:key',
     'did:web',
   ],
+
+  // mdoc is signed with an X.509 certificate, so it has no DID method here.
+  sdjwt: ['did:key', 'did:web'],
 }

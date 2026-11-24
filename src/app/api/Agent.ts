@@ -140,6 +140,26 @@ export const createDid = async (
   }
 }
 
+export const importDidX509 = async (
+  orgId: string,
+  data: object,
+): Promise<AxiosResponse | string> => {
+  const url = `${apiRoutes.organizations.root}/${orgId}${apiRoutes.organizations.importDidX509}`
+  const config = getHeaderConfigs()
+  const axiosPayload = {
+    url,
+    payload: data,
+    config,
+  }
+
+  try {
+    return await axiosPost(axiosPayload)
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
 export const getLedgerConfig = async (): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.organizations.root}${apiRoutes.Agent.getLedgerConfig}`
   const config = getHeaderConfigs()
@@ -276,6 +296,21 @@ export const resolveDid = async (
   try {
     return await axiosGet({
       url: `${didUrl(orgId, did)}/resolve?source=${source}`,
+      config: getHeaderConfigs(),
+    })
+  } catch (error) {
+    const err = error as Error
+    return err?.message
+  }
+}
+
+export const getDidKms = async (
+  orgId: string,
+  did: string,
+): Promise<AxiosResponse | string> => {
+  try {
+    return await axiosGet({
+      url: `${didUrl(orgId, did)}/kms`,
       config: getHeaderConfigs(),
     })
   } catch (error) {
