@@ -1,4 +1,4 @@
-# next-shadcn-dashboard-starter
+# credebl-studio
 
 ## 2.3.0
 
