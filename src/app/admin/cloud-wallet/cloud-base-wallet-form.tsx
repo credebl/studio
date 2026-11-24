@@ -17,15 +17,10 @@ import {
   configureCloudBaseWalletAction,
   fetchAgentAuthTokenAction,
 } from '../actions'
-import {
-  startTransition,
-  useActionState,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import { startTransition, useActionState, useEffect, useState } from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { CheckCircle2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -41,6 +36,25 @@ interface Notice {
   status: 'success' | 'error'
   message: string
 }
+
+type FetchInputField = 'agentEndpoint' | 'tokenEndpoint' | 'agentAuthKey'
+type TextFieldName = FetchInputField | 'walletKey'
+
+interface FormValues {
+  agentEndpoint: string
+  tokenEndpoint: string
+  agentAuthKey: string
+  walletKey: string
+  confirm: boolean
+}
+
+const initialFormValues = (status: CloudBaseWalletStatus): FormValues => ({
+  agentEndpoint: status.agentEndpoint ?? '',
+  tokenEndpoint: '',
+  agentAuthKey: '',
+  walletKey: '',
+  confirm: false,
+})
 
 const walletAction = async (
   previous: WalletActionState,
@@ -80,12 +94,13 @@ export function CloudBaseWalletPanel({
 }: {
   initialStatus: CloudBaseWalletStatus
 }): React.JSX.Element {
-  const formRef = useRef<HTMLFormElement>(null)
-  const apiKeyRef = useRef<HTMLInputElement>(null)
-  const agentAuthKeyRef = useRef<HTMLInputElement>(null)
   const [status, setStatus] = useState(initialStatus)
+  const [formValues, setFormValues] = useState<FormValues>(() =>
+    initialFormValues(initialStatus),
+  )
   const [isEditing, setIsEditing] = useState(!initialStatus.configured)
   const [tokenNotice, setTokenNotice] = useState<Notice | null>(null)
+  const [fetchedToken, setFetchedToken] = useState('')
   const [actionState, dispatch, isSubmitting] = useActionState(
     walletAction,
     null,
@@ -101,14 +116,10 @@ export function CloudBaseWalletPanel({
     }
 
     if (tokenState.status === 'success' && tokenState.token) {
-      // Populate the form only for this submission; the raw authorization key
-      // is cleared immediately and neither value is persisted by Studio.
-      if (apiKeyRef.current) {
-        apiKeyRef.current.value = tokenState.token
-      }
-      if (agentAuthKeyRef.current) {
-        agentAuthKeyRef.current.value = ''
-      }
+      // Keep the JWT only in transient client state; clear the raw key it was
+      // minted from as soon as the fetch succeeds.
+      setFetchedToken(tokenState.token)
+      setFormValues((current) => ({ ...current, agentAuthKey: '' }))
     }
 
     setTokenNotice({
@@ -126,8 +137,14 @@ export function CloudBaseWalletPanel({
     }
 
     // Clear any secrets the admin typed before switching away from the form.
-    formRef.current?.reset()
+    setFetchedToken('')
     setTokenNotice(null)
+    setFormValues((current) => ({
+      ...current,
+      agentAuthKey: '',
+      walletKey: '',
+      confirm: false,
+    }))
     setStatus((current) => ({
       configured: true,
       agentEndpoint: actionState.agentEndpoint ?? current.agentEndpoint,
@@ -137,8 +154,37 @@ export function CloudBaseWalletPanel({
   }, [actionState])
 
   const clearTransientSecrets = (): void => {
-    formRef.current?.reset()
+    setFetchedToken('')
     setTokenNotice(null)
+    setFormValues((current) => ({
+      ...current,
+      agentAuthKey: '',
+      walletKey: '',
+      confirm: false,
+    }))
+  }
+
+  const updateTextField = (field: TextFieldName, value: string): void => {
+    setFormValues((current) => ({ ...current, [field]: value }))
+  }
+
+  const updateFetchInput = (field: FetchInputField, value: string): void => {
+    updateTextField(field, value)
+    setFetchedToken('')
+    setTokenNotice(null)
+  }
+
+  const handleFetchToken = (): void => {
+    const formData = new FormData()
+    formData.set('agentEndpoint', formValues.agentEndpoint)
+    formData.set('tokenEndpoint', formValues.tokenEndpoint)
+    formData.set('agentAuthKey', formValues.agentAuthKey)
+
+    // A plain button avoids React's automatic form reset, which was clearing
+    // unrelated fields whenever the token was fetched.
+    startTransition(() => {
+      fetchTokenDispatch(formData)
+    })
   }
 
   const openEditor = (): void => {
@@ -157,13 +203,6 @@ export function CloudBaseWalletPanel({
       fetchTokenDispatch({ type: 'reset' })
       setIsEditing(false)
     })
-  }
-
-  const invalidateFetchedToken = (): void => {
-    if (apiKeyRef.current) {
-      apiKeyRef.current.value = ''
-    }
-    setTokenNotice(null)
   }
 
   if (!isEditing && status.configured) {
@@ -242,7 +281,7 @@ export function CloudBaseWalletPanel({
       </CardHeader>
 
       <CardContent>
-        <form ref={formRef} action={dispatch} className="space-y-5">
+        <form action={dispatch} className="space-y-5">
           <div className="space-y-2">
             <Label htmlFor="agent-endpoint">Agent endpoint</Label>
             <Input
@@ -251,11 +290,13 @@ export function CloudBaseWalletPanel({
               type="text"
               required
               maxLength={2048}
-              defaultValue={status.agentEndpoint ?? ''}
+              value={formValues.agentEndpoint}
               placeholder="https://agent.example.com:4001"
               autoComplete="off"
               spellCheck={false}
-              onChange={invalidateFetchedToken}
+              onChange={(event) =>
+                updateFetchInput('agentEndpoint', event.target.value)
+              }
               aria-describedby="agent-endpoint-description"
             />
             <p
@@ -274,10 +315,13 @@ export function CloudBaseWalletPanel({
               name="tokenEndpoint"
               type="text"
               maxLength={2048}
+              value={formValues.tokenEndpoint}
               placeholder="Uses the agent endpoint above"
               autoComplete="off"
               spellCheck={false}
-              onChange={invalidateFetchedToken}
+              onChange={(event) =>
+                updateFetchInput('tokenEndpoint', event.target.value)
+              }
               aria-describedby="agent-token-url-description"
             />
             <p
@@ -296,13 +340,15 @@ export function CloudBaseWalletPanel({
               Agent authorization key
             </Label>
             <Input
-              ref={agentAuthKeyRef}
               id="agent-authorization-key"
               name="agentAuthKey"
               type="password"
               maxLength={4096}
+              value={formValues.agentAuthKey}
               autoComplete="off"
-              onChange={invalidateFetchedToken}
+              onChange={(event) =>
+                updateFetchInput('agentAuthKey', event.target.value)
+              }
               aria-describedby="agent-authorization-key-description"
             />
             <p
@@ -316,17 +362,22 @@ export function CloudBaseWalletPanel({
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Button
-                type="submit"
-                formAction={fetchTokenDispatch}
-                formNoValidate
+                type="button"
                 variant="outline"
+                onClick={handleFetchToken}
                 disabled={isFetchingToken || isSubmitting}
               >
                 {isFetchingToken ? 'Checking agent...' : 'Fetch token'}
               </Button>
               <span className="text-muted-foreground text-xs">
-                Tests that the agent is reachable and fills the runtime API key.
+                Tests that the agent is reachable and fetches the runtime key.
               </span>
+              {fetchedToken ? (
+                <span className="text-success flex items-center gap-1 text-xs">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Token fetched
+                </span>
+              ) : null}
             </div>
           </div>
 
@@ -342,26 +393,18 @@ export function CloudBaseWalletPanel({
           ) : null}
 
           <div className="space-y-2">
-            <Label htmlFor="agent-api-key">Agent API key</Label>
-            <Input
-              ref={apiKeyRef}
-              id="agent-api-key"
-              name="apiKey"
-              type="password"
-              required
-              maxLength={4096}
-              autoComplete="new-password"
-              onChange={() => setTokenNotice(null)}
-              aria-describedby="agent-api-key-description"
-            />
-            <p
-              id="agent-api-key-description"
-              className="text-muted-foreground text-sm"
-            >
-              Runtime JWT from{' '}
-              <code className="text-xs">POST /agent/token</code>. Use Fetch
-              token above or paste a token you already minted.
-            </p>
+            <p className="text-sm font-medium">Runtime API key</p>
+            <input name="apiKey" type="hidden" value={fetchedToken} />
+            {fetchedToken ? (
+              <div className="text-success bg-muted flex items-center gap-2 rounded-md p-3 text-sm">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                <span>Runtime API key fetched and ready to configure.</span>
+              </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">
+                Fetch a runtime key above to continue. The JWT is not displayed.
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">
@@ -372,7 +415,11 @@ export function CloudBaseWalletPanel({
               type="password"
               required
               maxLength={4096}
+              value={formValues.walletKey}
               autoComplete="new-password"
+              onChange={(event) =>
+                updateTextField('walletKey', event.target.value)
+              }
               aria-describedby="wallet-key-description"
             />
             <p
@@ -389,6 +436,13 @@ export function CloudBaseWalletPanel({
               name="confirm"
               type="checkbox"
               required
+              checked={formValues.confirm}
+              onChange={(event) =>
+                setFormValues((current) => ({
+                  ...current,
+                  confirm: event.target.checked,
+                }))
+              }
               className="border-input bg-background focus-visible:ring-ring mt-0.5 size-4 rounded border shadow-sm focus-visible:ring-1 focus-visible:outline-none"
             />
             <Label
