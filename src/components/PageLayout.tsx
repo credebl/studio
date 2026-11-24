@@ -22,9 +22,13 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
     '/verify-email-success',
     '/reset-password',
   ]
+
+  // The platform console renders its own admin-only shell.
+  const isAdminRoute = pathname.startsWith('/admin')
+
   return (
     <>
-      {excludeLayoutRoutes.includes(pathname) ? (
+      {excludeLayoutRoutes.includes(pathname) || isAdminRoute ? (
         <>{children}</>
       ) : (
         <KBar>

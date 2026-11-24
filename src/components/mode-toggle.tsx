@@ -14,20 +14,23 @@ import { Button } from '@/components/ui/button'
 import { useTheme } from 'next-themes'
 
 export default function ModeToggle(): React.JSX.Element {
-  const { setTheme, theme } = useTheme()
+  const { setTheme, resolvedTheme } = useTheme()
 
   return (
     <TooltipProvider disableHoverableContent>
       <Tooltip delayDuration={100}>
         <TooltipTrigger asChild>
           <Button
-            className="group/toggle size-8"
+            className="group/toggle relative size-8"
             variant="secondary"
             size="icon"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            aria-label="Toggle light and dark theme"
+            onClick={() =>
+              setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
+            }
           >
             <SunIcon className="h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-transform duration-500 ease-in-out dark:scale-100 dark:rotate-0" />
-            <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] scale-1000 rotate-0 transition-transform duration-500 ease-in-out dark:scale-0 dark:-rotate-90" />
+            <MoonIcon className="absolute h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-transform duration-500 ease-in-out dark:scale-0 dark:-rotate-90" />
             <span className="sr-only">Switch Theme</span>
           </Button>
         </TooltipTrigger>

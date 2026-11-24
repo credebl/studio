@@ -1,11 +1,6 @@
 'use client'
 
-import {
-  IOrgAgent,
-  IOrganisation,
-} from '@/features/organization/components/interfaces/organization'
 import React, { useEffect, useState } from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getUserEcosystemInvitations,
   getUserInvitations,
@@ -16,9 +11,9 @@ import { AlertComponent } from '@/components/AlertComponent'
 import { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import { CreateWalletIcon } from '@/components/iconsSvg'
+import { IOrgAgent } from '@/features/organization/components/interfaces/organization'
 import Loader from '@/components/Loader'
 import { OrganizationDashboard } from '@/features/organization/components/OrganizationDashboard'
-import OrganizationDetails from '@/features/organization/components/OrganizationDetails'
 import PageContainer from '@/components/layout/page-container'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { getEcosystemEnableStausApi } from '@/app/api/ecosystem'
@@ -27,6 +22,10 @@ import { pathRoutes } from '@/config/pathRoutes'
 import { setEcosystemEnableStatus } from '@/lib/ecosystemSlice'
 import { setLedgerId } from '@/lib/orgSlice'
 import { useRouter } from 'next/navigation'
+
+// Token-based so the banner follows the active theme (see docs/THEMING.md).
+const walletBannerClass =
+  'relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-lg border bg-gradient-to-br from-accent via-card to-card p-6 shadow-sm'
 
 const initialPageState = {
   pageNumber: 1,
@@ -44,8 +43,6 @@ export default function Dashboard(): React.JSX.Element {
   const [hasOrganization, setHasOrganization] = useState<boolean>(false)
   const [viewButton, setViewButton] = useState<boolean>(false)
   const [ecoMessage, setEcoMessage] = useState<string | null>('')
-  const [activeTab, setActiveTab] = useState('Overview')
-  const [orgData, setOrgData] = useState<IOrganisation | null>(null)
   const [isWalletSetupLoading, setIsWalletSetupLoading] =
     useState<boolean>(false)
   const orgId = useAppSelector((state) => state?.organization.orgId)
@@ -179,7 +176,7 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else if (!hasOrganization) {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-start">
           <h3 className="text-xl font-semibold">No Organization Found</h3>
           <p className="mt-2 text-sm">
@@ -190,7 +187,7 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else if (walletData.length === 0) {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex flex-col items-start">
             <h3 className="text-xl font-semibold">
@@ -215,18 +212,24 @@ export default function Dashboard(): React.JSX.Element {
     )
   } else if (currentWallet?.orgDid) {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-start">
           <h3 className="text-xl font-semibold">Wallet Details</h3>
-          <p className="mt-2 text-sm text-gray-700">
+          <p className="text-muted-foreground mt-2 text-sm">
             DID is already created for your organization.
           </p>
         </div>
+        <Button
+          onClick={() => router.push(pathRoutes.organizations.wallet)}
+          className="mt-4 w-fit"
+        >
+          Open Wallet
+        </Button>
       </div>
     )
   } else {
     walletSection = (
-      <div className="relative mb-6 flex min-h-[150px] flex-col justify-center overflow-hidden rounded-md bg-[url('/images/bg-lightwallet.png')] bg-cover bg-center bg-no-repeat p-6 shadow-sm dark:bg-[url('/images/bg-darkwallet.png')] dark:bg-cover">
+      <div className={walletBannerClass}>
         <div className="flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-center">
           <div className="flex flex-col items-start">
             <h3 className="text-xl font-semibold">Setup your DID</h3>
@@ -280,34 +283,9 @@ export default function Dashboard(): React.JSX.Element {
         </div>
         {walletSection}
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList>
-            <TabsTrigger value="Overview" className="relative">
-              Overview
-            </TabsTrigger>
-            <TabsTrigger value="Wallet" disabled={walletData.length === 0}>
-              Wallet
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent
-            value="Overview"
-            className="mt-2 space-y-4 rounded-md border"
-          >
-            <OrganizationDashboard
-              orgId={orgId}
-              setOrgDataForDetails={setOrgData}
-            />
-          </TabsContent>
-          <TabsContent
-            value="Wallet"
-            className="mt-2 space-y-4 rounded-md border p-4"
-          >
-            <OrganizationDetails
-              orgData={orgData}
-              setActiveTab={setActiveTab}
-            />
-          </TabsContent>
-        </Tabs>
+        <div className="mt-2 space-y-4 rounded-md border">
+          <OrganizationDashboard orgId={orgId} />
+        </div>
       </div>
     </PageContainer>
   )

@@ -1,4 +1,4 @@
-const MODE = process.env.MODE || ''
+const MODE = process.env.NEXT_PUBLIC_MODE || ''
 
 export const didExamples: Record<string, string> = {
   'did:indy:bcovrin:testnet': 'did:indy:bcovrin:testnet:123abc456xyz',

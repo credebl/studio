@@ -74,7 +74,7 @@ module.exports = {
       { max: 500, skipComments: true, skipBlankLines: true },
     ],
     'no-unused-vars': 'off',
-    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-console': 'error',
     'template-curly-spacing': 'error',
 
     'arrow-parens': 'warn',
@@ -191,4 +191,20 @@ module.exports = {
       version: 'detect',
     },
   },
+  overrides: [
+    {
+      // Admin console code must never log to the browser or server console.
+      // The strict severity is the base rule; this override relaxes every other
+      // file so existing app code may keep using console.warn/console.error.
+      files: ['**/*.{js,jsx,ts,tsx}'],
+      excludedFiles: [
+        'src/app/admin/**',
+        'src/app/api/admin/**',
+        'src/lib/server/**',
+      ],
+      rules: {
+        'no-console': ['error', { allow: ['warn', 'error'] }],
+      },
+    },
+  ],
 }

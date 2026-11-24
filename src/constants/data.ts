@@ -22,6 +22,14 @@ export const navItems: NavItem[] = [
     items: [], // Empty array as there are no child items for Dashboard
   },
   {
+    title: 'Wallet',
+    url: '/wallet',
+    icon: 'wallet',
+    shortcut: ['w', 'w'],
+    isActive: false,
+    items: [],
+  },
+  {
     title: 'Connections',
     url: '/connections',
     icon: 'connections',
@@ -66,6 +74,16 @@ export const navItems: NavItem[] = [
     ],
   },
 ]
+
+// Only injected into the sidebar for users holding the platform_admin role.
+export const adminNavItem: NavItem = {
+  title: 'Admin',
+  url: '/admin',
+  icon: 'settings',
+  isActive: false,
+  shortcut: ['a', 'a'],
+  items: [],
+}
 
 export interface saleuser {
   id: number

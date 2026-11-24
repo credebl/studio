@@ -90,6 +90,7 @@ export const apiRoutes = {
     editUserROle: '/user-roles',
     didList: '/dids',
     createDid: '/agents/did',
+    didImportSession: '/agents/did/import/session',
     primaryDid: '/primary-did',
     getOrgReferences: '/activity-count',
     deleteOrganization: '/deleteorganizations',
@@ -140,5 +141,14 @@ export const apiRoutes = {
 
   setting: {
     setting: '/client_credentials',
+  },
+
+  // Platform-admin (operator) endpoints. All of these are protected by the
+  // platform backend with the PLATFORM_ADMIN role.
+  platformAdmin: {
+    dashboardSummary: '/ecosystem/dashboard/summary',
+    ecosystemStatus: '/ecosystem/status',
+    updateEcosystemConfig: '/config/ecosystem',
+    invitations: '/invitations',
   },
 }

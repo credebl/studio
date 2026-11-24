@@ -1,30 +1,32 @@
 # ---------------------
+# Dependencies stage
+# ---------------------
+FROM node:22-alpine AS deps
+
+RUN corepack enable && corepack prepare pnpm@10.3.0 --activate
+
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml ./
+
+# Lockfile is committed; fail the build if it drifts from package.json.
+RUN pnpm install --frozen-lockfile
+
+# ---------------------
 # Build stage
 # ---------------------
 FROM node:22-alpine AS build
 
-# Enable corepack and install a specific pnpm version securely
 RUN corepack enable && corepack prepare pnpm@10.3.0 --activate
 
-
-# Set working directory
 WORKDIR /app
 
-# Copy only necessary files
-COPY package.json pnpm-lock.yaml ./
-
-# Install dependencies
-# sonarcloud: disable=ShellScriptExecutionRisk
-RUN pnpm install
-
-# Copy the rest of the source code
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# COPY .next ./.next
-# COPY public ./public
-# COPY node_modules ./node_modules
 
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_ENV=production
 
-# Build the Next.js application
 RUN pnpm run build
 
 # ---------------------
@@ -32,26 +34,22 @@ RUN pnpm run build
 # ---------------------
 FROM node:22-alpine AS production
 
-# Create a non-root user
-# RUN groupadd -r appgroup && useradd -r -g appgroup appuser
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
-# Set working directory
+
 WORKDIR /app
 
-# Copy necessary build artifacts from build stage
-COPY --from=build /app/package.json ./
-COPY --from=build /app/.next ./.next
-COPY --from=build /app/public ./public
-COPY --from=build /app/node_modules ./node_modules
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
 
-# Change ownership to non-root user
-RUN chown -R appuser:appgroup /app
+# Standalone output bundles only the runtime dependencies.
+COPY --from=build --chown=appuser:appgroup /app/.next/standalone ./
+COPY --from=build --chown=appuser:appgroup /app/.next/static ./.next/static
+COPY --from=build --chown=appuser:appgroup /app/public ./public
 
-# Switch to non-root user
 USER appuser
 
-# Expose port
 EXPOSE 3000
 
-# Start the Next.js application
-CMD ["npm", "start"]
+CMD ["node", "server.js"]

@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { importCertificate } from '@/app/api/x509'
 
@@ -56,9 +57,16 @@ const ImportCertificateDialog = ({
       setError('Invalid X.509 PEM file')
       return
     }
-    const parsed = parsePemCertificate(text)
-    setParsedCert({ ...parsed, certificatePem: text })
-    setError(null)
+    try {
+      const parsed = parsePemCertificate(text)
+      setParsedCert({ ...parsed, certificatePem: text })
+      setError(null)
+    } catch {
+      setParsedCert(null)
+      setError(
+        'Unable to parse the X.509 certificate. Please check the PEM file.',
+      )
+    }
   }
 
   const handleImport = async (): Promise<void> => {
@@ -76,8 +84,13 @@ const ImportCertificateDialog = ({
       const response = await importCertificate(orgId, {
         certificate: normalizedCert,
         privateKey,
-        keyType: parsedCert.keyType,
       })
+
+      if (typeof response === 'string') {
+        setError(response)
+        onFailure(response)
+        return
+      }
 
       const { data } = response as AxiosResponse
 
@@ -151,11 +164,11 @@ const ImportCertificateDialog = ({
 
           <div className="space-y-2">
             <Label>Private Key *</Label>
-            <Input
-              type="text"
+            <Textarea
               value={privateKey}
               onChange={(e) => setPrivateKey(e.target.value)}
-              placeholder="Enter private key"
+              placeholder="Paste the PEM or base64-encoded PKCS#8 private key"
+              rows={5}
             />
           </div>
 
