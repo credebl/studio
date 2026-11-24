@@ -27,6 +27,8 @@ export interface HolderDid {
   authenticationCount?: number
   assertionMethodCount?: number
   keyAgreementCount?: number
+  didDocument?: Record<string, unknown>
+  metadata?: Record<string, unknown>
   raw: Record<string, unknown>
 }
 
