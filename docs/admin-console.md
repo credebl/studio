@@ -77,7 +77,7 @@ is useful when the platform runs in Docker and Studio runs on the host. Only
 that fetch uses the override; the configured Agent endpoint remains the value
 sent to the platform. The raw authorization key is not forwarded to the platform,
 stored in Studio, or echoed back to the browser. The fetched JWT is cleared when
-the admin changes a fetch input, cancels, configures, or leaves the form.
+the admin changes a fetch input or configures the wallet.
 
 The **Agent endpoint** dropdown is built on the server. It combines:
 
@@ -105,11 +105,11 @@ tokens are included. True agent auto-discovery needs a platform registry API and
 is tracked in [credebl/platform#1863](https://github.com/credebl/platform/issues/1863).
 
 The platform accepts only one base wallet and exposes no update or delete route.
-The screen therefore opens in a read-only view when Studio knows a wallet is
-configured, with an **Edit** button that opens the form for a deliberate retry.
-Studio keeps only a non-secret endpoint/status hint in an httpOnly cookie; the
-backend's `409` response is authoritative. A conflict switches the screen back to
-the read-only view without changing any settings.
+The screen is read-only once Studio knows a wallet is configured; there is no
+**Edit** button. Studio keeps only a non-secret endpoint/status hint in an
+httpOnly cookie; the backend's `409` response remains authoritative if a stale
+tab submits again. A conflict keeps the read-only view without changing any
+settings.
 
 On submission, only the endpoint, runtime JWT and wallet key are sent to
 `POST /configure/base-wallet`. The platform stores the base wallet with the keys

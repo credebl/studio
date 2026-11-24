@@ -117,7 +117,6 @@ export function CloudBaseWalletPanel({
   const [selectedAgentId, setSelectedAgentId] = useState(() =>
     initialSelectedAgentId(initialStatus, knownAgents),
   )
-  const [isEditing, setIsEditing] = useState(!initialStatus.configured)
   const [tokenNotice, setTokenNotice] = useState<Notice | null>(null)
   const [fetchedToken, setFetchedToken] = useState('')
   const [actionState, dispatch, isSubmitting] = useActionState(
@@ -169,22 +168,7 @@ export function CloudBaseWalletPanel({
       agentEndpoint: actionState.agentEndpoint ?? current.agentEndpoint,
       configuredAt: actionState.configuredAt ?? current.configuredAt,
     }))
-    setIsEditing(false)
   }, [actionState])
-
-  const clearTransientSecrets = (): void => {
-    setFetchedToken('')
-    setTokenNotice(null)
-    setSelectedAgentId(initialSelectedAgentId(status, knownAgents))
-    setFormValues((current) => ({
-      ...current,
-      agentEndpoint: status.agentEndpoint ?? '',
-      tokenEndpoint: '',
-      agentAuthKey: '',
-      walletKey: '',
-      confirm: false,
-    }))
-  }
 
   const updateTextField = (field: TextFieldName, value: string): void => {
     setFormValues((current) => ({ ...current, [field]: value }))
@@ -232,25 +216,7 @@ export function CloudBaseWalletPanel({
     })
   }
 
-  const openEditor = (): void => {
-    clearTransientSecrets()
-    startTransition(() => {
-      dispatch({ type: 'reset' })
-      fetchTokenDispatch({ type: 'reset' })
-      setIsEditing(true)
-    })
-  }
-
-  const closeEditor = (): void => {
-    clearTransientSecrets()
-    startTransition(() => {
-      dispatch({ type: 'reset' })
-      fetchTokenDispatch({ type: 'reset' })
-      setIsEditing(false)
-    })
-  }
-
-  if (!isEditing && status.configured) {
+  if (status.configured) {
     return (
       <Card className="max-w-2xl">
         <CardHeader>
@@ -302,11 +268,11 @@ export function CloudBaseWalletPanel({
             above.
           </p>
 
-          <div className="flex justify-end">
-            <Button type="button" variant="outline" onClick={openEditor}>
-              Edit
-            </Button>
-          </div>
+          <p className="text-muted-foreground text-sm">
+            Platform v2.3.0 has no read or update endpoint for the base wallet.
+            Studio cannot change these details or reconfigure the shared agent;
+            replacing it requires a platform change.
+          </p>
         </CardContent>
       </Card>
     )
@@ -315,13 +281,11 @@ export function CloudBaseWalletPanel({
   return (
     <Card className="max-w-2xl">
       <CardHeader>
-        <CardTitle>
-          {status.configured ? 'Edit shared agent' : 'Connect the shared agent'}
-        </CardTitle>
+        <CardTitle>Connect the shared agent</CardTitle>
         <CardDescription>
-          {status.configured
-            ? 'Platform v2.3.0 accepts only one base wallet and has no update endpoint. Saving while one exists is safely rejected.'
-            : 'The platform creates one tenant on this agent for each holder wallet. Keys are sent over TLS and encrypted by the platform; Studio does not store them.'}
+          The platform creates one tenant on this agent for each holder wallet.
+          Keys are sent over TLS and encrypted by the platform; Studio does not
+          store them.
         </CardDescription>
       </CardHeader>
 
@@ -493,20 +457,9 @@ export function CloudBaseWalletPanel({
             </Alert>
           ) : null}
 
-          <div className="flex justify-end gap-2">
-            {status.configured ? (
-              <Button type="button" variant="ghost" onClick={closeEditor}>
-                Cancel
-              </Button>
-            ) : null}
+          <div className="flex justify-end">
             <Button type="submit" disabled={isSubmitting || isFetchingToken}>
-              {isSubmitting
-                ? status.configured
-                  ? 'Saving...'
-                  : 'Configuring...'
-                : status.configured
-                  ? 'Save base wallet'
-                  : 'Configure base wallet'}
+              {isSubmitting ? 'Configuring...' : 'Configure base wallet'}
             </Button>
           </div>
         </form>
