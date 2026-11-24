@@ -74,7 +74,7 @@ export const navItems: NavItem[] = [
       {
         title: 'OID4VC Issuer',
         shortcut: ['o', 'i'],
-        url: '/oid4vc/create-issuer',
+        url: '/oid4vc/issuers',
         icon: 'add',
       },
     ],
