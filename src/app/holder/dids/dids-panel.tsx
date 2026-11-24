@@ -10,15 +10,12 @@ import {
 import { Badge } from '@/components/ui/badge'
 import type { HolderDid } from '@/features/holder/types'
 import { HolderDidCreateForm } from '@/features/holder/components/holder-did-create-form'
-import { useRouter } from 'next/navigation'
 
 interface DidsPanelProps {
   dids: HolderDid[]
 }
 
 export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
-  const router = useRouter()
-
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -36,7 +33,7 @@ export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <HolderDidCreateForm onSuccess={() => router.refresh()} />
+          <HolderDidCreateForm />
         </CardContent>
       </Card>
 
