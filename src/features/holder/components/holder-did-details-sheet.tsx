@@ -41,7 +41,7 @@ export function HolderDidDetailsSheet({
 }: HolderDidDetailsSheetProps): React.JSX.Element {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto sm:max-w-2xl">
+      <SheetContent className="w-full overflow-y-auto sm:max-w-5xl">
         <SheetHeader>
           <SheetTitle>DID details</SheetTitle>
           <SheetDescription>
@@ -103,7 +103,7 @@ export function HolderDidDetailsSheet({
               )}
             </div>
 
-            <div className="border-t pt-4">
+            <div className="min-w-0 border-t pt-4">
               <DidDocumentView
                 did={did.did ?? ''}
                 didDocument={did.didDocument}
