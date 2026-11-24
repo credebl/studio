@@ -33,7 +33,7 @@ export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <HolderDidCreateForm />
+          <HolderDidCreateForm showX509Note={false} />
         </CardContent>
       </Card>
 

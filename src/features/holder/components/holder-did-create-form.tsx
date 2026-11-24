@@ -38,6 +38,7 @@ type HolderDidMethod = 'key' | 'web' | 'polygon'
 
 interface HolderDidCreateFormProps {
   onSuccess?: () => void
+  showX509Note?: boolean
 }
 
 const polygonPrivateKeyMaterial = (value: string): KeyImportKeyMaterial => {
@@ -60,6 +61,7 @@ const polygonPrivateKeyMaterial = (value: string): KeyImportKeyMaterial => {
  */
 export function HolderDidCreateForm({
   onSuccess,
+  showX509Note = true,
 }: HolderDidCreateFormProps): React.JSX.Element {
   const [state, formAction, pending] = useActionState(createDidAction, null)
   const [method, setMethod] = useState<HolderDidMethod>('key')
@@ -154,18 +156,20 @@ export function HolderDidCreateForm({
               </SelectItem>
             </SelectContent>
           </Select>
-          <p className="text-muted-foreground text-xs">
-            did:x509 needs a holder-scoped import API. Track{' '}
-            <a
-              className="underline"
-              href="https://github.com/credebl/platform/issues/1864"
-              target="_blank"
-              rel="noreferrer"
-            >
-              credebl/platform#1864
-            </a>
-            .
-          </p>
+          {showX509Note ? (
+            <p className="text-muted-foreground text-xs">
+              did:x509 needs a holder-scoped import API. Track{' '}
+              <a
+                className="underline"
+                href="https://github.com/credebl/platform/issues/1864"
+                target="_blank"
+                rel="noreferrer"
+              >
+                credebl/platform#1864
+              </a>
+              .
+            </p>
+          ) : null}
         </div>
 
         <div className="space-y-2">
