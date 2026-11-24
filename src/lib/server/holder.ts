@@ -18,12 +18,6 @@ import { redirect } from 'next/navigation'
  * because the session claim is only a UI hint.
  */
 
-const HOLDER_ROLE = 'holder'
-
-interface HolderProfile {
-  userOrgRoles?: { orgRole?: { name?: string }; orgId?: string | null }[]
-}
-
 class HolderApiError extends Error {
   constructor(
     message: string,
@@ -34,26 +28,23 @@ class HolderApiError extends Error {
   }
 }
 
-const loadHolderProfile = cache(async (): Promise<HolderProfile | null> => {
-  const response = await platformFetch(apiRoutes.users.userProfile)
-  if (!response?.ok) {
-    return null
-  }
+const cloudFetch = (
+  path: string,
+  init: RequestInit = {},
+): Promise<Response | null> => platformFetch(path, init)
 
-  try {
-    const body = (await response.json()) as ApiEnvelope<HolderProfile>
-    return body?.data ?? null
-  } catch {
-    return null
-  }
-})
-
+/**
+ * The platform's holder guard checks a Keycloak `userRole` attribute that
+ * cloud-wallet accounts carry and org accounts do not. An effective holder is
+ * therefore one that can call GET /did: 200 (wallet exists) or 404 (no wallet
+ * yet). A 403 means the account is not a platform holder.
+ *
+ * GET /users/profile cannot be used here: the platform's UserAccessGuard
+ * rejects holder accounts, so it would produce a false negative.
+ */
 const holdsHolderRole = cache(async (): Promise<boolean> => {
-  const roles = (await loadHolderProfile())?.userOrgRoles
-  return (
-    Array.isArray(roles) &&
-    roles.some((item) => item?.orgRole?.name === HOLDER_ROLE)
-  )
+  const response = await cloudFetch(apiRoutes.cloudWallet.did)
+  return response?.status === 200 || response?.status === 404
 })
 
 export const getHolderSession = async (): Promise<Session | null> => {
@@ -77,11 +68,6 @@ export const requireHolderSession = async (): Promise<Session> => {
   }
   return session
 }
-
-const cloudFetch = (
-  path: string,
-  init: RequestInit = {},
-): Promise<Response | null> => platformFetch(path, init)
 
 const failureMessage = (status: number | undefined): string => {
   if (status === 409) {
@@ -140,6 +126,15 @@ export const getHolderWalletState = async (): Promise<HolderWalletState> => {
   }
   if (response.status === 404) {
     return { available: true, hasWallet: false, dids: [] }
+  }
+  if (response.status === 403) {
+    return {
+      available: false,
+      hasWallet: false,
+      dids: [],
+      message:
+        'Your account is missing the holder entitlement. Sign up with the updated registration flow or ask your platform administrator to add the holder role to your account.',
+    }
   }
   if (!response.ok) {
     return { available: false, hasWallet: false, dids: [] }

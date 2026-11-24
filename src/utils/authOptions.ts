@@ -95,6 +95,24 @@ export const resolvePlatformAccess = async (
       },
     )
 
+    if (response.status === 403) {
+      // Holder accounts are rejected by UserAccessGuard on /users/profile.
+      // Confirm the capability with the user-scoped wallet endpoint instead.
+      const walletResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.cloudWallet.did}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          cache: 'no-store',
+        },
+      )
+      return {
+        isPlatformAdmin: false,
+        hasOrgAccess: false,
+        hasHolderAccess:
+          walletResponse.status === 200 || walletResponse.status === 404,
+      }
+    }
+
     if (!response.ok) {
       return null
     }

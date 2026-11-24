@@ -19,6 +19,7 @@ export interface IAddPasswordDetails {
   isPasskey: boolean
   firstName: string | null
   lastName: string | null
+  isHolder?: boolean
 }
 export interface IUserSignInData {
   email: string | undefined

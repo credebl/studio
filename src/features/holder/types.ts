@@ -10,6 +10,7 @@ export interface HolderWalletState {
   available: boolean
   hasWallet: boolean
   dids: HolderDid[]
+  message?: string
 }
 
 export interface HolderDid {

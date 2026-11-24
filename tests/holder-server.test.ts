@@ -36,9 +36,6 @@ const sessionTokens = (): Response =>
     data: { sessionToken: 'access-token', refreshToken: 'refresh-token' },
   })
 
-const profileWithRole = (role = 'holder'): Response =>
-  jsonResponse({ data: { userOrgRoles: [{ orgRole: { name: role } }] } })
-
 describe('getHolderSession', () => {
   it('denies access without a session', async () => {
     vi.mocked(getServerSession).mockResolvedValue(null)
@@ -56,13 +53,13 @@ describe('getHolderSession', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 
-  it('re-validates a stale claim against the live holder role', async () => {
+  it('re-validates a stale claim against the live wallet probe', async () => {
     vi.mocked(getServerSession).mockResolvedValue(
       makeSession({ hasHolderAccess: false }),
     )
     fetchMock
       .mockResolvedValueOnce(sessionTokens())
-      .mockResolvedValueOnce(profileWithRole())
+      .mockResolvedValueOnce(jsonResponse({}, 404))
 
     await expect(getHolderSession()).resolves.toMatchObject({
       sessionId: 'session-1',
@@ -76,12 +73,12 @@ describe('getHolderSession', () => {
     )
     fetchMock
       .mockResolvedValueOnce(sessionTokens())
-      .mockResolvedValueOnce(profileWithRole('owner'))
+      .mockResolvedValueOnce(jsonResponse({}, 403))
 
     await expect(getHolderSession()).resolves.toBeNull()
   })
 
-  it('fails closed when the profile lookup fails', async () => {
+  it('fails closed when the wallet probe fails', async () => {
     vi.mocked(getServerSession).mockResolvedValue(makeSession())
     fetchMock
       .mockResolvedValueOnce(sessionTokens())
@@ -106,7 +103,7 @@ describe('requireHolderSession', () => {
     vi.mocked(getServerSession).mockResolvedValue(makeSession())
     fetchMock
       .mockResolvedValueOnce(sessionTokens())
-      .mockResolvedValueOnce(profileWithRole('issuer'))
+      .mockResolvedValueOnce(jsonResponse({}, 403))
     vi.mocked(redirect).mockImplementation(() => {
       throw new Error('NEXT_REDIRECT')
     })
@@ -152,6 +149,18 @@ describe('holder wallet state', () => {
       available: false,
       hasWallet: false,
       dids: [],
+    })
+  })
+
+  it('explains a missing holder entitlement on a 403', async () => {
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(jsonResponse({}, 403))
+
+    await expect(getHolderWalletState()).resolves.toMatchObject({
+      available: false,
+      hasWallet: false,
+      message: expect.stringContaining('holder entitlement'),
     })
   })
 })
