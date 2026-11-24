@@ -138,7 +138,7 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "globals": "^16.1.0",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.1",
+    "lint-staged": "^17.6.0",
     "postcss": "8.5.32",
     "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
