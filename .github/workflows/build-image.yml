@@ -3,6 +3,25 @@ name: Build and publish Studio image
 on:
   release:
     types: [published]
+  # Called by release.yml right after Changesets publishes a release. A release
+  # created with GITHUB_TOKEN does not emit a `release: published` event, so the
+  # build is started explicitly from the release workflow instead.
+  workflow_call:
+    inputs:
+      environment:
+        description: GitHub environment to read build variables from
+        required: false
+        default: prod
+        type: string
+      tag:
+        description: Release tag to publish (for example, v2.3.0)
+        required: true
+        type: string
+      release:
+        description: Publish as a release (release tag and latest)
+        required: false
+        default: true
+        type: boolean
   workflow_dispatch:
     inputs:
       environment:
@@ -44,9 +63,14 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "release" ]; then
             echo "value=${{ github.event.release.tag_name }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ inputs.release }}" = "true" ]; then
+            echo "value=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
           else
             echo "value=${{ github.sha }}" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -64,9 +88,9 @@ jobs:
         with:
           images: ${{ env.IMAGE }}
           tags: |
-            type=sha,format=short,prefix=${{ github.event_name == 'release' && '' || format('{0}-', inputs.environment) }}
-            type=raw,value=${{ github.event.release.tag_name }},enable=${{ github.event_name == 'release' }}
-            type=raw,value=latest,enable=${{ github.event_name == 'release' }}
+            type=sha,format=short,prefix=${{ (github.event_name == 'release' || inputs.release == true) && '' || format('{0}-', inputs.environment) }}
+            type=raw,value=${{ steps.version.outputs.value }},enable=${{ (github.event_name == 'release' || inputs.release == true) }}
+            type=raw,value=latest,enable=${{ (github.event_name == 'release' || inputs.release == true) }}
             type=raw,value=${{ inputs.tag }},enable=${{ github.event_name == 'workflow_dispatch' && inputs.tag != '' }}
 
       - name: Build and push image
@@ -75,6 +99,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
