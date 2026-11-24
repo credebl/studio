@@ -10,6 +10,8 @@ export interface NavItem {
   label?: string
   description?: string
   isActive?: boolean
+  match?: 'exact' | 'prefix'
+  matchPaths?: string[]
   items?: NavItem[]
 }
 
