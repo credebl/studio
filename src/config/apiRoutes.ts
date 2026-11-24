@@ -91,6 +91,7 @@ export const apiRoutes = {
     didList: '/dids',
     createDid: '/agents/did',
     didImportSession: '/agents/did/import/session',
+    importDidX509: '/agents/did/x509/import',
     primaryDid: '/primary-did',
     getOrgReferences: '/activity-count',
     deleteOrganization: '/deleteorganizations',

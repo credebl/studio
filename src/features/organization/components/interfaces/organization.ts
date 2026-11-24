@@ -198,8 +198,24 @@ export interface IDidListData {
   isPrimaryDid: boolean
   isArchived?: boolean
   archivedAt?: string | null
+  /** null/absent: not known yet (DID created before the backend was recorded). */
+  kmsBackend?: DidKmsBackend | null
   createDateTime: string
   lastChangedDateTime: string
+}
+
+export type DidKmsBackend = 'askar' | 'node' | 'openbao' | 'mixed'
+
+export interface IDidKmsKey {
+  didDocumentRelativeKeyId: string
+  kmsKeyId: string
+  kmsBackend: DidKmsBackend | null
+}
+
+export interface IDidKms {
+  did: string
+  kmsBackend: DidKmsBackend | null
+  keys: IDidKmsKey[]
 }
 
 /** How a DID has been used, which decides whether it can still be deleted. */

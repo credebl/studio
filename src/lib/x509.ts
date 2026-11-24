@@ -300,3 +300,23 @@ export function formatKmsBackend(backend?: string | null): string {
   }
   return KMS_BACKEND_LABELS[backend.toLowerCase()] || backend
 }
+
+export const PENDING_ACTIVATION = 'Pending activation'
+
+/**
+ * The message shown after importing a certificate. A certificate whose dates overlap an active one of the same key
+ * type is kept but not used until it is activated, so say so and what to do instead of only "imported successfully".
+ */
+export const importedCertificateMessage = (
+  message: string,
+  status: string | undefined,
+  keyType: string | null,
+): string => {
+  if (status !== PENDING_ACTIVATION) {
+    return message
+  }
+  const other = keyType
+    ? `another ${keyType} certificate`
+    : 'another certificate'
+  return `${message}. It is pending: ${other} is active during the same period, so this one is not used for signing yet. Deactivate the other one, then choose Activate on this certificate.`
+}

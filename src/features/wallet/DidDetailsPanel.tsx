@@ -5,6 +5,7 @@ import { CopyValue, Detail, StatusPill } from './DetailParts'
 import {
   DidResolveSource,
   IDidDetails,
+  IDidKmsKey,
   IDidResolution,
 } from '@/features/organization/components/interfaces/organization'
 import React, { useEffect, useState } from 'react'
@@ -17,10 +18,11 @@ import {
 } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { didWebToUrl, getDidMethod } from '@/lib/did'
-import { getDidDetails, resolveDid } from '@/app/api/Agent'
+import { getDidDetails, getDidKms, resolveDid } from '@/app/api/Agent'
 import type { AxiosResponse } from 'axios'
 import { Button } from '@/components/ui/button'
 import DidDocumentView from './DidDocumentView'
+import KmsBackendBadge from './KmsBackendBadge'
 import Loader from '@/components/Loader'
 import { apiStatusCodes } from '@/config/CommonConstant'
 import { cn } from '@/lib/utils'
@@ -191,10 +193,37 @@ const UsageRow = ({
 )
 
 const OverviewTab = ({
+  orgId,
   details,
 }: {
+  orgId: string
   details: IDidDetails
 }): React.JSX.Element => {
+  const [kmsBackend, setKmsBackend] = useState(details.kmsBackend ?? null)
+  const [kmsKeys, setKmsKeys] = useState<IDidKmsKey[]>([])
+
+  // Always ask for the key list; for older DIDs this also records the backend on the platform.
+  useEffect(() => {
+    let cancelled = false
+    getDidKms(orgId, details.did)
+      .then((response) => {
+        if (cancelled || typeof response === 'string') {
+          return
+        }
+        const kms = (response as AxiosResponse).data?.data
+        if (kms?.kmsBackend) {
+          setKmsBackend(kms.kmsBackend)
+        }
+        if (Array.isArray(kms?.keys)) {
+          setKmsKeys(kms.keys)
+        }
+      })
+      .catch(() => undefined)
+    return () => {
+      cancelled = true
+    }
+  }, [orgId, details.did])
+
   const hostedUrl = didWebToUrl(details.did)
   const { usage, deletion } = details
 
@@ -213,6 +242,9 @@ const OverviewTab = ({
         </Detail>
         <Detail label="Method">did:{details.method}</Detail>
         <Detail label="Status">{statusPill}</Detail>
+        <Detail label="Key storage (KMS)">
+          <KmsBackendBadge backend={kmsBackend} />
+        </Detail>
         <Detail label="Created">
           {dateConversion(details.createDateTime)}
         </Detail>
@@ -225,6 +257,28 @@ const OverviewTab = ({
           </Detail>
         )}
       </dl>
+
+      {kmsKeys.length > 0 && (
+        <section className="space-y-2">
+          <h3 className="text-base font-semibold">Keys</h3>
+          <ul className="divide-y rounded-md border px-3 text-sm">
+            {kmsKeys.map((key) => (
+              <li
+                key={`${key.didDocumentRelativeKeyId}-${key.kmsKeyId}`}
+                className="space-y-1 py-2"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-muted-foreground font-mono text-xs break-all">
+                    {key.didDocumentRelativeKeyId}
+                  </span>
+                  <KmsBackendBadge backend={key.kmsBackend} />
+                </div>
+                <CopyValue value={key.kmsKeyId} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="space-y-2">
         <h3 className="text-base font-semibold">Usage</h3>
@@ -322,15 +376,15 @@ const DidDetailsBody = ({
   }
 
   return (
-    <Tabs defaultValue="overview" className="min-h-0 flex-1 px-4">
-      <TabsList>
+    <Tabs defaultValue="overview" className="flex min-h-0 flex-1 flex-col px-4">
+      <TabsList className="shrink-0">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="document">Document</TabsTrigger>
         <TabsTrigger value="resolve">Resolve</TabsTrigger>
       </TabsList>
-      <div className="overflow-y-auto pt-4 pb-6">
+      <div className="min-h-0 flex-1 overflow-y-auto pt-4 pb-6">
         <TabsContent value="overview">
-          <OverviewTab details={details} />
+          <OverviewTab orgId={orgId} details={details} />
         </TabsContent>
         <TabsContent value="document">
           <DidDocumentView

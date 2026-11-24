@@ -38,6 +38,7 @@ import {
   createPolygonKeyValuePair,
   deleteDid,
   getDids,
+  importDidX509,
   unarchiveDid,
   updatePrimaryDid,
 } from '@/app/api/Agent'
@@ -58,15 +59,20 @@ import DidRowActions from './DidRowActions'
 import DidWebPreview from './DidWebPreview'
 import { IDidListData } from '@/features/organization/components/interfaces/organization'
 import { Input } from '@/components/ui/input'
+import KmsBackendBadge from './KmsBackendBadge'
 import { Label } from '@/components/ui/label'
 import Loader from '@/components/Loader'
 import { StatusPill } from './DetailParts'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import X509DidFields from './X509DidFields'
 import { buildDidWebIdentifier } from '@/lib/did'
+import { cn } from '@/lib/utils'
 import { dateConversion } from '@/utils/DateConversion'
 import { ethers } from 'ethers'
 import { nanoid } from 'nanoid'
+import { parseCertificateChain } from '@/utils/didX509'
+import { useKmsBackendLookup } from './useKmsBackendLookup'
 import { useRouter } from 'next/navigation'
 
 interface IPolygonKeys {
@@ -86,6 +92,8 @@ interface IFormValues {
   passphrase: string
   endorserDid: string
   did: string
+  certificateChain: string
+  isPrimaryDid: boolean
 }
 
 interface OrgRole {
@@ -112,6 +120,7 @@ const createDidMethods: DidMethod[] = [
   DidMethod.KEY,
   DidMethod.WEB,
   DidMethod.POLYGON,
+  DidMethod.X509,
 ]
 
 const indyNetworks = [
@@ -334,6 +343,8 @@ const DIDListComponent = ({
     passphrase: '',
     endorserDid: '',
     did: '',
+    certificateChain: '',
+    isPrimaryDid: false,
   })
 
   const router = useRouter()
@@ -449,6 +460,9 @@ const DIDListComponent = ({
     getData()
   }, [showArchived])
 
+  // DIDs created before the backend was recorded get it from the platform, which also persists it.
+  useKmsBackendLookup(didList, setDidList, orgId)
+
   // Create DID functions
   const getValidationSchema = (): Yup.AnyObject => {
     let schema = Yup.object().shape({
@@ -462,6 +476,7 @@ const DIDListComponent = ({
       passphrase: Yup.string(),
       endorserDid: Yup.string(),
       did: Yup.string(),
+      certificateChain: Yup.string(),
     })
 
     if (method === DidMethod.WEB) {
@@ -487,6 +502,24 @@ const DIDListComponent = ({
     } else if (method === DidMethod.INDY) {
       schema = schema.shape({
         network: Yup.string().required('Network is required'),
+      })
+    } else if (method === DidMethod.X509) {
+      schema = schema.shape({
+        certificateChain: Yup.string()
+          .required('Certificate chain is required')
+          .test('pem-chain', (value, context) => {
+            try {
+              parseCertificateChain(value ?? '')
+              return true
+            } catch (error) {
+              return context.createError({
+                message: error instanceof Error ? error.message : 'Invalid',
+              })
+            }
+          }),
+        privateKey: Yup.string().required(
+          'Leaf private key (PEM, base64 DER or JWK) is required',
+        ),
       })
     }
 
@@ -529,7 +562,9 @@ const DIDListComponent = ({
     // The organization's current DID method is only used to preselect a sensible
     // default. It must never block creating a DID with a different method.
     const didMethod =
-      orgDidMethod && createDidMethods.includes(orgDidMethod)
+      orgDidMethod &&
+      orgDidMethod !== DidMethod.X509 &&
+      createDidMethods.includes(orgDidMethod)
         ? orgDidMethod
         : DidMethod.KEY
 
@@ -556,6 +591,8 @@ const DIDListComponent = ({
       passphrase: '',
       endorserDid: '',
       did: '',
+      certificateChain: '',
+      isPrimaryDid: false,
     }
     setInitialValues(resolvedValues)
 
@@ -578,6 +615,8 @@ const DIDListComponent = ({
     setFieldValue('privatekey', '')
     setFieldValue('privateKey', '')
     setFieldValue('passphrase', '')
+    setFieldValue('certificateChain', '')
+    setFieldValue('isPrimaryDid', false)
     setHavePrivateKey(false)
     setHaveKeyMaterial(false)
     setGeneratedKeys(null)
@@ -603,7 +642,9 @@ const DIDListComponent = ({
       return (
         <>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Creating DID...
+          {method === DidMethod.X509
+            ? 'Importing did:x509...'
+            : 'Creating DID...'}
         </>
       )
     }
@@ -687,7 +728,80 @@ const DIDListComponent = ({
     return encryptKeyForDidImport(orgId, didMethod, material)
   }
 
+  const importX509Did = async (values: IFormValues): Promise<void> => {
+    setLoading(true)
+    setErrMsg(null)
+    setIsCreatingDid(true)
+
+    const finish = (): void => {
+      setLoading(false)
+      setIsCreatingDid(false)
+    }
+
+    let payload: {
+      certificateChain: string[]
+      encryptedKey: EncryptedKey
+    } | null = null
+    try {
+      // Parse both before asking for a session, so invalid input does not burn one.
+      const certificateChain = parseCertificateChain(values.certificateChain)
+      const material = parseKeyMaterial(values.privateKey, values.passphrase)
+      payload = {
+        certificateChain,
+        encryptedKey: await encryptKeyForDidImport(orgId, 'x509', material),
+      }
+    } catch (error) {
+      setErrMsg(
+        error instanceof Error
+          ? error.message
+          : 'Failed to encrypt the private key for import',
+      )
+      finish()
+      return
+    }
+
+    try {
+      const response = await importDidX509(orgId, {
+        ...payload,
+        isPrimaryDid: values.isPrimaryDid,
+      })
+
+      if (typeof response === 'string') {
+        setErrMsg(response)
+        finish()
+        return
+      }
+
+      const { data } = response as AxiosResponse
+      if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {
+        setShowPopup(false)
+        setSuccessMsg(data?.message ?? 'did:x509 imported successfully')
+        finish()
+        await getData()
+        setTimeout(() => {
+          router.refresh()
+        }, 2000)
+      } else {
+        setErrMsg(getCreateDidErrorMessage(data?.message))
+        finish()
+      }
+    } catch (error) {
+      console.error('An error occurred while importing did:x509:', error)
+      setErrMsg(
+        error instanceof Error
+          ? error.message
+          : 'An error occurred while importing the did:x509. Please try again.',
+      )
+      finish()
+    }
+  }
+
   const createNewDid = async (values: IFormValues): Promise<void> => {
+    if (values.method === DidMethod.X509) {
+      await importX509Did(values)
+      return
+    }
+
     setLoading(true)
     setErrMsg(null)
 
@@ -947,6 +1061,8 @@ const DIDListComponent = ({
                     )}
                   </div>
                   <div className="flex shrink-0 items-center gap-2">
+                    <span className="text-muted-foreground text-xs">KMS</span>
+                    <KmsBackendBadge backend={item.kmsBackend} />
                     {item.isPrimaryDid && (
                       <Badge
                         variant="default"
@@ -1002,7 +1118,12 @@ const DIDListComponent = ({
           organization is never limited to its current primary DID method. */}
       {showPopup && (
         <Dialog open={showPopup} onOpenChange={setShowPopup}>
-          <DialogContent className="max-w-2xl!">
+          <DialogContent
+            className={cn(
+              'max-h-[90vh] overflow-y-auto',
+              method === DidMethod.X509 ? 'max-w-4xl!' : 'max-w-2xl!',
+            )}
+          >
             <DialogHeader>
               <DialogTitle>Create DID</DialogTitle>
             </DialogHeader>
@@ -1051,23 +1172,27 @@ const DIDListComponent = ({
                       )}
                     </div>
 
-                    <div>
-                      <Label htmlFor="ledger">Ledger</Label>
-                      <Field
-                        as={Input}
-                        id="ledger"
-                        name="ledger"
-                        readOnly
-                        tabIndex={-1}
-                        className="bg-muted cursor-default select-none"
-                        value={values.ledger}
-                      />
-                      <ErrorMessage
-                        name="ledger"
-                        component="div"
-                        className="text-destructive mt-1 text-sm"
-                      />
-                    </div>
+                    {/* Only the ledger based methods have a ledger; the value is still kept for the others. */}
+                    {(method === DidMethod.INDY ||
+                      method === DidMethod.POLYGON) && (
+                      <div>
+                        <Label htmlFor="ledger">Ledger</Label>
+                        <Field
+                          as={Input}
+                          id="ledger"
+                          name="ledger"
+                          readOnly
+                          tabIndex={-1}
+                          className="bg-muted cursor-default select-none"
+                          value={values.ledger}
+                        />
+                        <ErrorMessage
+                          name="ledger"
+                          component="div"
+                          className="text-destructive mt-1 text-sm"
+                        />
+                      </div>
+                    )}
 
                     {(method === DidMethod.INDY ||
                       method === DidMethod.POLYGON) && (
@@ -1230,6 +1355,10 @@ const DIDListComponent = ({
                           </>
                         )}
                       </div>
+                    )}
+
+                    {method === DidMethod.X509 && (
+                      <X509DidFields loading={loading} />
                     )}
 
                     {method === DidMethod.POLYGON && (
@@ -1397,22 +1526,25 @@ const DIDListComponent = ({
                     )}
                   </div>
 
-                  <div className="flex justify-end">
-                    <Button
-                      type="submit"
-                      disabled={
-                        loading ||
-                        (method === DidMethod.POLYGON && !values.privatekey) ||
-                        (method === DidMethod.WEB && !values.domain) ||
-                        ((method === DidMethod.KEY ||
-                          method === DidMethod.WEB) &&
-                          haveKeyMaterial &&
-                          !values.privateKey)
-                      }
-                    >
-                      {loading ? 'Submitting...' : 'Submit'}
-                    </Button>
-                  </div>
+                  {method !== DidMethod.X509 && (
+                    <div className="bg-background sticky -bottom-6 -mx-6 -mb-6 flex justify-end border-t px-6 py-4">
+                      <Button
+                        type="submit"
+                        disabled={
+                          loading ||
+                          (method === DidMethod.POLYGON &&
+                            !values.privatekey) ||
+                          (method === DidMethod.WEB && !values.domain) ||
+                          ((method === DidMethod.KEY ||
+                            method === DidMethod.WEB) &&
+                            haveKeyMaterial &&
+                            !values.privateKey)
+                        }
+                      >
+                        {loading ? 'Submitting...' : 'Submit'}
+                      </Button>
+                    </div>
+                  )}
                 </Form>
               )}
             </Formik>
