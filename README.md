@@ -1,4 +1,3 @@
-
 ## 🚀 Quick start
 
 1. Clone this repository or download the ZIP file
@@ -50,6 +49,8 @@ Runtime-only settings such as `NEXTAUTH_URL`, `NEXTAUTH_SECRET`, `NEXTAUTH_COOKI
 - On manual dispatch it uses the selected `dev`, `qa`, or `prod` environment and pushes `<environment>-sha-<short>` plus any optional custom tag.
 
 Create `dev`, `qa`, and `prod` environments under repository settings, then add the `NEXT_PUBLIC_*` values above as **environment variables** in each environment. These values are public by design because they are embedded in the browser bundle; do not put secrets in them.
+
+Jenkins users: see [docs/jenkins-cicd.md](docs/jenkins-cicd.md) for pipeline options, credential setup, and a verification checklist.
 
 ## Contributing
 
