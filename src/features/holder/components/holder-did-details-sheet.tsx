@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/sheet'
 import { didRelationshipSummary, formatDidDate } from '../did-details'
 import { Badge } from '@/components/ui/badge'
-import { CopyField } from './copy-field'
+import { CopyValue } from '@/features/wallet/DetailParts'
 import DidDocumentView from '@/features/wallet/DidDocumentView'
 import type { HolderDid } from '../types'
 
@@ -65,10 +65,10 @@ export function HolderDidDetailsSheet({
               </span>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <p className="text-muted-foreground text-xs">DID</p>
               {did.did ? (
-                <CopyField value={did.did} label="DID" />
+                <CopyValue value={did.did} />
               ) : (
                 <p className="text-sm font-medium">Not reported</p>
               )}
@@ -94,10 +94,10 @@ export function HolderDidDetailsSheet({
               />
             </dl>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               <p className="text-muted-foreground text-xs">Record ID</p>
               {did.id ? (
-                <CopyField value={did.id} label="Record ID" />
+                <CopyValue value={did.id} />
               ) : (
                 <p className="text-sm font-medium">Not reported</p>
               )}
