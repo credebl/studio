@@ -2,7 +2,7 @@
 
 import * as z from 'zod'
 
-import { Eye, EyeOff, KeyRound, LockKeyhole, Mail } from 'lucide-react'
+import { Eye, EyeOff, KeyRound, LockKeyhole, Mail, Wallet } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -72,6 +72,11 @@ export default function SignInViewPage(): React.JSX.Element {
     redirectTo && clientAlias
       ? `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
       : '/sign-up'
+
+  // Holder is a self-service, user-level capability. Platform v2.3.0 only sets
+  // the Keycloak userRole entitlement at signup, so offer a dedicated entry point.
+  const holderSignUpUrl =
+    redirectTo && clientAlias ? `${signUpUrl}&holder=1` : '/sign-up?holder=1'
 
   const handleSignIn = async (values: {
     email: string
@@ -487,6 +492,16 @@ export default function SignInViewPage(): React.JSX.Element {
               </span>
               <Link href={signUpUrl} className="url-link">
                 Create one
+              </Link>
+            </div>
+
+            <div className="border-border mt-4 flex items-center justify-center gap-1.5 border-t pt-4 text-center text-xs md:text-sm">
+              <Wallet className="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+              <span className="text-muted-foreground">
+                Need a personal wallet?
+              </span>
+              <Link href={holderSignUpUrl} className="url-link font-medium">
+                Create holder wallet account
               </Link>
             </div>
           </form>
