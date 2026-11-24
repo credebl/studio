@@ -20,7 +20,13 @@ import {
   createDidAction,
   createDidImportSessionAction,
 } from '@/app/holder/actions'
-import { useActionState, useEffect, useState, useTransition } from 'react'
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormStatus } from './form-status'
@@ -63,15 +69,20 @@ export function HolderDidCreateForm({
   const [encryptedKey, setEncryptedKey] = useState<EncryptedKey | null>(null)
   const [prepareError, setPrepareError] = useState<string | null>(null)
   const [preparing, startPreparing] = useTransition()
+  const onSuccessRef = useRef(onSuccess)
+
+  useEffect(() => {
+    onSuccessRef.current = onSuccess
+  }, [onSuccess])
 
   useEffect(() => {
     if (state?.status === 'success') {
       setPrivateKey('')
       setPassphrase('')
       setEncryptedKey(null)
-      onSuccess?.()
+      onSuccessRef.current?.()
     }
-  }, [state, onSuccess])
+  }, [state])
 
   const resetEncryptedKey = (): void => {
     setEncryptedKey(null)
