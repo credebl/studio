@@ -126,6 +126,8 @@ export const normalizeHolderDids = (value: unknown): HolderDid[] =>
       authenticationCount: countValues(document.authentication),
       assertionMethodCount: countValues(document.assertionMethod),
       keyAgreementCount: countValues(document.keyAgreement),
+      didDocument: nestedRecord(raw.didDocument),
+      metadata: nestedRecord(raw.metadata),
       raw,
     }
   })

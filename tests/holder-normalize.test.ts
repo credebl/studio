@@ -50,6 +50,8 @@ describe('holder normalization', () => {
           role: 'created',
         },
         didDocument: {
+          '@context': ['https://www.w3.org/ns/did/v1'],
+          id: 'did:key:z6Mk',
           verificationMethod: [{ type: 'Ed25519VerificationKey2018' }],
           authentication: ['did:key:z6Mk#z6Mk'],
           assertionMethod: ['did:key:z6Mk#z6Mk'],
@@ -70,6 +72,10 @@ describe('holder normalization', () => {
       authenticationCount: 1,
       assertionMethodCount: 1,
       keyAgreementCount: 1,
+      didDocument: {
+        '@context': ['https://www.w3.org/ns/did/v1'],
+        id: 'did:key:z6Mk',
+      },
     })
   })
 

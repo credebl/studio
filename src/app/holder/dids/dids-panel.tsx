@@ -7,24 +7,20 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  didRelationshipSummary,
+  formatDidDate,
+} from '@/features/holder/did-details'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Eye } from 'lucide-react'
 import type { HolderDid } from '@/features/holder/types'
 import { HolderDidCreateForm } from '@/features/holder/components/holder-did-create-form'
+import { HolderDidDetailsSheet } from '@/features/holder/components/holder-did-details-sheet'
+import { useState } from 'react'
 
 interface DidsPanelProps {
   dids: HolderDid[]
-}
-
-const formatDate = (value?: string): string => {
-  if (!value) {
-    return 'Not reported'
-  }
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return value
-  }
-  const iso = date.toISOString()
-  return `${iso.slice(0, 10)} ${iso.slice(11, 16)} UTC`
 }
 
 const DetailItem = ({
@@ -42,21 +38,9 @@ const DetailItem = ({
   </div>
 )
 
-const relationshipSummary = (did: HolderDid): string => {
-  const parts = [
-    did.authenticationCount
-      ? `${did.authenticationCount} authentication`
-      : undefined,
-    did.assertionMethodCount
-      ? `${did.assertionMethodCount} assertion`
-      : undefined,
-    did.keyAgreementCount ? `${did.keyAgreementCount} agreement` : undefined,
-  ].filter((part): part is string => Boolean(part))
-
-  return parts.length ? parts.join(' · ') : 'Not reported'
-}
-
 export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
+  const [selectedDid, setSelectedDid] = useState<HolderDid | null>(null)
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -97,7 +81,7 @@ export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
                   key={did.id || did.did || index}
                   className="space-y-3 rounded-md border p-4"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="flex flex-wrap items-center gap-2">
                       {did.method && (
                         <Badge variant="secondary">did:{did.method}</Badge>
@@ -107,13 +91,21 @@ export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
                           {did.role.charAt(0).toUpperCase() + did.role.slice(1)}
                         </Badge>
                       )}
-                      {did.isPrimary && (
-                        <Badge variant="outline">Primary</Badge>
-                      )}
                     </div>
-                    <span className="text-muted-foreground text-xs">
-                      Created {formatDate(did.createdAt)}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground text-xs">
+                        Created {formatDidDate(did.createdAt)}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedDid(did)}
+                      >
+                        <Eye className="h-4 w-4" />
+                        View details
+                      </Button>
+                    </div>
                   </div>
 
                   <p className="font-mono text-sm break-all">
@@ -128,7 +120,7 @@ export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
                     />
                     <DetailItem
                       label="Relationships"
-                      value={relationshipSummary(did)}
+                      value={didRelationshipSummary(did)}
                     />
                     <DetailItem label="Record ID" value={did.id} />
                   </dl>
@@ -138,6 +130,16 @@ export function DidsPanel({ dids }: DidsPanelProps): React.JSX.Element {
           )}
         </CardContent>
       </Card>
+
+      <HolderDidDetailsSheet
+        did={selectedDid}
+        open={selectedDid !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedDid(null)
+          }
+        }}
+      />
     </div>
   )
 }
