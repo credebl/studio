@@ -43,11 +43,12 @@ export default function EmailVerificationForm({
     try {
       setVerifyLoader(true)
 
+      // clientAlias is optional on the platform. Omit it entirely when the URL
+      // has none so the platform uses its default client; sending the display
+      // name here fails validation against SUPPORTED_SSO_CLIENTS.
       const payload = {
         email,
-        clientAlias: clientAliasValue
-          ? clientAliasValue
-          : process.env.NEXT_PUBLIC_PLATFORM_NAME,
+        ...(clientAliasValue ? { clientAlias: clientAliasValue } : {}),
       }
 
       const userRsp = await sendVerificationMail(payload)
