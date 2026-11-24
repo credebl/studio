@@ -29,3 +29,14 @@ export interface AdminActionResult {
   status: 'success' | 'error'
   message: string
 }
+
+/**
+ * Operator-supplied settings for the single shared agent that hosts every
+ * holder's cloud wallet tenant. Secrets are sent to the platform over TLS and
+ * encrypted at rest by the platform; Studio never stores or echoes them.
+ */
+export interface CloudBaseWalletConfigInput {
+  agentEndpoint: string
+  apiKey: string
+  walletKey: string
+}

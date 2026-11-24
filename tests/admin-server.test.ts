@@ -1,5 +1,6 @@
-import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  CloudBaseWalletConflictError,
+  configureCloudBaseWallet,
   getDashboardSummary,
   getPlatformAdminSession,
   getPlatformInvitations,
@@ -7,6 +8,7 @@ import {
   requirePlatformAdmin,
   updateEcosystemStatus,
 } from '@/lib/server/admin'
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'
 import { jsonResponse, makeSession } from './helpers'
 import { getServerSession } from 'next-auth/next'
 import { redirect } from 'next/navigation'
@@ -301,5 +303,57 @@ describe('admin data access', () => {
 
     await expect(getDashboardSummary()).resolves.toBeNull()
     expect(fetchMock).toHaveBeenCalledTimes(3)
+  })
+})
+
+describe('configureCloudBaseWallet', () => {
+  const config = {
+    agentEndpoint: 'https://agent.example.com:4001',
+    apiKey: 'agent-secret',
+    walletKey: 'wallet-secret',
+  }
+
+  it('posts the configuration with the exchanged backend token', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(jsonResponse({ data: { id: 'base-1' } }, 201))
+
+    await expect(configureCloudBaseWallet(config)).resolves.toBeUndefined()
+
+    const [, [url, init]] = fetchMock.mock.calls
+    expect(String(url)).toBe('http://platform.test/configure/base-wallet')
+    expect(init?.method).toBe('POST')
+    expect(init?.body).toBe(JSON.stringify(config))
+
+    const headers = init?.headers as Record<string, string>
+    expect(headers.Authorization).toBe('Bearer access-token')
+    expect(headers['Content-Type']).toBe('application/json')
+  })
+
+  it('reports a conflict without exposing the backend message', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(
+        jsonResponse({ message: 'raw backend conflict detail' }, 409),
+      )
+
+    await expect(configureCloudBaseWallet(config)).rejects.toBeInstanceOf(
+      CloudBaseWalletConflictError,
+    )
+  })
+
+  it('throws a generic error when configuration fails', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(
+        jsonResponse({ message: 'raw backend detail' }, 500),
+      )
+
+    await expect(configureCloudBaseWallet(config)).rejects.toThrow(
+      'Unable to configure the cloud base wallet',
+    )
   })
 })

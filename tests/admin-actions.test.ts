@@ -1,10 +1,13 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  CloudBaseWalletConflictError,
+  configureCloudBaseWallet,
   getPlatformAdminSession,
   inviteEcosystemOwner,
   updateEcosystemStatus,
 } from '@/lib/server/admin'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  configureCloudBaseWalletAction,
   inviteEcosystemOwnerAction,
   setEcosystemEnabledAction,
 } from '@/app/admin/actions'
@@ -15,6 +18,8 @@ vi.mock('@/lib/server/admin', () => ({
   getPlatformAdminSession: vi.fn(),
   inviteEcosystemOwner: vi.fn(),
   updateEcosystemStatus: vi.fn(),
+  configureCloudBaseWallet: vi.fn(),
+  CloudBaseWalletConflictError: class CloudBaseWalletConflictError extends Error {},
 }))
 
 vi.mock('next/cache', () => ({ revalidatePath: vi.fn() }))
@@ -25,10 +30,23 @@ const emailForm = (email: string): FormData => {
   return form
 }
 
+const walletForm = (overrides: Record<string, string> = {}): FormData => {
+  const form = new FormData()
+  form.set('agentEndpoint', ' https://agent.example.com:4001 ')
+  form.set('apiKey', ' agent-secret ')
+  form.set('walletKey', ' wallet-secret ')
+  form.set('confirm', 'on')
+  for (const [key, value] of Object.entries(overrides)) {
+    form.set(key, value)
+  }
+  return form
+}
+
 beforeEach(() => {
   vi.mocked(getPlatformAdminSession).mockResolvedValue(makeSession())
   vi.mocked(inviteEcosystemOwner).mockResolvedValue(undefined)
   vi.mocked(updateEcosystemStatus).mockResolvedValue(undefined)
+  vi.mocked(configureCloudBaseWallet).mockResolvedValue(undefined)
 })
 
 describe('inviteEcosystemOwnerAction', () => {
@@ -100,6 +118,95 @@ describe('inviteEcosystemOwnerAction', () => {
     expect(result).toEqual({
       status: 'error',
       message: 'Could not send the invitation. Please try again.',
+    })
+    expect(JSON.stringify(result)).not.toContain('raw backend detail')
+  })
+})
+
+describe('configureCloudBaseWalletAction', () => {
+  it('rejects a direct invocation without a platform-admin session', async () => {
+    vi.mocked(getPlatformAdminSession).mockResolvedValue(null)
+
+    const result = await configureCloudBaseWalletAction(null, walletForm())
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'You are not allowed to perform this action.',
+    })
+    expect(configureCloudBaseWallet).not.toHaveBeenCalled()
+  })
+
+  it('requires the explicit confirmation', async () => {
+    const result = await configureCloudBaseWalletAction(
+      null,
+      walletForm({ confirm: '' }),
+    )
+
+    expect(result.status).toBe('error')
+    expect(configureCloudBaseWallet).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    'not-a-url',
+    'javascript:alert(1)',
+    'https://agent.example.com:4001/some/path',
+  ])('rejects an invalid agent endpoint: %s', async (agentEndpoint) => {
+    const result = await configureCloudBaseWalletAction(
+      null,
+      walletForm({ agentEndpoint }),
+    )
+
+    expect(result.status).toBe('error')
+    expect(configureCloudBaseWallet).not.toHaveBeenCalled()
+  })
+
+  it.each(['apiKey', 'walletKey'])('rejects a missing %s', async (field) => {
+    const result = await configureCloudBaseWalletAction(
+      null,
+      walletForm({ [field]: '' }),
+    )
+
+    expect(result.status).toBe('error')
+    expect(configureCloudBaseWallet).not.toHaveBeenCalled()
+  })
+
+  it('trims values, configures the wallet and revalidates the page', async () => {
+    const result = await configureCloudBaseWalletAction(null, walletForm())
+
+    expect(configureCloudBaseWallet).toHaveBeenCalledWith({
+      agentEndpoint: 'https://agent.example.com:4001',
+      apiKey: 'agent-secret',
+      walletKey: 'wallet-secret',
+    })
+    expect(revalidatePath).toHaveBeenCalledWith('/admin/cloud-wallet')
+    expect(result.status).toBe('success')
+    expect(JSON.stringify(result)).not.toContain('agent-secret')
+    expect(JSON.stringify(result)).not.toContain('wallet-secret')
+  })
+
+  it('explains when a base wallet is already configured', async () => {
+    vi.mocked(configureCloudBaseWallet).mockRejectedValue(
+      new CloudBaseWalletConflictError(),
+    )
+
+    const result = await configureCloudBaseWalletAction(null, walletForm())
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'A cloud base wallet is already configured for this platform.',
+    })
+  })
+
+  it('does not leak backend error details to the client', async () => {
+    vi.mocked(configureCloudBaseWallet).mockRejectedValue(
+      new Error('raw backend detail'),
+    )
+
+    const result = await configureCloudBaseWalletAction(null, walletForm())
+
+    expect(result).toEqual({
+      status: 'error',
+      message: 'Could not configure the cloud base wallet. Please try again.',
     })
     expect(JSON.stringify(result)).not.toContain('raw backend detail')
   })

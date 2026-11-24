@@ -2,6 +2,7 @@ import type {
   AdminDashboardSummary,
   AdminInvitation,
   AdminInvitationPage,
+  CloudBaseWalletConfigInput,
 } from '@/features/admin/types'
 import type { Session } from 'next-auth'
 import { apiRoutes } from '@/config/apiRoutes'
@@ -318,5 +319,37 @@ export const updateEcosystemStatus = async (
 
   if (!response?.ok) {
     throw new Error('Unable to update the ecosystem setting')
+  }
+}
+
+/**
+ * The platform allows exactly one base wallet, so a second configuration
+ * attempt returns 409. Keeping this as a typed error lets the UI explain the
+ * conflict without exposing raw backend details.
+ */
+export class CloudBaseWalletConflictError extends Error {
+  constructor() {
+    super('A cloud base wallet is already configured')
+    this.name = 'CloudBaseWalletConflictError'
+  }
+}
+
+export const configureCloudBaseWallet = async (
+  config: CloudBaseWalletConfigInput,
+): Promise<void> => {
+  const response = await platformFetch(
+    apiRoutes.platformAdmin.configureCloudBaseWallet,
+    {
+      method: 'POST',
+      body: JSON.stringify(config),
+    },
+  )
+
+  if (response?.status === 409) {
+    throw new CloudBaseWalletConflictError()
+  }
+
+  if (!response?.ok) {
+    throw new Error('Unable to configure the cloud base wallet')
   }
 }

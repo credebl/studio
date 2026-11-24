@@ -6,6 +6,7 @@ import { UserNav } from '@/components/layout/user-nav'
 import { usePathname } from 'next/navigation'
 
 const pageTitles = [
+  { prefix: '/admin/cloud-wallet', title: 'Cloud wallet' },
   { prefix: '/admin/invitations', title: 'Invitations' },
   { prefix: '/admin/settings', title: 'Settings' },
   { prefix: '/admin', title: 'Dashboard' },

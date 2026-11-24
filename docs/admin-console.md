@@ -51,14 +51,28 @@ or the live role check in the server actions and route handlers.
 
 ## Screens
 
-| Route                | Purpose                                               |
-| -------------------- | ----------------------------------------------------- |
-| `/admin`             | Dashboard: KPIs, recent invitations and quick actions |
-| `/admin/invitations` | List and create ecosystem-owner invitations           |
-| `/admin/settings`    | Enable or disable the ecosystem feature platform-wide |
+| Route                 | Purpose                                                 |
+| --------------------- | ------------------------------------------------------- |
+| `/admin`              | Dashboard: KPIs, recent invitations and quick actions   |
+| `/admin/cloud-wallet` | Configure the shared agent used by holder cloud wallets |
+| `/admin/invitations`  | List and create ecosystem-owner invitations             |
+| `/admin/settings`     | Enable or disable the ecosystem feature platform-wide   |
 
 The previous standalone app's `/sessions` screen was dropped because Studio
 already provides an equivalent sessions view under Profile.
+
+### Cloud base wallet
+
+`/admin/cloud-wallet` configures the single base wallet that platform v2.3.0
+requires before any holder can create a wallet. The form sends `agentEndpoint`,
+`apiKey` and `walletKey` to `POST /configure/base-wallet`; the platform encrypts
+both keys at rest and creates one tenant on that shared agent per holder.
+
+The platform accepts only one base wallet and exposes no update or delete route,
+so the screen requires explicit confirmation and clears the secrets from the DOM
+after a successful submission. A second attempt is reported as a conflict. Studio
+never stores, logs or echoes the keys; the server action re-checks the live
+platform-admin role and returns only generic failure messages.
 
 ## Security tests
 
