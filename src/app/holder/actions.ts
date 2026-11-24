@@ -4,6 +4,7 @@ import type {
   HolderActionResult,
   HolderCredentialFormat,
 } from '@/features/holder/types'
+import { type KeyImportSession, isKeyImportSession } from '@/utils/keyImport'
 import {
   acceptHolderOffer,
   acceptHolderProof,
@@ -22,7 +23,13 @@ import {
   resolveCredentialOffer,
   resolveProofRequest,
 } from '@/lib/server/holder'
+import { randomBytes } from 'node:crypto'
 import { revalidatePath } from 'next/cache'
+
+const HOLDER_DID_METHODS = ['key', 'web', 'polygon'] as const
+const HOLDER_DID_KEY_TYPE = 'ed25519'
+const DID_SEED_BYTES = 16
+const MAX_ENCRYPTED_KEY_JWE_LENGTH = 200_000
 
 const CREDENTIAL_FORMATS: HolderCredentialFormat[] = [
   'sd-jwt-vc',
@@ -30,7 +37,7 @@ const CREDENTIAL_FORMATS: HolderCredentialFormat[] = [
   'w3c-vc',
 ]
 
-const forbidden = (): HolderActionResult => ({
+const forbidden = <T>(): HolderActionResult<T> => ({
   status: 'error',
   message: 'You are not allowed to perform this action.',
 })
@@ -90,18 +97,85 @@ export async function createDidAction(
 
   const keyType = field(formData, 'keyType')
   const method = field(formData, 'method')
-  const network = field(formData, 'network')
   const domain = field(formData, 'domain')
-  const endpoint = field(formData, 'endpoint')
+  const network = field(formData, 'network')
+  const sessionId = field(formData, 'encryptedKeySessionId')
+  const jwe = field(formData, 'encryptedKeyJwe')
 
   if (!keyType || !method) {
     return { status: 'error', message: 'Key type and method are required.' }
   }
 
-  if (method === 'web' && !domain) {
+  if (method === 'x509') {
     return {
       status: 'error',
-      message: 'did:web requires the domain you control.',
+      message:
+        'did:x509 is not available for holder wallets on platform v2.3.0. Follow credebl/platform#1864.',
+    }
+  }
+
+  if (!HOLDER_DID_METHODS.some((candidate) => candidate === method)) {
+    return {
+      status: 'error',
+      message: 'Choose did:key, did:web or did:polygon for your holder DID.',
+    }
+  }
+
+  if (keyType !== HOLDER_DID_KEY_TYPE) {
+    return {
+      status: 'error',
+      message: 'Ed25519 is the supported key type for holder DIDs.',
+    }
+  }
+
+  if (Boolean(sessionId) !== Boolean(jwe)) {
+    return {
+      status: 'error',
+      message: 'The encrypted key is incomplete. Prepare it again.',
+    }
+  }
+  if (jwe.length > MAX_ENCRYPTED_KEY_JWE_LENGTH) {
+    return { status: 'error', message: 'The encrypted key is too large.' }
+  }
+  // Only the opaque single-use envelope crosses the server boundary. Plaintext
+  // private keys are encrypted in the browser and never accepted here.
+  const encryptedKey = sessionId ? { sessionId, jwe } : undefined
+
+  if (method === 'web') {
+    if (!domain) {
+      return {
+        status: 'error',
+        message: 'did:web requires the domain you control.',
+      }
+    }
+    // The agent rejects domains with a scheme, path, or whitespace. A clear
+    // message here is better than the platform's generic 400 response.
+    if (!/^[a-z0-9]([a-z0-9.-]*[a-z0-9])?(:\d{1,5})?$/i.test(domain)) {
+      return {
+        status: 'error',
+        message: 'Enter a bare did:web domain, such as example.com.',
+      }
+    }
+  }
+
+  if (method === 'polygon') {
+    if (!network) {
+      return {
+        status: 'error',
+        message: 'did:polygon requires a network, such as polygon:testnet.',
+      }
+    }
+    if (!/^[a-z0-9:_-]+$/i.test(network)) {
+      return {
+        status: 'error',
+        message: 'Enter a bare did:polygon network, such as polygon:testnet.',
+      }
+    }
+    if (!encryptedKey) {
+      return {
+        status: 'error',
+        message: 'did:polygon requires an imported secp256k1 private key.',
+      }
     }
   }
 
@@ -109,9 +183,14 @@ export async function createDidAction(
     await createHolderDid({
       keyType,
       method,
-      ...(network ? { network } : {}),
-      ...(domain ? { domain } : {}),
-      ...(endpoint ? { endpoint } : {}),
+      // Platform v2.3.0 requires a seed for did:key and did:web without an
+      // imported key. Generate it server-side so it is never exposed to the
+      // browser or supplied by it. Imported keys use the encrypted envelope.
+      ...(encryptedKey
+        ? { encryptedKey }
+        : { seed: randomBytes(DID_SEED_BYTES).toString('hex') }),
+      ...(method === 'web' ? { domain } : {}),
+      ...(method === 'polygon' ? { network } : {}),
     })
     revalidateHolder()
     return { status: 'success', message: 'DID created in your wallet.' }
@@ -121,21 +200,24 @@ export async function createDidAction(
 }
 
 export async function createDidImportSessionAction(
-  method: 'key' | 'web' | 'polygon',
-): Promise<HolderActionResult<unknown>> {
+  method: (typeof HOLDER_DID_METHODS)[number],
+): Promise<HolderActionResult<KeyImportSession>> {
   if (!(await authorize())) {
     return forbidden()
   }
-  if (!['key', 'web', 'polygon'].includes(method)) {
+  if (!HOLDER_DID_METHODS.some((candidate) => candidate === method)) {
     return { status: 'error', message: 'Invalid DID import method.' }
   }
 
   try {
     const data = await createHolderDidImportSession(method)
+    if (!isKeyImportSession(data)) {
+      throw new Error('The wallet service returned an invalid import session.')
+    }
     return {
       status: 'success',
       message:
-        'Import session created. Use its public key to encrypt your private key.',
+        'Import session created. Encrypt your private key in the browser before continuing.',
       data,
     }
   } catch (error) {
