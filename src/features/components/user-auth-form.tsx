@@ -121,6 +121,8 @@ export default function SignInViewPage(): React.JSX.Element {
     | {
         role: { name: string }
         orgId: string | null
+        hasOrgAccess: boolean
+        hasHolderAccess: boolean
       }
     | undefined
   > => {
@@ -142,6 +144,18 @@ export default function SignInViewPage(): React.JSX.Element {
             permissionArray.push(element?.orgRole?.name),
         )
 
+        const nonOrgRoles = new Set([
+          PlatformRoles.platformAdmin,
+          'holder',
+          'Ecosystem Lead',
+          'Ecosystem Member',
+        ])
+        const hasHolderAccess = permissionArray.includes('holder')
+        const hasOrgAccess = data?.data?.userOrgRoles.some(
+          (item: { orgId: string | null; orgRole: { name: string } }) =>
+            item.orgId !== null && !nonOrgRoles.has(item.orgRole.name),
+        )
+
         const { id, profileImg, firstName, lastName, email } = data?.data || {}
         const userProfile = {
           id,
@@ -160,6 +174,8 @@ export default function SignInViewPage(): React.JSX.Element {
         return {
           role: { name: selectedRole.orgRole.name },
           orgId,
+          hasOrgAccess,
+          hasHolderAccess,
         }
       } else {
         console.error('No roles found for the user')
@@ -221,11 +237,13 @@ export default function SignInViewPage(): React.JSX.Element {
           return
         }
 
-        route.push(
-          userRole?.role?.name === PlatformRoles.platformAdmin
-            ? '/admin'
-            : '/dashboard',
-        )
+        if (userRole?.role?.name === PlatformRoles.platformAdmin) {
+          route.push('/admin')
+        } else if (!userRole?.hasOrgAccess && userRole?.hasHolderAccess) {
+          route.push('/holder')
+        } else {
+          route.push('/dashboard')
+        }
       } else if (verificationResp?.error) {
         console.error(verificationResp?.error)
       } else {

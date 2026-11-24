@@ -19,7 +19,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { adminNavItem, navItems } from '@/constants/data'
+import { adminNavItem, holderNavItem, navItems } from '@/constants/data'
 import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
@@ -145,6 +145,7 @@ export default function AppSidebar(): React.JSX.Element {
 
   const { data: session } = useSession()
   const isPlatformAdmin = session?.isPlatformAdmin === true
+  const hasHolderAccess = session?.hasHolderAccess === true
 
   useEffect(() => {
     setManagedNavItem((prev) => {
@@ -159,6 +160,20 @@ export default function AppSidebar(): React.JSX.Element {
       return hasAdminItem ? prev : [...prev, adminNavItem]
     })
   }, [isPlatformAdmin])
+
+  useEffect(() => {
+    setManagedNavItem((prev) => {
+      const hasHolderItem = prev.some((item) => item.url === '/holder')
+
+      if (!hasHolderAccess) {
+        return hasHolderItem
+          ? prev.filter((item) => item.url !== '/holder')
+          : prev
+      }
+
+      return hasHolderItem ? prev : [...prev, holderNavItem]
+    })
+  }, [hasHolderAccess])
 
   return (
     <Sidebar collapsible="icon">

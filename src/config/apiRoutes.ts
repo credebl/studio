@@ -144,6 +144,35 @@ export const apiRoutes = {
     setting: '/client_credentials',
   },
 
+  // Holder cloud-wallet endpoints shipped in platform v2.3.0. They are
+  // user-scoped and must never be called with an orgId.
+  cloudWallet: {
+    createWallet: '/create-wallet',
+    did: '/did',
+    didImportSession: '/did/import/session',
+    connectionInvitation: '/connections/invitation',
+    connection: '/connection',
+    connections: '/connections',
+    receiveInvitation: '/receive-invitation-url',
+    acceptOffer: '/accept-offer',
+    proofs: '/proofs',
+    proof: '/proofs',
+    acceptProof: '/proofs/accept-request',
+    credentials: '/credential',
+    credential: '/credential',
+    sdJwtCredentials: '/holder/sd-jwt-vcs',
+    mdocCredentials: '/holder/mdoc-vcs',
+    w3cCredentials: '/holder/w3c-vcs',
+    decodeMdoc: '/holder/mdoc-vcs/decode',
+    decodeSdJwt: '/holder/decode-sdjwt',
+    deleteCredential: '/holder/credential',
+    resolveCredentialOffer: '/oid4vc/holder/resolve-credential-offer',
+    authorizationRequest: '/oid4vc/holder/authorization-request',
+    requestCredential: '/oid4vc/holder/request-credential',
+    resolveProofRequest: '/oid4vc/holder/resolve-proof-request',
+    acceptProofRequest: '/oid4vc/holder/accept-proof-request',
+  },
+
   // Platform-admin (operator) endpoints. All of these are protected by the
   // platform backend with the PLATFORM_ADMIN role.
   platformAdmin: {
