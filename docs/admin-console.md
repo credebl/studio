@@ -68,11 +68,17 @@ requires before any holder can create a wallet. The form sends `agentEndpoint`,
 `apiKey` and `walletKey` to `POST /configure/base-wallet`; the platform encrypts
 both keys at rest and creates one tenant on that shared agent per holder.
 
-The platform accepts only one base wallet and exposes no update or delete route,
-so the screen requires explicit confirmation and clears the secrets from the DOM
-after a successful submission. A second attempt is reported as a conflict. Studio
-never stores, logs or echoes the keys; the server action re-checks the live
-platform-admin role and returns only generic failure messages.
+The platform accepts only one base wallet and exposes no update or delete route.
+The screen therefore opens in a read-only view when Studio knows a wallet is
+configured, with an **Edit** button that opens the form for a deliberate retry.
+Studio keeps only a non-secret endpoint/status hint in an httpOnly cookie; the
+backend's `409` response is authoritative. A conflict switches the screen back to
+the read-only view without changing any settings.
+
+Both key fields require explicit confirmation and are cleared from the DOM as
+soon as the form is left. Studio never stores, logs or echoes the keys; the
+server action re-checks the live platform-admin role and returns only generic
+failure messages.
 
 ## Security tests
 

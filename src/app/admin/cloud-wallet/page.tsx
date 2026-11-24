@@ -1,5 +1,8 @@
-import { CloudBaseWalletForm } from './cloud-base-wallet-form'
-import { requirePlatformAdmin } from '@/lib/server/admin'
+import {
+  getCloudBaseWalletStatus,
+  requirePlatformAdmin,
+} from '@/lib/server/admin'
+import { CloudBaseWalletPanel } from './cloud-base-wallet-form'
 
 export const metadata = {
   title: 'Cloud Wallet Configuration',
@@ -7,6 +10,7 @@ export const metadata = {
 
 export default async function AdminCloudWalletPage(): Promise<React.JSX.Element> {
   await requirePlatformAdmin()
+  const initialStatus = await getCloudBaseWalletStatus()
 
   return (
     <div className="max-w-2xl space-y-4">
@@ -18,7 +22,7 @@ export default async function AdminCloudWalletPage(): Promise<React.JSX.Element>
         </p>
       </div>
 
-      <CloudBaseWalletForm />
+      <CloudBaseWalletPanel initialStatus={initialStatus} />
     </div>
   )
 }

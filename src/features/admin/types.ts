@@ -40,3 +40,29 @@ export interface CloudBaseWalletConfigInput {
   apiKey: string
   walletKey: string
 }
+
+/**
+ * Non-secret details Studio can safely keep after a successful configuration.
+ * Platform v2.3.0 has no read endpoint for the base wallet, so this is a UI
+ * hint only; the backend's 409 response remains the authoritative check.
+ */
+export interface CloudBaseWalletStatus {
+  configured: boolean
+  agentEndpoint?: string
+  configuredAt?: string
+}
+
+/** Sanitized fields returned by the platform after configuration. */
+export interface CloudBaseWalletSummary {
+  id?: string
+  email?: string
+  type?: string
+  userId?: string
+  agentEndpoint?: string
+}
+
+export interface CloudBaseWalletActionResult extends AdminActionResult {
+  configured?: boolean
+  agentEndpoint?: string
+  configuredAt?: string
+}

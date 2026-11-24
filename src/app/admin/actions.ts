@@ -1,13 +1,17 @@
 'use server'
 
+import type {
+  AdminActionResult,
+  CloudBaseWalletActionResult,
+} from '@/features/admin/types'
 import {
   CloudBaseWalletConflictError,
   configureCloudBaseWallet,
   getPlatformAdminSession,
   inviteEcosystemOwner,
+  rememberCloudBaseWalletConfigured,
   updateEcosystemStatus,
 } from '@/lib/server/admin'
-import type { AdminActionResult } from '@/features/admin/types'
 import { revalidatePath } from 'next/cache'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
@@ -71,9 +75,9 @@ export async function inviteEcosystemOwnerAction(
  * bypassing the form and its layout guard.
  */
 export async function configureCloudBaseWalletAction(
-  _previousState: AdminActionResult | null,
+  _previousState: CloudBaseWalletActionResult | null,
   formData: FormData,
-): Promise<AdminActionResult> {
+): Promise<CloudBaseWalletActionResult> {
   if (!(await getPlatformAdminSession())) {
     return forbidden()
   }
@@ -115,18 +119,33 @@ export async function configureCloudBaseWalletAction(
   }
 
   try {
-    await configureCloudBaseWallet({ agentEndpoint, apiKey, walletKey })
+    const details = await configureCloudBaseWallet({
+      agentEndpoint,
+      apiKey,
+      walletKey,
+    })
+    const status = await rememberCloudBaseWalletConfigured({
+      agentEndpoint: details?.agentEndpoint ?? agentEndpoint,
+    })
     revalidatePath('/admin/cloud-wallet')
     return {
       status: 'success',
       message:
         'Cloud base wallet configured. Holders can now create their wallets.',
+      configured: status.configured,
+      agentEndpoint: status.agentEndpoint,
+      configuredAt: status.configuredAt,
     }
   } catch (error) {
     if (error instanceof CloudBaseWalletConflictError) {
+      const status = await rememberCloudBaseWalletConfigured()
+      revalidatePath('/admin/cloud-wallet')
       return {
         status: 'error',
         message: 'A cloud base wallet is already configured for this platform.',
+        configured: status.configured,
+        agentEndpoint: status.agentEndpoint,
+        configuredAt: status.configuredAt,
       }
     }
 

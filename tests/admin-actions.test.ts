@@ -3,6 +3,7 @@ import {
   configureCloudBaseWallet,
   getPlatformAdminSession,
   inviteEcosystemOwner,
+  rememberCloudBaseWalletConfigured,
   updateEcosystemStatus,
 } from '@/lib/server/admin'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -19,6 +20,7 @@ vi.mock('@/lib/server/admin', () => ({
   inviteEcosystemOwner: vi.fn(),
   updateEcosystemStatus: vi.fn(),
   configureCloudBaseWallet: vi.fn(),
+  rememberCloudBaseWalletConfigured: vi.fn(),
   CloudBaseWalletConflictError: class CloudBaseWalletConflictError extends Error {},
 }))
 
@@ -46,7 +48,12 @@ beforeEach(() => {
   vi.mocked(getPlatformAdminSession).mockResolvedValue(makeSession())
   vi.mocked(inviteEcosystemOwner).mockResolvedValue(undefined)
   vi.mocked(updateEcosystemStatus).mockResolvedValue(undefined)
-  vi.mocked(configureCloudBaseWallet).mockResolvedValue(undefined)
+  vi.mocked(configureCloudBaseWallet).mockResolvedValue({})
+  vi.mocked(rememberCloudBaseWalletConfigured).mockResolvedValue({
+    configured: true,
+    agentEndpoint: 'https://agent.example.com:4001',
+    configuredAt: '2026-01-01T00:00:00.000Z',
+  })
 })
 
 describe('inviteEcosystemOwnerAction', () => {
@@ -178,23 +185,40 @@ describe('configureCloudBaseWalletAction', () => {
       apiKey: 'agent-secret',
       walletKey: 'wallet-secret',
     })
+    expect(rememberCloudBaseWalletConfigured).toHaveBeenCalledWith({
+      agentEndpoint: 'https://agent.example.com:4001',
+    })
     expect(revalidatePath).toHaveBeenCalledWith('/admin/cloud-wallet')
-    expect(result.status).toBe('success')
+    expect(result).toEqual({
+      status: 'success',
+      message:
+        'Cloud base wallet configured. Holders can now create their wallets.',
+      configured: true,
+      agentEndpoint: 'https://agent.example.com:4001',
+      configuredAt: '2026-01-01T00:00:00.000Z',
+    })
     expect(JSON.stringify(result)).not.toContain('agent-secret')
     expect(JSON.stringify(result)).not.toContain('wallet-secret')
   })
 
-  it('explains when a base wallet is already configured', async () => {
+  it('switches to view mode when a base wallet is already configured', async () => {
     vi.mocked(configureCloudBaseWallet).mockRejectedValue(
       new CloudBaseWalletConflictError(),
     )
 
     const result = await configureCloudBaseWalletAction(null, walletForm())
 
+    expect(rememberCloudBaseWalletConfigured).toHaveBeenCalledWith()
+    expect(revalidatePath).toHaveBeenCalledWith('/admin/cloud-wallet')
     expect(result).toEqual({
       status: 'error',
       message: 'A cloud base wallet is already configured for this platform.',
+      configured: true,
+      agentEndpoint: 'https://agent.example.com:4001',
+      configuredAt: '2026-01-01T00:00:00.000Z',
     })
+    expect(JSON.stringify(result)).not.toContain('agent-secret')
+    expect(JSON.stringify(result)).not.toContain('wallet-secret')
   })
 
   it('does not leak backend error details to the client', async () => {
