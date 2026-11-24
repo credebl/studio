@@ -35,6 +35,7 @@ export function UserNav(): React.JSX.Element | null {
   const { data: session } = useSession()
   const isPlatformAdmin = session?.isPlatformAdmin === true
   const hasOrgAccess = session?.hasOrgAccess === true
+  const hasHolderAccess = session?.hasHolderAccess === true
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
   const token = useAppSelector((state) => state.auth.token)
@@ -150,6 +151,12 @@ export function UserNav(): React.JSX.Element | null {
               onClick={() => router.push('/developers-setting')}
             >
               Developer Settings
+            </DropdownMenuItem>
+          )}
+
+          {hasHolderAccess && (
+            <DropdownMenuItem onClick={() => router.push('/holder')}>
+              My Wallet
             </DropdownMenuItem>
           )}
 

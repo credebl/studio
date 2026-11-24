@@ -85,6 +85,16 @@ export const adminNavItem: NavItem = {
   items: [],
 }
 
+// Injected into the organization sidebar for users with the holder capability.
+export const holderNavItem: NavItem = {
+  title: 'My Wallet',
+  url: '/holder',
+  icon: 'wallet',
+  isActive: false,
+  shortcut: ['h', 'h'],
+  items: [],
+}
+
 export interface saleuser {
   id: number
   name: string

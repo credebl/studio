@@ -1,10 +1,12 @@
-const adminHeaders = [
+const sensitiveHeaders = [
   { key: 'Cache-Control', value: 'no-store, max-age=0' },
   { key: 'Pragma', value: 'no-cache' },
   { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'no-referrer' },
 ]
+
+const adminHeaders = sensitiveHeaders
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -42,6 +44,12 @@ const nextConfig = {
         // sets no-store itself, but the rest are applied here too.
         source: '/api/admin/:path*',
         headers: adminHeaders,
+      },
+      {
+        // Personal wallet pages hold credential data and must never be cached
+        // or indexed.
+        source: '/holder/:path*',
+        headers: sensitiveHeaders,
       },
     ]
   },
