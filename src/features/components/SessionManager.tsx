@@ -32,6 +32,7 @@ const preventRedirectOnPaths = [
   '/agent-config',
   '/credentials',
   '/verification',
+  '/oid4vc',
 ]
 const excludeRouteForSessionCheck = [
   '/verify-email-success',

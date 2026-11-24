@@ -19,6 +19,40 @@ const routeMapping: Record<string, BreadcrumbItem[]> = {
     { title: 'Dashboard', link: '/dashboard' },
     { title: 'Product', link: '/dashboard/product' },
   ],
+  '/credentials': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'Issued credentials', link: '/credentials' },
+  ],
+  '/credentials/issue': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'Issue via DIDComm', link: '/credentials/issue' },
+  ],
+  '/credentials/issue/email': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'Issue via DIDComm', link: '/credentials/issue' },
+    { title: 'Email', link: '/credentials/issue/email' },
+  ],
+  '/credentials/issue/schemas': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'Issue via DIDComm', link: '/credentials/issue' },
+    { title: 'Schemas', link: '/credentials/issue/schemas' },
+  ],
+  '/verification': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'Verify via DIDComm', link: '/verification' },
+  ],
+  '/oid4vc/issuers': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'OID4VC issuance', link: '/oid4vc/issuers' },
+  ],
+  '/oid4vc/create-issuer': [
+    { title: 'Credentials', link: '/credentials' },
+    { title: 'OID4VC issuance', link: '/oid4vc/issuers' },
+    { title: 'Create issuer', link: '/oid4vc/create-issuer' },
+  ],
+  '/x509-certificate': [
+    { title: 'x509 certificates', link: '/x509-certificate' },
+  ],
   // Add more custom mappings as needed
 }
 
