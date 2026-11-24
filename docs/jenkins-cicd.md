@@ -302,8 +302,8 @@ build lists them explicitly.
 
 | Variable                              | Example                                | Notes                               |
 | ------------------------------------- | -------------------------------------- | ----------------------------------- |
-| `NEXT_PUBLIC_BASE_URL`                | `https://devapi.sovio.id`              | Platform API base URL               |
-| `NEXT_PUBLIC_ACTIVE_THEME`            | `credebl` or `sovio`                   | Branding theme                      |
+| `NEXT_PUBLIC_BASE_URL`                | `https://api.credebl.id`               | Platform API base URL               |
+| `NEXT_PUBLIC_ACTIVE_THEME`            | `credebl`                              | Branding theme                      |
 | `NEXT_PUBLIC_MODE`                    | `DEV`, `QA`, `PROD`                    | App mode                            |
 | `NEXT_PUBLIC_APP_NAME`                | `CREDEBL Studio`                       | App launcher name                   |
 | `NEXT_PUBLIC_APP_TITLE`               | `CREDEBL Studio`                       | Document title                      |
@@ -311,12 +311,12 @@ build lists them explicitly.
 | `NEXT_PUBLIC_LOGO_BASE_URL`           | `https://cdn.example.com/logos/`       | Logo base URL                       |
 | `NEXT_PUBLIC_PLATFORM_NAME`           | `CREDEBL`                              | Platform name                       |
 | `NEXT_PUBLIC_CURRENT_RELEASE`         | `v2.3.0`                               | Falls back to release tag / git ref |
-| `NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL` | `https://dev.sovio.id`                 | Ecosystem front end                 |
+| `NEXT_PUBLIC_ECOSYSTEM_FRONT_END_URL` | `https://credebl.id`                   | Ecosystem front end                 |
 | `NEXT_PUBLIC_ENABLE_APP_LAUNCHER`     | `true` / `false`                       | App launcher toggle                 |
 | `NEXT_PUBLIC_ENABLE_SOCIAL_LOGIN`     | `true` / `false`                       | Social login toggle                 |
 | `NEXT_PUBLIC_ENABLE_BILLING_OPTION`   | `true` / `false`                       | Billing toggle                      |
 | `NEXT_PUBLIC_ADMIN_PORTAL_CLIENT_ID`  | `studio-admin`                         | Admin portal client id              |
-| `NEXT_PUBLIC_LANDINGPAGE_URL`         | `https://dev.sovio.id`                 | Landing page URL                    |
+| `NEXT_PUBLIC_LANDINGPAGE_URL`         | `https://credebl.id`                   | Landing page URL                    |
 | `NEXT_PUBLIC_POLYGON_TESTNET_URL`     | `https://rpc-amoy.polygon.technology/` | Wallet testnet RPC                  |
 | `NEXT_PUBLIC_POLYGON_MAINNET_URL`     | `https://polygon-rpc.com/`             | Wallet mainnet RPC                  |
 
@@ -363,7 +363,7 @@ Before promoting an image:
 
    ```sh
    docker run --rm --entrypoint sh ghcr.io/credebl/studio:<tag> \
-     -c "grep -R -l 'devapi.sovio.id' .next/static | head -3"
+     -c "grep -R -l 'api.credebl.id' .next/static | head -3"
    ```
 
    Replace the hostname with the value expected for that environment.
