@@ -66,5 +66,9 @@ by hand unless you are recovering from a failed workflow run.
   private app is versioned and tagged like a published package.
 - the changelog uses the default Changesets CLI generator.
 
-The first release is `2.2.0` because the initial changeset is a `minor` bump
-for the `/admin` console.
+## Keep `package.json` on the last released version
+
+Changesets bumps from the version in `package.json`, so it must equal the latest
+tag before the release PR is generated. If it lags (it stayed on `2.1.2` after
+`v2.2.0` was tagged), the version PR proposes a version that already exists.
+Set it to the last tag in a PR before cutting the release.
