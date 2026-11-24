@@ -268,6 +268,30 @@ export function CloudBaseWalletPanel({
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="agent-token-url">Token fetch URL (optional)</Label>
+            <Input
+              id="agent-token-url"
+              name="tokenEndpoint"
+              type="text"
+              maxLength={2048}
+              placeholder="Uses the agent endpoint above"
+              autoComplete="off"
+              spellCheck={false}
+              onChange={invalidateFetchedToken}
+              aria-describedby="agent-token-url-description"
+            />
+            <p
+              id="agent-token-url-description"
+              className="text-muted-foreground text-sm"
+            >
+              Only needed when Studio reaches the agent at a different URL than
+              the platform does, such as{' '}
+              <code className="text-xs">localhost</code> versus{' '}
+              <code className="text-xs">host.docker.internal</code>.
+            </p>
+          </div>
+
+          <div className="space-y-2">
             <Label htmlFor="agent-authorization-key">
               Agent authorization key
             </Label>

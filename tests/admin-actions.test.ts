@@ -174,6 +174,29 @@ describe('fetchAgentAuthTokenAction', () => {
     expect(fetchAgentAuthToken).not.toHaveBeenCalled()
   })
 
+  it('rejects an invalid token fetch URL override', async () => {
+    const result = await fetchAgentAuthTokenAction(
+      null,
+      tokenForm({ tokenEndpoint: 'https://user:pass@agent.example.com:4001' }),
+    )
+
+    expect(result.status).toBe('error')
+    expect(fetchAgentAuthToken).not.toHaveBeenCalled()
+  })
+
+  it('uses the token fetch URL override without changing the stored endpoint', async () => {
+    const result = await fetchAgentAuthTokenAction(
+      null,
+      tokenForm({ tokenEndpoint: ' http://localhost:4001 ' }),
+    )
+
+    expect(fetchAgentAuthToken).toHaveBeenCalledWith(
+      'http://localhost:4001',
+      'raw-agent-key',
+    )
+    expect(result.status).toBe('success')
+  })
+
   it('requires the agent authorization key', async () => {
     const result = await fetchAgentAuthTokenAction(
       null,

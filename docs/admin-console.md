@@ -70,10 +70,13 @@ both keys at rest and creates one tenant on that shared agent per holder.
 
 The **Fetch token** button accepts the raw agent authorization key alongside the
 endpoint, calls `POST /agent/token` from the Studio server, verifies the agent is
-reachable, and fills the runtime JWT into the Agent API key field. The raw
-authorization key is not forwarded to the platform, stored in Studio, or echoed
-back to the browser. The fetched JWT is kept only in the form until the admin
-submits or leaves it.
+reachable, and fills the runtime JWT into the Agent API key field. An optional
+Token fetch URL lets Studio reach the agent at a different URL than the platform
+does, which is useful when the platform runs in Docker and Studio runs on the
+host. Only that fetch uses the override; the configured Agent endpoint remains
+the value sent to the platform. The raw authorization key is not forwarded to
+the platform, stored in Studio, or echoed back to the browser. The fetched JWT
+is kept only in the form until the admin submits or leaves it.
 
 The platform accepts only one base wallet and exposes no update or delete route.
 The screen therefore opens in a read-only view when Studio knows a wallet is

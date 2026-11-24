@@ -89,18 +89,20 @@ export async function fetchAgentAuthTokenAction(
     return forbidden()
   }
 
-  const agentEndpoint = String(formData.get('agentEndpoint') ?? '').trim()
+  const configuredEndpoint = String(formData.get('agentEndpoint') ?? '').trim()
+  const tokenEndpoint =
+    String(formData.get('tokenEndpoint') ?? '').trim() || configuredEndpoint
   const authorizationKey = String(formData.get('agentAuthKey') ?? '').trim()
 
   if (
-    !agentEndpoint ||
-    agentEndpoint.length > MAX_ENDPOINT_LENGTH ||
-    !isValidAgentEndpoint(agentEndpoint)
+    !tokenEndpoint ||
+    tokenEndpoint.length > MAX_ENDPOINT_LENGTH ||
+    !isValidAgentEndpoint(tokenEndpoint)
   ) {
     return {
       status: 'error',
       message:
-        'Enter a valid agent endpoint, for example https://agent.example.com:4001.',
+        'Enter a valid token fetch URL or agent endpoint, for example http://localhost:4001.',
     }
   }
 
@@ -112,7 +114,7 @@ export async function fetchAgentAuthTokenAction(
   }
 
   try {
-    const token = await fetchAgentAuthToken(agentEndpoint, authorizationKey)
+    const token = await fetchAgentAuthToken(tokenEndpoint, authorizationKey)
     return {
       status: 'success',
       message: 'Agent reachable. Runtime API key added to the form.',
