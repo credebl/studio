@@ -101,7 +101,8 @@ platform-admin-only account will not see them in the dropdown. The allowlist,
 the stored base-wallet endpoint and the **Custom endpoint…** fallback always
 work. Candidates are URL-validated, deduplicated by endpoint and capped at 20.
 Only labels, endpoints and optional descriptions reach the browser; no keys or
-tokens are included.
+tokens are included. True agent auto-discovery needs a platform registry API and
+is tracked in [credebl/platform#1863](https://github.com/credebl/platform/issues/1863).
 
 The platform accepts only one base wallet and exposes no update or delete route.
 The screen therefore opens in a read-only view when Studio knows a wallet is
