@@ -29,7 +29,13 @@ import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 
-export function UserNav(): React.JSX.Element | null {
+interface UserNavProps {
+  profileHref?: string
+}
+
+export function UserNav({
+  profileHref = '/profile',
+}: UserNavProps): React.JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
   const { data: session } = useSession()
@@ -62,7 +68,7 @@ export function UserNav(): React.JSX.Element | null {
     }
 
     fetchProfile()
-  }, [token])
+  }, [dispatch, token])
 
   if (!token) {
     return null
@@ -142,7 +148,7 @@ export function UserNav(): React.JSX.Element | null {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/profile')}>
+          <DropdownMenuItem onClick={() => router.push(profileHref)}>
             Profile
           </DropdownMenuItem>
 
