@@ -170,7 +170,7 @@ export default function TemplateFormDialog({
         }
       }}
     >
-      <DialogContent className="max-h-[88vh] max-w-3xl overflow-y-auto">
+      <DialogContent className="max-h-[88vh] max-w-[min(calc(100vw_-_2rem),96rem)]! overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {template
