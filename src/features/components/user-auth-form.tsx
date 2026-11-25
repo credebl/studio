@@ -223,7 +223,7 @@ export default function SignInViewPage(): React.JSX.Element {
 
         route.push(
           userRole?.role?.name === PlatformRoles.platformAdmin
-            ? '/dashboard/settings'
+            ? '/admin'
             : '/dashboard',
         )
       } else if (verificationResp?.error) {

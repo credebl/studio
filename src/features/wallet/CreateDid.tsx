@@ -22,6 +22,10 @@ import {
   protocolOptions,
   subOptionsMap,
 } from '@/config/didOptions'
+import {
+  encryptKeyForDidImport,
+  polygonKeyMaterial,
+} from '@/utils/didKeyImport'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { AlertComponent } from '@/components/AlertComponent'
@@ -33,6 +37,7 @@ import SetDomainValueInput from './SetDomainValueInput'
 import SetPrivateKeyValueInput from './SetPrivateKeyValue'
 import Stepper from '@/components/StepperComponent'
 import TooltipInfo from '@/components/TooltipInfo'
+import { buildDidWebIdentifier } from '@/lib/did'
 import { createDid } from '@/app/api/Agent'
 import { nanoid } from 'nanoid'
 
@@ -48,6 +53,7 @@ const CreateDid = (): React.JSX.Element => {
   const [alert, setAlert] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [domainValue, setDomainValue] = useState<string>('')
+  const [pathValue, setPathValue] = useState<string>('')
   const [domainError, setDomainError] = useState<string | null>(null)
   type Protocol = 'didcomm' | 'oid4vc'
   const [step, setStep] = useState(3)
@@ -69,9 +75,12 @@ const CreateDid = (): React.JSX.Element => {
 
     let isValid = true
 
-    if (selectedDid === 'did:web' && !domainValue.trim()) {
-      setDomainError('Domain is required')
-      isValid = false
+    if (selectedDid === 'did:web') {
+      const parts = buildDidWebIdentifier(domainValue, pathValue)
+      if (!parts.ok) {
+        setDomainError(parts.error)
+        isValid = false
+      }
     }
 
     if (!selectedDid) {
@@ -101,14 +110,27 @@ const CreateDid = (): React.JSX.Element => {
         network = didParts.slice(-2).join(':')
       }
 
+      const isPolygon = fullMethod === DidMethod.POLYGON
+      const webParts = buildDidWebIdentifier(domainValue, pathValue)
+      const webIdentifier =
+        fullMethod === DidMethod.WEB && webParts.ok ? webParts.identifier : ''
+      // The Polygon key is encrypted in the browser to a single-use import session; only the envelope is sent.
+      const encryptedKey = isPolygon
+        ? await encryptKeyForDidImport(
+            orgId!,
+            method,
+            polygonKeyMaterial(privateKeyValue),
+          )
+        : undefined
+
       const payload = {
-        seed: method === DidMethod.POLYGON ? '' : seeds,
+        seed: isPolygon ? '' : seeds,
         keyType: 'ed25519',
         method,
         ledger: didParts[2] || '',
-        privatekey: privateKeyValue,
+        encryptedKey,
         network,
-        domain: domainValue,
+        domain: webIdentifier,
         role: method === 'indy' ? 'endorser' : '',
         endorserDid: '',
         clientSocketId: '',
@@ -149,6 +171,7 @@ const CreateDid = (): React.JSX.Element => {
       }
     } catch (error) {
       console.error('Error creating did', error)
+      setAlert(error instanceof Error ? error.message : 'Failed to create DID')
     } finally {
       setIsApiInProgress(false)
     }
@@ -214,42 +237,35 @@ const CreateDid = (): React.JSX.Element => {
                 )}
               </div>
               <div className="mb-8 grid gap-4 md:grid-cols-2">
-                {protocolOptions.map((option) => {
-                  const isDisabled = option.id === 'oid4vc'
-                  return (
-                    <button
-                      key={option.id}
-                      type="button"
-                      onClick={() => {
-                        if (isDisabled) {
-                          return
-                        }
-                        setSelectedProtocol(option.id as Protocol)
-                        setSelectedOption(null)
-                        setSelectedDid(null)
-                        setDomainError(null)
-                      }}
-                      disabled={isDisabled}
-                      className={`relative rounded-xl border-2 p-6 text-left transition-all ${selectedProtocol === option.id ? 'border-primary bg-secondary shadow-sm' : 'border-border bg-background hover:shadow-sm'} ${isDisabled ? 'cursor-not-allowed opacity-50' : ''} `}
-                    >
-                      {option.id === 'didcomm' && (
-                        <TooltipInfo text={InfoText.DIDCommInfoText} />
-                      )}
-                      {option.id === 'oid4vc' && (
-                        <TooltipInfo text={InfoText.OID4VCInfoText} />
-                      )}
+                {protocolOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedProtocol(option.id as Protocol)
+                      setSelectedOption(null)
+                      setSelectedDid(null)
+                      setDomainError(null)
+                    }}
+                    className={`relative rounded-xl border-2 p-6 text-left transition-all ${selectedProtocol === option.id ? 'border-primary bg-secondary shadow-sm' : 'border-border bg-background hover:shadow-sm'}`}
+                  >
+                    {option.id === 'didcomm' && (
+                      <TooltipInfo text={InfoText.DIDCommInfoText} />
+                    )}
+                    {option.id === 'oid4vc' && (
+                      <TooltipInfo text={InfoText.OID4VCInfoText} />
+                    )}
 
-                      <div className="mb-6">{option.icon}</div>
+                    <div className="mb-6">{option.icon}</div>
 
-                      <h3 className="text-foreground mb-1 font-semibold">
-                        {option.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm">
-                        {option.desc}
-                      </p>
-                    </button>
-                  )
-                })}
+                    <h3 className="text-foreground mb-1 font-semibold">
+                      {option.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {option.desc}
+                    </p>
+                  </button>
+                ))}
               </div>
 
               {selectedProtocol && (
@@ -298,43 +314,64 @@ const CreateDid = (): React.JSX.Element => {
                 </div>
               )}
 
-              {selectedProtocol === 'didcomm' && selectedOption && (
-                <div className="mt-6">
-                  <label className="text-foreground mb-2 block text-sm font-medium">
-                    Select DID Method{' '}
-                    <span className="text-destructive">*</span>
-                  </label>
+              {(selectedProtocol === 'didcomm' || selectedOption === 'sdjwt') &&
+                selectedOption && (
+                  <div className="mt-6">
+                    <label className="text-foreground mb-2 block text-sm font-medium">
+                      Select DID Method{' '}
+                      <span className="text-destructive">*</span>
+                    </label>
 
-                  <div className="flex items-center gap-4">
-                    <Select
-                      value={selectedDid ?? ''}
-                      onValueChange={(value) => {
-                        setSelectedDid(value)
-                        setDomainError(null)
-                      }}
-                    >
-                      <SelectTrigger className="w-full md:w-1/2">
-                        <SelectValue placeholder="Select DID" />
-                      </SelectTrigger>
+                    <div className="flex items-center gap-4">
+                      <Select
+                        value={selectedDid ?? ''}
+                        onValueChange={(value) => {
+                          setSelectedDid(value)
+                          setDomainError(null)
+                        }}
+                      >
+                        <SelectTrigger className="w-full md:w-1/2">
+                          <SelectValue placeholder="Select DID" />
+                        </SelectTrigger>
 
-                      <SelectContent>
-                        {didOptions.map((did) => (
-                          <SelectItem key={did} value={did}>
-                            {did}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                        <SelectContent>
+                          {didOptions.map((did) => (
+                            <SelectItem key={did} value={did}>
+                              {did}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
 
-                    {selectedDid && (
-                      <div className="rounded-md px-3 py-2 font-mono text-sm font-semibold whitespace-nowrap">
-                        <span className="text-muted-foreground font-normal">
-                          e.g.
-                        </span>
-                        <span className="ml-1">{didExamples[selectedDid]}</span>
-                      </div>
-                    )}
+                      {selectedDid && (
+                        <div className="rounded-md px-3 py-2 font-mono text-sm font-semibold whitespace-nowrap">
+                          <span className="text-muted-foreground font-normal">
+                            e.g.
+                          </span>
+                          <span className="ml-1">
+                            {didExamples[selectedDid]}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
+                )}
+
+              {selectedOption === 'mdoc' && (
+                <div className="border-border bg-secondary mt-6 rounded-lg border p-4">
+                  <p className="text-foreground text-sm font-medium">
+                    No DID is needed for mDoc
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    mDoc credentials are signed with an X.509 certificate. Set
+                    one up next to start issuing.
+                  </p>
+                  <Button
+                    className="mt-4"
+                    onClick={() => router.push('/x509-certificate')}
+                  >
+                    Continue to X.509 certificates
+                  </Button>
                 </div>
               )}
 
@@ -343,13 +380,16 @@ const CreateDid = (): React.JSX.Element => {
                 <SetDomainValueInput
                   domainValue={domainValue}
                   setDomainValue={handleDomainChange}
+                  pathValue={pathValue}
+                  setPathValue={setPathValue}
                   domainError={domainError}
                 />
               )}
             </CardContent>
           </Card>
 
-          {(selectedDid === 'did:polygon:testnet' || selectedDid === 'did:polygon:mainnet') && (
+          {(selectedDid === 'did:polygon:testnet' ||
+            selectedDid === 'did:polygon:mainnet') && (
             <Card className="border-border mt-6 border shadow-sm">
               <CardHeader>
                 <CardTitle className="text-foreground text-lg font-semibold">

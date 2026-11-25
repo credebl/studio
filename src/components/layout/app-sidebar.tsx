@@ -5,7 +5,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import React, { JSX, useEffect, useState } from 'react'
+import React, { JSX, useEffect, useMemo, useState } from 'react'
 import {
   Sidebar,
   SidebarContent,
@@ -19,6 +19,12 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import {
+  adminNavItem,
+  getActiveNavGroup,
+  isNavItemActive,
+  navItems,
+} from '@/constants/data'
 import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
@@ -31,18 +37,18 @@ import Link from 'next/link'
 import { NavItem } from '../../../types'
 import { Organization } from '@/features/dashboard/type/organization'
 import { getOrganizations } from '@/app/api/organization'
-import { navItems } from '@/constants/data'
 import { setSidebarCollapsed } from '@/lib/sidebarSlice'
+import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
 const APP_ENV =
   process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
 
 const APP_CONFIG = {
-  logo: (theme: string, resolvedTheme: string): string =>
-    (resolvedTheme === 'dark'
-      ? `/logos/${theme}_logo_dark.svg`
-      : `/logos/${theme}_logo.svg`),
+  logo: (theme: string, resolvedTheme: string): string => {
+    const variant = resolvedTheme === 'dark' ? '_logo_dark' : '_logo'
+    return `/logos/${theme}${variant}.svg`
+  },
   collapsedLogo: (theme: string): string => `/favicons/favicon-${theme}.ico`,
   poweredBy: (theme: string): { src: string; alt: string } | null => {
     if (theme === 'credebl') {
@@ -141,6 +147,40 @@ export default function AppSidebar(): React.JSX.Element {
       })
     }
   }, [ecosystemEnableStatus])
+
+  const { data: session } = useSession()
+  const isPlatformAdmin = session?.isPlatformAdmin === true
+
+  useEffect(() => {
+    setManagedNavItem((prev) => {
+      const hasAdminItem = prev.some((item) => item.url === '/admin')
+
+      if (!isPlatformAdmin) {
+        return hasAdminItem
+          ? prev.filter((item) => item.url !== '/admin')
+          : prev
+      }
+
+      return hasAdminItem ? prev : [...prev, adminNavItem]
+    })
+  }, [isPlatformAdmin])
+
+  const activeGroupTitle = useMemo(
+    () => getActiveNavGroup(managedNavItem, pathname),
+    [managedNavItem, pathname],
+  )
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    setOpenGroups(
+      Object.fromEntries(
+        managedNavItem
+          .filter((item) => item.items && item.items.length > 0)
+          .map((item) => [item.title, item.title === activeGroupTitle]),
+      ),
+    )
+  }, [activeGroupTitle, managedNavItem])
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="group" data-collapsed>
@@ -182,15 +222,20 @@ export default function AppSidebar(): React.JSX.Element {
                 <Collapsible
                   key={item.title}
                   asChild
-                  defaultOpen={item.isActive}
+                  open={
+                    openGroups[item.title] ?? item.title === activeGroupTitle
+                  }
+                  onOpenChange={(open) =>
+                    setOpenGroups((prev) => ({ ...prev, [item.title]: open }))
+                  }
                   className="group/collapsible"
                 >
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton
                         tooltip={item.title}
-                        isActive={pathname === item.url}
-                        className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
+                        isActive={item.title === activeGroupTitle}
+                        className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground dark:data-[active=true]:bg-sidebar-accent dark:data-[active=true]:hover:bg-sidebar-accent dark:data-[active=true]:text-sidebar-accent-foreground dark:data-[active=true]:shadow-glow dark:data-[active=true]:before:bg-sidebar-ring relative dark:data-[active=true]:before:absolute dark:data-[active=true]:before:inset-y-1.5 dark:data-[active=true]:before:left-0 dark:data-[active=true]:before:w-0.5 dark:data-[active=true]:before:rounded-full"
                       >
                         {item.icon && <Icon />}
                         <span>{item.title}</span>
@@ -204,8 +249,9 @@ export default function AppSidebar(): React.JSX.Element {
                           <SidebarMenuSubItem key={subItem.title}>
                             <SidebarMenuSubButton
                               asChild
-                              isActive={pathname === subItem.url}
-                              className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
+                              isActive={isNavItemActive(pathname, subItem)}
+                              title={subItem.description ?? subItem.title}
+                              className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground dark:data-[active=true]:bg-sidebar-accent dark:data-[active=true]:hover:bg-sidebar-accent dark:data-[active=true]:text-sidebar-accent-foreground dark:data-[active=true]:shadow-glow dark:data-[active=true]:before:bg-sidebar-ring relative dark:data-[active=true]:before:absolute dark:data-[active=true]:before:inset-y-1.5 dark:data-[active=true]:before:left-0 dark:data-[active=true]:before:w-0.5 dark:data-[active=true]:before:rounded-full"
                             >
                               <Link
                                 href={
@@ -228,8 +274,8 @@ export default function AppSidebar(): React.JSX.Element {
                   <SidebarMenuButton
                     asChild
                     tooltip={item.title}
-                    isActive={pathname.startsWith(item.url)}
-                    className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground"
+                    isActive={isNavItemActive(pathname, item)}
+                    className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground dark:data-[active=true]:bg-sidebar-accent dark:data-[active=true]:hover:bg-sidebar-accent dark:data-[active=true]:text-sidebar-accent-foreground dark:data-[active=true]:shadow-glow dark:data-[active=true]:before:bg-sidebar-ring relative dark:data-[active=true]:before:absolute dark:data-[active=true]:before:inset-y-1.5 dark:data-[active=true]:before:left-0 dark:data-[active=true]:before:w-0.5 dark:data-[active=true]:before:rounded-full"
                   >
                     <Link href={item.url}>
                       <Icon />

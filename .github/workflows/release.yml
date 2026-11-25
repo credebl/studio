@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release:
+    name: Version or tag
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+      version: ${{ fromJSON(steps.changesets.outputs.publishedPackages || '[]')[0].version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6.1.1
+        with:
+          version: 10.3.0
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create version PR or tag release
+        id: changesets
+        uses: changesets/action@v2.1.2
+        with:
+          version-script: pnpm changeset:version
+          publish-script: pnpm changeset:publish
+          pr-title: 'chore(release): version packages'
+          commit-message: |
+            chore(release): version packages
+
+            Signed-off-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+          create-github-releases: true
+          push-git-tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Releases created with GITHUB_TOKEN do not trigger `release: published`
+  # workflows, so build and publish the image from here once a release is cut.
+  build-image:
+    name: Build image
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-image.yml
+    with:
+      environment: prod
+      tag: v${{ needs.release.outputs.version }}
+      release: true

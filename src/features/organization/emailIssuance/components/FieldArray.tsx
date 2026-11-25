@@ -30,7 +30,7 @@ function FieldArrayData({
                 schemaDataType: string
               }[]
             },
-            index: React.Key | null | undefined,
+            index: number,
           ) => (
             <div
               key={`firstLayer-${index}`}

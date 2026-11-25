@@ -196,8 +196,55 @@ export interface IDidListData {
   id: string
   did: string
   isPrimaryDid: boolean
+  isArchived?: boolean
+  archivedAt?: string | null
+  /** null/absent: not known yet (DID created before the backend was recorded). */
+  kmsBackend?: DidKmsBackend | null
   createDateTime: string
   lastChangedDateTime: string
+}
+
+export type DidKmsBackend = 'askar' | 'node' | 'openbao' | 'mixed'
+
+export interface IDidKmsKey {
+  didDocumentRelativeKeyId: string
+  kmsKeyId: string
+  kmsBackend: DidKmsBackend | null
+}
+
+export interface IDidKms {
+  did: string
+  kmsBackend: DidKmsBackend | null
+  keys: IDidKmsKey[]
+}
+
+/** How a DID has been used, which decides whether it can still be deleted. */
+export interface IDidUsage {
+  wasPrimary: boolean
+  schemas: number
+  statusLists: number
+  holderNotifications: number
+  invitations: number
+}
+
+export interface IDidDetails extends IDidListData {
+  method: string
+  didDocument: unknown
+  usage: IDidUsage
+  deletion: {
+    allowed: boolean
+    reasons: string[]
+  }
+}
+
+export type DidResolveSource = 'local' | 'network'
+
+export interface IDidResolution {
+  source: DidResolveSource
+  matchesStored: boolean
+  didDocument: unknown
+  didDocumentMetadata?: Record<string, unknown>
+  didResolutionMetadata?: Record<string, unknown>
 }
 
 export interface IFormikValue {
