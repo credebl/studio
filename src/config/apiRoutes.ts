@@ -148,6 +148,9 @@ export const apiRoutes = {
     createOffer: '/oid4vc',
     deleteOffer: '/oid4vc',
     revokeCredential: '/openid4vc/issuance-sessions',
+    holderResolveOffer: '/oid4vc/holder/resolve-credential-offer',
+    holderRequestCredential: '/oid4vc/holder/request-credential',
+    holderPrimaryDid: '/oid4vc/holder/primary-did',
   },
 
   setting: {
