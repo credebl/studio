@@ -7,29 +7,14 @@ import type {
   HolderProof,
   HolderResolvedOffer,
 } from './types'
-
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
-
-const stringValue = (value: unknown): string | undefined => {
-  if (typeof value !== 'string' || !value.trim()) {
-    return undefined
-  }
-  return value.trim()
-}
-
-const firstString = (
-  record: Record<string, unknown>,
-  keys: string[],
-): string | undefined => {
-  for (const key of keys) {
-    const value = stringValue(record[key])
-    if (value) {
-      return value
-    }
-  }
-  return undefined
-}
+import {
+  credentialIssuedAt,
+  credentialIssuer,
+  credentialTypeLabel,
+  firstString,
+  isRecord,
+  nestedRecord,
+} from './credential-fields'
 
 /** Unwrap the optional inner pagination envelope used by holder list APIs. */
 export const unwrapList = (value: unknown): unknown => {
@@ -52,13 +37,6 @@ export const rawRecords = (value: unknown): Record<string, unknown>[] => {
     return []
   }
   return value.filter(isRecord)
-}
-
-const nestedRecord = (value: unknown): Record<string, unknown> | undefined => {
-  if (isRecord(value)) {
-    return value
-  }
-  return undefined
 }
 
 const countValues = (value: unknown): number => {
@@ -154,10 +132,10 @@ export const normalizeHolderCredentials = (
       ]) ?? '',
     format,
     title:
-      firstString(raw, ['label', 'name', 'title', 'type', 'credentialType']) ??
+      credentialTypeLabel(raw, format) ??
       (format === 'sd-jwt-vc' ? 'SD-JWT credential' : 'Credential'),
-    issuer: firstString(raw, ['issuer', 'issuerDid', 'issuerId']),
-    issuedAt: firstString(raw, ['createdAt', 'issuedAt', 'createDateTime']),
+    issuer: credentialIssuer(raw, format),
+    issuedAt: credentialIssuedAt(raw, format),
     encoded: firstString(raw, encodedKeys[format]),
     raw,
   }))

@@ -29,6 +29,38 @@ describe('holder normalization', () => {
     ])
   })
 
+  it('derives credential details from the agent record shape', () => {
+    const [credential] = normalizeHolderCredentials(
+      [
+        {
+          id: 'cred-1',
+          createdAt: '2026-11-24T22:18:53.679Z',
+          _tags: {
+            issuerId: 'did:key:issuer',
+            types: ['LocalDegreeLdpVc', 'VerifiableCredential'],
+          },
+          credentialInstances: [
+            {
+              credential: {
+                issuer: 'did:key:issuer',
+                issuanceDate: '2026-11-24T22:15:08.901Z',
+                type: ['VerifiableCredential', 'LocalDegreeLdpVc'],
+              },
+            },
+          ],
+        },
+      ],
+      'w3c-vc',
+    )
+
+    expect(credential).toMatchObject({
+      id: 'cred-1',
+      title: 'LocalDegreeLdpVc',
+      issuer: 'did:key:issuer',
+      issuedAt: '2026-11-24T22:18:53.679Z',
+    })
+  })
+
   it('accepts the paginated envelope used when query parameters are sent', () => {
     const dids = normalizeHolderDids({
       data: [{ id: 'did-1', did: 'did:key:z6Mk' }],

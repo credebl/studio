@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { FormStatus } from '@/features/holder/components/form-status'
 import { JsonPanel } from '@/features/holder/components/json-panel'
+import { summarizeCredential } from '@/features/holder/credential-details'
 
 interface CredentialsPanelProps {
   credentials: {
@@ -49,6 +50,19 @@ const tabs: {
     description: 'W3C Verifiable Credentials.',
   },
 ]
+
+const DetailItem = ({
+  label,
+  value,
+}: {
+  label: string
+  value: string
+}): React.JSX.Element => (
+  <div className="min-w-0 space-y-1">
+    <dt className="text-muted-foreground text-xs">{label}</dt>
+    <dd className="text-sm font-medium break-words">{value}</dd>
+  </div>
+)
 
 export function CredentialsPanel({
   credentials,
@@ -103,6 +117,7 @@ export function CredentialsPanel({
       <div className="grid gap-3">
         {items.map((credential, index) => {
           const key = credential.id || `${credential.format}-${index}`
+          const summary = summarizeCredential(credential)
           return (
             <Card key={key}>
               <CardHeader className="flex-row items-start justify-between space-y-0">
@@ -140,6 +155,36 @@ export function CredentialsPanel({
                   >
                     Delete
                   </Button>
+                </div>
+                <div className="space-y-3 rounded-md border p-3">
+                  <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                    Credential details
+                  </p>
+                  <dl className="grid gap-x-4 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {summary.metadata.map((detail) => (
+                      <DetailItem
+                        key={detail.label}
+                        label={detail.label}
+                        value={detail.value}
+                      />
+                    ))}
+                  </dl>
+                  {summary.claims.length > 0 && (
+                    <div className="space-y-2 border-t pt-3">
+                      <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+                        Credential claims
+                      </p>
+                      <dl className="grid gap-x-4 gap-y-2 sm:grid-cols-2">
+                        {summary.claims.map((claim) => (
+                          <DetailItem
+                            key={claim.label}
+                            label={claim.label}
+                            value={claim.value}
+                          />
+                        ))}
+                      </dl>
+                    </div>
+                  )}
                 </div>
                 <JsonPanel value={credential.raw} label="Stored credential" />
                 {decoded[key] ? (
