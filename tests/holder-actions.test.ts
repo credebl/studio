@@ -329,4 +329,88 @@ describe('holder server actions', () => {
       sendNotification: false,
     })
   })
+
+  it('forwards a nested fresh-key selection without any flat DID', async () => {
+    vi.mocked(requestHolderCredential).mockResolvedValue({ credential: 'ok' })
+
+    const result = await requestCredentialAction(
+      null,
+      formData({
+        credentialOfferUri: 'openid-credential-offer://?x=1',
+        credentialsToRequest: 'Degree',
+        bindingMode: 'new-key',
+        bindingDidMethod: 'did:jwk',
+        bindingSignatureAlgorithm: 'EdDSA',
+        sendNotification: 'true',
+      }),
+    )
+
+    expect(result).toMatchObject({ status: 'success' })
+    const payload = vi.mocked(requestHolderCredential).mock.calls.at(-1)?.[0]
+    expect(payload).toMatchObject({
+      binding: {
+        mode: 'new-key',
+        didMethod: 'did:jwk',
+        signatureAlgorithm: 'EdDSA',
+      },
+    })
+    expect(payload).not.toHaveProperty('holderDidUrl')
+  })
+
+  it('forwards a nested existing-DID selection with its policy', async () => {
+    vi.mocked(requestHolderCredential).mockResolvedValue({ credential: 'ok' })
+
+    await requestCredentialAction(
+      null,
+      formData({
+        credentialOfferUri: 'openid-credential-offer://?x=1',
+        credentialsToRequest: 'Degree',
+        bindingMode: 'existing-did',
+        bindingHolderDidUrl: 'did:web:holder.example.com#key-1',
+        bindingPolicy: 'prefer',
+      }),
+    )
+
+    const payload = vi.mocked(requestHolderCredential).mock.calls.at(-1)?.[0]
+    expect(payload?.binding).toEqual({
+      mode: 'existing-did',
+      holderDidUrl: 'did:web:holder.example.com#key-1',
+      policy: 'prefer',
+    })
+    expect(payload).not.toHaveProperty('holderDidUrl')
+  })
+
+  it('rejects conflicting flat and nested DIDs before calling the API', async () => {
+    const result = await requestCredentialAction(
+      null,
+      formData({
+        credentialOfferUri: 'openid-credential-offer://?x=1',
+        credentialsToRequest: 'Degree',
+        bindingMode: 'existing-did',
+        bindingHolderDidUrl: 'did:web:holder.example.com#key-1',
+        holderDidUrl: 'did:key:z6Mkflat',
+      }),
+    )
+
+    expect(result).toMatchObject({ status: 'error' })
+    expect(result.message).toContain('Conflicting holder DID')
+    expect(requestHolderCredential).not.toHaveBeenCalled()
+  })
+
+  it('rejects a binding policy supplied with a fresh-key selection', async () => {
+    const result = await requestCredentialAction(
+      null,
+      formData({
+        credentialOfferUri: 'openid-credential-offer://?x=1',
+        credentialsToRequest: 'Degree',
+        bindingMode: 'new-key',
+        bindingDidMethod: 'did:jwk',
+        bindingPolicy: 'prefer',
+      }),
+    )
+
+    expect(result).toMatchObject({ status: 'error' })
+    expect(result.message).toContain('binding options are not valid')
+    expect(requestHolderCredential).not.toHaveBeenCalled()
+  })
 })

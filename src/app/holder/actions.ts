@@ -1,5 +1,12 @@
 'use server'
 
+import {
+  BINDING_ERROR_MESSAGES,
+  type CredentialBindingOptions,
+  HolderBindingError,
+  type HolderCredentialRequestPayload,
+  assertValidHolderCredentialRequest,
+} from '@/lib/holderBinding'
 import type {
   HolderActionResult,
   HolderCredentialFormat,
@@ -47,6 +54,7 @@ const field = (formData: FormData, name: string): string =>
 
 const revalidateHolder = (): void => {
   revalidatePath('/holder')
+  revalidatePath('/holder/offers')
   revalidatePath('/holder/credentials')
   revalidatePath('/holder/dids')
   revalidatePath('/holder/connections')
@@ -349,6 +357,7 @@ export async function requestCredentialAction(
   const authorizationCode = field(formData, 'authorizationCode')
   const codeVerifier = field(formData, 'codeVerifier')
   const txCode = field(formData, 'txCode')
+  const bindingMode = field(formData, 'bindingMode')
   const holderDidUrl = field(formData, 'holderDidUrl')
   const bindingPolicy = field(formData, 'bindingPolicy')
   const sendNotification = formData.get('sendNotification') !== 'false'
@@ -360,19 +369,67 @@ export async function requestCredentialAction(
     }
   }
 
+  // The UI always submits the nested form. A flat holderDidUrl is accepted for
+  // backwards compatibility and must agree with the nested value; anything
+  // else is rejected before the server wrapper can redeem the offer.
+  const binding: CredentialBindingOptions | undefined = bindingMode
+    ? {
+        mode: bindingMode as CredentialBindingOptions['mode'],
+        ...(bindingMode === 'new-key'
+          ? {
+              ...(field(formData, 'bindingDidMethod')
+                ? { didMethod: field(formData, 'bindingDidMethod') }
+                : {}),
+              ...(field(formData, 'bindingSignatureAlgorithm')
+                ? {
+                    signatureAlgorithm: field(
+                      formData,
+                      'bindingSignatureAlgorithm',
+                    ),
+                  }
+                : {}),
+            }
+          : {}),
+        ...(bindingMode === 'existing-did'
+          ? {
+              ...(field(formData, 'bindingHolderDidUrl')
+                ? { holderDidUrl: field(formData, 'bindingHolderDidUrl') }
+                : {}),
+              ...(bindingPolicy && ['require', 'prefer'].includes(bindingPolicy)
+                ? {
+                    policy: bindingPolicy as CredentialBindingOptions['policy'],
+                  }
+                : {}),
+            }
+          : {}),
+      }
+    : undefined
+
+  const payload: HolderCredentialRequestPayload = {
+    credentialOfferUri,
+    credentialsToRequest,
+    ...(authorizationCode ? { authorizationCode } : {}),
+    ...(codeVerifier ? { codeVerifier } : {}),
+    ...(txCode ? { txCode } : {}),
+    ...(holderDidUrl ? { holderDidUrl } : {}),
+    ...(bindingPolicy && ['require', 'prefer'].includes(bindingPolicy)
+      ? { bindingPolicy: bindingPolicy as CredentialBindingOptions['policy'] }
+      : {}),
+    ...(binding ? { binding } : {}),
+    sendNotification,
+  }
+
   try {
-    const data = await requestHolderCredential({
-      credentialOfferUri,
-      credentialsToRequest,
-      ...(authorizationCode ? { authorizationCode } : {}),
-      ...(codeVerifier ? { codeVerifier } : {}),
-      ...(txCode ? { txCode } : {}),
-      ...(holderDidUrl ? { holderDidUrl } : {}),
-      ...(holderDidUrl && ['require', 'prefer'].includes(bindingPolicy)
-        ? { bindingPolicy: bindingPolicy as 'require' | 'prefer' }
-        : {}),
-      sendNotification,
-    })
+    assertValidHolderCredentialRequest(payload)
+  } catch (error) {
+    if (error instanceof HolderBindingError) {
+      return { status: 'error', message: BINDING_ERROR_MESSAGES[error.code] }
+    }
+    return { status: 'error', message: (error as Error).message }
+  }
+
+  try {
+    const data = await requestHolderCredential(payload)
     revalidateHolder()
     return {
       status: 'success',
