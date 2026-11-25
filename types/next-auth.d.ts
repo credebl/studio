@@ -7,6 +7,8 @@ declare module 'next-auth' {
     expiresAt?: number
     user: User
     sessionId?: string
+    isPlatformAdmin?: boolean
+    hasOrgAccess?: boolean
   }
 
   interface User {
@@ -14,6 +16,8 @@ declare module 'next-auth' {
     refreshToken?: string
     expiresAt?: number
     sessionId?: string
+    isPlatformAdmin?: boolean
+    hasOrgAccess?: boolean
   }
 }
 
@@ -24,5 +28,8 @@ declare module 'next-auth/jwt' {
     accessToken?: string
     refreshToken?: string
     expiresAt?: number
+    isPlatformAdmin?: boolean
+    hasOrgAccess?: boolean
+    sessionId?: string
   }
 }

@@ -1,6 +1,7 @@
 import { axiosGet, axiosPost, axiosPut } from '@/services/apiRequests'
 
 import { AxiosResponse } from 'axios'
+import type { EncryptedKey } from '@/utils/keyImport'
 import apiRoutes from './apiRoutes'
 import { getHeaderConfigs } from '@/config/GetHeaderConfigs'
 
@@ -101,9 +102,17 @@ export const deactivateCertificate = async (
   }
 }
 
+export interface IImportCertificatePayload {
+  certificate: string
+  /** The certificates that follow `certificate` in its chain (base64 DER), each issued by the next, root last. */
+  certificateChain?: string[]
+  keyType: 'Ed25519' | 'P-256'
+  encryptedKey: EncryptedKey
+}
+
 export const importCertificate = async (
   orgId: string,
-  data: object,
+  data: IImportCertificatePayload,
 ): Promise<AxiosResponse | string> => {
   const url = `${apiRoutes.x509.root}/${orgId}${apiRoutes.x509.importCertificate}`
   const payload = data

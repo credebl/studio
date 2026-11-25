@@ -182,6 +182,13 @@ const CreateCertificate = ({
 
     try {
       const response = await createCertificate(orgId || '', payload)
+
+      if (typeof response === 'string') {
+        setFailure(response)
+        onFailure(response)
+        return
+      }
+
       const { data } = response as AxiosResponse
 
       if (data?.statusCode === apiStatusCodes.API_STATUS_CREATED) {

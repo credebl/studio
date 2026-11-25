@@ -23,6 +23,7 @@ export const pathRoutes = {
   },
   organizations: {
     root: '/organizations',
+    wallet: '/wallet',
     invitations: '/invitations',
     users: '/users',
     schemas: '/schemas',
