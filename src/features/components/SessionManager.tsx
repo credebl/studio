@@ -33,6 +33,7 @@ const preventRedirectOnPaths = [
   '/credentials',
   '/verification',
   '/holder',
+  '/oid4vc',
 ]
 const excludeRouteForSessionCheck = [
   '/verify-email-success',

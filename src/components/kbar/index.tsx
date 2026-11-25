@@ -91,6 +91,12 @@ export default function KBar({
       router.push(url)
     }
 
+    const actionKeywords = (item: NavItem): string =>
+      `${item.title} ${item.description ?? ''}`.trim().toLowerCase()
+
+    const actionSubtitle = (item: NavItem): string =>
+      item.description ?? `Go to ${item.title}`
+
     const createBaseAction = (navItem: NavItem): KBarAction => {
       if (navItem.url === '#') {
         return null
@@ -100,9 +106,9 @@ export default function KBar({
         id: `${navItem.title.toLowerCase()}Action`,
         name: navItem.title,
         shortcut: navItem.shortcut,
-        keywords: navItem.title.toLowerCase(),
+        keywords: actionKeywords(navItem),
         section: 'Navigation',
-        subtitle: `Go to ${navItem.title}`,
+        subtitle: actionSubtitle(navItem),
         perform: (): void => navigateTo(navItem.url),
       }
     }
@@ -114,9 +120,9 @@ export default function KBar({
       id: `${childItem.title.toLowerCase()}Action`,
       name: childItem.title,
       shortcut: childItem.shortcut,
-      keywords: childItem.title.toLowerCase(),
+      keywords: actionKeywords(childItem),
       section: navItem.title,
-      subtitle: `Go to ${childItem.title}`,
+      subtitle: actionSubtitle(childItem),
       perform: (): void => navigateTo(childItem.url),
     })
     // Map child items into actions
