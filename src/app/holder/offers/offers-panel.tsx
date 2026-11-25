@@ -1,12 +1,29 @@
 'use client'
 
 import {
+  BINDING_ERROR_MESSAGES,
+  BINDING_MODE_OPTIONS,
+  type BindingSelection,
+  type BindingValidation,
+  type CredentialBindingMode,
+  type CredentialBindingPolicy,
+  POLICY_OPTIONS,
+  PRIMARY_DID_BADGE,
+  getAllowedDidMethods,
+  getAllowedProofAlgorithms,
+  getConfirmationSummary,
+  getInitialBindingSelection,
+  toResolvedHolderOffer,
+  validateBindingSelection,
+} from '@/lib/holderBinding'
+import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   Select,
   SelectContent,
@@ -19,7 +36,13 @@ import {
   requestCredentialAction,
   resolveOfferAction,
 } from '../actions'
-import { useActionState, useMemo, useState, useTransition } from 'react'
+import {
+  useActionState,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { FormStatus } from '@/features/holder/components/form-status'
@@ -31,14 +54,27 @@ import { normalizeResolvedOffer } from '@/features/holder/normalize'
 
 interface OffersPanelProps {
   dids: string[]
+  /** Platform preference; a suggestion shown only after existing-DID opt-in. */
+  primaryDidUrl?: string | null
 }
 
-export function OffersPanel({ dids }: OffersPanelProps): React.JSX.Element {
+export function OffersPanel({
+  dids,
+  primaryDidUrl,
+}: OffersPanelProps): React.JSX.Element {
   const [offerUri, setOfferUri] = useState('')
   const [selected, setSelected] = useState<string[]>([])
   const [prepareState, setPrepareState] =
     useState<HolderActionResult<unknown> | null>(null)
   const [preparing, startPrepare] = useTransition()
+
+  // Fresh key is the default even when the platform supplies a primary DID.
+  const [bindingMode, setBindingMode] =
+    useState<CredentialBindingMode>('new-key')
+  const [didMethod, setDidMethod] = useState('')
+  const [signatureAlgorithm, setSignatureAlgorithm] = useState('')
+  const [existingDidUrl, setExistingDidUrl] = useState('')
+  const [policy, setPolicy] = useState<CredentialBindingPolicy>('require')
 
   const [resolveState, resolveAction, resolving] = useActionState(
     resolveOfferAction,
@@ -56,6 +92,58 @@ export function OffersPanel({ dids }: OffersPanelProps): React.JSX.Element {
     return normalizeResolvedOffer(resolveState.data).configurations
   }, [resolveState])
 
+  const offer = useMemo(() => {
+    if (resolveState?.status !== 'success') {
+      return undefined
+    }
+    return toResolvedHolderOffer(resolveState.data, selected)
+  }, [resolveState, selected])
+
+  // Each newly resolved offer starts with the privacy-preserving default and
+  // advanced overrides derived from that offer's metadata.
+  useEffect(() => {
+    setBindingMode('new-key')
+    setDidMethod('')
+    setSignatureAlgorithm('')
+    setExistingDidUrl('')
+  }, [resolveState?.data])
+
+  const defaults = useMemo(
+    () =>
+      getInitialBindingSelection({
+        primaryDidUrl,
+        offer,
+      }),
+    [primaryDidUrl, offer],
+  )
+  const allowedDidMethods = offer ? getAllowedDidMethods(offer) : []
+  const allowedAlgorithms = offer ? getAllowedProofAlgorithms(offer) : []
+  const activeDidMethod = didMethod || defaults.didMethod || ''
+  const activeAlgorithm =
+    signatureAlgorithm || defaults.signatureAlgorithm || ''
+
+  const selection: BindingSelection =
+    bindingMode === 'new-key'
+      ? {
+          mode: bindingMode,
+          ...(activeDidMethod ? { didMethod: activeDidMethod } : {}),
+          ...(activeAlgorithm ? { signatureAlgorithm: activeAlgorithm } : {}),
+        }
+      : {
+          mode: bindingMode,
+          holderDidUrl: existingDidUrl,
+          policy,
+        }
+
+  const validation: BindingValidation = offer
+    ? validateBindingSelection(selection, offer)
+    : { valid: false, errors: [] }
+
+  const suggestedDid = primaryDidUrl?.trim() || ''
+  const existingDidOptions = Array.from(
+    new Set([...dids, ...(suggestedDid ? [suggestedDid] : [])]),
+  )
+
   const toggleConfiguration = (id: string, checked: boolean): void => {
     setSelected((current) => {
       if (checked) {
@@ -69,6 +157,18 @@ export function OffersPanel({ dids }: OffersPanelProps): React.JSX.Element {
     startPrepare(async () => {
       setPrepareState(await authorizationRequestAction(offerUri, selected))
     })
+  }
+
+  const changeBindingMode = (value: string): void => {
+    if (!BINDING_MODE_OPTIONS.some((option) => option.mode === value)) {
+      return
+    }
+    const nextMode = value as CredentialBindingMode
+    setBindingMode(nextMode)
+    // Pre-fill only when the user explicitly opts into an existing DID.
+    if (nextMode === 'existing-did' && !existingDidUrl) {
+      setExistingDidUrl(suggestedDid || dids[0] || '')
+    }
   }
 
   return (
@@ -169,8 +269,8 @@ export function OffersPanel({ dids }: OffersPanelProps): React.JSX.Element {
           <CardHeader>
             <CardTitle>Request credential</CardTitle>
             <CardDescription>
-              Provide the authorization code or transaction code required by the
-              issuer. DID binding is optional.
+              Choose how the credential is bound. A fresh key is used unless you
+              explicitly opt into an existing DID.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -181,6 +281,34 @@ export function OffersPanel({ dids }: OffersPanelProps): React.JSX.Element {
                 name="credentialsToRequest"
                 value={selected.join(',')}
               />
+              <input type="hidden" name="bindingMode" value={selection.mode} />
+              {selection.mode === 'new-key' ? (
+                <>
+                  {activeDidMethod ? (
+                    <input
+                      type="hidden"
+                      name="bindingDidMethod"
+                      value={activeDidMethod}
+                    />
+                  ) : null}
+                  {activeAlgorithm ? (
+                    <input
+                      type="hidden"
+                      name="bindingSignatureAlgorithm"
+                      value={activeAlgorithm}
+                    />
+                  ) : null}
+                </>
+              ) : (
+                <>
+                  <input
+                    type="hidden"
+                    name="bindingHolderDidUrl"
+                    value={existingDidUrl}
+                  />
+                  <input type="hidden" name="bindingPolicy" value={policy} />
+                </>
+              )}
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
@@ -213,42 +341,154 @@ export function OffersPanel({ dids }: OffersPanelProps): React.JSX.Element {
                 </div>
               </div>
 
-              {dids.length > 0 && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="holder-did">Bind to a DID (optional)</Label>
-                    <Select name="holderDidUrl" defaultValue="">
-                      <SelectTrigger id="holder-did">
-                        <SelectValue placeholder="Use a new key" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="">Use a new key</SelectItem>
-                        {dids.map((did) => (
-                          <SelectItem key={did} value={did}>
-                            {did}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="binding-policy">Binding policy</Label>
-                    <Select name="bindingPolicy" defaultValue="require">
-                      <SelectTrigger id="binding-policy">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="require">Require</SelectItem>
-                        <SelectItem value="prefer">Prefer</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <div className="space-y-3 rounded-md border p-4">
+                <div className="space-y-1">
+                  <h3 className="font-medium">Credential binding</h3>
+                  <p className="text-muted-foreground text-xs">
+                    A fresh key keeps this credential unlinkable from your other
+                    issuers. Only choose an existing DID when you want it
+                    reused.
+                  </p>
                 </div>
-              )}
+                <RadioGroup
+                  value={bindingMode}
+                  onValueChange={changeBindingMode}
+                  className="gap-3"
+                >
+                  {BINDING_MODE_OPTIONS.map((option) => (
+                    <label
+                      key={option.mode}
+                      htmlFor={`binding-${option.mode}`}
+                      className="flex items-center gap-3 text-sm"
+                    >
+                      <RadioGroupItem
+                        id={`binding-${option.mode}`}
+                        value={option.mode}
+                        className="border-primary text-primary focus:ring-ring size-4 rounded-full border shadow-sm focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  ))}
+                </RadioGroup>
+
+                {bindingMode === 'new-key' ? (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="binding-did-method">DID method</Label>
+                      <Select
+                        value={activeDidMethod}
+                        onValueChange={setDidMethod}
+                      >
+                        <SelectTrigger id="binding-did-method">
+                          <SelectValue placeholder="Automatic" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allowedDidMethods.map((method) => (
+                            <SelectItem key={method} value={method}>
+                              {method}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="binding-algorithm">Proof algorithm</Label>
+                      <Select
+                        value={activeAlgorithm}
+                        onValueChange={setSignatureAlgorithm}
+                      >
+                        <SelectTrigger id="binding-algorithm">
+                          <SelectValue placeholder="Automatic" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allowedAlgorithms.map((algorithm) => (
+                            <SelectItem key={algorithm} value={algorithm}>
+                              {algorithm}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="existing-did">Holder DID</Label>
+                      <Select
+                        value={existingDidUrl}
+                        onValueChange={setExistingDidUrl}
+                      >
+                        <SelectTrigger id="existing-did">
+                          <SelectValue placeholder="Choose a DID" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {existingDidOptions.map((did) => (
+                            <SelectItem key={did} value={did}>
+                              {did}
+                              {did === suggestedDid
+                                ? ` (${PRIMARY_DID_BADGE})`
+                                : ''}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {suggestedDid ? (
+                        <p className="text-muted-foreground text-xs">
+                          {suggestedDid} is {PRIMARY_DID_BADGE} — it is only
+                          used if you choose this option.
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="binding-policy">Binding policy</Label>
+                      <Select
+                        value={policy}
+                        onValueChange={(value) =>
+                          setPolicy(value as CredentialBindingPolicy)
+                        }
+                      >
+                        <SelectTrigger id="binding-policy">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {POLICY_OPTIONS.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="bg-muted/40 space-y-1 rounded-md p-3 text-sm">
+                <p className="font-medium">Confirmation</p>
+                {getConfirmationSummary(selection, primaryDidUrl).map(
+                  (line) => (
+                    <p key={line} className="text-muted-foreground">
+                      {line}
+                    </p>
+                  ),
+                )}
+                {validation.errors.length > 0 ? (
+                  <ul className="text-destructive list-disc pl-5 text-xs">
+                    {validation.errors.map((error) => (
+                      <li key={error}>{BINDING_ERROR_MESSAGES[error]}</li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
 
               <Button
                 type="submit"
-                disabled={selected.length === 0 || requesting}
+                disabled={
+                  selected.length === 0 ||
+                  requesting ||
+                  !offer ||
+                  !validation.valid
+                }
               >
                 {requesting ? 'Requesting…' : 'Request credential'}
               </Button>

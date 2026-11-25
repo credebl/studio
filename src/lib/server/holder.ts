@@ -1,4 +1,10 @@
 import { type ApiEnvelope, platformFetch } from './platform'
+import {
+  BINDING_ERROR_MESSAGES,
+  type BindingErrorCode,
+  type HolderCredentialRequestPayload,
+  assertValidHolderCredentialRequest,
+} from '@/lib/holderBinding'
 import type {
   HolderCredentialFormat,
   HolderWalletState,
@@ -18,10 +24,11 @@ import { redirect } from 'next/navigation'
  * because the session claim is only a UI hint.
  */
 
-class HolderApiError extends Error {
+export class HolderApiError extends Error {
   constructor(
     message: string,
     readonly status?: number,
+    readonly code?: BindingErrorCode,
   ) {
     super(message)
     this.name = 'HolderApiError'
@@ -69,7 +76,22 @@ export const requireHolderSession = async (): Promise<Session> => {
   return session
 }
 
-const failureMessage = (status: number | undefined): string => {
+const bindingErrorCode = (value: unknown): BindingErrorCode | undefined => {
+  if (typeof value !== 'string' || !(value in BINDING_ERROR_MESSAGES)) {
+    return undefined
+  }
+  return value as BindingErrorCode
+}
+
+const failureMessage = (
+  status: number | undefined,
+  code?: BindingErrorCode,
+): string => {
+  // Only allow-listed codes are surfaced; upstream bodies can contain tx codes
+  // or other sensitive details and are never forwarded to the browser.
+  if (code) {
+    return BINDING_ERROR_MESSAGES[code]
+  }
   if (status === 409) {
     return 'A personal wallet already exists for this account.'
   }
@@ -94,7 +116,18 @@ const requestCloud = async <T>(
     throw new HolderApiError('The wallet service is unavailable.')
   }
   if (!response.ok) {
-    throw new HolderApiError(failureMessage(response.status), response.status)
+    let code: BindingErrorCode | undefined = undefined
+    try {
+      const body = (await response.json()) as { errorCode?: unknown } | null
+      code = bindingErrorCode(body?.errorCode)
+    } catch {
+      // A non-JSON error body still produces the generic status-based message.
+    }
+    throw new HolderApiError(
+      failureMessage(response.status, code),
+      response.status,
+      code,
+    )
   }
 
   try {
@@ -149,6 +182,56 @@ export const getHolderWalletState = async (): Promise<HolderWalletState> => {
     }
   } catch {
     return { available: false, hasWallet: false, dids: [] }
+  }
+}
+
+const DID_URL_PATTERN = /^did:[a-z0-9]+:.+$/i
+
+const asRecord = (value: unknown): Record<string, unknown> | undefined => {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return undefined
+  }
+  return value as Record<string, unknown>
+}
+
+/**
+ * Platform's primary DID preference. It is a UI suggestion only: callers must
+ * never use it as an implicit holderDidUrl (spec 6.3 / N-P-01).
+ *
+ * The preference is org-scoped on the platform side, so it is only available
+ * when the holder session can supply both ids. A personal wallet without an
+ * org simply has no suggestion.
+ */
+export const getPrimaryDidUrl = async (
+  orgId?: string | null,
+  userId?: string | null,
+): Promise<string | null> => {
+  const normalizedOrgId = orgId?.trim()
+  if (!normalizedOrgId) {
+    return null
+  }
+
+  const session = userId ? null : await getServerSession(authOptions)
+  const normalizedUserId = userId?.trim() || session?.user?.id
+  if (!normalizedUserId) {
+    return null
+  }
+
+  const path = `${apiRoutes.organizations.root}/${encodeURIComponent(normalizedOrgId)}/users/${encodeURIComponent(normalizedUserId)}${apiRoutes.cloudWallet.holderPrimaryDid}`
+  const response = await cloudFetch(path)
+  if (!response?.ok) {
+    return null
+  }
+
+  try {
+    const body = (await response.json()) as ApiEnvelope<unknown>
+    const data = asRecord(body?.data)
+    const didUrl = [data?.didUrl, data?.primaryDidUrl, data?.did].find(
+      (value): value is string => typeof value === 'string',
+    )
+    return didUrl && DID_URL_PATTERN.test(didUrl.trim()) ? didUrl.trim() : null
+  } catch {
+    return null
   }
 }
 
@@ -215,17 +298,15 @@ export const authorizationRequest = (
     credentialsToRequest,
   })
 
-export const requestHolderCredential = (payload: {
-  credentialOfferUri: string
-  credentialsToRequest: string[]
-  authorizationCode?: string
-  codeVerifier?: string
-  txCode?: string
-  holderDidUrl?: string
-  bindingPolicy?: 'require' | 'prefer'
-  sendNotification?: boolean
-}): Promise<unknown> =>
-  post(apiRoutes.cloudWallet.requestCredential, { ...payload })
+export const requestHolderCredential = async (
+  payload: HolderCredentialRequestPayload,
+): Promise<unknown> => {
+  // Validate every selection before token redemption so a user input error
+  // cannot consume the offer or transaction code (spec 5.1). Keeping this
+  // function async also surfaces the validation failure as a rejected promise.
+  assertValidHolderCredentialRequest(payload)
+  return post(apiRoutes.cloudWallet.requestCredential, { ...payload })
+}
 
 export const getHolderProofs = (): Promise<unknown> =>
   requestCloud<unknown>(apiRoutes.cloudWallet.proofs)

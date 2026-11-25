@@ -169,6 +169,7 @@ export const apiRoutes = {
     resolveCredentialOffer: '/oid4vc/holder/resolve-credential-offer',
     authorizationRequest: '/oid4vc/holder/authorization-request',
     requestCredential: '/oid4vc/holder/request-credential',
+    holderPrimaryDid: '/oid4vc/holder/primary-did',
     resolveProofRequest: '/oid4vc/holder/resolve-proof-request',
     acceptProofRequest: '/oid4vc/holder/accept-proof-request',
   },

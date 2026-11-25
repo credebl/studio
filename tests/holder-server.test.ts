@@ -3,6 +3,8 @@ import {
   createHolderWallet,
   getHolderSession,
   getHolderWalletState,
+  getPrimaryDidUrl,
+  requestHolderCredential,
   requireHolderSession,
 } from '@/lib/server/holder'
 import { jsonResponse, makeSession } from './helpers'
@@ -191,5 +193,141 @@ describe('holder wallet calls', () => {
     await expect(createHolderWallet('My wallet')).rejects.toThrow(
       'A personal wallet already exists for this account.',
     )
+  })
+})
+
+const lastRequestUrl = (): string => String(fetchMock.mock.calls.at(-1)?.[0])
+
+const lastRequestBody = (): Record<string, unknown> =>
+  JSON.parse(String(fetchMock.mock.calls.at(-1)?.[1]?.body)) as Record<
+    string,
+    unknown
+  >
+
+describe('credential binding forwarding', () => {
+  beforeEach(() => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+  })
+
+  it('forwards the nested binding unchanged and omits a flat DID', async () => {
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(jsonResponse({ data: {} }))
+
+    await expect(
+      requestHolderCredential({
+        credentialOfferUri: 'openid-credential-offer://?credential_offer=abc',
+        credentialsToRequest: ['person-sdjwt'],
+        binding: {
+          mode: 'new-key',
+          didMethod: 'did:jwk',
+          signatureAlgorithm: 'EdDSA',
+        },
+        sendNotification: true,
+      }),
+    ).resolves.toBeDefined()
+
+    expect(lastRequestUrl()).toBe(
+      'http://platform.test/oid4vc/holder/request-credential',
+    )
+    expect(lastRequestBody().binding).toEqual({
+      mode: 'new-key',
+      didMethod: 'did:jwk',
+      signatureAlgorithm: 'EdDSA',
+    })
+    expect(lastRequestBody()).not.toHaveProperty('holderDidUrl')
+  })
+
+  it('keeps the flat holderDidUrl form backward compatible', async () => {
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(jsonResponse({ data: {} }))
+
+    await requestHolderCredential({
+      credentialOfferUri: 'openid-credential-offer://?credential_offer=abc',
+      credentialsToRequest: ['person-sdjwt'],
+      holderDidUrl: 'did:web:holder.example.com#key-1',
+      bindingPolicy: 'prefer',
+    })
+
+    expect(lastRequestBody()).toMatchObject({
+      holderDidUrl: 'did:web:holder.example.com#key-1',
+      bindingPolicy: 'prefer',
+    })
+    expect(lastRequestBody()).not.toHaveProperty('binding')
+  })
+
+  it('rejects conflicting forms before any token is redeemed', async () => {
+    await expect(
+      requestHolderCredential({
+        credentialOfferUri: 'openid-credential-offer://?credential_offer=abc',
+        credentialsToRequest: ['person-sdjwt'],
+        holderDidUrl: 'did:key:z6Mkflat',
+        binding: {
+          mode: 'existing-did',
+          holderDidUrl: 'did:web:holder.example.com#key-1',
+        },
+      }),
+    ).rejects.toThrow('CONFLICTING_HOLDER_DID_URL')
+
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('maps upstream binding errors without leaking the upstream body', async () => {
+    fetchMock.mockResolvedValueOnce(sessionTokens()).mockResolvedValueOnce(
+      jsonResponse(
+        {
+          errorCode: 'UNSUPPORTED_PROOF_ALGORITHM',
+          message: 'secret upstream detail: txCode=1234',
+        },
+        400,
+      ),
+    )
+
+    await expect(
+      requestHolderCredential({
+        credentialOfferUri: 'openid-credential-offer://?credential_offer=abc',
+        credentialsToRequest: ['person-sdjwt'],
+        binding: { mode: 'new-key', signatureAlgorithm: 'PS256' },
+      }),
+    ).rejects.toMatchObject({
+      code: 'UNSUPPORTED_PROOF_ALGORITHM',
+      status: 400,
+      message: 'The proof algorithm is not supported by this offer',
+    })
+  })
+})
+
+describe('primary DID suggestion', () => {
+  beforeEach(() => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+  })
+
+  it('reads the org-scoped primary DID preference', async () => {
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { didUrl: 'did:web:holder.example.com#key-1' } }),
+      )
+
+    await expect(getPrimaryDidUrl('org-1', 'user-1')).resolves.toBe(
+      'did:web:holder.example.com#key-1',
+    )
+    expect(lastRequestUrl()).toBe(
+      'http://platform.test/orgs/org-1/users/user-1/oid4vc/holder/primary-did',
+    )
+  })
+
+  it('returns null for an absent preference', async () => {
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+
+    await expect(getPrimaryDidUrl('org-1', 'user-1')).resolves.toBeNull()
+  })
+
+  it('does not call the platform without an org id', async () => {
+    await expect(getPrimaryDidUrl(null, 'user-1')).resolves.toBeNull()
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 })
