@@ -26,48 +26,61 @@ export interface ApiEnvelope<T> {
 interface SessionDetails {
   sessionToken?: string
   refreshToken?: string
+  /** Platform database user id; the NextAuth session user id is not this value. */
+  userId?: string
 }
 
 interface RefreshedTokens {
   access_token?: string
 }
 
+const loadSessionDetails = cache(async (): Promise<SessionDetails | null> => {
+  if (!BASE_URL) {
+    return null
+  }
+
+  const session = await getServerSession(authOptions)
+  if (!session?.sessionId) {
+    return null
+  }
+
+  try {
+    // The platform decrypts with JSON.parse, so the session id must be
+    // JSON-encoded before encryption. Encrypting the raw string yields a
+    // payload the backend rejects with 400 Invalid Credentials.
+    const encryptedSessionId = passwordEncryption(
+      JSON.stringify(session.sessionId),
+    )
+    const response = await fetch(
+      `${BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encodeURIComponent(encryptedSessionId)}`,
+      { cache: 'no-store' },
+    )
+
+    if (!response.ok) {
+      return null
+    }
+
+    const body = (await response.json()) as ApiEnvelope<SessionDetails>
+    return body?.data ?? null
+  } catch {
+    return null
+  }
+})
+
 export const loadSessionTokens = cache(
   async (): Promise<SessionTokens | null> => {
-    if (!BASE_URL) {
-      return null
-    }
+    const details = await loadSessionDetails()
+    const token = details?.sessionToken
+    const refreshToken = details?.refreshToken
 
-    const session = await getServerSession(authOptions)
-    if (!session?.sessionId) {
-      return null
-    }
-
-    try {
-      // The platform decrypts with JSON.parse, so the session id must be
-      // JSON-encoded before encryption. Encrypting the raw string yields a
-      // payload the backend rejects with 400 Invalid Credentials.
-      const encryptedSessionId = passwordEncryption(
-        JSON.stringify(session.sessionId),
-      )
-      const response = await fetch(
-        `${BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encodeURIComponent(encryptedSessionId)}`,
-        { cache: 'no-store' },
-      )
-
-      if (!response.ok) {
-        return null
-      }
-
-      const body = (await response.json()) as ApiEnvelope<SessionDetails>
-      const token = body?.data?.sessionToken
-      const refreshToken = body?.data?.refreshToken
-
-      return token && refreshToken ? { token, refreshToken } : null
-    } catch {
-      return null
-    }
+    return token && refreshToken ? { token, refreshToken } : null
   },
+)
+
+/** Resolve the platform user id needed by user-scoped APIs such as primary DID. */
+export const loadSessionUserId = cache(
+  async (): Promise<string | null> =>
+    (await loadSessionDetails())?.userId?.trim() || null,
 )
 
 const refreshAccessToken = async (

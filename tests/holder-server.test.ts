@@ -318,6 +318,33 @@ describe('primary DID suggestion', () => {
     )
   })
 
+  it('resolves the platform user id from session details when none is supplied', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(
+      makeSession({ user: { id: '', name: 'Holder' } }),
+    )
+    const details = (): Response =>
+      jsonResponse({
+        data: {
+          sessionToken: 'access-token',
+          refreshToken: 'refresh-token',
+          userId: 'platform-user-1',
+        },
+      })
+    fetchMock
+      .mockResolvedValueOnce(details())
+      .mockResolvedValueOnce(details())
+      .mockResolvedValueOnce(
+        jsonResponse({ data: { didUrl: 'did:key:z6MkSuggestion' } }),
+      )
+
+    await expect(getPrimaryDidUrl('org-1')).resolves.toBe(
+      'did:key:z6MkSuggestion',
+    )
+    expect(lastRequestUrl()).toBe(
+      'http://platform.test/orgs/org-1/users/platform-user-1/oid4vc/holder/primary-did',
+    )
+  })
+
   it('returns null for an absent preference', async () => {
     fetchMock
       .mockResolvedValueOnce(sessionTokens())

@@ -1,4 +1,4 @@
-import { type ApiEnvelope, platformFetch } from './platform'
+import { type ApiEnvelope, loadSessionUserId, platformFetch } from './platform'
 import {
   BINDING_ERROR_MESSAGES,
   type BindingErrorCode,
@@ -212,7 +212,11 @@ export const getPrimaryDidUrl = async (
   }
 
   const session = userId ? null : await getServerSession(authOptions)
-  const normalizedUserId = userId?.trim() || session?.user?.id
+  // The NextAuth session user id is the email/session state, while the platform
+  // primary-DID route is scoped by its database user id. Resolve the latter
+  // from the same session-details exchange used for API tokens.
+  const normalizedUserId =
+    userId?.trim() || (await loadSessionUserId()) || session?.user?.id?.trim()
   if (!normalizedUserId) {
     return null
   }
