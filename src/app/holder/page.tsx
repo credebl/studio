@@ -6,11 +6,13 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { KeyRound, ShieldCheck, Wallet } from 'lucide-react'
 import { getHolderWalletState, requireHolderSession } from '@/lib/server/holder'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { HolderOverviewMetricsPanel } from '@/features/holder/components/holder-overview-metrics'
 import Link from 'next/link'
+import { buildHolderOverviewMetrics } from '@/features/holder/overview-metrics'
+import { getHolderOverviewData } from '@/lib/server/holder-overview'
 import { redirect } from 'next/navigation'
 
 export const metadata = {
@@ -38,59 +40,26 @@ export default async function HolderOverviewPage(): Promise<React.JSX.Element> {
   }
 
   const primaryDid = wallet.dids.find((did) => did.isPrimary) ?? wallet.dids[0]
+  const overview = await getHolderOverviewData()
+  const metrics = buildHolderOverviewMetrics({
+    dids: wallet.dids,
+    ...overview,
+  })
 
   return (
     <div className="space-y-6">
       <div className="space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight">My wallet</h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-2xl font-bold tracking-tight">My wallet</h2>
+          <Badge variant="outline">Wallet active</Badge>
+        </div>
         <p className="text-muted-foreground text-sm">
           Your personal credentials and identifiers. This wallet belongs to you,
           not to an organization.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Card>
-          <CardContent className="flex items-center justify-between p-6">
-            <div>
-              <p className="text-sm font-medium">Wallet status</p>
-              <p className="mt-2 text-lg font-semibold text-green-600">
-                Active
-              </p>
-            </div>
-            <Wallet
-              aria-hidden="true"
-              className="text-muted-foreground/40 size-9"
-            />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center justify-between p-6">
-            <div>
-              <p className="text-sm font-medium">DIDs</p>
-              <p className="mt-2 text-3xl font-bold tabular-nums">
-                {wallet.dids.length}
-              </p>
-            </div>
-            <KeyRound
-              aria-hidden="true"
-              className="text-muted-foreground/40 size-9"
-            />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="flex items-center justify-between p-6">
-            <div>
-              <p className="text-sm font-medium">Sharing</p>
-              <p className="mt-2 text-sm">Under your control</p>
-            </div>
-            <ShieldCheck
-              aria-hidden="true"
-              className="text-muted-foreground/40 size-9"
-            />
-          </CardContent>
-        </Card>
-      </div>
+      <HolderOverviewMetricsPanel metrics={metrics} />
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Card>

@@ -138,18 +138,57 @@ const w3cClaims = (
     .map(([label, value]) => ({ label, value: formatClaimValue(value) }))
 }
 
+export interface CredentialFacts {
+  type?: string
+  issuer?: string
+  issuedAt?: string
+  expiresAt?: string
+  bindingKid?: string
+  storedAt?: string
+  updatedAt?: string
+  state?: string
+}
+
 /**
- * Build a human-readable summary directly from the stored agent record. This
- * stays available without running the decode action, so a user can tell which
- * credential is in the vault before opening the raw JSON.
+ * Extract the fields shared by the vault details and the wallet metrics from
+ * the stored agent record. No decode action or private key material is needed.
  */
+export const credentialFacts = (
+  credential: HolderCredential,
+): CredentialFacts => {
+  const { raw, format } = credential
+  const embedded = credentialEmbedded(raw, format)
+  const payload = format === 'sd-jwt-vc' ? sdJwtPayload(credential) : embedded
+
+  return {
+    type: credentialTypeLabel(raw, format) ?? specificType(payload?.type),
+    issuer: credentialIssuer(raw, format) ?? stringValue(payload?.iss),
+    issuedAt:
+      format === 'w3c-vc'
+        ? firstString(embedded ?? {}, ['issuanceDate', 'issuedAt', 'validFrom'])
+        : (epochDate(payload?.iat) ?? credential.issuedAt),
+    expiresAt:
+      epochDate(payload?.exp) ?? firstString(payload ?? {}, ['expirationDate']),
+    bindingKid:
+      firstString(nestedRecord(payload?.cnf) ?? {}, ['kid', 'kidUrl']) ??
+      firstString(nestedRecord(embedded?.proof) ?? {}, [
+        'verificationMethod',
+        'kid',
+      ]),
+    storedAt: firstString(raw, ['createdAt', 'createDateTime']),
+    updatedAt: firstString(raw, ['updatedAt']),
+    state: credentialState(raw),
+  }
+}
+
+/** Build a human-readable summary directly from the stored agent record. */
 export const summarizeCredential = (
   credential: HolderCredential,
 ): CredentialSummary => {
   const { raw, format } = credential
   const tags = credentialTags(raw)
+  const facts = credentialFacts(credential)
   const embedded = credentialEmbedded(raw, format)
-  const payload = format === 'sd-jwt-vc' ? sdJwtPayload(credential) : embedded
   const metadata: CredentialDetail[] = []
   const add = (label: string, value?: string): void => {
     if (value) {
@@ -157,38 +196,35 @@ export const summarizeCredential = (
     }
   }
 
-  const type = credentialTypeLabel(raw, format) ?? specificType(payload?.type)
-  const issuer = credentialIssuer(raw, format) ?? stringValue(payload?.iss)
-  const issued =
-    format === 'w3c-vc'
-      ? firstString(embedded ?? {}, ['issuanceDate', 'issuedAt', 'validFrom'])
-      : (epochDate(payload?.iat) ?? credential.issuedAt)
-  const expires =
-    epochDate(payload?.exp) ?? firstString(payload ?? {}, ['expirationDate'])
-  const holderBinding = firstString(nestedRecord(payload?.cnf) ?? {}, [
-    'kid',
-    'kidUrl',
-  ])
   const proofAlgorithm =
     firstString(tags, ['alg', 'signatureAlgorithm', 'proofType']) ??
     firstArrayString(tags.proofTypes) ??
     firstString(nestedRecord(embedded?.proof) ?? {}, ['type'])
-  const state = credentialState(raw)
-  const stored = firstString(raw, ['createdAt', 'createDateTime'])
-  const updated = firstString(raw, ['updatedAt'])
 
-  add(format === 'mso_mdoc' ? 'Document type' : 'Credential type', type)
-  add('Issuer', issuer)
-  add('Issued', issued ? formatCredentialDate(issued) : undefined)
-  add('Expires', expires ? formatCredentialDate(expires) : undefined)
-  add('Holder binding', holderBinding)
+  add(format === 'mso_mdoc' ? 'Document type' : 'Credential type', facts.type)
+  add('Issuer', facts.issuer)
+  add(
+    'Issued',
+    facts.issuedAt ? formatCredentialDate(facts.issuedAt) : undefined,
+  )
+  add(
+    'Expires',
+    facts.expiresAt ? formatCredentialDate(facts.expiresAt) : undefined,
+  )
+  add('Holder binding', facts.bindingKid)
   add('Proof algorithm', proofAlgorithm)
   if (format === 'sd-jwt-vc') {
     add('Disclosure algorithm', firstString(tags, ['sdAlg']))
   }
-  add('Stored', stored ? formatCredentialDate(stored) : undefined)
-  add('Updated', updated ? formatCredentialDate(updated) : undefined)
-  add('Wallet state', state)
+  add(
+    'Stored',
+    facts.storedAt ? formatCredentialDate(facts.storedAt) : undefined,
+  )
+  add(
+    'Updated',
+    facts.updatedAt ? formatCredentialDate(facts.updatedAt) : undefined,
+  )
+  add('Wallet state', facts.state)
   add('Record ID', credential.id)
 
   return {
