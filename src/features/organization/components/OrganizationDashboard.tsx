@@ -22,15 +22,10 @@ import { useRouter } from 'next/navigation'
 
 type OrganizationDashboardProps = {
   orgId: string
-  setOrgDataForDetails: React.Dispatch<
-    React.SetStateAction<IOrganisation | null>
-  >
-  // orgData?: IOrganisation;
 }
 
 export const OrganizationDashboard = ({
   orgId,
-  setOrgDataForDetails,
 }: OrganizationDashboardProps): React.JSX.Element => {
   const router = useRouter()
   const [orgData, setOrgData] = useState<IOrganisation | null>(null)
@@ -61,7 +56,6 @@ export const OrganizationDashboard = ({
         setWalletStatus(true)
       }
       setOrgData(data?.data)
-      setOrgDataForDetails(data?.data)
     } else {
       console.error(response as string)
     }

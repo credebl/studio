@@ -282,7 +282,7 @@ const ClientCredentials = (): React.JSX.Element => {
                                   value={clientSecret}
                                 />
                               ) : (
-                                <span className="text-muted-foreground truncate font-mono text-sm">
+                                <span className="text-foreground truncate font-mono text-sm">
                                   {clientSecret}
                                 </span>
                               )}
@@ -307,7 +307,7 @@ const ClientCredentials = (): React.JSX.Element => {
                     href="https://docs.credebl.id/docs/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-medium text-blue-600 hover:underline"
+                    className="text-primary text-sm font-medium hover:underline"
                   >
                     View Documentation →
                   </a>

@@ -1,4 +1,4 @@
-const MODE = process.env.MODE || ''
+const MODE = process.env.NEXT_PUBLIC_MODE || ''
 
 export const didExamples: Record<string, string> = {
   'did:indy:bcovrin:testnet': 'did:indy:bcovrin:testnet:123abc456xyz',
@@ -85,4 +85,7 @@ export const didOptionsMap: Record<string, string[]> = {
     'did:key',
     'did:web',
   ],
+
+  // mdoc is signed with an X.509 certificate, so it has no DID method here.
+  sdjwt: ['did:key', 'did:web'],
 }

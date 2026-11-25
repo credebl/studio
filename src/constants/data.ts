@@ -22,6 +22,14 @@ export const navItems: NavItem[] = [
     items: [], // Empty array as there are no child items for Dashboard
   },
   {
+    title: 'Wallet',
+    url: '/wallet',
+    icon: 'wallet',
+    shortcut: ['w', 'w'],
+    isActive: false,
+    items: [],
+  },
+  {
     title: 'Connections',
     url: '/connections',
     icon: 'connections',
@@ -33,39 +41,103 @@ export const navItems: NavItem[] = [
     title: 'Credentials',
     url: '#', // Placeholder as there is no direct link for the parent
     icon: 'billing',
-    isActive: true,
-
     items: [
       {
-        title: 'Issue',
+        title: 'Issued credentials',
         url: '/credentials',
-        icon: 'userPen',
-        shortcut: ['m', 'm'],
+        icon: 'page',
+        shortcut: ['c', 'c'],
+        description: 'View credentials already issued by your organization.',
+        match: 'exact',
       },
       {
-        title: 'Verify',
-        shortcut: ['l', 'l'],
+        title: 'Issue via DIDComm',
+        url: '/credentials/issue',
+        icon: 'userPen',
+        shortcut: ['i', 'i'],
+        description:
+          'W3C credential issuance over DIDComm via connection, email, or bulk.',
+        match: 'prefix',
+      },
+      {
+        title: 'Verify via DIDComm',
         url: '/verification',
         icon: 'login',
+        shortcut: ['v', 'v'],
+        description: 'W3C proof requests over DIDComm.',
+        match: 'prefix',
+      },
+      {
+        title: 'OID4VC issuance',
+        url: '/oid4vc/issuers',
+        icon: 'add',
+        shortcut: ['o', 'i'],
+        description:
+          'OpenID4VCI: manage issuers, templates, and credential offers.',
+        match: 'prefix',
+        matchPaths: ['/oid4vc/create-issuer'],
+        // Reserve ['o', 'v'] for the upcoming OID4VP verification flow.
       },
     ],
   },
   {
-    title: 'Trust',
-    url: '#', // Placeholder as there is no direct link for the parent
-    icon: 'billing',
-    isActive: true,
-
-    items: [
-      {
-        title: 'x509',
-        shortcut: ['l', 'l'],
-        url: '/x509-certificate',
-        icon: 'login',
-      },
-    ],
+    title: 'x509 certificates',
+    url: '/x509-certificate',
+    icon: 'login',
+    shortcut: ['x', 'x'],
+    description: 'Manage x509 certificates.',
+    isActive: false,
+    items: [],
   },
 ]
+
+const normalizePath = (path: string): string => path.replace(/\/+$/, '') || '/'
+
+const matchesPath = (
+  pathname: string,
+  url: string,
+  match: NavItem['match'],
+): boolean => {
+  const currentPath = normalizePath(pathname)
+  const targetPath = normalizePath(url)
+
+  if (match === 'exact') {
+    return currentPath === targetPath
+  }
+
+  return (
+    currentPath === targetPath ||
+    currentPath.startsWith(targetPath === '/' ? '/' : `${targetPath}/`)
+  )
+}
+
+export const isNavItemActive = (pathname: string, item: NavItem): boolean => {
+  if (item.url === '#') {
+    return false
+  }
+
+  return [item.url, ...(item.matchPaths ?? [])].some((url) =>
+    matchesPath(pathname, url, item.match),
+  )
+}
+
+export const getActiveNavGroup = (
+  items: NavItem[],
+  pathname: string,
+): string | undefined =>
+  items.find((item) =>
+    item.items?.some((subItem) => isNavItemActive(pathname, subItem)),
+  )?.title
+
+// Only injected into the sidebar for users holding the platform_admin role.
+export const adminNavItem: NavItem = {
+  title: 'Admin',
+  url: '/admin',
+  icon: 'settings',
+  isActive: false,
+  shortcut: ['a', 'a'],
+  items: [],
+}
 
 export interface saleuser {
   id: number

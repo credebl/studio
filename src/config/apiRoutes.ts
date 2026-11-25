@@ -90,6 +90,8 @@ export const apiRoutes = {
     editUserROle: '/user-roles',
     didList: '/dids',
     createDid: '/agents/did',
+    didImportSession: '/agents/did/import/session',
+    importDidX509: '/agents/did/x509/import',
     primaryDid: '/primary-did',
     getOrgReferences: '/activity-count',
     deleteOrganization: '/deleteorganizations',
@@ -138,7 +140,26 @@ export const apiRoutes = {
     deleteWallet: '/agents/wallet',
   },
 
+  oid4vc: {
+    createIssuer: '/oid4vc/issuers',
+    issuers: '/oid4vc/issuers',
+    issuerTemplates: '/oid4vc',
+    credentialOffers: '/oid4vc/credential-offer',
+    createOffer: '/oid4vc',
+    deleteOffer: '/oid4vc',
+    revokeCredential: '/openid4vc/issuance-sessions',
+  },
+
   setting: {
     setting: '/client_credentials',
+  },
+
+  // Platform-admin (operator) endpoints. All of these are protected by the
+  // platform backend with the PLATFORM_ADMIN role.
+  platformAdmin: {
+    dashboardSummary: '/ecosystem/dashboard/summary',
+    ecosystemStatus: '/ecosystem/status',
+    updateEcosystemConfig: '/config/ecosystem',
+    invitations: '/invitations',
   },
 }

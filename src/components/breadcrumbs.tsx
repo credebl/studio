@@ -60,9 +60,7 @@ export function Breadcrumbs(): React.JSX.Element | null {
               const decodedTitle = decodeURIComponent(item.title)
 
               return (
-                <Fragment
-                  key={item.link ? item.link : `${item.title}-${index}`}
-                >
+                <Fragment key={`${item.link}-${item.title}-${index}`}>
                   {index !== items.length - 1 && (
                     <BreadcrumbItem className="hidden md:block">
                       <BreadcrumbLink

@@ -14,9 +14,7 @@ import {
   IconBell,
   IconChevronsDown,
   IconCircleCheck,
-  IconCreditCard,
   IconLogout,
-  IconSparkles,
 } from '@tabler/icons-react'
 import {
   SidebarMenu,
@@ -79,19 +77,8 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <IconSparkles className="mr-2 h-4 w-4" />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
                 <IconCircleCheck className="mr-2 h-4 w-4" />
                 Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard className="mr-2 h-4 w-4" />
-                Billing
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <IconBell className="mr-2 h-4 w-4" />
