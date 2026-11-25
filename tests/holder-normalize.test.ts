@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { describe, expect, it } from 'vitest'
 import {
   normalizeHolderCredentials,
@@ -90,6 +91,43 @@ describe('holder normalization', () => {
     expect(offer.configurations.map((item) => item.id)).toEqual([
       'Degree',
       'IdCard',
+    ])
+  })
+
+  it('only offers the configurations present in the offer payload', () => {
+    const offer = normalizeResolvedOffer({
+      credentialOfferPayload: {
+        credential_configuration_ids: ['Local Degree-sdjwt'],
+      },
+      credentialIssuerMetadata: {
+        credential_configurations_supported: {
+          'Local Degree-sdjwt': { format: 'dc+sd-jwt' },
+          'Local Degree-mdoc': { format: 'mso_mdoc' },
+          'Local Degree-w3c': { format: 'jwt_vc_json' },
+        },
+      },
+    })
+
+    expect(offer.configurations.map((item) => item.id)).toEqual([
+      'Local Degree-sdjwt',
+    ])
+  })
+
+  it('reads offered ids from a nested credential_offer payload', () => {
+    const offer = normalizeResolvedOffer({
+      credentialOfferPayload: {
+        credential_offer: {
+          credential_configuration_ids: ['Local Degree-sdjwt'],
+        },
+      },
+      credential_configurations_supported: {
+        'Local Degree-sdjwt': { format: 'dc+sd-jwt' },
+        'Local Degree-mdoc': { format: 'mso_mdoc' },
+      },
+    })
+
+    expect(offer.configurations.map((item) => item.id)).toEqual([
+      'Local Degree-sdjwt',
     ])
   })
 })

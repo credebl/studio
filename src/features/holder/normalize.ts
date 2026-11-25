@@ -185,16 +185,62 @@ const configurationId = (
   return { id: String(index), label: String(index), raw: {} }
 }
 
+const OFFERED_ID_KEYS = [
+  'credential_configuration_ids',
+  'credentialConfigurationIds',
+]
+
 /**
- * Extract credential configuration ids from the resolved offer. The agent may
- * return them at several nesting levels, so scan the known keys and fall back
- * to a shallow recursive search.
+ * The resolved offer carries the configurations that were actually offered in
+ * the offer payload. Issuer metadata also lists every configuration the issuer
+ * supports, so it must not be used while that payload is present.
+ */
+const findOfferedConfigurationIds = (value: unknown): unknown[] => {
+  if (isRecord(value)) {
+    for (const key of OFFERED_ID_KEYS) {
+      const candidate = value[key]
+      if (Array.isArray(candidate)) {
+        return candidate
+      }
+    }
+    for (const key of [
+      'credentialOfferPayload',
+      'credentialOffer',
+      'credential_offer',
+      'resolvedCredentialOffer',
+    ]) {
+      const nested = findOfferedConfigurationIds(value[key])
+      if (nested.length) {
+        return nested
+      }
+    }
+  }
+  if (Array.isArray(value)) {
+    for (const child of value) {
+      const nested = findOfferedConfigurationIds(child)
+      if (nested.length) {
+        return nested
+      }
+    }
+  }
+  return []
+}
+
+/**
+ * Extract credential configuration ids from the resolved offer. Prefer the
+ * ids in the offer payload, then fall back to known configuration collections
+ * and a shallow recursive search for older or differently shaped responses.
  */
 const findConfigurations = (value: unknown): unknown[] => {
+  const offeredIds = findOfferedConfigurationIds(value)
+  if (offeredIds.length) {
+    return offeredIds
+  }
+
   const knownKeys = [
-    'credentialConfigurationsSupported',
     'credential_configurations_supported',
-    'credentialConfigurationIds',
+    'credentialConfigurationsSupported',
+    ...OFFERED_ID_KEYS,
     'credentialsToRequest',
     'supportedCredentialConfigurations',
     'configurations',
