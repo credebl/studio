@@ -19,6 +19,9 @@ jobs:
     name: Version or tag
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    outputs:
+      published: ${{ steps.changesets.outputs.published }}
+      version: ${{ fromJSON(steps.changesets.outputs.publishedPackages || '[]')[0].version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7.0.1
@@ -41,6 +44,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Create version PR or tag release
+        id: changesets
         uses: changesets/action@v2.1.2
         with:
           version-script: pnpm changeset:version
@@ -54,3 +58,18 @@ jobs:
           push-git-tags: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Releases created with GITHUB_TOKEN do not trigger `release: published`
+  # workflows, so build and publish the image from here once a release is cut.
+  build-image:
+    name: Build image
+    needs: release
+    if: needs.release.outputs.published == 'true'
+    permissions:
+      contents: read
+      packages: write
+    uses: ./.github/workflows/build-image.yml
+    with:
+      environment: prod
+      tag: v${{ needs.release.outputs.version }}
+      release: true
