@@ -1,3 +1,4 @@
+import { ACTIVE_THEME } from '@/lib/theme-assets'
 import Image from 'next/image'
 import React from 'react'
 import { defaultCredeblFooterText } from '../config/CommonConstant'
@@ -7,7 +8,7 @@ interface IFooter {
 }
 
 const Footer: React.FC<IFooter> = ({ fixed = false }) => {
-  const activeTheme = (process.env.NEXT_PUBLIC_ACTIVE_THEME || '').toUpperCase()
+  const activeTheme = ACTIVE_THEME.toUpperCase()
   const footerText =
     process.env.NEXT_PUBLIC_FOOTER_TEXT || defaultCredeblFooterText
 

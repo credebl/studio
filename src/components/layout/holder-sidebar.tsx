@@ -12,6 +12,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { ACTIVE_THEME } from '@/lib/theme-assets'
 import { Icons } from '@/components/icons'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,8 +20,7 @@ import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+const APP_ENV = ACTIVE_THEME
 
 type HolderNavItem = {
   title: string

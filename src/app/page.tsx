@@ -1,18 +1,23 @@
 'use client'
 
+import {
+  ACTIVE_THEME,
+  DEFAULT_THEME_ASSET,
+  fallbackOnce,
+  themeFaviconPath,
+} from '@/lib/theme-assets'
 import { JSX, useEffect } from 'react'
 import Loader from '@/components/Loader'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+const APP_ENV = ACTIVE_THEME
 
 export default function Home(): JSX.Element {
   const { data: session, status } = useSession()
   const router = useRouter()
 
-  const logoImageSrc = `/favicons/favicon-${APP_ENV}.ico`
+  const logoImageSrc = themeFaviconPath(APP_ENV)
 
   useEffect(() => {
     if (status === 'loading') {
@@ -41,6 +46,12 @@ export default function Home(): JSX.Element {
           <img
             src={logoImageSrc}
             alt={`${APP_ENV} Logo`}
+            onError={(e) =>
+              fallbackOnce(
+                e.currentTarget,
+                themeFaviconPath(DEFAULT_THEME_ASSET),
+              )
+            }
             className="h-14 w-14 object-contain"
           />
         </div>

@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils'
 import { cookies } from 'next/headers'
 import { fontVariables } from '@/lib/font'
 import { getServerSession } from 'next-auth/next'
+import { resolveThemeName } from '@/lib/theme-assets'
 
 // Create a new type extending Session to guarantee expires is defined
 type SessionWithExpires = NextAuthSession & { expires: string }
@@ -49,7 +50,9 @@ export default async function RootLayout({
     : null
 
   const cookieStore = await cookies()
-  const activeThemeValue = cookieStore.get('active_theme')?.value
+  const activeThemeValue = resolveThemeName(
+    cookieStore.get('active_theme')?.value,
+  )
   const isScaled = activeThemeValue?.endsWith('-scaled')
 
   return (

@@ -1,6 +1,13 @@
 'use client'
 
 import {
+  ACTIVE_THEME,
+  DEFAULT_THEME_ASSET,
+  fallbackOnce,
+  themeFaviconPath,
+  themeLogoPath,
+} from '@/lib/theme-assets'
+import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
@@ -30,7 +37,6 @@ import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { usePathname, useRouter } from 'next/navigation'
-
 import { IconChevronRight } from '@tabler/icons-react'
 import { Icons } from '../icons'
 import Image from 'next/image'
@@ -42,15 +48,12 @@ import { setSidebarCollapsed } from '@/lib/sidebarSlice'
 import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+const APP_ENV = ACTIVE_THEME
 
 const APP_CONFIG = {
-  logo: (theme: string, resolvedTheme: string): string => {
-    const variant = resolvedTheme === 'dark' ? '_logo_dark' : '_logo'
-    return `/logos/${theme}${variant}.svg`
-  },
-  collapsedLogo: (theme: string): string => `/favicons/favicon-${theme}.ico`,
+  logo: (theme: string, resolvedTheme: string): string =>
+    themeLogoPath(theme, resolvedTheme === 'dark'),
+  collapsedLogo: (theme: string): string => themeFaviconPath(theme),
   poweredBy: (theme: string): { src: string; alt: string } | null => {
     if (theme === 'credebl') {
       return null
@@ -213,6 +216,15 @@ export default function AppSidebar(): React.JSX.Element {
                 alt="Full Logo"
                 className="h-auto max-h-[100px] w-auto object-contain"
                 src={logoImageSrc}
+                onError={(e) =>
+                  fallbackOnce(
+                    e.currentTarget,
+                    themeLogoPath(
+                      DEFAULT_THEME_ASSET,
+                      resolvedTheme === 'dark',
+                    ),
+                  )
+                }
               />
             </div>
           ) : (
@@ -223,6 +235,12 @@ export default function AppSidebar(): React.JSX.Element {
                 alt="Collapsed Logo"
                 className="h-full w-full object-contain"
                 src={collapsedLogoImageSrc}
+                onError={(e) =>
+                  fallbackOnce(
+                    e.currentTarget,
+                    themeFaviconPath(DEFAULT_THEME_ASSET),
+                  )
+                }
               />
             </div>
           )}

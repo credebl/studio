@@ -30,12 +30,12 @@ describe('sendVerificationMail', () => {
   it('encodes a provided clientAlias in the query string', async () => {
     await sendVerificationMail({
       email: 'test@example.com',
-      clientAlias: 'SOVIO',
+      clientAlias: 'ACME',
     })
 
     expect(axiosPostMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: '/auth/verification-mail?clientAlias=SOVIO',
+        url: '/auth/verification-mail?clientAlias=ACME',
       }),
     )
   })
