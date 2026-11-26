@@ -133,3 +133,20 @@ export interface AdminDashboardMetrics {
   features: MetricResult<AdminPlatformFeatures>
   cloudWallet: CloudBaseWalletStatus
 }
+
+/**
+ * Read-only platform configuration. Built from an allow-list: secrets are
+ * reduced to a "configured" flag and internal ids are left out.
+ */
+export interface AdminPlatformSettings {
+  externalIp: string
+  inboundEndpoint: string
+  apiEndpoint: string
+  tailsFileServer: string
+  emailFrom: string
+  emailUsername: string
+  emailApiKeyConfigured: boolean
+  ecosystemEnabled: boolean | null
+  createdAt?: string
+  updatedAt?: string
+}

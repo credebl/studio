@@ -5,6 +5,7 @@ import type {
   AdminLedgerSummary,
   AdminOrganizationSummary,
   AdminPlatformFeatures,
+  AdminPlatformSettings,
   MetricResult,
 } from '@/features/admin/types'
 import { type ApiEnvelope, platformFetch } from './platform'
@@ -252,7 +253,38 @@ export const getInvitationsMetric = (): Promise<
   })
 
 interface PlatformSettingsPayload {
-  platform_config?: { isEcosystemEnabled?: unknown }[]
+  platform_config?: Record<string, unknown>[]
+}
+
+const readPlatformConfigRow = async (): Promise<Record<
+  string,
+  unknown
+> | null> => {
+  const result = await request<PlatformSettingsPayload>(
+    apiRoutes.platformAdmin.platformSettings,
+  )
+  if (!result?.ok) {
+    return null
+  }
+
+  const row = result.body?.data?.platform_config?.[0]
+  return row && typeof row === 'object' ? row : null
+}
+
+const text = (value: unknown): string => {
+  if (typeof value !== 'string') {
+    return ''
+  }
+
+  return value.trim()
+}
+
+const isoDate = (value: unknown): string | undefined => {
+  if (typeof value !== 'string' || Number.isNaN(Date.parse(value))) {
+    return undefined
+  }
+
+  return value
 }
 
 /**
@@ -263,21 +295,46 @@ export const getPlatformFeatures = (): Promise<
   MetricResult<AdminPlatformFeatures>
 > =>
   guard(async () => {
-    const result = await request<PlatformSettingsPayload>(
-      apiRoutes.platformAdmin.platformSettings,
-    )
-    if (!result?.ok) {
+    const row = await readPlatformConfigRow()
+    if (!row) {
       return FAILED
     }
 
-    const rows = result.body?.data?.platform_config
-    if (!Array.isArray(rows)) {
-      return FAILED
-    }
-
-    const flag = rows[0]?.isEcosystemEnabled
+    const flag = row.isEcosystemEnabled
     return succeed({
       ecosystemEnabled: typeof flag === 'boolean' ? flag : null,
+    })
+  })
+
+/**
+ * Platform configuration for the read-only settings page. Only allow-listed
+ * fields are copied: the email API key is reduced to a flag (not even its
+ * length is kept) and ids, audit user ids and soft-delete markers are dropped.
+ */
+export const getPlatformSettings = (): Promise<
+  MetricResult<AdminPlatformSettings>
+> =>
+  guard(async () => {
+    const row = await readPlatformConfigRow()
+    if (!row) {
+      return FAILED
+    }
+
+    const flag = row.isEcosystemEnabled
+    const createdAt = isoDate(row.createDateTime)
+    const updatedAt = isoDate(row.lastChangedDateTime)
+
+    return succeed({
+      externalIp: text(row.externalIp),
+      inboundEndpoint: text(row.inboundEndpoint),
+      apiEndpoint: text(row.apiEndpoint),
+      tailsFileServer: text(row.tailsFileServer),
+      emailFrom: text(row.emailFrom),
+      emailUsername: text(row.username),
+      emailApiKeyConfigured: text(row.sgApiKey).length > 0,
+      ecosystemEnabled: typeof flag === 'boolean' ? flag : null,
+      ...(createdAt ? { createdAt } : {}),
+      ...(updatedAt ? { updatedAt } : {}),
     })
   })
 

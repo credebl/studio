@@ -7,6 +7,7 @@ import {
   getLedgers,
   getOrganizationCount,
   getPlatformFeatures,
+  getPlatformSettings,
   getRecentOrganizations,
   getSchemaCount,
 } from '@/lib/server/admin-metrics'
@@ -284,6 +285,84 @@ describe('platform features', () => {
   })
 })
 
+describe('platform settings (view only)', () => {
+  const row = {
+    id: 'row-id',
+    externalIp: ' 10.0.0.5 ',
+    inboundEndpoint: null,
+    username: 'mailer',
+    sgApiKey: 'SG.super-secret-key',
+    emailFrom: 'no-reply@example.test',
+    isEcosystemEnabled: false,
+    apiEndpoint: 'https://api.example.test',
+    tailsFileServer: 'https://tails.example.test',
+    createDateTime: '2026-11-24T17:49:09.142Z',
+    createdBy: '1',
+    lastChangedDateTime: 'not a date',
+    lastChangedBy: 'user-9',
+    deletedAt: null,
+  }
+
+  it('exposes the allow-listed fields and trims values', async () => {
+    respondWith({
+      '/users/platform-settings': () => jsonResponse(settingsBody([row])),
+    })
+
+    expect(await getPlatformSettings()).toEqual({
+      ok: true,
+      value: {
+        externalIp: '10.0.0.5',
+        inboundEndpoint: '',
+        apiEndpoint: 'https://api.example.test',
+        tailsFileServer: 'https://tails.example.test',
+        emailFrom: 'no-reply@example.test',
+        emailUsername: 'mailer',
+        emailApiKeyConfigured: true,
+        ecosystemEnabled: false,
+        createdAt: '2026-11-24T17:49:09.142Z',
+      },
+    })
+  })
+
+  it('never carries the API key, ids or audit users', async () => {
+    respondWith({
+      '/users/platform-settings': () => jsonResponse(settingsBody([row])),
+    })
+
+    const json = JSON.stringify(await getPlatformSettings())
+    expect(json).not.toContain('super-secret')
+    expect(json).not.toContain('row-id')
+    expect(json).not.toContain('user-9')
+    expect(json).not.toContain('sgApiKey')
+  })
+
+  it('reports a missing or blank API key as not configured', async () => {
+    respondWith({
+      '/users/platform-settings': () =>
+        jsonResponse(settingsBody([{ ...row, sgApiKey: '   ' }])),
+    })
+    const blank = await getPlatformSettings()
+    expect(blank.ok && blank.value.emailApiKeyConfigured).toBe(false)
+
+    respondWith({
+      '/users/platform-settings': () =>
+        jsonResponse(settingsBody([{ ...row, sgApiKey: undefined }])),
+    })
+    const missing = await getPlatformSettings()
+    expect(missing.ok && missing.value.emailApiKeyConfigured).toBe(false)
+  })
+
+  it('is unavailable when there is no settings row or the call fails', async () => {
+    respondWith({
+      '/users/platform-settings': () => jsonResponse(settingsBody([])),
+    })
+    expect(await getPlatformSettings()).toEqual({ ok: false })
+
+    respondWith({ '/users/platform-settings': () => jsonResponse({}, 403) })
+    expect(await getPlatformSettings()).toEqual({ ok: false })
+  })
+})
+
 describe('getAdminDashboardMetrics', () => {
   it('lets one failing source leave the others intact', async () => {
     getDashboardSummary.mockResolvedValue(null)
@@ -334,6 +413,7 @@ describe('admin navigation', () => {
     )
     expect(urls).toEqual([
       '/admin',
+      '/admin/platform-settings',
       '/admin/cloud-wallet',
       '/admin/invitations',
       '/admin/settings',
