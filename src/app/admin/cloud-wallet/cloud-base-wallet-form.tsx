@@ -234,12 +234,9 @@ export function CloudBaseWalletPanel({
 
         <CardContent className="space-y-5">
           {actionState?.configured ? (
-            <Alert
-              variant={
-                actionState.status === 'error' ? 'destructive' : 'default'
-              }
-              role={actionState.status === 'error' ? 'alert' : 'status'}
-            >
+            // The wallet is configured here, so a conflict ("already
+            // configured") is information, not a failure: keep it neutral.
+            <Alert variant="default" role="status">
               <AlertDescription>{actionState.message}</AlertDescription>
             </Alert>
           ) : null}
