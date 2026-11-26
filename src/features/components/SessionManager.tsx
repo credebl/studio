@@ -32,6 +32,7 @@ const preventRedirectOnPaths = [
   '/agent-config',
   '/credentials',
   '/verification',
+  '/holder',
   '/oid4vc',
 ]
 const excludeRouteForSessionCheck = [
@@ -76,11 +77,19 @@ export const SessionManager = ({
     } else if (!redirectTo && !isOnRestrictedPage) {
       const isPlatformAdmin = session?.isPlatformAdmin === true
       const hasOrgAccess = session?.hasOrgAccess === true
+      const hasHolderAccess = session?.hasHolderAccess === true
 
       // A platform operator without an org role has no usable org console, so
       // keep them in the platform shell instead of a dashboard full of 403s.
       if (isPlatformAdmin && !hasOrgAccess) {
         router.push('/admin')
+        return
+      }
+
+      // A holder-only user has no usable org console, so keep them in the
+      // personal wallet shell instead of a dashboard full of 403s.
+      if (!hasOrgAccess && hasHolderAccess) {
+        router.push('/holder')
         return
       }
 

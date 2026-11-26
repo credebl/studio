@@ -9,6 +9,7 @@ declare module 'next-auth' {
     sessionId?: string
     isPlatformAdmin?: boolean
     hasOrgAccess?: boolean
+    hasHolderAccess?: boolean
   }
 
   interface User {
@@ -18,6 +19,7 @@ declare module 'next-auth' {
     sessionId?: string
     isPlatformAdmin?: boolean
     hasOrgAccess?: boolean
+    hasHolderAccess?: boolean
   }
 }
 
@@ -30,6 +32,7 @@ declare module 'next-auth/jwt' {
     expiresAt?: number
     isPlatformAdmin?: boolean
     hasOrgAccess?: boolean
+    hasHolderAccess?: boolean
     sessionId?: string
   }
 }

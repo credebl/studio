@@ -29,12 +29,19 @@ import { useAppSelector } from '@/lib/hooks'
 import { useDispatch } from 'react-redux'
 import { useRouter } from 'next/navigation'
 
-export function UserNav(): React.JSX.Element | null {
+interface UserNavProps {
+  profileHref?: string
+}
+
+export function UserNav({
+  profileHref = '/profile',
+}: UserNavProps): React.JSX.Element | null {
   const dispatch = useDispatch()
   const router = useRouter()
   const { data: session } = useSession()
   const isPlatformAdmin = session?.isPlatformAdmin === true
   const hasOrgAccess = session?.hasOrgAccess === true
+  const hasHolderAccess = session?.hasHolderAccess === true
 
   const [userProfile, setUserProfile] = useState<IUserProfile | null>(null)
   const token = useAppSelector((state) => state.auth.token)
@@ -61,7 +68,7 @@ export function UserNav(): React.JSX.Element | null {
     }
 
     fetchProfile()
-  }, [token])
+  }, [dispatch, token])
 
   if (!token) {
     return null
@@ -141,7 +148,7 @@ export function UserNav(): React.JSX.Element | null {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => router.push('/profile')}>
+          <DropdownMenuItem onClick={() => router.push(profileHref)}>
             Profile
           </DropdownMenuItem>
 
@@ -150,6 +157,12 @@ export function UserNav(): React.JSX.Element | null {
               onClick={() => router.push('/developers-setting')}
             >
               Developer Settings
+            </DropdownMenuItem>
+          )}
+
+          {hasHolderAccess && (
+            <DropdownMenuItem onClick={() => router.push('/holder')}>
+              My Wallet
             </DropdownMenuItem>
           )}
 

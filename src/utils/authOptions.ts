@@ -53,24 +53,37 @@ interface JwtDataPayload extends JwtPayload {
 }
 
 const PLATFORM_ADMIN_ROLE = 'platform_admin'
+const HOLDER_ROLE = 'holder'
+const ECOSYSTEM_ROLES = new Set(['Ecosystem Lead', 'Ecosystem Member'])
+const NON_ORG_ROLES = new Set([
+  PLATFORM_ADMIN_ROLE,
+  HOLDER_ROLE,
+  ...Array.from(ECOSYSTEM_ROLES),
+])
 
 interface PlatformAccess {
   isPlatformAdmin: boolean
   hasOrgAccess: boolean
+  hasHolderAccess: boolean
 }
 
 /**
  * Resolves which consoles the signed-in user may use.
  *
- * `platform_admin` grants the platform console. Any other org role (owner,
- * admin, issuer, verifier, member, …) grants the organization console, so a
- * person holding both roles can switch between the two shells.
+ * `platform_admin` grants the platform console, an org-scoped role (owner,
+ * admin, issuer, verifier, member, …) grants the organization console, and the
+ * user-level `holder` role grants the personal wallet. A person may hold any
+ * combination of the three, so this returns independent capabilities rather
+ * than a single role.
+ *
+ * The platform assigns every new user a `holder` userOrgRole with `orgId: null`,
+ * so holder must not be treated as an organization role.
  *
  * Runs server-side only (authorize is never bundled for the browser) and fails
  * closed: returns null when the profile lookup cannot be completed so callers
  * can decide whether to treat the user as a non-admin.
  */
-const resolvePlatformAccess = async (
+export const resolvePlatformAccess = async (
   accessToken: string,
 ): Promise<PlatformAccess | null> => {
   try {
@@ -82,6 +95,24 @@ const resolvePlatformAccess = async (
       },
     )
 
+    if (response.status === 403) {
+      // Holder accounts are rejected by UserAccessGuard on /users/profile.
+      // Confirm the capability with the user-scoped wallet endpoint instead.
+      const walletResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}${apiRoutes.cloudWallet.did}`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+          cache: 'no-store',
+        },
+      )
+      return {
+        isPlatformAdmin: false,
+        hasOrgAccess: false,
+        hasHolderAccess:
+          walletResponse.status === 200 || walletResponse.status === 404,
+      }
+    }
+
     if (!response.ok) {
       return null
     }
@@ -90,16 +121,30 @@ const resolvePlatformAccess = async (
     const roles = body?.data?.userOrgRoles
 
     if (!Array.isArray(roles)) {
-      return { isPlatformAdmin: false, hasOrgAccess: false }
+      return {
+        isPlatformAdmin: false,
+        hasOrgAccess: false,
+        hasHolderAccess: false,
+      }
     }
 
-    const roleNames = roles
-      .map((item: { orgRole?: { name?: string } }) => item?.orgRole?.name)
+    const userRoles = roles as {
+      orgRole?: { name?: string }
+      orgId?: string | null
+    }[]
+    const roleNames = userRoles
+      .map((item) => item?.orgRole?.name)
       .filter((name): name is string => Boolean(name))
 
     return {
       isPlatformAdmin: roleNames.includes(PLATFORM_ADMIN_ROLE),
-      hasOrgAccess: roleNames.some((name) => name !== PLATFORM_ADMIN_ROLE),
+      hasHolderAccess: roleNames.includes(HOLDER_ROLE),
+      hasOrgAccess: userRoles.some(
+        (item) =>
+          Boolean(item.orgId) &&
+          Boolean(item.orgRole?.name) &&
+          !NON_ORG_ROLES.has(item.orgRole?.name as string),
+      ),
     }
   } catch {
     return null
@@ -251,6 +296,7 @@ export const authOptions: MyAuthOptions = {
               sessionId: user.data.sessionId,
               isPlatformAdmin: access?.isPlatformAdmin ?? false,
               hasOrgAccess: access?.hasOrgAccess ?? false,
+              hasHolderAccess: access?.hasHolderAccess ?? false,
             }
           }
 
@@ -271,6 +317,7 @@ export const authOptions: MyAuthOptions = {
         token.sessionId = user.sessionId
         token.isPlatformAdmin = Boolean(user.isPlatformAdmin)
         token.hasOrgAccess = Boolean(user.hasOrgAccess)
+        token.hasHolderAccess = Boolean(user.hasHolderAccess)
         return token
       }
 
@@ -279,12 +326,14 @@ export const authOptions: MyAuthOptions = {
       if (
         typeof token.sessionId === 'string' &&
         (typeof token.isPlatformAdmin !== 'boolean' ||
-          typeof token.hasOrgAccess !== 'boolean')
+          typeof token.hasOrgAccess !== 'boolean' ||
+          typeof token.hasHolderAccess !== 'boolean')
       ) {
         const access = await resolvePlatformAccessFromSessionId(token.sessionId)
         if (access !== null) {
           token.isPlatformAdmin = access.isPlatformAdmin
           token.hasOrgAccess = access.hasOrgAccess
+          token.hasHolderAccess = access.hasHolderAccess
         }
       }
 
@@ -301,6 +350,7 @@ export const authOptions: MyAuthOptions = {
       session.sessionId = token.sessionId as string
       session.isPlatformAdmin = Boolean(token.isPlatformAdmin)
       session.hasOrgAccess = Boolean(token.hasOrgAccess)
+      session.hasHolderAccess = Boolean(token.hasHolderAccess)
       return session
     },
 

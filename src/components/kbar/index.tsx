@@ -8,11 +8,12 @@ import {
   KBarSearch,
 } from 'kbar'
 import React, { useMemo } from 'react'
+import { holderNavItem, navItems } from '@/constants/data'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { NavItem } from '../../../types'
 import RenderResults from './render-result'
-import { navItems } from '@/constants/data'
+import { useSession } from 'next-auth/react'
 
 export type KBarAction = {
   id: string
@@ -65,6 +66,8 @@ export default function KBar({
   const pathname = usePathname()
 
   const [refreshKey, setRefreshKey] = React.useState(0)
+  const { data: session } = useSession()
+  const hasHolderAccess = session?.hasHolderAccess === true
 
   React.useEffect(() => {
     const handleRefresh = (): void => {
@@ -128,14 +131,16 @@ export default function KBar({
         convertChildItemToAction(childItem, navItem),
       ) ?? []
 
-    return navItems.flatMap((navItem) => {
+    const items = hasHolderAccess ? [...navItems, holderNavItem] : navItems
+
+    return items.flatMap((navItem) => {
       const baseAction = createBaseAction(navItem)
       const childActions = createChildActions(navItem)
 
       // Return only valid actions (ignoring null base actions for containers)
       return baseAction ? [baseAction, ...childActions] : childActions
     })
-  }, [router])
+  }, [router, hasHolderAccess])
 
   return (
     <KBarProvider actions={actions}>

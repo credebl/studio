@@ -2,7 +2,7 @@
 
 import * as z from 'zod'
 
-import { Eye, EyeOff, KeyRound, LockKeyhole, Mail } from 'lucide-react'
+import { Eye, EyeOff, KeyRound, LockKeyhole, Mail, Wallet } from 'lucide-react'
 import {
   Form,
   FormControl,
@@ -73,6 +73,11 @@ export default function SignInViewPage(): React.JSX.Element {
       ? `/sign-up?redirectTo=${encodeURIComponent(redirectTo)}&clientAlias=${clientAlias}`
       : '/sign-up'
 
+  // Holder is a self-service, user-level capability. Platform v2.3.0 only sets
+  // the Keycloak userRole entitlement at signup, so offer a dedicated entry point.
+  const holderSignUpUrl =
+    redirectTo && clientAlias ? `${signUpUrl}&holder=1` : '/sign-up?holder=1'
+
   const handleSignIn = async (values: {
     email: string
     password?: string
@@ -121,6 +126,8 @@ export default function SignInViewPage(): React.JSX.Element {
     | {
         role: { name: string }
         orgId: string | null
+        hasOrgAccess: boolean
+        hasHolderAccess: boolean
       }
     | undefined
   > => {
@@ -142,6 +149,18 @@ export default function SignInViewPage(): React.JSX.Element {
             permissionArray.push(element?.orgRole?.name),
         )
 
+        const nonOrgRoles = new Set([
+          PlatformRoles.platformAdmin,
+          'holder',
+          'Ecosystem Lead',
+          'Ecosystem Member',
+        ])
+        const hasHolderAccess = permissionArray.includes('holder')
+        const hasOrgAccess = data?.data?.userOrgRoles.some(
+          (item: { orgId: string | null; orgRole: { name: string } }) =>
+            item.orgId !== null && !nonOrgRoles.has(item.orgRole.name),
+        )
+
         const { id, profileImg, firstName, lastName, email } = data?.data || {}
         const userProfile = {
           id,
@@ -160,6 +179,8 @@ export default function SignInViewPage(): React.JSX.Element {
         return {
           role: { name: selectedRole.orgRole.name },
           orgId,
+          hasOrgAccess,
+          hasHolderAccess,
         }
       } else {
         console.error('No roles found for the user')
@@ -221,11 +242,13 @@ export default function SignInViewPage(): React.JSX.Element {
           return
         }
 
-        route.push(
-          userRole?.role?.name === PlatformRoles.platformAdmin
-            ? '/admin'
-            : '/dashboard',
-        )
+        if (userRole?.role?.name === PlatformRoles.platformAdmin) {
+          route.push('/admin')
+        } else if (!userRole?.hasOrgAccess && userRole?.hasHolderAccess) {
+          route.push('/holder')
+        } else {
+          route.push('/dashboard')
+        }
       } else if (verificationResp?.error) {
         console.error(verificationResp?.error)
       } else {
@@ -469,6 +492,16 @@ export default function SignInViewPage(): React.JSX.Element {
               </span>
               <Link href={signUpUrl} className="url-link">
                 Create one
+              </Link>
+            </div>
+
+            <div className="border-border mt-4 flex items-center justify-center gap-1.5 border-t pt-4 text-center text-xs md:text-sm">
+              <Wallet className="text-muted-foreground h-3.5 w-3.5 shrink-0" />
+              <span className="text-muted-foreground">
+                Need a personal wallet?
+              </span>
+              <Link href={holderSignUpUrl} className="url-link font-medium">
+                Create holder wallet account
               </Link>
             </div>
           </form>

@@ -22,6 +22,7 @@ import {
 import {
   adminNavItem,
   getActiveNavGroup,
+  holderNavItem,
   isNavItemActive,
   navItems,
 } from '@/constants/data'
@@ -150,6 +151,7 @@ export default function AppSidebar(): React.JSX.Element {
 
   const { data: session } = useSession()
   const isPlatformAdmin = session?.isPlatformAdmin === true
+  const hasHolderAccess = session?.hasHolderAccess === true
 
   useEffect(() => {
     setManagedNavItem((prev) => {
@@ -164,6 +166,20 @@ export default function AppSidebar(): React.JSX.Element {
       return hasAdminItem ? prev : [...prev, adminNavItem]
     })
   }, [isPlatformAdmin])
+
+  useEffect(() => {
+    setManagedNavItem((prev) => {
+      const hasHolderItem = prev.some((item) => item.url === '/holder')
+
+      if (!hasHolderAccess) {
+        return hasHolderItem
+          ? prev.filter((item) => item.url !== '/holder')
+          : prev
+      }
+
+      return hasHolderItem ? prev : [...prev, holderNavItem]
+    })
+  }, [hasHolderAccess])
 
   const activeGroupTitle = useMemo(
     () => getActiveNavGroup(managedNavItem, pathname),
