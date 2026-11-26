@@ -266,7 +266,7 @@ export function CloudBaseWalletPanel({
           </p>
 
           <p className="text-muted-foreground text-sm">
-            Platform v2.3.0 has no read or update endpoint for the base wallet.
+            The platform has no read or update endpoint for the base wallet.
             Studio cannot change these details or reconfigure the shared agent;
             replacing it requires a platform change.
           </p>
