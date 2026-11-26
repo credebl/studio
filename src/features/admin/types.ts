@@ -87,3 +87,106 @@ export interface CloudBaseWalletActionResult extends AdminActionResult {
 export interface AgentTokenActionResult extends AdminActionResult {
   token?: string
 }
+
+/**
+ * Result of one independent dashboard data source. A source that fails is
+ * `{ ok: false }` so its card can say "Unavailable" without hiding the rest.
+ */
+export type MetricResult<T> = { ok: true; value: T } | { ok: false }
+
+export interface AdminOrganizationSummary {
+  id: string
+  name: string
+}
+
+export interface AdminLedgerSummary {
+  id: string
+  name: string
+  networkType?: string
+}
+
+/**
+ * Invitation counts computed from the most recent pages. `capped` is true when
+ * more invitations exist than were counted.
+ */
+export interface AdminInvitationsMetric {
+  created: number
+  pending: number
+  counted: number
+  capped: boolean
+  recent: AdminInvitation[]
+}
+
+/** Non-secret platform feature flags. Never carries other platform settings. */
+export interface AdminPlatformFeatures {
+  ecosystemEnabled: boolean | null
+}
+
+/**
+ * An agent Studio can find from its own sources. This is not an inventory of
+ * every agent on the platform, and it never carries token endpoints.
+ */
+export interface AdminKnownAgent {
+  id: string
+  label: string
+  endpoint: string
+  source: KnownAgentOption['source']
+  isCloudBase: boolean
+}
+
+export interface AdminDashboardMetrics {
+  summary: MetricResult<AdminDashboardSummary>
+  organizationCount: MetricResult<number>
+  recentOrganizations: MetricResult<AdminOrganizationSummary[]>
+  schemaCount: MetricResult<number>
+  credentialDefinitionCount: MetricResult<number>
+  ledgers: MetricResult<AdminLedgerSummary[]>
+  invitations: MetricResult<AdminInvitationsMetric>
+  features: MetricResult<AdminPlatformFeatures>
+  knownAgents: MetricResult<AdminKnownAgent[]>
+  cloudWallet: CloudBaseWalletStatus
+}
+
+/**
+ * Read-only platform configuration. Built from an allow-list: secrets are
+ * reduced to a "configured" flag and internal ids are left out.
+ */
+export interface AdminPlatformSettings {
+  externalIp: string
+  inboundEndpoint: string
+  apiEndpoint: string
+  tailsFileServer: string
+  emailFrom: string
+  emailUsername: string
+  emailApiKeyConfigured: boolean
+  ecosystemEnabled: boolean | null
+  createdAt?: string
+  updatedAt?: string
+}
+
+export type ServiceState = 'operational' | 'unavailable' | 'unknown'
+
+/**
+ * One reachability check. The platform has no health endpoint for its
+ * services, so a check calls a read-only gateway endpoint that is served by
+ * the service and infers the state from the answer.
+ */
+export interface ServiceStatusCheck {
+  id: string
+  name: string
+  covers: string
+  probe: string
+  state: ServiceState
+  latencyMs?: number
+  detail: string
+}
+
+export interface ServiceStatusReport {
+  checkedAt: string
+  checks: ServiceStatusCheck[]
+}
+
+export interface UncheckableService {
+  name: string
+  reason: string
+}

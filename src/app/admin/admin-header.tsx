@@ -3,18 +3,12 @@
 import ModeToggle from '@/components/mode-toggle'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { UserNav } from '@/components/layout/user-nav'
+import { adminPageTitles } from '@/components/layout/admin-nav'
 import { usePathname } from 'next/navigation'
-
-const pageTitles = [
-  { prefix: '/admin/cloud-wallet', title: 'Cloud wallet' },
-  { prefix: '/admin/invitations', title: 'Invitations' },
-  { prefix: '/admin/settings', title: 'Settings' },
-  { prefix: '/admin', title: 'Dashboard' },
-]
 
 export function AdminHeader(): React.JSX.Element {
   const pathname = usePathname()
-  const currentPage = pageTitles.find((page) =>
+  const currentPage = adminPageTitles.find((page) =>
     pathname.startsWith(page.prefix),
   )
 

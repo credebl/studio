@@ -192,5 +192,11 @@ export const apiRoutes = {
     updateEcosystemConfig: '/config/ecosystem',
     invitations: '/invitations',
     configureCloudBaseWallet: '/configure/base-wallet',
+    organisations: '/orgs',
+    schemas: '/platform/schemas',
+    credentialDefinitions: '/platform/cred-defs',
+    ledgers: '/platform/ledgers',
+    platformSettings: '/users/platform-settings',
+    agentLedgerConfig: '/orgs/agents/ledgerConfig',
   },
 }

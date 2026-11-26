@@ -1,4 +1,5 @@
 import {
+  IconActivity,
   IconAlertTriangle,
   IconArrowRight,
   IconBrandGithub,
@@ -18,6 +19,7 @@ import {
   IconLayoutKanban,
   IconLoader2,
   IconLogin,
+  IconMail,
   IconMoon,
   IconPhoto,
   IconPizza,
@@ -72,6 +74,8 @@ export const Icons = {
   twitter: IconBrandTwitter,
   check: IconCheck,
   connections: IconTopologyStar,
+  activity: IconActivity,
+  mail: IconMail,
   wallet: IconWallet,
   organization: IconBuildingSkyscraper,
   world: IconWorld,
