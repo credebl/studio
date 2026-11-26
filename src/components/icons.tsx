@@ -1,4 +1,5 @@
 import {
+  IconActivity,
   IconAlertTriangle,
   IconArrowRight,
   IconBrandGithub,
@@ -73,6 +74,7 @@ export const Icons = {
   twitter: IconBrandTwitter,
   check: IconCheck,
   connections: IconTopologyStar,
+  activity: IconActivity,
   mail: IconMail,
   wallet: IconWallet,
   organization: IconBuildingSkyscraper,

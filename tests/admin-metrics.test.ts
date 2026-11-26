@@ -513,6 +513,7 @@ describe('admin navigation', () => {
       '/admin',
       '/admin/platform-settings',
       '/admin/cloud-wallet',
+      '/admin/status',
       '/admin/invitations',
       '/admin/settings',
     ])

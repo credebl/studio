@@ -163,3 +163,30 @@ export interface AdminPlatformSettings {
   createdAt?: string
   updatedAt?: string
 }
+
+export type ServiceState = 'operational' | 'unavailable' | 'unknown'
+
+/**
+ * One reachability check. The platform has no health endpoint for its
+ * services, so a check calls a read-only gateway endpoint that is served by
+ * the service and infers the state from the answer.
+ */
+export interface ServiceStatusCheck {
+  id: string
+  name: string
+  covers: string
+  probe: string
+  state: ServiceState
+  latencyMs?: number
+  detail: string
+}
+
+export interface ServiceStatusReport {
+  checkedAt: string
+  checks: ServiceStatusCheck[]
+}
+
+export interface UncheckableService {
+  name: string
+  reason: string
+}

@@ -29,6 +29,7 @@ export const adminNavGroups: AdminNavGroup[] = [
         icon: 'settings',
       },
       { title: 'Cloud wallets', url: '/admin/cloud-wallet', icon: 'wallet' },
+      { title: 'Service status', url: '/admin/status', icon: 'activity' },
     ],
   },
   {
@@ -52,6 +53,7 @@ export const isAdminNavActive = (pathname: string, url: string): boolean => {
 export const adminPageTitles = [
   { prefix: '/admin/platform-settings', title: 'Platform settings' },
   { prefix: '/admin/cloud-wallet', title: 'Cloud wallets' },
+  { prefix: '/admin/status', title: 'Service status' },
   { prefix: '/admin/invitations', title: 'Invitations' },
   { prefix: '/admin/settings', title: 'Ecosystem settings' },
   { prefix: '/admin', title: 'Dashboard' },
