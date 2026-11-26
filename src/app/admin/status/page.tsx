@@ -20,9 +20,17 @@ export const metadata = {
 
 const stateBadge: Record<
   ServiceState,
-  { label: string; variant: 'secondary' | 'destructive' | 'outline' }
+  {
+    label: string
+    variant: 'secondary' | 'destructive' | 'outline'
+    className?: string
+  }
 > = {
-  operational: { label: 'Operational', variant: 'secondary' },
+  operational: {
+    label: 'Operational',
+    variant: 'secondary',
+    className: 'bg-success text-success-foreground',
+  },
   unavailable: { label: 'Unavailable', variant: 'destructive' },
   unknown: { label: 'Unknown', variant: 'outline' },
 }
@@ -82,7 +90,10 @@ export default async function ServiceStatusPage(): Promise<React.JSX.Element> {
                       {check.latencyMs} ms
                     </span>
                   ) : null}
-                  <Badge variant={stateBadge[check.state].variant}>
+                  <Badge
+                    variant={stateBadge[check.state].variant}
+                    className={stateBadge[check.state].className}
+                  >
                     {stateBadge[check.state].label}
                   </Badge>
                 </div>
