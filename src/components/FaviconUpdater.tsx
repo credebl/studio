@@ -1,12 +1,13 @@
 'use client'
 
+import { DEFAULT_THEME_ASSET, themeFaviconPath } from '@/lib/theme-assets'
 import { JSX, useEffect } from 'react'
 
 const APP_ENV = process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
 const APP_TITLE = process.env.NEXT_PUBLIC_APP_TITLE?.trim()
 
 const DEFAULT_CONFIG = {
-  favicon: `/favicons/favicon-${APP_ENV || 'credebl'}.ico`,
+  favicon: themeFaviconPath(APP_ENV || DEFAULT_THEME_ASSET),
   title: APP_TITLE ? APP_TITLE : 'CREDEBL - Studio',
 }
 

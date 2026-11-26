@@ -5,6 +5,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import {
+  DEFAULT_THEME_ASSET,
+  fallbackOnce,
+  themeFaviconPath,
+  themeLogoPath,
+} from '@/lib/theme-assets'
 import React, { JSX, useEffect, useMemo, useState } from 'react'
 import {
   Sidebar,
@@ -46,11 +52,9 @@ const APP_ENV =
   process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
 
 const APP_CONFIG = {
-  logo: (theme: string, resolvedTheme: string): string => {
-    const variant = resolvedTheme === 'dark' ? '_logo_dark' : '_logo'
-    return `/logos/${theme}${variant}.svg`
-  },
-  collapsedLogo: (theme: string): string => `/favicons/favicon-${theme}.ico`,
+  logo: (theme: string, resolvedTheme: string): string =>
+    themeLogoPath(theme, resolvedTheme === 'dark'),
+  collapsedLogo: (theme: string): string => themeFaviconPath(theme),
   poweredBy: (theme: string): { src: string; alt: string } | null => {
     if (theme === 'credebl') {
       return null
@@ -213,6 +217,15 @@ export default function AppSidebar(): React.JSX.Element {
                 alt="Full Logo"
                 className="h-auto max-h-[100px] w-auto object-contain"
                 src={logoImageSrc}
+                onError={(e) =>
+                  fallbackOnce(
+                    e.currentTarget,
+                    themeLogoPath(
+                      DEFAULT_THEME_ASSET,
+                      resolvedTheme === 'dark',
+                    ),
+                  )
+                }
               />
             </div>
           ) : (
@@ -223,6 +236,12 @@ export default function AppSidebar(): React.JSX.Element {
                 alt="Collapsed Logo"
                 className="h-full w-full object-contain"
                 src={collapsedLogoImageSrc}
+                onError={(e) =>
+                  fallbackOnce(
+                    e.currentTarget,
+                    themeFaviconPath(DEFAULT_THEME_ASSET),
+                  )
+                }
               />
             </div>
           )}
