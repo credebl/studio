@@ -2,14 +2,20 @@ import type {
   AdminDashboardMetrics,
   AdminInvitation,
   AdminInvitationsMetric,
+  AdminKnownAgent,
   AdminLedgerSummary,
   AdminOrganizationSummary,
   AdminPlatformFeatures,
   AdminPlatformSettings,
+  CloudBaseWalletStatus,
   MetricResult,
 } from '@/features/admin/types'
 import { type ApiEnvelope, platformFetch } from './platform'
-import { getCloudBaseWalletStatus, getDashboardSummary } from './admin'
+import {
+  getCloudBaseWalletStatus,
+  getDashboardSummary,
+  getKnownAgentOptions,
+} from './admin'
 import { apiRoutes } from '@/config/apiRoutes'
 
 /**
@@ -338,8 +344,39 @@ export const getPlatformSettings = (): Promise<
     })
   })
 
+const normalizeEndpoint = (endpoint: string): string =>
+  endpoint.trim().replace(/\/+$/, '').toLowerCase()
+
+/**
+ * Agents Studio can find from its allow-list, the cloud base wallet and the
+ * admin's own organizations. Token endpoints are deliberately not returned.
+ */
+export const getKnownAgents = (
+  cloudEndpoint?: string,
+): Promise<MetricResult<AdminKnownAgent[]>> =>
+  guard(async () => {
+    const options = await getKnownAgentOptions(cloudEndpoint)
+    const cloud = cloudEndpoint ? normalizeEndpoint(cloudEndpoint) : ''
+
+    return succeed(
+      options.map((option) => ({
+        id: option.id,
+        label: option.label,
+        endpoint: option.endpoint,
+        source: option.source,
+        isCloudBase:
+          option.source === 'cloud-wallet' ||
+          (cloud !== '' && normalizeEndpoint(option.endpoint) === cloud),
+      })),
+    )
+  })
+
 export const getAdminDashboardMetrics =
   async (): Promise<AdminDashboardMetrics> => {
+    const cloudWalletStatus = getCloudBaseWalletStatus().catch(
+      (): CloudBaseWalletStatus => ({ configured: false }),
+    )
+
     const [
       summary,
       organizationCount,
@@ -350,6 +387,7 @@ export const getAdminDashboardMetrics =
       invitations,
       features,
       cloudWallet,
+      knownAgents,
     ] = await Promise.all([
       guard(async () => {
         const value = await getDashboardSummary()
@@ -362,7 +400,8 @@ export const getAdminDashboardMetrics =
       getLedgers(),
       getInvitationsMetric(),
       getPlatformFeatures(),
-      getCloudBaseWalletStatus().catch(() => ({ configured: false })),
+      cloudWalletStatus,
+      cloudWalletStatus.then((status) => getKnownAgents(status.agentEndpoint)),
     ])
 
     return {
@@ -374,6 +413,7 @@ export const getAdminDashboardMetrics =
       ledgers,
       invitations,
       features,
+      knownAgents,
       cloudWallet,
     }
   }

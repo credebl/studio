@@ -4,6 +4,7 @@ import {
   getAdminDashboardMetrics,
   getCredentialDefinitionCount,
   getInvitationsMetric,
+  getKnownAgents,
   getLedgers,
   getOrganizationCount,
   getPlatformFeatures,
@@ -17,11 +18,13 @@ import { jsonResponse } from './helpers'
 const platformFetch = vi.hoisted(() => vi.fn())
 const getDashboardSummary = vi.hoisted(() => vi.fn())
 const getCloudBaseWalletStatus = vi.hoisted(() => vi.fn())
+const getKnownAgentOptions = vi.hoisted(() => vi.fn())
 
 vi.mock('@/lib/server/platform', () => ({ platformFetch }))
 vi.mock('@/lib/server/admin', () => ({
   getDashboardSummary,
   getCloudBaseWalletStatus,
+  getKnownAgentOptions,
 }))
 
 // The platform names this field in snake case.
@@ -46,6 +49,8 @@ beforeEach(() => {
   fetchMock.mockReset()
   getDashboardSummary.mockReset()
   getCloudBaseWalletStatus.mockReset()
+  getKnownAgentOptions.mockReset()
+  getKnownAgentOptions.mockResolvedValue([])
 })
 
 describe('organizations', () => {
@@ -360,6 +365,99 @@ describe('platform settings (view only)', () => {
 
     respondWith({ '/users/platform-settings': () => jsonResponse({}, 403) })
     expect(await getPlatformSettings()).toEqual({ ok: false })
+  })
+})
+
+describe('known agents', () => {
+  const options = [
+    {
+      id: 'allowlist:0:http://agent.example:4001',
+      label: 'Local shared agent',
+      endpoint: 'http://agent.example:4001',
+      tokenEndpoint: 'http://localhost:4001',
+      description: 'internal note',
+      source: 'allowlist',
+    },
+    {
+      id: 'platform-org:o1:http://org.example',
+      label: 'Org agent: Acme',
+      endpoint: 'http://org.example',
+      source: 'platform-org',
+    },
+  ]
+
+  it('lists agents without token endpoints or descriptions', async () => {
+    getKnownAgentOptions.mockResolvedValue(options)
+
+    const result = await getKnownAgents()
+    expect(result).toEqual({
+      ok: true,
+      value: [
+        {
+          id: options[0].id,
+          label: 'Local shared agent',
+          endpoint: 'http://agent.example:4001',
+          source: 'allowlist',
+          isCloudBase: false,
+        },
+        {
+          id: options[1].id,
+          label: 'Org agent: Acme',
+          endpoint: 'http://org.example',
+          source: 'platform-org',
+          isCloudBase: false,
+        },
+      ],
+    })
+    expect(JSON.stringify(result)).not.toContain('localhost:4001')
+    expect(JSON.stringify(result)).not.toContain('internal note')
+  })
+
+  it('marks the cloud base agent, ignoring case and a trailing slash', async () => {
+    getKnownAgentOptions.mockResolvedValue(options)
+
+    const result = await getKnownAgents('HTTP://Agent.example:4001/')
+    expect(getKnownAgentOptions).toHaveBeenCalledWith(
+      'HTTP://Agent.example:4001/',
+    )
+    expect(result.ok && result.value.map((agent) => agent.isCloudBase)).toEqual(
+      [true, false],
+    )
+  })
+
+  it('marks an entry that came from the cloud wallet itself', async () => {
+    getKnownAgentOptions.mockResolvedValue([
+      {
+        id: 'cloud-wallet:current',
+        label: 'Cloud base wallet',
+        endpoint: 'http://cw.example',
+        source: 'cloud-wallet',
+      },
+    ])
+
+    const result = await getKnownAgents()
+    expect(result.ok && result.value[0].isCloudBase).toBe(true)
+  })
+
+  it('is unavailable when the lookup throws', async () => {
+    getKnownAgentOptions.mockRejectedValue(new Error('boom'))
+    expect(await getKnownAgents()).toEqual({ ok: false })
+  })
+
+  it('is included in the dashboard metrics and uses the stored endpoint', async () => {
+    getDashboardSummary.mockResolvedValue(null)
+    getCloudBaseWalletStatus.mockResolvedValue({
+      configured: true,
+      agentEndpoint: 'http://agent.example:4001',
+    })
+    getKnownAgentOptions.mockResolvedValue(options)
+    fetchMock.mockResolvedValue(null)
+
+    const metrics = await getAdminDashboardMetrics()
+    expect(getKnownAgentOptions).toHaveBeenCalledWith(
+      'http://agent.example:4001',
+    )
+    expect(metrics.knownAgents.ok && metrics.knownAgents.value).toHaveLength(2)
   })
 })
 

@@ -22,6 +22,7 @@ import {
 } from '@/lib/server/admin'
 import { Button } from '@/components/ui/button'
 import { InvitationsCard } from '@/features/admin/components/invitations-card'
+import { KnownAgentsCard } from '@/features/admin/components/known-agents-card'
 import Link from 'next/link'
 import { MetricCard } from '@/features/admin/components/metric-card'
 import type { MetricResult } from '@/features/admin/types'
@@ -151,6 +152,8 @@ export default async function AdminOverviewPage(): Promise<React.JSX.Element> {
             </Button>
           </CardContent>
         </Card>
+
+        <KnownAgentsCard result={metrics.knownAgents} />
       </div>
     </div>
   )

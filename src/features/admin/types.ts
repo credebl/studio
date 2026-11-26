@@ -122,6 +122,18 @@ export interface AdminPlatformFeatures {
   ecosystemEnabled: boolean | null
 }
 
+/**
+ * An agent Studio can find from its own sources. This is not an inventory of
+ * every agent on the platform, and it never carries token endpoints.
+ */
+export interface AdminKnownAgent {
+  id: string
+  label: string
+  endpoint: string
+  source: KnownAgentOption['source']
+  isCloudBase: boolean
+}
+
 export interface AdminDashboardMetrics {
   summary: MetricResult<AdminDashboardSummary>
   organizationCount: MetricResult<number>
@@ -131,6 +143,7 @@ export interface AdminDashboardMetrics {
   ledgers: MetricResult<AdminLedgerSummary[]>
   invitations: MetricResult<AdminInvitationsMetric>
   features: MetricResult<AdminPlatformFeatures>
+  knownAgents: MetricResult<AdminKnownAgent[]>
   cloudWallet: CloudBaseWalletStatus
 }
 
