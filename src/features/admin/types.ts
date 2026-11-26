@@ -87,3 +87,49 @@ export interface CloudBaseWalletActionResult extends AdminActionResult {
 export interface AgentTokenActionResult extends AdminActionResult {
   token?: string
 }
+
+/**
+ * Result of one independent dashboard data source. A source that fails is
+ * `{ ok: false }` so its card can say "Unavailable" without hiding the rest.
+ */
+export type MetricResult<T> = { ok: true; value: T } | { ok: false }
+
+export interface AdminOrganizationSummary {
+  id: string
+  name: string
+}
+
+export interface AdminLedgerSummary {
+  id: string
+  name: string
+  networkType?: string
+}
+
+/**
+ * Invitation counts computed from the most recent pages. `capped` is true when
+ * more invitations exist than were counted.
+ */
+export interface AdminInvitationsMetric {
+  created: number
+  pending: number
+  counted: number
+  capped: boolean
+  recent: AdminInvitation[]
+}
+
+/** Non-secret platform feature flags. Never carries other platform settings. */
+export interface AdminPlatformFeatures {
+  ecosystemEnabled: boolean | null
+}
+
+export interface AdminDashboardMetrics {
+  summary: MetricResult<AdminDashboardSummary>
+  organizationCount: MetricResult<number>
+  recentOrganizations: MetricResult<AdminOrganizationSummary[]>
+  schemaCount: MetricResult<number>
+  credentialDefinitionCount: MetricResult<number>
+  ledgers: MetricResult<AdminLedgerSummary[]>
+  invitations: MetricResult<AdminInvitationsMetric>
+  features: MetricResult<AdminPlatformFeatures>
+  cloudWallet: CloudBaseWalletStatus
+}

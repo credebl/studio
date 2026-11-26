@@ -1,25 +1,18 @@
 'use client'
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
-import { IconChevronRight } from '@tabler/icons-react'
+import { adminNavGroups, isAdminNavActive } from './admin-nav'
 import { Icons } from '@/components/icons'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -29,35 +22,6 @@ import { useTheme } from 'next-themes'
 
 const APP_ENV =
   process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
-
-type AdminNavItem = {
-  title: string
-  url: string
-  icon: keyof typeof Icons
-  items?: { title: string; url: string }[]
-}
-
-const adminNavItems: AdminNavItem[] = [
-  {
-    title: 'Dashboard',
-    url: '/admin',
-    icon: 'dashboard',
-  },
-  {
-    title: 'Cloud wallet',
-    url: '/admin/cloud-wallet',
-    icon: 'wallet',
-  },
-  {
-    title: 'Ecosystem',
-    url: '#',
-    icon: 'world',
-    items: [
-      { title: 'Invitations', url: '/admin/invitations' },
-      { title: 'Settings', url: '/admin/settings' },
-    ],
-  },
-]
 
 export function AdminSidebar(): React.JSX.Element {
   const pathname = usePathname()
@@ -98,72 +62,32 @@ export function AdminSidebar(): React.JSX.Element {
       </SidebarHeader>
 
       <SidebarContent className="overflow-x-hidden">
-        <SidebarGroup>
-          <SidebarMenu>
-            {adminNavItems.map((item) => {
-              const Icon = Icons[item.icon]
-
-              if (item.items?.length) {
-                const groupActive = item.items.some((subItem) =>
-                  pathname.startsWith(subItem.url),
-                )
+        {adminNavGroups.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarMenu>
+              {group.items.map((item) => {
+                const Icon = Icons[item.icon]
 
                 return (
-                  <Collapsible
-                    key={item.title}
-                    asChild
-                    defaultOpen={groupActive}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={item.title}>
-                          <Icon />
-                          <span>{item.title}</span>
-                          <IconChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-
-                      <CollapsibleContent>
-                        <SidebarMenuSub>
-                          {item.items.map((subItem) => (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton
-                                asChild
-                                isActive={pathname === subItem.url}
-                                className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground dark:data-[active=true]:bg-sidebar-accent dark:data-[active=true]:hover:bg-sidebar-accent dark:data-[active=true]:text-sidebar-accent-foreground dark:data-[active=true]:shadow-glow dark:data-[active=true]:before:bg-sidebar-ring relative dark:data-[active=true]:before:absolute dark:data-[active=true]:before:inset-y-1.5 dark:data-[active=true]:before:left-0 dark:data-[active=true]:before:w-0.5 dark:data-[active=true]:before:rounded-full"
-                              >
-                                <Link href={subItem.url}>
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          ))}
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={item.title}
+                      isActive={isAdminNavActive(pathname, item.url)}
+                      className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground dark:data-[active=true]:bg-sidebar-accent dark:data-[active=true]:hover:bg-sidebar-accent dark:data-[active=true]:text-sidebar-accent-foreground dark:data-[active=true]:shadow-glow dark:data-[active=true]:before:bg-sidebar-ring relative dark:data-[active=true]:before:absolute dark:data-[active=true]:before:inset-y-1.5 dark:data-[active=true]:before:left-0 dark:data-[active=true]:before:w-0.5 dark:data-[active=true]:before:rounded-full"
+                    >
+                      <Link href={item.url}>
+                        <Icon />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                 )
-              }
-
-              return (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    isActive={pathname === item.url}
-                    className="data-[active=true]:bg-primary data-[active=true]:hover:bg-primary/90 data-[active=true]:text-primary-foreground dark:data-[active=true]:bg-sidebar-accent dark:data-[active=true]:hover:bg-sidebar-accent dark:data-[active=true]:text-sidebar-accent-foreground dark:data-[active=true]:shadow-glow dark:data-[active=true]:before:bg-sidebar-ring relative dark:data-[active=true]:before:absolute dark:data-[active=true]:before:inset-y-1.5 dark:data-[active=true]:before:left-0 dark:data-[active=true]:before:w-0.5 dark:data-[active=true]:before:rounded-full"
-                  >
-                    <Link href={item.url}>
-                      <Icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            })}
-          </SidebarMenu>
-        </SidebarGroup>
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
 
       {hasOrgAccess && (
