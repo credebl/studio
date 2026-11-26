@@ -77,6 +77,13 @@ export const checkDefinitions: CheckDefinition[] = [
       ),
   },
   {
+    id: 'agent-service',
+    name: 'Agent service',
+    covers: 'Agent provisioning and ledger configuration.',
+    probe: `GET ${apiRoutes.platformAdmin.agentLedgerConfig}`,
+    call: () => authenticatedStatus(apiRoutes.platformAdmin.agentLedgerConfig),
+  },
+  {
     id: 'platform-service',
     name: 'Platform service',
     covers: 'Ledgers, schemas and ecosystem settings.',
@@ -91,8 +98,9 @@ export const checkDefinitions: CheckDefinition[] = [
  */
 export const uncheckableServices: UncheckableService[] = [
   {
-    name: 'Agent service and agent controllers',
-    reason: 'The only health call needs a role in an organization.',
+    name: 'Agent controllers',
+    reason:
+      'The agents themselves are only checked by an organization-level health call.',
   },
   {
     name: 'Issuance, verification and connections',

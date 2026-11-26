@@ -56,6 +56,9 @@ describe('getServiceStatusReport', () => {
       if (path.includes('get-all-platform-organisations')) {
         return jsonResponse({}, 200)
       }
+      if (path.includes('ledgerConfig')) {
+        return jsonResponse({}, 200)
+      }
       return jsonResponse({}, 500)
     })
 
@@ -71,6 +74,7 @@ describe('getServiceStatusReport', () => {
       'api-gateway': 'operational',
       'user-service': 'operational',
       'organization-service': 'operational',
+      'agent-service': 'operational',
       'platform-service': 'unavailable',
     })
     expect(Number.isNaN(Date.parse(report.checkedAt))).toBe(false)

@@ -197,5 +197,6 @@ export const apiRoutes = {
     credentialDefinitions: '/platform/cred-defs',
     ledgers: '/platform/ledgers',
     platformSettings: '/users/platform-settings',
+    agentLedgerConfig: '/orgs/agents/ledgerConfig',
   },
 }
