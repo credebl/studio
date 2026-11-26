@@ -1,18 +1,17 @@
-import { CredeblLogoHeight, CredeblLogoWidth } from '@/config/CommonConstant'
 import {
+  ACTIVE_THEME,
   DEFAULT_THEME_ASSET,
   fallbackOnce,
   themeLogoPath,
 } from '@/lib/theme-assets'
+import { CredeblLogoHeight, CredeblLogoWidth } from '@/config/CommonConstant'
 import React, { JSX } from 'react'
-
 import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { useTheme } from 'next-themes'
 
 function DynamicApplicationLogo(): JSX.Element {
-  const APP_ENV =
-    process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+  const APP_ENV = ACTIVE_THEME
   const searchParams = useSearchParams()
   const alias = searchParams.get('clientAlias')
   const { resolvedTheme } = useTheme()

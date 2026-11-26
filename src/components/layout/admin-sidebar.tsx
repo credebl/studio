@@ -19,6 +19,7 @@ import {
   SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import { ACTIVE_THEME } from '@/lib/theme-assets'
 import { IconChevronRight } from '@tabler/icons-react'
 import { Icons } from '@/components/icons'
 import Image from 'next/image'
@@ -27,8 +28,7 @@ import { usePathname } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+const APP_ENV = ACTIVE_THEME
 
 type AdminNavItem = {
   title: string

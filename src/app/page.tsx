@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  ACTIVE_THEME,
   DEFAULT_THEME_ASSET,
   fallbackOnce,
   themeFaviconPath,
@@ -10,8 +11,7 @@ import Loader from '@/components/Loader'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+const APP_ENV = ACTIVE_THEME
 
 export default function Home(): JSX.Element {
   const { data: session, status } = useSession()

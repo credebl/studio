@@ -1,16 +1,17 @@
 'use client'
 
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible'
-import {
+  ACTIVE_THEME,
   DEFAULT_THEME_ASSET,
   fallbackOnce,
   themeFaviconPath,
   themeLogoPath,
 } from '@/lib/theme-assets'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import React, { JSX, useEffect, useMemo, useState } from 'react'
 import {
   Sidebar,
@@ -36,7 +37,6 @@ import { currentPageNumber, itemPerPage } from '@/config/CommonConstant'
 import { setOrgId, setOrgInfo } from '@/lib/orgSlice'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { usePathname, useRouter } from 'next/navigation'
-
 import { IconChevronRight } from '@tabler/icons-react'
 import { Icons } from '../icons'
 import Image from 'next/image'
@@ -48,8 +48,7 @@ import { setSidebarCollapsed } from '@/lib/sidebarSlice'
 import { useSession } from 'next-auth/react'
 import { useTheme } from 'next-themes'
 
-const APP_ENV =
-  process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim() || 'credebl'
+const APP_ENV = ACTIVE_THEME
 
 const APP_CONFIG = {
   logo: (theme: string, resolvedTheme: string): string =>

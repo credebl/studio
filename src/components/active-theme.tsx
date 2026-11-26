@@ -1,5 +1,6 @@
 'use client'
 
+import { ACTIVE_THEME, resolveThemeName } from '@/lib/theme-assets'
 import React, {
   JSX,
   ReactNode,
@@ -10,7 +11,6 @@ import React, {
 } from 'react'
 
 const COOKIE_NAME = 'active_theme'
-const DEFAULT_THEME = 'credebl'
 
 /** Set the theme in a cookie */
 function setThemeCookie(theme: string): void {
@@ -65,23 +65,9 @@ export function ActiveThemeProvider({
   children,
   initialTheme,
 }: ActiveThemeProviderProps): JSX.Element {
-  const envTheme: string | undefined =
-    process.env.NEXT_PUBLIC_ACTIVE_THEME?.toLowerCase().trim()
-
   /** Determine initial theme */
-  const getInitialTheme = (): string => {
-    if (initialTheme) {
-      return initialTheme
-    }
-    const cookieTheme = getThemeFromCookie()
-    if (cookieTheme) {
-      return cookieTheme
-    }
-    if (envTheme && envTheme.length > 0) {
-      return envTheme
-    }
-    return DEFAULT_THEME
-  }
+  const getInitialTheme = (): string =>
+    resolveThemeName(initialTheme ?? getThemeFromCookie() ?? ACTIVE_THEME)
 
   const [activeTheme, setActiveTheme] = useState<string>(getInitialTheme)
 
