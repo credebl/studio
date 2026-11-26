@@ -27,7 +27,15 @@ import { apiRoutes } from '@/config/apiRoutes'
  * open to the platform admin are used.
  */
 
-/** A valid UUID that matches no organization, so none is excluded from lists. */
+/**
+ * A valid UUID that matches no organization, so none is excluded from lists.
+ *
+ * The platform's organization list needs an `orgId` in the path even for the
+ * platform admin, where it is only used to leave one organization out. The
+ * gateway guard lets the platform admin through before it looks at `orgId`,
+ * which is what makes this work. Replace it when the platform offers a list
+ * that takes no `orgId`: https://github.com/credebl/platform/issues/1869
+ */
 const NO_EXCLUDED_ORG_ID = '00000000-0000-4000-8000-000000000000'
 const RECENT_ORGANIZATIONS = 5
 const RECENT_INVITATIONS = 5
