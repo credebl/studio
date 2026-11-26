@@ -52,6 +52,9 @@ jobs:
   build:
     name: Build ${{ matrix.arch }} (${{ github.event_name == 'release' && 'prod' || inputs.environment }})
     runs-on: ${{ matrix.runner }}
+    # A pre-release (alpha, beta, rc) must not be built with the prod variables
+    # or tagged `latest`; build those with a manual run instead.
+    if: github.event_name != 'release' || !github.event.release.prerelease
     timeout-minutes: 30
     environment: ${{ github.event_name == 'release' && 'prod' || inputs.environment }}
     strategy:
