@@ -191,5 +191,6 @@ export const apiRoutes = {
     ecosystemStatus: '/ecosystem/status',
     updateEcosystemConfig: '/config/ecosystem',
     invitations: '/invitations',
+    configureCloudBaseWallet: '/configure/base-wallet',
   },
 }

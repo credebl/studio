@@ -51,14 +51,76 @@ or the live role check in the server actions and route handlers.
 
 ## Screens
 
-| Route                | Purpose                                               |
-| -------------------- | ----------------------------------------------------- |
-| `/admin`             | Dashboard: KPIs, recent invitations and quick actions |
-| `/admin/invitations` | List and create ecosystem-owner invitations           |
-| `/admin/settings`    | Enable or disable the ecosystem feature platform-wide |
+| Route                 | Purpose                                                 |
+| --------------------- | ------------------------------------------------------- |
+| `/admin`              | Dashboard: KPIs, recent invitations and quick actions   |
+| `/admin/cloud-wallet` | Configure the shared agent used by holder cloud wallets |
+| `/admin/invitations`  | List and create ecosystem-owner invitations             |
+| `/admin/settings`     | Enable or disable the ecosystem feature platform-wide   |
 
 The previous standalone app's `/sessions` screen was dropped because Studio
 already provides an equivalent sessions view under Profile.
+
+### Cloud base wallet
+
+`/admin/cloud-wallet` configures the single base wallet that platform v2.3.0
+requires before any holder can create a wallet. The form sends `agentEndpoint`,
+`apiKey` and `walletKey` to `POST /configure/base-wallet`; the platform encrypts
+both keys at rest and creates one tenant on that shared agent per holder.
+
+The **Fetch token** button accepts the raw agent authorization key alongside the
+endpoint, calls `POST /agent/token` from the Studio server, verifies the agent is
+reachable, and stores the runtime JWT in a hidden form value. The screen then
+shows a success indicator instead of displaying the JWT. An optional Token fetch
+URL lets Studio reach the agent at a different URL than the platform does, which
+is useful when the platform runs in Docker and Studio runs on the host. Only
+that fetch uses the override; the configured Agent endpoint remains the value
+sent to the platform. The raw authorization key is not forwarded to the platform,
+stored in Studio, or echoed back to the browser. The fetched JWT is cleared when
+the admin changes a fetch input or configures the wallet.
+
+The **Agent endpoint** dropdown is built on the server. It combines:
+
+- the endpoint already stored in Studio's non-secret base-wallet status cookie;
+- `STUDIO_KNOWN_AGENTS`, a server-only JSON allowlist of labels and endpoints;
+- org agent endpoints the signed-in operator can already read through
+  `GET /orgs` and `GET /orgs/:orgId`.
+
+```bash
+STUDIO_KNOWN_AGENTS='[
+  {
+    "label": "Local shared agent",
+    "endpoint": "http://host.docker.internal:4001",
+    "tokenEndpoint": "http://localhost:4001"
+  }
+]'
+```
+
+Platform v2.3.0 only returns org agents to users who hold an org role, so a
+platform-admin-only account will not see them in the dropdown. The allowlist,
+the stored base-wallet endpoint and the **Custom endpoint…** fallback always
+work. Candidates are URL-validated, deduplicated by endpoint and capped at 20.
+Only labels, endpoints and optional descriptions reach the browser; no keys or
+tokens are included. True agent auto-discovery needs a platform registry API and
+is tracked in [credebl/platform#1863](https://github.com/credebl/platform/issues/1863).
+
+The platform accepts only one base wallet and exposes no update or delete route.
+The screen is read-only once Studio knows a wallet is configured; there is no
+**Edit** button. Studio keeps only a non-secret endpoint/status hint in an
+httpOnly cookie; the backend's `409` response remains authoritative if a stale
+tab submits again. A conflict keeps the read-only view without changing any
+settings.
+
+On submission, only the endpoint, runtime JWT and wallet key are sent to
+`POST /configure/base-wallet`. The platform stores the base wallet with the keys
+encrypted at rest; Studio keeps only the non-secret status/endpoint hint in the
+httpOnly cookie. This configuration enables the platform to create one wallet
+tenant per holder; it does not create holder wallets by itself.
+
+Both key fields require explicit confirmation and are cleared from the DOM as
+soon as the form is left. Studio never stores, logs or echoes the keys; the
+server action re-checks the live platform-admin role and returns only generic
+failure messages.
 
 ## Security tests
 

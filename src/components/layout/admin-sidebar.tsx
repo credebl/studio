@@ -44,6 +44,11 @@ const adminNavItems: AdminNavItem[] = [
     icon: 'dashboard',
   },
   {
+    title: 'Cloud wallet',
+    url: '/admin/cloud-wallet',
+    icon: 'wallet',
+  },
+  {
     title: 'Ecosystem',
     url: '#',
     icon: 'world',

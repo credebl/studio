@@ -2,13 +2,23 @@ import type {
   AdminDashboardSummary,
   AdminInvitation,
   AdminInvitationPage,
+  CloudBaseWalletConfigInput,
+  CloudBaseWalletStatus,
+  CloudBaseWalletSummary,
+  KnownAgentOption,
 } from '@/features/admin/types'
 import { type ApiEnvelope, platformFetch } from './platform'
+import {
+  buildKnownAgentOptions,
+  parseKnownAgentAllowlist,
+} from '@/lib/server/known-agents'
 import type { Session } from 'next-auth'
 import { apiRoutes } from '@/config/apiRoutes'
 import { authOptions } from '@/utils/authOptions'
 import { cache } from 'react'
+import { cookies } from 'next/headers'
 import { getServerSession } from 'next-auth/next'
+import { loadAccessibleOrgAgents } from '@/lib/server/known-agent-orgs'
 import { redirect } from 'next/navigation'
 
 /**
@@ -58,6 +68,25 @@ const holdsPlatformAdminRole = cache(async (): Promise<boolean> => {
     Array.isArray(roles) &&
     roles.some((item) => item?.orgRole?.name === PLATFORM_ADMIN_ROLE)
   )
+})
+
+/**
+ * v2.3.0's `/orgs` endpoint returns only organizations where the caller holds
+ * a specific org role. Platform-admin is not an org role, so an operator who
+ * also belongs to organizations can use those roles to discover their agents.
+ */
+const getAccessibleOrgRoles = cache(async (): Promise<string[]> => {
+  const profile = await loadPlatformProfile()
+  const roles = new Set<string>()
+
+  for (const item of profile?.userOrgRoles ?? []) {
+    const name = item?.orgRole?.name?.trim()
+    if (name && name !== PLATFORM_ADMIN_ROLE) {
+      roles.add(name)
+    }
+  }
+
+  return Array.from(roles)
 })
 
 /**
@@ -204,5 +233,228 @@ export const updateEcosystemStatus = async (
 
   if (!response?.ok) {
     throw new Error('Unable to update the ecosystem setting')
+  }
+}
+
+const CLOUD_WALLET_STATUS_COOKIE = 'studio_cloud_base_wallet_status'
+const MAX_COOKIE_ENDPOINT_LENGTH = 2048
+const AGENT_TOKEN_PATH = '/agent/token'
+const AGENT_TOKEN_TIMEOUT_MS = 8000
+
+/**
+ * The platform allows exactly one base wallet, so a second configuration
+ * attempt returns 409. Keeping this as a typed error lets the UI explain the
+ * conflict without exposing raw backend details.
+ */
+export class CloudBaseWalletConflictError extends Error {
+  constructor() {
+    super('A cloud base wallet is already configured')
+    this.name = 'CloudBaseWalletConflictError'
+  }
+}
+
+/**
+ * Platform v2.3.0 has no read endpoint for the base wallet. Studio keeps a
+ * non-secret UI hint in an httpOnly cookie after a successful configuration or
+ * a 409 conflict. The cookie is never used for authorization; the backend's
+ * conflict response is the authoritative check.
+ */
+const readCloudBaseWalletStatus = async (): Promise<CloudBaseWalletStatus> => {
+  const raw = (await cookies()).get(CLOUD_WALLET_STATUS_COOKIE)?.value
+  if (!raw) {
+    return { configured: false }
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as Partial<CloudBaseWalletStatus> | null
+    if (!parsed || parsed.configured !== true) {
+      return { configured: false }
+    }
+
+    const agentEndpoint =
+      typeof parsed.agentEndpoint === 'string' &&
+      parsed.agentEndpoint.length <= MAX_COOKIE_ENDPOINT_LENGTH
+        ? parsed.agentEndpoint
+        : undefined
+    const configuredAt =
+      typeof parsed.configuredAt === 'string' &&
+      !Number.isNaN(Date.parse(parsed.configuredAt))
+        ? parsed.configuredAt
+        : undefined
+
+    return {
+      configured: true,
+      ...(agentEndpoint ? { agentEndpoint } : {}),
+      ...(configuredAt ? { configuredAt } : {}),
+    }
+  } catch {
+    return { configured: false }
+  }
+}
+
+export const getCloudBaseWalletStatus = readCloudBaseWalletStatus
+
+/**
+ * Builds the non-secret dropdown candidates. The allowlist and the stored
+ * endpoint always work; org agents appear only for admins who also hold an org
+ * role in v2.3.0. A future platform discovery API can replace these lookups.
+ */
+export const getKnownAgentOptions = async (
+  cloudEndpoint?: string,
+): Promise<KnownAgentOption[]> => {
+  if (!(await getPlatformAdminSession())) {
+    return []
+  }
+
+  const [allowlist, orgs] = await Promise.all([
+    Promise.resolve(parseKnownAgentAllowlist(process.env.STUDIO_KNOWN_AGENTS)),
+    loadAccessibleOrgAgents({
+      fetcher: platformFetch,
+      roles: await getAccessibleOrgRoles(),
+    }),
+  ])
+
+  return buildKnownAgentOptions({ cloudEndpoint, allowlist, orgs })
+}
+
+export const rememberCloudBaseWalletConfigured = async (
+  details: Pick<CloudBaseWalletStatus, 'agentEndpoint'> = {},
+): Promise<CloudBaseWalletStatus> => {
+  const current = await readCloudBaseWalletStatus()
+  const trimmedEndpoint = details.agentEndpoint?.trim()
+  const status: CloudBaseWalletStatus = {
+    configured: true,
+    ...(trimmedEndpoint
+      ? { agentEndpoint: trimmedEndpoint.slice(0, MAX_COOKIE_ENDPOINT_LENGTH) }
+      : current.agentEndpoint
+        ? { agentEndpoint: current.agentEndpoint }
+        : {}),
+    ...(current.configuredAt
+      ? { configuredAt: current.configuredAt }
+      : { configuredAt: new Date().toISOString() }),
+  }
+
+  const cookieStore = await cookies()
+  cookieStore.set(CLOUD_WALLET_STATUS_COOKIE, JSON.stringify(status), {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+  })
+
+  return status
+}
+
+/**
+ * Mints the base-agent JWT at configuration time. The raw authorization key
+ * is used only for this request: it is never stored in Studio, returned to the
+ * browser, or forwarded to the platform's base-wallet endpoint.
+ */
+export class AgentTokenFetchError extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = 'AgentTokenFetchError'
+  }
+}
+
+const buildAgentTokenUrl = (agentEndpoint: string): URL | null => {
+  try {
+    const url = new URL(AGENT_TOKEN_PATH, agentEndpoint)
+    url.search = ''
+    url.hash = ''
+    return url
+  } catch {
+    return null
+  }
+}
+
+export const fetchAgentAuthToken = async (
+  agentEndpoint: string,
+  authorizationKey: string,
+): Promise<string> => {
+  const url = buildAgentTokenUrl(agentEndpoint)
+  if (!url) {
+    throw new AgentTokenFetchError(
+      'Unable to reach the agent or fetch its token.',
+    )
+  }
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        Authorization: authorizationKey,
+      },
+      redirect: 'error',
+      credentials: 'omit',
+      cache: 'no-store',
+      signal: AbortSignal.timeout(AGENT_TOKEN_TIMEOUT_MS),
+    })
+
+    if (response.status === 401 || response.status === 403) {
+      throw new AgentTokenFetchError(
+        'The agent rejected the authorization key.',
+      )
+    }
+
+    if (!response.ok) {
+      throw new AgentTokenFetchError('The agent did not return a token.')
+    }
+
+    const body = (await response.json()) as { token?: unknown }
+    const token = typeof body?.token === 'string' ? body.token.trim() : ''
+    if (!token) {
+      throw new AgentTokenFetchError('The agent did not return a token.')
+    }
+
+    return token
+  } catch (error) {
+    if (error instanceof AgentTokenFetchError) {
+      throw error
+    }
+
+    throw new AgentTokenFetchError(
+      'Unable to reach the agent or fetch its token.',
+    )
+  }
+}
+
+export const configureCloudBaseWallet = async (
+  config: CloudBaseWalletConfigInput,
+): Promise<CloudBaseWalletSummary> => {
+  const response = await platformFetch(
+    apiRoutes.platformAdmin.configureCloudBaseWallet,
+    {
+      method: 'POST',
+      body: JSON.stringify(config),
+    },
+  )
+
+  if (response?.status === 409) {
+    throw new CloudBaseWalletConflictError()
+  }
+
+  if (!response?.ok) {
+    throw new Error('Unable to configure the cloud base wallet')
+  }
+
+  try {
+    const body = (await response.json()) as ApiEnvelope<CloudBaseWalletSummary>
+    const data = body?.data
+
+    // Only copy fields the UI can display. Secrets are never returned.
+    return {
+      ...(typeof data?.id === 'string' ? { id: data.id } : {}),
+      ...(typeof data?.email === 'string' ? { email: data.email } : {}),
+      ...(typeof data?.type === 'string' ? { type: data.type } : {}),
+      ...(typeof data?.userId === 'string' ? { userId: data.userId } : {}),
+      ...(typeof data?.agentEndpoint === 'string'
+        ? { agentEndpoint: data.agentEndpoint }
+        : {}),
+    }
+  } catch {
+    return {}
   }
 }

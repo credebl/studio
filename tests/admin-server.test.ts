@@ -1,12 +1,18 @@
-import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  AgentTokenFetchError,
+  CloudBaseWalletConflictError,
+  configureCloudBaseWallet,
+  fetchAgentAuthToken,
+  getCloudBaseWalletStatus,
   getDashboardSummary,
   getPlatformAdminSession,
   getPlatformInvitations,
   inviteEcosystemOwner,
+  rememberCloudBaseWalletConfigured,
   requirePlatformAdmin,
   updateEcosystemStatus,
 } from '@/lib/server/admin'
+import { type Mock, beforeEach, describe, expect, it, vi } from 'vitest'
 import { jsonResponse, makeSession } from './helpers'
 import { getServerSession } from 'next-auth/next'
 import { redirect } from 'next/navigation'
@@ -26,9 +32,29 @@ vi.mock('@/app/api/server/encryption', () => ({
   passwordEncryption: (value: string): string => `encrypted:${value}`,
 }))
 
+const cookieState = vi.hoisted(() => ({
+  values: new Map<string, string>(),
+}))
+
+vi.mock('next/headers', () => ({
+  cookies: async (): Promise<{
+    get: (name: string) => { name: string; value: string } | undefined
+    set: (name: string, value: string) => void
+  }> => ({
+    get: (name: string): { name: string; value: string } | undefined => {
+      const value = cookieState.values.get(name)
+      return value === undefined ? undefined : { name, value }
+    },
+    set: (name: string, value: string): void => {
+      cookieState.values.set(name, value)
+    },
+  }),
+}))
+
 let fetchMock: Mock<typeof fetch> = vi.fn<typeof fetch>()
 
 beforeEach(() => {
+  cookieState.values.clear()
   fetchMock = vi.fn<typeof fetch>()
   vi.stubGlobal('fetch', fetchMock)
 })
@@ -301,5 +327,177 @@ describe('admin data access', () => {
 
     await expect(getDashboardSummary()).resolves.toBeNull()
     expect(fetchMock).toHaveBeenCalledTimes(3)
+  })
+})
+
+describe('configureCloudBaseWallet', () => {
+  const config = {
+    agentEndpoint: 'https://agent.example.com:4001',
+    apiKey: 'agent-secret',
+    walletKey: 'wallet-secret',
+  }
+
+  it('posts the configuration with the exchanged backend token', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock.mockResolvedValueOnce(sessionTokens()).mockResolvedValueOnce(
+      jsonResponse(
+        {
+          data: {
+            id: 'base-1',
+            agentEndpoint: config.agentEndpoint,
+            apiKey: 'must-not-be-returned',
+            key: 'must-not-be-returned',
+          },
+        },
+        201,
+      ),
+    )
+
+    await expect(configureCloudBaseWallet(config)).resolves.toEqual({
+      id: 'base-1',
+      agentEndpoint: config.agentEndpoint,
+    })
+
+    const [, [url, init]] = fetchMock.mock.calls
+    expect(String(url)).toBe('http://platform.test/configure/base-wallet')
+    expect(init?.method).toBe('POST')
+    expect(init?.body).toBe(JSON.stringify(config))
+
+    const headers = init?.headers as Record<string, string>
+    expect(headers.Authorization).toBe('Bearer access-token')
+    expect(headers['Content-Type']).toBe('application/json')
+  })
+
+  it('reports a conflict without exposing the backend message', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(
+        jsonResponse({ message: 'raw backend conflict detail' }, 409),
+      )
+
+    await expect(configureCloudBaseWallet(config)).rejects.toBeInstanceOf(
+      CloudBaseWalletConflictError,
+    )
+  })
+
+  it('throws a generic error when configuration fails', async () => {
+    vi.mocked(getServerSession).mockResolvedValue(makeSession())
+    fetchMock
+      .mockResolvedValueOnce(sessionTokens())
+      .mockResolvedValueOnce(
+        jsonResponse({ message: 'raw backend detail' }, 500),
+      )
+
+    await expect(configureCloudBaseWallet(config)).rejects.toThrow(
+      'Unable to configure the cloud base wallet',
+    )
+  })
+})
+
+describe('fetchAgentAuthToken', () => {
+  const endpoint = 'https://agent.example.com:4001'
+  const authorizationKey = 'raw-agent-key'
+
+  it('posts directly to the agent with the raw key and returns the JWT', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ token: 'runtime-jwt' }))
+
+    await expect(fetchAgentAuthToken(endpoint, authorizationKey)).resolves.toBe(
+      'runtime-jwt',
+    )
+
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    const [[url, init]] = fetchMock.mock.calls
+    expect(String(url)).toBe('https://agent.example.com:4001/agent/token')
+    expect(init?.method).toBe('POST')
+    expect(init?.body).toBeUndefined()
+    expect(init?.cache).toBe('no-store')
+    expect(init?.redirect).toBe('error')
+
+    const headers = init?.headers as Record<string, string>
+    expect(headers.Authorization).toBe(authorizationKey)
+    expect(headers.Authorization).not.toContain('Bearer')
+    expect(fetchMock.mock.calls.length).toBe(1)
+  })
+
+  it('reports a rejected key without echoing it', async () => {
+    fetchMock.mockResolvedValueOnce(
+      jsonResponse({ message: 'raw-agent-key rejected' }, 401),
+    )
+
+    const request = fetchAgentAuthToken(endpoint, authorizationKey)
+
+    await expect(request).rejects.toBeInstanceOf(AgentTokenFetchError)
+    await expect(request).rejects.toThrow(
+      'The agent rejected the authorization key.',
+    )
+  })
+
+  it('rejects a response without a token', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse({ token: '   ' }))
+
+    await expect(
+      fetchAgentAuthToken(endpoint, authorizationKey),
+    ).rejects.toThrow('The agent did not return a token.')
+  })
+
+  it('hides network error details', async () => {
+    fetchMock.mockRejectedValueOnce(new Error('http://metadata.internal'))
+
+    await expect(
+      fetchAgentAuthToken(endpoint, authorizationKey),
+    ).rejects.toThrow('Unable to reach the agent or fetch its token.')
+  })
+})
+
+describe('cloud base wallet status', () => {
+  it('starts unconfigured and ignores malformed cookie data', async () => {
+    await expect(getCloudBaseWalletStatus()).resolves.toEqual({
+      configured: false,
+    })
+
+    cookieState.values.set('studio_cloud_base_wallet_status', 'not-json')
+
+    await expect(getCloudBaseWalletStatus()).resolves.toEqual({
+      configured: false,
+    })
+  })
+
+  it('stores only non-secret details and keeps the first configured timestamp', async () => {
+    const first = await rememberCloudBaseWalletConfigured({
+      agentEndpoint: ' https://agent.example.com:4001 ',
+    })
+
+    expect(first).toEqual({
+      configured: true,
+      agentEndpoint: 'https://agent.example.com:4001',
+      configuredAt: expect.any(String),
+    })
+
+    const raw = cookieState.values.get('studio_cloud_base_wallet_status')
+    expect(raw).toBeDefined()
+    expect(raw).not.toContain('agent-secret')
+    expect(raw).not.toContain('wallet-secret')
+
+    const second = await rememberCloudBaseWalletConfigured()
+
+    expect(second.configuredAt).toBe(first.configuredAt)
+    expect(second.agentEndpoint).toBe(first.agentEndpoint)
+    await expect(getCloudBaseWalletStatus()).resolves.toEqual(second)
+  })
+
+  it('drops an oversized or invalid endpoint from the stored hint', async () => {
+    cookieState.values.set(
+      'studio_cloud_base_wallet_status',
+      JSON.stringify({
+        configured: true,
+        agentEndpoint: 'x'.repeat(3000),
+        configuredAt: 'not-a-date',
+      }),
+    )
+
+    await expect(getCloudBaseWalletStatus()).resolves.toEqual({
+      configured: true,
+    })
   })
 })
