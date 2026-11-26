@@ -1,9 +1,9 @@
 # Prevent sensitive files from being copied into the Docker image
 
 .pnpm-store
-.env
-.env.*
-!.env.demo
+# .env
+# .env.*
+# !.env.demo
 
 # Git and editor files
 .git
