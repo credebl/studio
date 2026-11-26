@@ -140,8 +140,48 @@ export const apiRoutes = {
     deleteWallet: '/agents/wallet',
   },
 
+  oid4vc: {
+    createIssuer: '/oid4vc/issuers',
+    issuers: '/oid4vc/issuers',
+    issuerTemplates: '/oid4vc',
+    credentialOffers: '/oid4vc/credential-offer',
+    createOffer: '/oid4vc',
+    deleteOffer: '/oid4vc',
+    revokeCredential: '/openid4vc/issuance-sessions',
+  },
+
   setting: {
     setting: '/client_credentials',
+  },
+
+  // Holder cloud-wallet endpoints shipped in platform v2.3.0. They are
+  // user-scoped and must never be called with an orgId.
+  cloudWallet: {
+    createWallet: '/create-wallet',
+    did: '/did',
+    didImportSession: '/did/import/session',
+    connectionInvitation: '/connections/invitation',
+    connection: '/connection',
+    connections: '/connections',
+    receiveInvitation: '/receive-invitation-url',
+    acceptOffer: '/accept-offer',
+    proofs: '/proofs',
+    proof: '/proofs',
+    acceptProof: '/proofs/accept-request',
+    credentials: '/credential',
+    credential: '/credential',
+    sdJwtCredentials: '/holder/sd-jwt-vcs',
+    mdocCredentials: '/holder/mdoc-vcs',
+    w3cCredentials: '/holder/w3c-vcs',
+    decodeMdoc: '/holder/mdoc-vcs/decode',
+    decodeSdJwt: '/holder/decode-sdjwt',
+    deleteCredential: '/holder/credential',
+    resolveCredentialOffer: '/oid4vc/holder/resolve-credential-offer',
+    authorizationRequest: '/oid4vc/holder/authorization-request',
+    requestCredential: '/oid4vc/holder/request-credential',
+    holderPrimaryDid: '/oid4vc/holder/primary-did',
+    resolveProofRequest: '/oid4vc/holder/resolve-proof-request',
+    acceptProofRequest: '/oid4vc/holder/accept-proof-request',
   },
 
   // Platform-admin (operator) endpoints. All of these are protected by the

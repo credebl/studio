@@ -23,12 +23,15 @@ const PageLayout: React.FC<PageLayoutProps> = ({ children }) => {
     '/reset-password',
   ]
 
-  // The platform console renders its own admin-only shell.
+  // The platform console and holder wallet render their own role-scoped shells.
   const isAdminRoute = pathname.startsWith('/admin')
+  const isHolderRoute = pathname.startsWith('/holder')
 
   return (
     <>
-      {excludeLayoutRoutes.includes(pathname) || isAdminRoute ? (
+      {excludeLayoutRoutes.includes(pathname) ||
+      isAdminRoute ||
+      isHolderRoute ? (
         <>{children}</>
       ) : (
         <KBar>

@@ -8,11 +8,12 @@ import {
   KBarSearch,
 } from 'kbar'
 import React, { useMemo } from 'react'
+import { holderNavItem, navItems } from '@/constants/data'
 import { usePathname, useRouter } from 'next/navigation'
 
 import { NavItem } from '../../../types'
 import RenderResults from './render-result'
-import { navItems } from '@/constants/data'
+import { useSession } from 'next-auth/react'
 
 export type KBarAction = {
   id: string
@@ -65,6 +66,8 @@ export default function KBar({
   const pathname = usePathname()
 
   const [refreshKey, setRefreshKey] = React.useState(0)
+  const { data: session } = useSession()
+  const hasHolderAccess = session?.hasHolderAccess === true
 
   React.useEffect(() => {
     const handleRefresh = (): void => {
@@ -88,18 +91,27 @@ export default function KBar({
       router.push(url)
     }
 
-    const createBaseAction = (navItem: NavItem): KBarAction =>
-      (navItem.url !== '#'
-        ? {
-            id: `${navItem.title.toLowerCase()}Action`,
-            name: navItem.title,
-            shortcut: navItem.shortcut,
-            keywords: navItem.title.toLowerCase(),
-            section: 'Navigation',
-            subtitle: `Go to ${navItem.title}`,
-            perform: (): void => navigateTo(navItem.url),
-          }
-        : null)
+    const actionKeywords = (item: NavItem): string =>
+      `${item.title} ${item.description ?? ''}`.trim().toLowerCase()
+
+    const actionSubtitle = (item: NavItem): string =>
+      item.description ?? `Go to ${item.title}`
+
+    const createBaseAction = (navItem: NavItem): KBarAction => {
+      if (navItem.url === '#') {
+        return null
+      }
+
+      return {
+        id: `${navItem.title.toLowerCase()}Action`,
+        name: navItem.title,
+        shortcut: navItem.shortcut,
+        keywords: actionKeywords(navItem),
+        section: 'Navigation',
+        subtitle: actionSubtitle(navItem),
+        perform: (): void => navigateTo(navItem.url),
+      }
+    }
 
     const convertChildItemToAction = (
       childItem: NavItem,
@@ -108,9 +120,9 @@ export default function KBar({
       id: `${childItem.title.toLowerCase()}Action`,
       name: childItem.title,
       shortcut: childItem.shortcut,
-      keywords: childItem.title.toLowerCase(),
+      keywords: actionKeywords(childItem),
       section: navItem.title,
-      subtitle: `Go to ${childItem.title}`,
+      subtitle: actionSubtitle(childItem),
       perform: (): void => navigateTo(childItem.url),
     })
     // Map child items into actions
@@ -119,14 +131,16 @@ export default function KBar({
         convertChildItemToAction(childItem, navItem),
       ) ?? []
 
-    return navItems.flatMap((navItem) => {
+    const items = hasHolderAccess ? [...navItems, holderNavItem] : navItems
+
+    return items.flatMap((navItem) => {
       const baseAction = createBaseAction(navItem)
       const childActions = createChildActions(navItem)
 
       // Return only valid actions (ignoring null base actions for containers)
       return baseAction ? [baseAction, ...childActions] : childActions
     })
-  }, [router])
+  }, [router, hasHolderAccess])
 
   return (
     <KBarProvider actions={actions}>

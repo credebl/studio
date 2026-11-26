@@ -7,6 +7,7 @@ import type {
   CloudBaseWalletSummary,
   KnownAgentOption,
 } from '@/features/admin/types'
+import { type ApiEnvelope, platformFetch } from './platform'
 import {
   buildKnownAgentOptions,
   parseKnownAgentAllowlist,
@@ -18,7 +19,6 @@ import { cache } from 'react'
 import { cookies } from 'next/headers'
 import { getServerSession } from 'next-auth/next'
 import { loadAccessibleOrgAgents } from '@/lib/server/known-agent-orgs'
-import { passwordEncryption } from '@/app/api/server/encryption'
 import { redirect } from 'next/navigation'
 
 /**
@@ -29,126 +29,12 @@ import { redirect } from 'next/navigation'
  * browser for the /admin screens.
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
 const PLATFORM_ADMIN_ROLE = 'platform_admin'
 const DEFAULT_PAGE_SIZE = 10
-
-interface SessionTokens {
-  token: string
-  refreshToken: string
-}
-
-interface ApiEnvelope<T> {
-  data?: T
-}
-
-interface SessionDetails {
-  sessionToken?: string
-  refreshToken?: string
-}
-
-interface RefreshedTokens {
-  access_token?: string
-}
 
 interface InvitationsPayload {
   data?: AdminInvitation[]
   totalPages?: number
-}
-
-const loadSessionTokens = cache(async (): Promise<SessionTokens | null> => {
-  if (!BASE_URL) {
-    return null
-  }
-
-  const session = await getServerSession(authOptions)
-  if (!session?.sessionId) {
-    return null
-  }
-
-  try {
-    // The platform decrypts with JSON.parse, so the session id must be
-    // JSON-encoded before encryption. Encrypting the raw string yields a
-    // payload the backend rejects with 400 Invalid Credentials.
-    const encryptedSessionId = passwordEncryption(
-      JSON.stringify(session.sessionId),
-    )
-    const response = await fetch(
-      `${BASE_URL}${apiRoutes.auth.fetchSessionDetails}?sessionId=${encodeURIComponent(encryptedSessionId)}`,
-      { cache: 'no-store' },
-    )
-
-    if (!response.ok) {
-      return null
-    }
-
-    const body = (await response.json()) as ApiEnvelope<SessionDetails>
-    const token = body?.data?.sessionToken
-    const refreshToken = body?.data?.refreshToken
-
-    return token && refreshToken ? { token, refreshToken } : null
-  } catch {
-    return null
-  }
-})
-
-const refreshAccessToken = async (
-  refreshToken: string,
-): Promise<string | null> => {
-  if (!BASE_URL) {
-    return null
-  }
-
-  try {
-    const response = await fetch(`${BASE_URL}${apiRoutes.auth.refreshToken}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refreshToken }),
-      cache: 'no-store',
-    })
-
-    if (!response.ok) {
-      return null
-    }
-
-    const body = (await response.json()) as ApiEnvelope<RefreshedTokens>
-    return body?.data?.access_token ?? null
-  } catch {
-    return null
-  }
-}
-
-const platformFetch = async (
-  path: string,
-  init: RequestInit = {},
-): Promise<Response | null> => {
-  if (!BASE_URL) {
-    return null
-  }
-
-  const tokens = await loadSessionTokens()
-  if (!tokens) {
-    return null
-  }
-
-  const send = (token: string): Promise<Response> =>
-    fetch(`${BASE_URL}${path}`, {
-      ...init,
-      headers: {
-        'Content-Type': 'application/json',
-        ...init.headers,
-        Authorization: `Bearer ${token}`,
-      },
-      cache: 'no-store',
-    })
-
-  const response = await send(tokens.token)
-  if (response.status !== 401) {
-    return response
-  }
-
-  const refreshedToken = await refreshAccessToken(tokens.refreshToken)
-  return refreshedToken ? send(refreshedToken) : response
 }
 
 interface PlatformProfile {

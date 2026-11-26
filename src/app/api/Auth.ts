@@ -19,6 +19,7 @@ export interface IAddPasswordDetails {
   isPasskey: boolean
   firstName: string | null
   lastName: string | null
+  isHolder?: boolean
 }
 export interface IUserSignInData {
   email: string | undefined
@@ -42,8 +43,11 @@ export const sendVerificationMail = async (
 ): Promise<AxiosResponse | string> => {
   const config = getHeaderConfigs()
 
+  const clientAlias = payload?.clientAlias
   const details = {
-    url: `${apiRoutes.auth.sendMail}?clientAlias=${payload?.clientAlias}`,
+    url: clientAlias
+      ? `${apiRoutes.auth.sendMail}?clientAlias=${encodeURIComponent(clientAlias)}`
+      : apiRoutes.auth.sendMail,
     payload,
     config,
   }

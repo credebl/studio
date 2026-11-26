@@ -47,6 +47,7 @@ export interface AddPasswordDetails {
   isPasskey: boolean
   firstName: string | null
   lastName: string | null
+  isHolder?: boolean
 }
 
 const validationSchema = Yup.object().shape({
@@ -100,6 +101,15 @@ export default function UserInfoForm({
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirectTo')
   const clientAlias = searchParams.get('clientAlias')
+  const [isHolderSignup, setIsHolderSignup] = useState(false)
+
+  useEffect(() => {
+    setIsHolderSignup(
+      searchParams.get('holder') === '1' ||
+        searchParams.get('holder') === 'true' ||
+        sessionStorage.getItem('studio-holder-signup') === '1',
+    )
+  }, [searchParams])
 
   const onSubmit = async (values: {
     firstName: string
@@ -111,12 +121,15 @@ export default function UserInfoForm({
     setFailure(null)
     setShowEmailVerification({ message: '', isError: false, type: '' })
     const encryptedPassword = await passwordValueEncryption(values.password)
-    const payload = {
+    const payload: AddPasswordDetails = {
       email,
       password: encryptedPassword,
       isPasskey: false,
       firstName: values.firstName,
       lastName: values.lastName,
+      // Opt-in holder accounts get the Keycloak userRole attribute the cloud
+      // wallet's UserRoleGuard checks. Regular sign-ups keep org access.
+      isHolder: isHolderSignup,
     }
 
     try {
@@ -156,6 +169,7 @@ export default function UserInfoForm({
       firstName: values.firstName,
       lastName: values.lastName,
       password: encryptedPassword,
+      isHolder: isHolderSignup,
     }
 
     setLoading(true)
